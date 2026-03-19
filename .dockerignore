@@ -1,0 +1,11 @@
+node_modules
+.next
+.env
+*.log
+.git
+.vscode
+Dockerfile
+.dockerignore
+public/uploads/*
+prisma/*.db
+prisma/*.db-journal

@@ -1,0 +1,266 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #01b0ef;
+  --primary-light: #34c0f2;
+  --primary-dark: #0088b9;
+  --secondary: #FDB913;
+  --secondary-light: #fadb6f;
+  --accent: #FDB913;
+  --font-size-base: 15px; /* Reduzindo levemente o tamanho base */
+}
+
+/* === ACESSIBILIDADE === */
+.high-contrast {
+  --bg-main: #000 !important;
+  --text-main: #fff !important;
+  filter: contrast(1.5);
+}
+
+html.high-contrast body {
+  background: #000 !important;
+  color: #fff !important;
+}
+
+html.high-contrast a {
+  color: #ffff00 !important;
+}
+
+html.high-contrast .bg-white {
+  background: #111 !important;
+}
+
+html.high-contrast .text-gray-600,
+html.high-contrast .text-gray-500 {
+  color: #ddd !important;
+}
+
+html.high-contrast .bg-primary-500,
+html.high-contrast .bg-primary-600 {
+  background: #000080 !important;
+  border: 2px solid #fff;
+}
+
+html.high-contrast header {
+  background: #111 !important;
+  border-bottom: 2px solid #fff;
+}
+
+html.high-contrast footer {
+  background: #000 !important;
+  border-top: 2px solid #fff;
+}
+
+html.font-large {
+  font-size: 20px !important;
+}
+
+html.font-xlarge {
+  font-size: 24px !important;
+}
+
+/* === SKIP LINK (Acessibilidade) === */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--primary);
+  color: white;
+  padding: 8px;
+  text-decoration: none;
+  z-index: 9999;
+  font-weight: bold;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* === SCROLLBAR === */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1a5276;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0f3050;
+}
+
+/* === UTILITÁRIOS === */
+@layer components {
+  .btn-primary {
+    @apply bg-primary-500 hover:bg-primary-600 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary-500 hover:bg-secondary-600 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-secondary-400 focus:ring-offset-2;
+  }
+
+  .btn-outline {
+    @apply border-2 border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2;
+  }
+
+  .card {
+    @apply bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100;
+  }
+
+  .section-title {
+    @apply text-3xl font-extrabold text-[#003362] mb-4 uppercase tracking-tight;
+  }
+
+  .section-subtitle {
+    @apply text-gray-500 text-base mb-8 uppercase tracking-widest font-semibold;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest;
+  }
+
+  .input-field {
+    @apply w-full px-5 py-3.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-colors bg-gray-50 hover:bg-white;
+  }
+
+  .table-header {
+    @apply bg-primary-500 text-white font-bold text-sm px-5 py-4 text-left uppercase tracking-wider;
+  }
+
+  .table-cell {
+    @apply px-5 py-4 text-sm text-gray-700 border-b border-gray-50;
+  }
+}
+
+/* === ANIMAÇÕES === */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.animate-slide-in {
+  animation: slideInLeft 0.6s ease forwards;
+}
+
+/* === HERO GRADIENT - WARM SUNSET VIBE === */
+.hero-gradient {
+  background: linear-gradient(135deg, rgba(1, 176, 239, 0.98) 0%, rgba(1, 176, 239, 0.7) 40%, rgba(253, 185, 19, 0.6) 100%);
+}
+
+.hero-overlay {
+  background: linear-gradient(to bottom, rgba(0, 33, 49, 0.4) 0%, rgba(1, 176, 239, 0.1) 60%, rgba(248, 250, 252, 1) 100%);
+}
+
+/* === GLASSMORPHISM === */
+.glass {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(1, 176, 239, 0.1);
+}
+
+.glass-dark {
+  background: rgba(0, 33, 49, 0.7);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-light {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* === BARRA GOV (Baseada no estilo de topo das prefeituras do Piauí/Gov) === */
+.barra-gov {
+  background: #002241;
+}
+
+/* === NOTÍCIAS === */
+.news-card:hover .news-image {
+  transform: scale(1.08);
+}
+
+.news-image {
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* === CARD SIMPLES DESTAQUE (Serviços e Transparência) === */
+.service-card {
+  @apply rounded-3xl p-8 bg-white text-gray-800 shadow-sm border border-gray-100 hover:shadow-2xl hover:border-primary/20 transition-all duration-300 hover:-translate-y-2 flex flex-col items-center justify-center text-center;
+}
+
+/* === PRINT === */
+@media print {
+
+  header,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    font-size: 12pt;
+  }
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .section-title {
+    @apply text-2xl;
+  }
+
+  .hero-title {
+    @apply text-3xl;
+  }
+}
