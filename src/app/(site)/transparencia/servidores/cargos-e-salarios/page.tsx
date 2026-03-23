@@ -23,12 +23,13 @@ export default function CargosSalariosPage() {
     return (
         <div className="min-h-screen bg-gray-50">
             <PageHeader
-                title="Cargos, Empregos e Salários"
+                title="Padrão Remuneratório"
                 subtitle="Consulte a estrutura remuneratória e a tabela de vencimentos dos servidores municipais."
                 breadcrumbs={[
                     { label: "Início", href: "/" },
                     { label: "Transparência", href: "/transparencia" },
-                    { label: "Cargos e Salários" }
+                    { label: "Servidores", href: "/transparencia/servidores" },
+                    { label: "Padrão Remuneratório" }
                 ]}
             />
 

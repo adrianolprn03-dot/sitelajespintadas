@@ -74,6 +74,14 @@ const modulos = [
         badge: "LC 131",
     },
     {
+        icon: Scale,
+        titulo: "Padrão Remuneratório",
+        desc: "Tabelas de vencimentos, níveis e classes de cargos.",
+        href: "/transparencia/servidores/cargos-e-salarios",
+        cor: "from-blue-600 to-cyan-700",
+        badge: "PNTP",
+    },
+    {
         icon: FileBarChart,
         titulo: "Relatórios Fiscais",
         desc: "RREO, RGF e relatórios de gestão fiscal periódicos.",

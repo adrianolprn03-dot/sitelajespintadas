@@ -24,7 +24,7 @@ export default function DiariasPage() {
     const [search, setSearch] = useState("");
     const [totalValor, setTotalValor] = useState(0);
 
-    const anos = Array.from({ length: 5 }, (_, i) => (new Date().getFullYear() - i).toString());
+    const anos = Array.from({ length: 10 }, (_, i) => (new Date().getFullYear() - i).toString());
     const meses = [
         { v: "1", l: "Janeiro" }, { v: "2", l: "Fevereiro" }, { v: "3", l: "Março" },
         { v: "4", l: "Abril" }, { v: "5", l: "Maio" }, { v: "6", l: "Junho" },

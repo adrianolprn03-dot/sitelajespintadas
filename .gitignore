@@ -49,3 +49,6 @@ dirs.txt
 # temp files
 *.html
 prefeitura_redesign*.png
+
+.vercel
+.env*.local

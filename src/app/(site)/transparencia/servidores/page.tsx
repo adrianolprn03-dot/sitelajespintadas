@@ -109,17 +109,48 @@ export default function ServidoresPage() {
                         <div className="flex flex-wrap items-center gap-4 text-teal-100/80 text-sm font-medium">
                             <span>Lei Complementar 131/2009</span>
                             <span className="opacity-30">•</span>
-                            <Link href="/transparencia/servidores/cargos-e-salarios" className="text-white font-bold hover:underline flex items-center gap-2">
-                                <FaMoneyCheckAlt /> Tabela de Vencimentos
-                            </Link>
+                            <span>Transparência Ativa</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 py-8 -mt-10">
+            <div className="max-w-7xl mx-auto px-4 py-8 -mt-12">
+                {/* Cards de Navegação por Sub-módulos */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                    <button 
+                        onClick={() => document.getElementById('filtros-servidores')?.scrollIntoView({ behavior: 'smooth' })}
+                        className="group relative overflow-hidden bg-white rounded-[2.5rem] p-8 shadow-xl border border-teal-100/50 hover:shadow-2xl hover:shadow-teal-900/10 transition-all duration-500 text-left"
+                    >
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-teal-50 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700" />
+                        <div className="relative z-10 flex items-center gap-6">
+                            <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-3xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-500">
+                                <FaMoneyCheckAlt size={28} />
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-black text-gray-800 uppercase tracking-tight mb-1 group-hover:text-teal-600 transition-colors">Consulta de Folha</h3>
+                                <p className="text-gray-500 text-xs font-medium">Pesquisa detalhada de pagamentos mensais por servidor.</p>
+                            </div>
+                        </div>
+                    </button>
+
+                    <Link href="/transparencia/servidores/cargos-e-salarios" className="group relative overflow-hidden bg-white rounded-[2.5rem] p-8 shadow-xl border border-blue-100/50 hover:shadow-2xl hover:shadow-blue-900/10 transition-all duration-500">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700" />
+                        <div className="relative z-10 flex items-center gap-6">
+                            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-500">
+                                <FaMoneyCheckAlt size={28} />
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-black text-gray-800 uppercase tracking-tight mb-1 group-hover:text-blue-600 transition-colors">Padrão Remuneratório</h3>
+                                <p className="text-gray-500 text-xs font-medium">Tabelas de vencimentos, níveis e classes de cargos.</p>
+                            </div>
+                        </div>
+                    </Link>
+                </div>
+
                 {/* Filtros Padronizados PNTP 2024 */}
-                <TransparencyFilters
+                <div id="filtros-servidores">
+                    <TransparencyFilters
                     searchValue={busca}
                     onSearch={setBusca}
                     currentYear={ano}
@@ -130,6 +161,7 @@ export default function ServidoresPage() {
                     onExport={handleExport}
                     placeholder="Pesquisar por nome, cargo ou secretaria..."
                 />
+                </div>
 
                 {/* Cards de totais */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
