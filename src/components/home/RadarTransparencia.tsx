@@ -1,8 +1,17 @@
-"use client";
 import Link from "next/link";
 import { HiOutlineArrowTopRightOnSquare } from "react-icons/hi2";
+import { prisma } from "@/lib/prisma";
+import { FaExternalLinkAlt } from "react-icons/fa";
 
-export default function RadarTransparencia() {
+export default async function RadarTransparencia() {
+    const override = await (prisma as any).linkExterno.findFirst({
+        where: { ativo: true, moduloAlvo: "home-radar" }
+    });
+
+    const defaultUrl = "https://radar.tce.mt.gov.br/pnl/";
+    const finalHref = override ? override.url : defaultUrl;
+    const isOverride = !!override;
+
     return (
         <section className="bg-white py-12 px-6">
             <div className="max-w-[1240px] mx-auto">
@@ -27,11 +36,13 @@ export default function RadarTransparencia() {
                             Confira o índice de transparência do nosso município avaliado pela ATRICON e órgãos de controle.
                         </p>
                         <Link 
-                            href="https://radar.tce.mt.gov.br/pnl/" 
+                            href={finalHref} 
                             target="_blank"
-                            className="inline-flex items-center gap-3 bg-white text-[#002241] px-10 py-5 rounded-full font-black text-xs uppercase tracking-widest hover:bg-secondary-400 transition-all hover:scale-105 shadow-xl"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-3 bg-white text-[#002241] px-10 py-5 rounded-full font-black text-xs uppercase tracking-widest hover:bg-secondary-400 transition-all hover:scale-105 shadow-xl group/btn"
                         >
-                            Ver no Radar <HiOutlineArrowTopRightOnSquare size={20} />
+                            {isOverride ? "Acessar Radar" : "Ver no Radar"} 
+                            {isOverride ? <FaExternalLinkAlt size={16} /> : <HiOutlineArrowTopRightOnSquare size={20} />}
                         </Link>
                     </div>
                 </div>
