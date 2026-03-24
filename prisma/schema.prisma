@@ -385,14 +385,33 @@ model Veiculo {
 }
 
 model EmendaParlamentar {
-  id          String   @id @default(cuid())
-  autor       String
-  valor       Float
-  objeto      String
-  tipo        String   // individual, bancada, pix
-  status      String   @default("em-execucao")
-  ano         Int
-  criadoEm    DateTime @default(now())
+  id                   String   @id @default(cuid())
+  codigoEmenda         String   @unique
+  anoEmenda            Int
+  autorNome            String
+  numeroEmenda         String?
+  tipoEmenda           String?
+  objeto               String?
+  funcaoGoverno        String?
+  subfuncaoGoverno     String?
+  localidade           String?
+  uf                   String?
+  favorecidoNome       String?
+  favorecidoCnpjCpf    String?
+  valorPrevisto        Float?   @default(0)
+  valorEmpenhado       Float?   @default(0)
+  valorLiquidado       Float?   @default(0)
+  valorPago            Float?   @default(0)
+  situacaoExecucao     String?
+  orgaoConcedente      String?
+  instrumentoNumero    String?
+  planoAcaoNumero      String?
+  convenioNumero       String?
+  urlFonteOficial      String?
+  dataImportacao       DateTime @default(now())
+  fonteDado            String?
+  criadoEm             DateTime @default(now())
+  atualizadoEm         DateTime @updatedAt
 }
 
 model Concurso {

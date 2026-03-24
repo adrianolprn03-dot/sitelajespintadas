@@ -22,10 +22,10 @@ const tipoInfo: Record<string, { label: string; cor: string; icon: typeof FaFile
     "resolucao": { label: "Resolução", cor: "bg-indigo-100 text-indigo-700 border-indigo-200", icon: FaFileAlt },
 };
 
-export default function LegislacaoClient() {
+export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = false }: { initialTipo?: string, hideTipoFilter?: boolean }) {
     const [leis, setLeis] = useState<Legislacao[]>([]);
     const [loading, setLoading] = useState(true);
-    const [tipoFiltro, setTipoFiltro] = useState("");
+    const [tipoFiltro, setTipoFiltro] = useState(initialTipo);
     const [anoFiltro, setAnoFiltro] = useState("");
     const [buscaFiltro, setBuscaFiltro] = useState("");
     const [page, setPage] = useState(1);
@@ -106,33 +106,35 @@ export default function LegislacaoClient() {
                     </button>
                 </form>
 
-                <div className="flex flex-wrap gap-2">
-                    {["Todos", "lei", "decreto", "portaria", "resolucao", "lei-organica"].map((f) => {
-                        const labels: Record<string, string> = {
-                            "Todos": "Todos os Tipos",
-                            "lei": "Leis",
-                            "decreto": "Decretos",
-                            "portaria": "Portarias",
-                            "resolucao": "Resoluções",
-                            "lei-organica": "Lei Orgânica"
-                        };
-                        const isActive = tipoFiltro === f || (f === "Todos" && tipoFiltro === "");
-                        
-                        return (
-                            <button 
-                                key={f} 
-                                onClick={() => { setTipoFiltro(f === "Todos" ? "" : f); setPage(1); }}
-                                className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest border transition-all ${
-                                    isActive 
-                                    ? "bg-[#01b0ef] text-white border-[#01b0ef]" 
-                                    : "bg-gray-50 text-gray-500 border-gray-200 hover:bg-gray-100"
-                                }`}
-                            >
-                                {labels[f]}
-                            </button>
-                        );
-                    })}
-                </div>
+                {!hideTipoFilter && (
+                    <div className="flex flex-wrap gap-2">
+                        {["Todos", "lei", "decreto", "portaria", "resolucao", "lei-organica"].map((f) => {
+                            const labels: Record<string, string> = {
+                                "Todos": "Todos os Tipos",
+                                "lei": "Leis",
+                                "decreto": "Decretos",
+                                "portaria": "Portarias",
+                                "resolucao": "Resoluções",
+                                "lei-organica": "Lei Orgânica"
+                            };
+                            const isActive = tipoFiltro === f || (f === "Todos" && tipoFiltro === "");
+                            
+                            return (
+                                <button 
+                                    key={f} 
+                                    onClick={() => { setTipoFiltro(f === "Todos" ? "" : f); setPage(1); }}
+                                    className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest border transition-all ${
+                                        isActive 
+                                        ? "bg-[#01b0ef] text-white border-[#01b0ef]" 
+                                        : "bg-gray-50 text-gray-500 border-gray-200 hover:bg-gray-100"
+                                    }`}
+                                >
+                                    {labels[f]}
+                                </button>
+                            );
+                        })}
+                    </div>
+                )}
             </div>
 
             {loading ? (

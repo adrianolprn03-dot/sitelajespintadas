@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 
 export async function GET(req: NextRequest) {
     try {
@@ -26,7 +24,6 @@ export async function GET(req: NextRequest) {
                 { autorNome: { contains: busca, mode: "insensitive" } },
                 { objeto: { contains: busca, mode: "insensitive" } },
                 { codigoEmenda: { contains: busca, mode: "insensitive" } },
-                { favorecidoNome: { contains: busca, mode: "insensitive" } },
             ];
         }
 
@@ -34,22 +31,10 @@ export async function GET(req: NextRequest) {
             where,
             orderBy: [{ anoEmenda: "desc" }, { autorNome: "asc" }],
         });
+
         return NextResponse.json(items);
     } catch (error) {
         console.error(error);
         return NextResponse.json({ error: "Erro ao buscar emendas" }, { status: 500 });
-    }
-}
-
-export async function POST(req: Request) {
-    const session = await getServerSession(authOptions);
-    if (!session) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
-    try {
-        const body = await req.json();
-        const item = await prisma.emendaParlamentar.create({ data: body });
-        return NextResponse.json(item);
-    } catch (error) {
-        console.error(error);
-        return NextResponse.json({ error: "Erro ao criar emenda" }, { status: 500 });
     }
 }

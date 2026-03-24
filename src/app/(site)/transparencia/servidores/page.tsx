@@ -1,245 +1,131 @@
 "use client";
-import { useState, useEffect } from "react";
 import Link from "next/link";
-import { FaSpinner, FaMoneyCheckAlt } from "react-icons/fa";
-import { exportToCSV, exportToJSON, exportToPDF } from "@/lib/exportUtils";
-import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
+import PageHeader from "@/components/PageHeader";
+import { 
+    FaUsers, 
+    FaMoneyCheckAlt, 
+    FaBriefcase, 
+    FaUserTie, 
+    FaUserGraduate, 
+    FaIdCardAlt 
+} from "react-icons/fa";
 
-type Servidor = {
-    id: string;
-    nome: string;
-    cargo: string;
-    vinculo: string;
-    secretaria: string;
-    salarioBase: number;
-    totalBruto: number;
-    totalLiquido: number;
-    mes: number;
-    ano: number;
-};
-
-const vinculoCores: Record<string, string> = {
-    efetivo: "bg-green-100 text-green-700",
-    comissionado: "bg-blue-100 text-blue-700",
-    contratado: "bg-orange-100 text-orange-700",
-};
-
-const mesesLabels = [
-    "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-    "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+const cards = [
+    {
+        icon: FaUsers,
+        title: "Folha de Pagamento",
+        description: "Consulte a relação mensal de servidores, cargos e remunerações detalhadas.",
+        href: "/transparencia/servidores/folha-pagamento",
+        color: "from-teal-500 to-emerald-600",
+        badge: "LC 131"
+    },
+    {
+        icon: FaMoneyCheckAlt,
+        title: "Padrão Remuneratório",
+        description: "Tabelas de vencimentos, referências salariais, níveis e classes de cargos.",
+        href: "/transparencia/servidores/cargos-e-salarios",
+        color: "from-blue-500 to-indigo-600",
+        badge: "PNTP"
+    },
+    {
+        icon: FaBriefcase,
+        title: "Concursos e Seleções",
+        description: "Acompanhe editais, resultados e convocações de concursos e processos seletivos.",
+        href: "/transparencia/concursos",
+        color: "from-purple-500 to-violet-600",
+        badge: "LAI"
+    },
+    {
+        icon: FaUserTie,
+        title: "Terceirizados",
+        description: "Relação de prestadores de serviço e postos de trabalho terceirizados.",
+        href: "/transparencia/servidores/terceirizados",
+        color: "from-orange-500 to-amber-600",
+        badge: "PNTP 2025"
+    },
+    {
+        icon: FaUserGraduate,
+        title: "Estagiários",
+        description: "Informações sobre estudantes em estágio na administração municipal.",
+        href: "/transparencia/servidores/estagiarios",
+        color: "from-pink-500 to-rose-600",
+        badge: "PNTP 2025"
+    },
+    {
+        icon: FaIdCardAlt,
+        title: "Agentes Políticos",
+        description: "Subsídios e remunerações de Prefeito, Vice-Prefeito e Secretários.",
+        href: "/transparencia/servidores/agentes-politicos",
+        color: "from-sky-500 to-cyan-600",
+        badge: "LAI"
+    }
 ];
 
-function fmt(v: number) {
-    return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-}
-
-export default function ServidoresPage() {
-    const [servidores, setServidores] = useState<Servidor[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [ano, setAno] = useState("2024");
-    const [mes, setMes] = useState("3");
-    const [busca, setBusca] = useState("");
-
-    useEffect(() => {
-        fetchServidores();
-    }, [ano, mes]);
-
-    const fetchServidores = async () => {
-        setLoading(true);
-        try {
-            const res = await fetch(`/api/servidores?ano=${ano}&mes=${mes}`);
-            const data = await res.json();
-            setServidores(data.items || []);
-        } catch (error) {
-            console.error("Erro ao carregar servidores:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleClearFilters = () => {
-        setBusca("");
-        setAno("2024");
-        setMes("3");
-    };
-
-    const handleExport = (format: "pdf" | "csv" | "json") => {
-        const payload = filtrados.map((s: Servidor) => ({
-            "Nome": s.nome,
-            "Cargo": s.cargo,
-            "Vínculo": s.vinculo,
-            "Secretaria": s.secretaria,
-            "Total Bruto": fmt(s.totalBruto),
-            "Total Líquido": fmt(s.totalLiquido)
-        }));
-
-        const filename = `folha_pagamento_${mes}_${ano}`;
-        const title = `Relatório de Servidores e Folha de Pagamento - Lajes Pintadas/RN (${mesesLabels[Number(mes)-1]} / ${ano})`;
-
-        if (format === "csv") exportToCSV(payload, filename);
-        else if (format === "json") exportToJSON(payload, filename);
-        else exportToPDF(payload, filename, title);
-    };
-
-    const filtrados = servidores.filter((s: Servidor) => {
-        const b = busca.toLowerCase();
-        return !busca || 
-            s.nome.toLowerCase().includes(b) || 
-            s.cargo.toLowerCase().includes(b) || 
-            s.secretaria.toLowerCase().includes(b);
-    });
-
-    const totalBruto = filtrados.reduce((acc: number, curr: Servidor) => acc + curr.totalBruto, 0);
-    const totalLiquido = filtrados.reduce((acc: number, curr: Servidor) => acc + curr.totalLiquido, 0);
-
+export default function QuadroPessoalHub() {
     return (
         <div className="min-h-screen bg-gray-50 font-['Montserrat',sans-serif]">
-            <div className="bg-gradient-to-r from-teal-700 to-emerald-900 py-16 px-4 shadow-xl">
-                <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                    <div>
-                        <nav className="text-[10px] font-black uppercase tracking-[0.2em] text-teal-200 mb-6 flex items-center gap-2">
-                            <Link href="/transparencia" className="hover:text-white transition-colors">Transparência</Link>
-                            <span className="opacity-50">/</span>
-                            <span className="text-white">Servidores</span>
-                        </nav>
-                        <h1 className="text-4xl font-black text-white uppercase tracking-tighter mb-4 flex items-center gap-4">
-                            <div className="w-12 h-1 bg-white rounded-full"></div>
-                            Servidores e Folha
-                        </h1>
-                        <div className="flex flex-wrap items-center gap-4 text-teal-100/80 text-sm font-medium">
-                            <span>Lei Complementar 131/2009</span>
-                            <span className="opacity-30">•</span>
-                            <span>Transparência Ativa</span>
+            <PageHeader
+                title="Quadro de Pessoal"
+                subtitle="Portal centralizado de informações sobre recursos humanos e gestão de pessoas."
+                breadcrumbs={[
+                    { label: "Início", href: "/" },
+                    { label: "Transparência", href: "/transparencia" },
+                    { label: "Quadro de Pessoal" }
+                ]}
+            />
+
+            <div className="max-w-[1240px] mx-auto px-6 py-16">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {cards.map((card, index) => (
+                        <Link 
+                            key={index} 
+                            href={card.href}
+                            className="group relative overflow-hidden bg-white rounded-[2.5rem] p-8 shadow-xl border border-white hover:border-gray-100 hover:shadow-2xl hover:shadow-gray-200/50 transition-all duration-500 flex flex-col h-full"
+                        >
+                            {/* Efeito de Fundo */}
+                            <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${card.color} opacity-[0.03] rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700`} />
+                            
+                            <div className="mb-8 relative">
+                                <div className={`w-16 h-16 bg-gradient-to-br ${card.color} rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-500`}>
+                                    <card.icon size={28} />
+                                </div>
+                                <div className="absolute -top-2 -right-2 bg-white px-2 py-0.5 rounded-full text-[8px] font-black text-gray-400 border border-gray-100 uppercase tracking-widest shadow-sm">
+                                    {card.badge}
+                                </div>
+                            </div>
+
+                            <div className="flex-1">
+                                <h3 className="text-xl font-black text-gray-800 uppercase tracking-tighter mb-3 group-hover:text-blue-600 transition-colors">
+                                    {card.title}
+                                </h3>
+                                <p className="text-gray-500 text-sm font-medium leading-relaxed">
+                                    {card.description}
+                                </p>
+                            </div>
+
+                            <div className="mt-8 flex items-center gap-2 text-[10px] font-black text-blue-500 uppercase tracking-widest">
+                                Acessar Módulo
+                                <div className="w-6 h-0.5 bg-blue-500 rounded-full group-hover:w-12 transition-all duration-500"></div>
+                            </div>
+                        </Link>
+                    ))}
+                </div>
+
+                <div className="mt-20 p-10 bg-gradient-to-br from-gray-900 to-slate-800 rounded-[3rem] text-white overflow-hidden relative shadow-2xl">
+                    <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-[100px] -mr-48 -mt-48" />
+                    <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                        <div>
+                            <h2 className="text-2xl font-black uppercase tracking-tighter mb-2 italic">Transparência Ativa</h2>
+                            <p className="text-gray-400 font-medium max-w-xl text-sm italic leading-relaxed">
+                                Este portal segue rigorosamente as diretrizes da Lei de Acesso à Informação (LAI) e da Lei Complementar 131/2009, garantindo o direito do cidadão ao acompanhamento dos gastos públicos com pessoal.
+                            </p>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <div className="max-w-7xl mx-auto px-4 py-8 -mt-12">
-                {/* Cards de Navegação por Sub-módulos */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-                    <button 
-                        onClick={() => document.getElementById('filtros-servidores')?.scrollIntoView({ behavior: 'smooth' })}
-                        className="group relative overflow-hidden bg-white rounded-[2.5rem] p-8 shadow-xl border border-teal-100/50 hover:shadow-2xl hover:shadow-teal-900/10 transition-all duration-500 text-left"
-                    >
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-teal-50 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700" />
-                        <div className="relative z-10 flex items-center gap-6">
-                            <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-3xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-500">
-                                <FaMoneyCheckAlt size={28} />
-                            </div>
-                            <div>
-                                <h3 className="text-xl font-black text-gray-800 uppercase tracking-tight mb-1 group-hover:text-teal-600 transition-colors">Consulta de Folha</h3>
-                                <p className="text-gray-500 text-xs font-medium">Pesquisa detalhada de pagamentos mensais por servidor.</p>
-                            </div>
-                        </div>
-                    </button>
-
-                    <Link href="/transparencia/servidores/cargos-e-salarios" className="group relative overflow-hidden bg-white rounded-[2.5rem] p-8 shadow-xl border border-blue-100/50 hover:shadow-2xl hover:shadow-blue-900/10 transition-all duration-500">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700" />
-                        <div className="relative z-10 flex items-center gap-6">
-                            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-500">
-                                <FaMoneyCheckAlt size={28} />
-                            </div>
-                            <div>
-                                <h3 className="text-xl font-black text-gray-800 uppercase tracking-tight mb-1 group-hover:text-blue-600 transition-colors">Padrão Remuneratório</h3>
-                                <p className="text-gray-500 text-xs font-medium">Tabelas de vencimentos, níveis e classes de cargos.</p>
-                            </div>
-                        </div>
-                    </Link>
-                </div>
-
-                {/* Filtros Padronizados PNTP 2024 */}
-                <div id="filtros-servidores">
-                    <TransparencyFilters
-                    searchValue={busca}
-                    onSearch={setBusca}
-                    currentYear={ano}
-                    onYearChange={setAno}
-                    currentMonth={mes}
-                    onMonthChange={setMes}
-                    onClear={handleClearFilters}
-                    onExport={handleExport}
-                    placeholder="Pesquisar por nome, cargo ou secretaria..."
-                />
-                </div>
-
-                {/* Cards de totais */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                    <div className="bg-white rounded-xl shadow p-5 border-l-4 border-teal-500">
-                        <div className="text-xs font-semibold text-gray-500 uppercase mb-1">Total de Servidores</div>
-                        <div className="text-2xl font-bold text-teal-600">{loading ? "..." : filtrados.length}</div>
-                    </div>
-                    <div className="bg-white rounded-xl shadow p-5 border-l-4 border-green-500">
-                        <div className="text-xs font-semibold text-gray-500 uppercase mb-1">Total Folha (Bruto)</div>
-                        <div className="text-2xl font-bold text-green-600">{loading ? "..." : fmt(totalBruto)}</div>
-                    </div>
-                    <div className="bg-white rounded-xl shadow p-5 border-l-4 border-blue-500">
-                        <div className="text-xs font-semibold text-gray-500 uppercase mb-1">Mês de Referência</div>
-                        <div className="text-2xl font-bold text-blue-600">{mes}/{ano}</div>
-                    </div>
-                </div>
-
-                {/* Tabela */}
-                <div className="bg-white rounded-2xl shadow overflow-hidden">
-                    <div className="p-4 border-b border-gray-100 flex justify-between items-center">
-                        <span className="text-sm text-gray-500">{filtrados.length} servidores</span>
-                        <span className="text-xs text-gray-400">Dados de {mes}/{ano}</span>
-                    </div>
-                    <div className="overflow-x-auto min-h-[200px] relative">
-                        {loading && (
-                            <div className="absolute inset-0 bg-white bg-opacity-70 flex items-center justify-center z-10">
-                                <FaSpinner className="animate-spin text-teal-500 text-3xl" />
-                            </div>
-                        )}
-                        <table className="w-full" aria-label="Tabela de servidores públicos">
-                            <thead>
-                                <tr>
-                                    <th className="table-header">Nome</th>
-                                    <th className="table-header">Cargo</th>
-                                    <th className="table-header">Vínculo</th>
-                                    <th className="table-header">Secretaria</th>
-                                    <th className="table-header text-right">Sal. Base</th>
-                                    <th className="table-header text-right">Total Bruto</th>
-                                    <th className="table-header text-right">Total Líquido</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filtrados.length === 0 && !loading ? (
-                                    <tr>
-                                        <td colSpan={7} className="text-center py-10 text-gray-500">
-                                            Nenhum servidor encontrado para este período.
-                                        </td>
-                                    </tr>
-                                ) : (
-                                    filtrados.map((s: Servidor) => (
-                                        <tr key={s.id} className="hover:bg-gray-50 transition-colors">
-                                            <td className="table-cell font-medium">{s.nome}</td>
-                                            <td className="table-cell text-sm">{s.cargo}</td>
-                                            <td className="table-cell">
-                                                <span className={`badge text-xs capitalize ${vinculoCores[s.vinculo.toLowerCase()] || "bg-gray-100"}`}>
-                                                    {s.vinculo}
-                                                </span>
-                                            </td>
-                                            <td className="table-cell text-sm">{s.secretaria}</td>
-                                            <td className="table-cell text-right text-sm">{fmt(s.salarioBase)}</td>
-                                            <td className="table-cell text-right font-semibold text-gray-800">{fmt(s.totalBruto)}</td>
-                                            <td className="table-cell text-right text-green-600 font-semibold">{fmt(s.totalLiquido)}</td>
-                                        </tr>
-                                    ))
-                                )}
-                            </tbody>
-                            {!loading && servidores.length > 0 && (
-                                <tfoot>
-                                    <tr className="bg-gray-50 border-t-2 border-gray-200">
-                                        <td colSpan={5} className="px-4 py-3 text-sm font-bold text-gray-700">Total Geral</td>
-                                        <td className="px-4 py-3 text-right font-bold text-teal-700 text-lg">{fmt(totalBruto)}</td>
-                                        <td className="px-4 py-3 text-right font-bold text-green-600">
-                                            {fmt(totalLiquido)}
-                                        </td>
-                                    </tr>
-                                </tfoot>
-                            )}
-                        </table>
+                        <Link 
+                            href="/transparencia"
+                            className="px-10 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap"
+                        >
+                            Voltar para Transparência
+                        </Link>
                     </div>
                 </div>
             </div>
