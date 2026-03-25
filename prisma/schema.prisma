@@ -3,439 +3,439 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
 model Usuario {
-  id        String   @id @default(cuid())
-  nome      String
-  email     String   @unique
-  senha     String
-  perfil    String   @default("editor") // admin, comunicacao, secretaria, editor
-  ativo     Boolean  @default(true)
-  criadoEm  DateTime @default(now())
+  id           String   @id @default(cuid())
+  nome         String
+  email        String   @unique
+  senha        String
+  perfil       String   @default("editor")
+  ativo        Boolean  @default(true)
+  criadoEm     DateTime @default(now())
   atualizadoEm DateTime @updatedAt
 }
 
 model Secretaria {
-  id          String   @id @default(cuid())
-  nome        String
-  slug        String   @unique
-  descricao   String
-  servicos    String   @default("[]")
-  contato     String?
-  telefone    String?
-  email       String?
-  endereco    String?
-  secretario  String?
-  imagem      String?
+  id                   String    @id @default(cuid())
+  nome                 String
+  slug                 String    @unique
+  descricao            String
+  servicos             String    @default("[]")
+  contato              String?
+  telefone             String?
+  email                String?
+  endereco             String?
+  secretario           String?
+  imagem               String?
   horarioFuncionamento String?
-  ativa       Boolean  @default(true)
-  ordem       Int      @default(0)
-  criadoEm   DateTime @default(now())
-  noticias    Noticia[]
+  ativa                Boolean   @default(true)
+  ordem                Int       @default(0)
+  criadoEm             DateTime  @default(now())
+  noticias             Noticia[]
 }
 
 model Noticia {
-  id           String     @id @default(cuid())
+  id           String      @id @default(cuid())
   titulo       String
-  slug         String     @unique
+  slug         String      @unique
   resumo       String
   conteudo     String
   imagem       String?
-  publicada    Boolean    @default(false)
-  destaque     Boolean    @default(false)
+  publicada    Boolean     @default(false)
+  destaque     Boolean     @default(false)
   publicadoEm  DateTime?
-  criadoEm     DateTime   @default(now())
-  atualizadoEm DateTime   @updatedAt
+  criadoEm     DateTime    @default(now())
+  atualizadoEm DateTime    @updatedAt
   secretariaId String?
+  tags         String      @default("[]")
   secretaria   Secretaria? @relation(fields: [secretariaId], references: [id])
-  tags         String     @default("[]")
 }
 
 model Licitacao {
-  id          String   @id @default(cuid())
-  numero      String
-  ano         Int
-  modalidade  String   // pregao, concorrencia, tomada-precos, convite, dispensa
-  objeto      String
-  valor       Float?
-  status      String   @default("aberta") // aberta, em-analise, concluida, cancelada, deserta
-  dataAbertura DateTime?
+  id               String     @id @default(cuid())
+  numero           String
+  ano              Int
+  modalidade       String
+  objeto           String
+  valor            Float?
+  status           String     @default("aberta")
+  dataAbertura     DateTime?
   dataEncerramento DateTime?
-  secretaria  String
-  documentos  String   @default("[]")
-  resultado   String?
-  criadoEm    DateTime @default(now())
-  contratos   Contrato[]
+  secretaria       String
+  documentos       String     @default("[]")
+  resultado        String?
+  criadoEm         DateTime   @default(now())
+  contratos        Contrato[]
 }
 
 model Contrato {
-  id           String    @id @default(cuid())
-  numero       String
-  objeto       String
-  fornecedor   String
+  id             String     @id @default(cuid())
+  numero         String
+  objeto         String
+  fornecedor     String
   cnpjFornecedor String?
-  valor        Float
-  dataInicio   DateTime
-  dataFim      DateTime
-  secretaria   String
-  status       String    @default("vigente") // vigente, encerrado, rescindido
-  documentos   String    @default("[]")
-  licitacaoId  String?
-  licitacao    Licitacao? @relation(fields: [licitacaoId], references: [id])
-  criadoEm     DateTime  @default(now())
+  valor          Float
+  dataInicio     DateTime
+  dataFim        DateTime
+  secretaria     String
+  status         String     @default("vigente")
+  documentos     String     @default("[]")
+  licitacaoId    String?
+  criadoEm       DateTime   @default(now())
+  licitacao      Licitacao? @relation(fields: [licitacaoId], references: [id])
 }
 
 model Convenio {
-  id          String   @id @default(cuid())
-  numero      String
-  objeto      String
-  concedente  String
-  valor       Float
-  contrapartida Float  @default(0)
-  dataInicio  DateTime
-  dataFim     DateTime
-  secretaria  String
-  status      String   @default("vigente")
-  documentos  String   @default("[]")
-  criadoEm    DateTime @default(now())
+  id            String   @id @default(cuid())
+  numero        String
+  objeto        String
+  concedente    String
+  valor         Float
+  contrapartida Float    @default(0)
+  dataInicio    DateTime
+  dataFim       DateTime
+  secretaria    String
+  status        String   @default("vigente")
+  documentos    String   @default("[]")
+  criadoEm      DateTime @default(now())
 }
 
 model Diaria {
-  id          String   @id @default(cuid())
-  servidor    String
-  cargo       String
-  destino     String
-  motivo      String
-  dataInicio  DateTime
-  dataFim     DateTime
-  valor       Float
-  quantidadeDias Int   @default(1)
-  secretaria  String
-  mes         Int
-  ano         Int
-  criadoEm    DateTime @default(now())
+  id             String   @id @default(cuid())
+  servidor       String
+  cargo          String
+  destino        String
+  motivo         String
+  dataInicio     DateTime
+  dataFim        DateTime
+  valor          Float
+  quantidadeDias Int      @default(1)
+  secretaria     String
+  mes            Int
+  ano            Int
+  criadoEm       DateTime @default(now())
 }
 
 model Servidor {
-  id          String   @id @default(cuid())
-  nome        String
-  matricula   String?  @unique
-  cargo       String
-  vinculo     String   @default("efetivo") // efetivo, comissionado, contratado
-  secretaria  String
-  salarioBase Float
-  totalBruto  Float
+  id           String   @id @default(cuid())
+  nome         String
+  matricula    String?  @unique
+  cargo        String
+  vinculo      String   @default("efetivo")
+  secretaria   String
+  salarioBase  Float
+  totalBruto   Float
   totalLiquido Float
-  ativo       Boolean  @default(true)
-  mes         Int
-  ano         Int
-  criadoEm    DateTime @default(now())
+  ativo        Boolean  @default(true)
+  mes          Int
+  ano          Int
+  criadoEm     DateTime @default(now())
 }
 
 model Receita {
-  id          String   @id @default(cuid())
-  descricao   String
-  categoria   String   // impostos, transferencias, receitas-proprias, outras
-  fonte       String?
-  valor       Float
-  mes         Int
-  ano         Int
-  criadoEm    DateTime @default(now())
+  id        String   @id @default(cuid())
+  descricao String
+  categoria String
+  fonte     String?
+  valor     Float
+  mes       Int
+  ano       Int
+  criadoEm  DateTime @default(now())
 }
 
 model Despesa {
-  id          String   @id @default(cuid())
-  descricao   String
-  categoria   String   // pessoal, custeio, investimento, transferencias
-  secretaria  String
-  fornecedor  String?
-  valor       Float
-  mes         Int
-  ano         Int
-  criadoEm    DateTime @default(now())
+  id         String   @id @default(cuid())
+  descricao  String
+  categoria  String
+  secretaria String
+  fornecedor String?
+  valor      Float
+  mes        Int
+  ano        Int
+  criadoEm   DateTime @default(now())
 }
 
 model Documento {
-  id          String   @id @default(cuid())
-  titulo      String
-  tipo        String   // loa, ldo, ppa, rreo, rgf, decreto, portaria, lei, edital, publicacao
-  arquivo     String
-  tamanho     Int?
-  ano         Int?
-  criadoEm    DateTime @default(now())
+  id       String   @id @default(cuid())
+  titulo   String
+  tipo     String
+  arquivo  String
+  tamanho  Int?
+  ano      Int?
+  criadoEm DateTime @default(now())
 }
 
 model Evento {
-  id          String   @id @default(cuid())
-  titulo      String
-  descricao   String?
-  local       String?
-  dataInicio  DateTime
-  dataFim     DateTime?
-  publico     Boolean  @default(true)
-  criadoEm    DateTime @default(now())
+  id         String    @id @default(cuid())
+  titulo     String
+  descricao  String?
+  local      String?
+  dataInicio DateTime
+  dataFim    DateTime?
+  publico    Boolean   @default(true)
+  criadoEm   DateTime  @default(now())
 }
 
 model Contato {
-  id          String   @id @default(cuid())
-  nome        String
-  email       String
-  telefone    String?
-  assunto     String
-  mensagem    String
-  respondido  Boolean  @default(false)
-  criadoEm    DateTime @default(now())
+  id         String   @id @default(cuid())
+  nome       String
+  email      String
+  telefone   String?
+  assunto    String
+  mensagem   String
+  respondido Boolean  @default(false)
+  criadoEm   DateTime @default(now())
 }
 
 model Ouvidoria {
-  id           String   @id @default(cuid())
-  protocolo    String   @unique @default(cuid())
-  tipo         String   // reclamacao, denuncia, sugestao, elogio, solicitacao
-  assunto      String
-  descricao    String
-  nome         String?
-  email        String?
-  anonimo      Boolean  @default(false)
-  status       String   @default("aberto") // aberto, em-analise, concluido, em-recurso, encerrado
-  resposta     String?
-  respondidoEm DateTime?
-  prazo        DateTime? 
-  prorrogado   Boolean  @default(false)
-  anexoResposta String?
-  recurso      String?
-  dataRecurso  DateTime?
-  respostaRecurso String?
+  id                  String    @id @default(cuid())
+  protocolo           String    @unique @default(cuid())
+  tipo                String
+  assunto             String
+  descricao           String
+  nome                String?
+  email               String?
+  anonimo             Boolean   @default(false)
+  status              String    @default("aberto")
+  resposta            String?
+  respondidoEm        DateTime?
+  prazo               DateTime?
+  prorrogado          Boolean   @default(false)
+  anexoResposta       String?
+  recurso             String?
+  dataRecurso         DateTime?
+  respostaRecurso     String?
   dataRespostaRecurso DateTime?
-  criadoEm     DateTime @default(now())
+  criadoEm            DateTime  @default(now())
 }
 
 model Esic {
-  id           String   @id @default(cuid())
-  protocolo    String   @unique @default(cuid())
-  orgao        String
-  pedido       String
-  nome         String?
-  email        String?
-  formaRetorno String   @default("sistema") // sistema, email, correios, retirar
-  status       String   @default("aberto") // aberto, em-analise, concluido, em-recurso, encerrado
-  resposta     String?
-  respondidoEm DateTime?
-  prazo        DateTime? 
-  prorrogado   Boolean  @default(false)
-  anexoResposta String?
-  recurso      String?
-  dataRecurso  DateTime?
-  respostaRecurso String?
+  id                  String    @id @default(cuid())
+  protocolo           String    @unique @default(cuid())
+  orgao               String
+  pedido              String
+  nome                String?
+  email               String?
+  formaRetorno        String    @default("sistema")
+  status              String    @default("aberto")
+  resposta            String?
+  respondidoEm        DateTime?
+  prazo               DateTime?
+  prorrogado          Boolean   @default(false)
+  anexoResposta       String?
+  recurso             String?
+  dataRecurso         DateTime?
+  respostaRecurso     String?
   dataRespostaRecurso DateTime?
-  criadoEm     DateTime @default(now())
+  criadoEm            DateTime  @default(now())
 }
 
 model GaleriaFoto {
-  id          String   @id @default(cuid())
-  titulo      String
-  descricao   String?
-  arquivo     String
-  album       String?
-  publicada   Boolean  @default(true)
-  criadoEm    DateTime @default(now())
+  id        String   @id @default(cuid())
+  titulo    String
+  descricao String?
+  arquivo   String
+  album     String?
+  publicada Boolean  @default(true)
+  criadoEm  DateTime @default(now())
 }
 
 model Obra {
-  id             String    @id @default(cuid())
-  titulo         String
-  descricao      String
-  local          String
-  valor          Float
-  status         String    @default("em-andamento") // licitacao, em-andamento, concluida, paralisada
-  dataInicio     DateTime?
+  id              String    @id @default(cuid())
+  titulo          String
+  descricao       String
+  local           String
+  valor           Float
+  status          String    @default("em-andamento")
+  dataInicio      DateTime?
   previsaoTermino DateTime?
-  empresa        String?
-  percentual     Int       @default(0)
-  imagem         String?
-  documentos     String    @default("[]")
-  criadoEm       DateTime  @default(now())
+  empresa         String?
+  percentual      Int       @default(0)
+  imagem          String?
+  documentos      String    @default("[]")
+  criadoEm        DateTime  @default(now())
 }
 
 model FAQ {
-  id          String   @id @default(cuid())
-  pergunta    String
-  resposta    String
-  categoria   String?
-  ordem       Int      @default(0)
-  criadoEm    DateTime @default(now())
+  id        String   @id @default(cuid())
+  pergunta  String
+  resposta  String
+  categoria String?
+  ordem     Int      @default(0)
+  criadoEm  DateTime @default(now())
 }
 
 model Glossario {
-  id          String   @id @default(cuid())
-  termo       String
-  definicao   String
-  criadoEm    DateTime @default(now())
+  id        String   @id @default(cuid())
+  termo     String
+  definicao String
+  criadoEm  DateTime @default(now())
 }
 
 model Legislacao {
-  id        String   @id @default(cuid())
-  tipo      String   // lei, decreto, portaria, resolucao, lei-organica
-  numero    String
-  ano       Int
-  ementa    String
-  arquivo   String?  // URL do PDF
-  ativo     Boolean  @default(true)
-  criadoEm  DateTime @default(now())
+  id           String   @id @default(cuid())
+  tipo         String
+  numero       String
+  ano          Int
+  ementa       String
+  arquivo      String?
+  ativo        Boolean  @default(true)
+  criadoEm     DateTime @default(now())
   atualizadoEm DateTime @updatedAt
 }
 
 model UnidadeAtendimento {
-  id        String   @id @default(cuid())
-  nome      String
-  tipo      String   // saude, social, educacao, cultura
-  descricao String
-  endereco  String
-  telefone  String?
-  horario   String
-  mapa      String?  // iframe url
-  ativa     Boolean  @default(true)
-  criadoEm  DateTime @default(now())
+  id           String   @id @default(cuid())
+  nome         String
+  tipo         String
+  descricao    String
+  endereco     String
+  telefone     String?
+  horario      String
+  mapa         String?
+  ativa        Boolean  @default(true)
+  criadoEm     DateTime @default(now())
   atualizadoEm DateTime @updatedAt
 }
 
 model Conselho {
-  id        String   @id @default(cuid())
-  nome      String
-  sigla     String?
-  tipo      String   // saude, educacao, social, fundeb, outros
-  descricao String
+  id         String        @id @default(cuid())
+  nome       String
+  sigla      String?
+  tipo       String
+  descricao  String
   composicao String
   presidente String?
-  email     String?
-  ativo     Boolean  @default(true)
-  criadoEm  DateTime @default(now())
-  atas      ConselhoAta[]
+  email      String?
+  ativo      Boolean       @default(true)
+  criadoEm   DateTime      @default(now())
+  atas       ConselhoAta[]
 }
 
 model ConselhoAta {
   id          String   @id @default(cuid())
   conselhoId  String
-  conselho    Conselho @relation(fields: [conselhoId], references: [id], onDelete: Cascade)
   titulo      String
   dataReuniao DateTime
-  arquivo     String?  // URL do PDF da ata
+  arquivo     String?
   criadoEm    DateTime @default(now())
+  conselho    Conselho @relation(fields: [conselhoId], references: [id], onDelete: Cascade)
 }
 
 model ImportacaoCSV {
-  id        String   @id @default(cuid())
-  modulo    String   // servidores, receitas, despesas, diarias
-  arquivo   String
-  total     Int      @default(0)
-  sucesso   Int      @default(0)
-  erros     Int      @default(0)
-  status    String   @default("pendente") // pendente, processando, concluido, erro
-  criadoEm  DateTime @default(now())
+  id       String   @id @default(cuid())
+  modulo   String
+  arquivo  String
+  total    Int      @default(0)
+  sucesso  Int      @default(0)
+  erros    Int      @default(0)
+  status   String   @default("pendente")
+  criadoEm DateTime @default(now())
 }
 
 model LinkExterno {
-  id        String   @id @default(cuid())
-  titulo    String
-  url       String
-  descricao String?
-  categoria String   // relatorios, transparencia, legislacao, geral
-  icone     String   @default("FaLink") // nome do icone react-icons
-  ativo     Boolean  @default(true)
-  ordem     Int      @default(0)
-  moduloAlvo String? // Novo campo para mapear ícones existentes (ex: receitas, despesas, esic)
-  criadoEm  DateTime @default(now())
+  id           String   @id @default(cuid())
+  titulo       String
+  url          String
+  descricao    String?
+  categoria    String
+  icone        String   @default("FaLink")
+  ativo        Boolean  @default(true)
+  ordem        Int      @default(0)
+  moduloAlvo   String?
+  criadoEm     DateTime @default(now())
   atualizadoEm DateTime @updatedAt
 }
 
 model Configuracao {
-  id          String   @id @default(cuid())
-  chave       String   @unique // prefeito_nome, prefeito_foto, cnpj, etc
-  valor       String
-  descricao   String?
-  grupo       String   @default("geral") // institucional, gestores, contato
+  id           String   @id @default(cuid())
+  chave        String   @unique
+  valor        String
+  descricao    String?
+  grupo        String   @default("geral")
   atualizadoEm DateTime @updatedAt
 }
 
 model Medicamento {
-  id          String   @id @default(cuid())
-  nome        String
-  categoria   String   // basico, hiperdia, etc
-  status      String   @default("disponivel") // disponivel, em-falta, estoque-baixo
-  observacao  String?
-  ativo       Boolean  @default(true)
-  criadoEm    DateTime @default(now())
+  id           String   @id @default(cuid())
+  nome         String
+  categoria    String
+  status       String   @default("disponivel")
+  observacao   String?
+  ativo        Boolean  @default(true)
+  criadoEm     DateTime @default(now())
   atualizadoEm DateTime @updatedAt
 }
 
 model Veiculo {
-  id          String   @id @default(cuid())
-  modelo      String
-  placa       String   @unique
-  ano         String?
-  secretaria  String
-  tipo        String   // carro, maquina, ambulancia, onibus
-  status      String   @default("em-uso") // em-uso, manutencao, baixado
-  ativo       Boolean  @default(true)
-  criadoEm    DateTime @default(now())
+  id           String   @id @default(cuid())
+  modelo       String
+  placa        String   @unique
+  ano          String?
+  secretaria   String
+  tipo         String
+  status       String   @default("em-uso")
+  ativo        Boolean  @default(true)
+  criadoEm     DateTime @default(now())
   atualizadoEm DateTime @updatedAt
 }
 
 model EmendaParlamentar {
-  id                   String   @id @default(cuid())
-  codigoEmenda         String   @unique
-  anoEmenda            Int
-  autorNome            String
-  numeroEmenda         String?
-  tipoEmenda           String?
-  objeto               String?
-  funcaoGoverno        String?
-  subfuncaoGoverno     String?
-  localidade           String?
-  uf                   String?
-  favorecidoNome       String?
-  favorecidoCnpjCpf    String?
-  valorPrevisto        Float?   @default(0)
-  valorEmpenhado       Float?   @default(0)
-  valorLiquidado       Float?   @default(0)
-  valorPago            Float?   @default(0)
-  situacaoExecucao     String?
-  orgaoConcedente      String?
-  instrumentoNumero    String?
-  planoAcaoNumero      String?
-  convenioNumero       String?
-  urlFonteOficial      String?
-  dataImportacao       DateTime @default(now())
-  fonteDado            String?
-  criadoEm             DateTime @default(now())
-  atualizadoEm         DateTime @updatedAt
+  id                String   @id @default(cuid())
+  objeto            String?
+  criadoEm          DateTime @default(now())
+  anoEmenda         Int
+  atualizadoEm      DateTime @updatedAt
+  autorNome         String
+  codigoEmenda      String   @unique
+  convenioNumero    String?
+  dataImportacao    DateTime @default(now())
+  favorecidoCnpjCpf String?
+  favorecidoNome    String?
+  fonteDado         String?
+  funcaoGoverno     String?
+  instrumentoNumero String?
+  localidade        String?
+  numeroEmenda      String?
+  orgaoConcedente   String?
+  planoAcaoNumero   String?
+  situacaoExecucao  String?
+  subfuncaoGoverno  String?
+  tipoEmenda        String?
+  uf                String?
+  urlFonteOficial   String?
+  valorEmpenhado    Float?   @default(0)
+  valorLiquidado    Float?   @default(0)
+  valorPago         Float?   @default(0)
+  valorPrevisto     Float?   @default(0)
 }
 
 model Concurso {
-  id          String   @id @default(cuid())
-  titulo      String
-  slug        String   @unique
-  tipo        String   // concurso, pss, estagio
-  status      String   @default("aberto")
-  vagas       String?
+  id             String   @id @default(cuid())
+  titulo         String
+  slug           String   @unique
+  tipo           String
+  status         String   @default("aberto")
+  vagas          String?
   dataPublicacao DateTime @default(now())
-  linkEdital  String?
-  ativo       Boolean  @default(true)
-  criadoEm    DateTime @default(now())
+  linkEdital     String?
+  ativo          Boolean  @default(true)
+  criadoEm       DateTime @default(now())
 }
 
 model ServicoCarta {
-  id          String   @id @default(cuid())
-  nome        String
-  categoria   String   // saude, educacao, etc
-  descricao   String
-  local       String
-  prazo       String
-  documentos  String?
-  ativo       Boolean  @default(true)
-  ordem       Int      @default(0)
-  criadoEm    DateTime @default(now())
+  id         String   @id @default(cuid())
+  nome       String
+  categoria  String
+  descricao  String
+  local      String
+  prazo      String
+  documentos String?
+  ativo      Boolean  @default(true)
+  ordem      Int      @default(0)
+  criadoEm   DateTime @default(now())
 }

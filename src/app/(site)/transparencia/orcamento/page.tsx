@@ -17,7 +17,7 @@ export default function OrcamentoPage() {
     const [tipo, setTipo] = useState("");
     const [ano, setAno] = useState(new Date().getFullYear().toString());
 
-    const anos = Array.from({ length: 5 }, (_, i) => (new Date().getFullYear() - i).toString());
+    const anos = Array.from({ length: 10 }, (_, i) => (new Date().getFullYear() - i).toString());
 
     useEffect(() => {
         const fetchData = async () => {
@@ -25,11 +25,23 @@ export default function OrcamentoPage() {
             try {
                 const query = new URLSearchParams();
                 if (ano) query.append("ano", ano);
-                if (tipo) query.append("tipo", tipo); else query.append("tipo", "loa,ldo,ppa");
+                if (tipo) query.append("tipo", tipo.toUpperCase()); else query.append("tipo", "LOA,LDO,PPA");
+                query.append("limit", "100"); // Pegar todos do ano
 
-                const res = await fetch(`/api/documentos?${query.toString()}`);
+                const res = await fetch(`/api/legislacao?${query.toString()}`);
                 const data = await res.json();
-                setDocs(data || []);
+                
+                // Mapear Legislacao para o formato esperado pelo Documento
+                const mappedDocs = (data.items || []).map((item: any) => ({
+                    id: item.id,
+                    titulo: item.ementa,
+                    tipo: item.tipo,
+                    arquivo: item.arquivo,
+                    ano: item.ano,
+                    tamanho: 0
+                }));
+                
+                setDocs(mappedDocs);
             } catch (error) {
                 console.error("Erro ao buscar documentos:", error);
             } finally {

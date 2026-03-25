@@ -154,6 +154,80 @@ async function main() {
     });
     console.log("✅ Conselhos Municipais criados");
 
+    // --- Emendas Parlamentares de exemplo ---
+    const emendasDados: Prisma.EmendaParlamentarCreateInput[] = [
+        {
+            codigoEmenda: "202412340001",
+            anoEmenda: 2024,
+            autorNome: "Deputado Federal João Silva",
+            tipoEmenda: "Individual",
+            objeto: "Aquisição de equipamentos hospitalares para o Hospital Municipal.",
+            valorPrevisto: 500000,
+            valorEmpenhado: 500000,
+            valorLiquidado: 450000,
+            valorPago: 450000,
+            situacaoExecucao: "Em Execução",
+            funcaoGoverno: "Saúde",
+            urlFonteOficial: "https://www.portaltransparencia.gov.br",
+            fonteDado: "Transferegov"
+        },
+        {
+            codigoEmenda: "202456780002",
+            anoEmenda: 2024,
+            autorNome: "Senadora Maria Oliveira",
+            tipoEmenda: "Bancada",
+            objeto: "Pavimentação asfáltica de vias urbanas no Bairro Novo Horizonte.",
+            valorPrevisto: 1200000,
+            valorEmpenhado: 1200000,
+            valorLiquidado: 0,
+            valorPago: 0,
+            situacaoExecucao: "Convênio Celebrado",
+            funcaoGoverno: "Urbanismo",
+            urlFonteOficial: "https://www.portaltransparencia.gov.br",
+            fonteDado: "Transferegov"
+        },
+        {
+            codigoEmenda: "202499990003",
+            anoEmenda: 2024,
+            autorNome: "Deputado Estadual Ricardo Santos",
+            tipoEmenda: "Transferência Especial",
+            objeto: "Recursos para custeio da rede municipal de ensino.",
+            valorPrevisto: 300000,
+            valorEmpenhado: 300000,
+            valorLiquidado: 300000,
+            valorPago: 300000,
+            situacaoExecucao: "Pago",
+            funcaoGoverno: "Educação",
+            urlFonteOficial: "https://www.portaltransparencia.gov.br",
+            fonteDado: "Transferegov"
+        },
+        // Emendas PIX (Transferências Especiais)
+        {
+            codigoEmenda: "2024PIX0001",
+            anoEmenda: 2024,
+            autorNome: "Deputado Federal André Costa",
+            tipoEmenda: "Transferência Especial",
+            objeto: "Apoio à infraestrutura turística local.",
+            valorPrevisto: 250000,
+            valorEmpenhado: 250000,
+            valorLiquidado: 250000,
+            valorPago: 250000,
+            situacaoExecucao: "Finalizado",
+            funcaoGoverno: "Turismo",
+            urlFonteOficial: "https://www.portaltransparencia.gov.br",
+            fonteDado: "Transferência Especial (PIX)"
+        }
+    ];
+
+    for (const e of emendasDados) {
+        await prisma.emendaParlamentar.upsert({
+            where: { codigoEmenda: e.codigoEmenda },
+            update: {},
+            create: e
+        });
+    }
+    console.log("✅ Emendas Parlamentares de exemplo criadas");
+
     console.log("\n🎉 Seed concluído com sucesso!");
     console.log("\n📋 Credenciais de acesso ao painel:");
     console.log("   E-mail: admin@lajespintadas.rn.gov.br");
