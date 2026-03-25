@@ -1,34 +1,87 @@
 import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
 import ListaDocumentosClient from "@/components/ListaDocumentosClient";
+import { FaScaleBalanced, FaFileInvoiceDollar, FaChartLine } from "react-icons/fa6";
 
 export const metadata: Metadata = {
     title: "Transparência Fiscal (LRF) | Prefeitura de Lajes Pintadas – RN",
-    description: "Relatórios Resumidos de Execução Orçamentária e Relatórios de Gestão Fiscal (LRF).",
+    description: "Relatórios Resumidos de Execução Orçamentária (RREO) e Relatórios de Gestão Fiscal (LRF) em conformidade com a LC 101/2000.",
 };
 
 export default function LRFPage() {
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-[#f8fafc] font-['Montserrat',sans-serif]">
             <PageHeader
                 title="Transparência Fiscal (LRF)"
-                subtitle="RREO e RGF publicados em atendimento à Lei Complementar 101/2000"
+                subtitle="Acompanhamento rigoroso da gestão fiscal e execução orçamentária do município."
                 breadcrumbs={[
                     { label: "Início", href: "/" },
                     { label: "Transparência", href: "/transparencia" },
                     { label: "Transparência Fiscal (LRF)" }
                 ]}
             />
-            <div className="bg-[#01b0ef]/10 py-5 px-6 border-b border-blue-100">
-                <div className="max-w-[1200px] mx-auto flex flex-wrap items-center justify-center gap-6 text-[#0088b9] text-[10px] font-black uppercase tracking-widest">
-                    {["LRF – LC 101/2000", "LAI – Lei 12.527/2011", "PNTP 2025"].map((item) => (
-                        <span key={item} className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border border-blue-100">
-                            <span className="text-[#50B749]">✓</span> {item}
-                        </span>
-                    ))}
+
+            {/* Seção Educativa de Luxo */}
+            <div className="max-w-[1240px] mx-auto px-6 -mt-12 relative z-20">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div className="bg-white rounded-[3rem] p-10 shadow-2xl shadow-blue-900/5 border border-white flex flex-col md:flex-row gap-8 items-center md:items-start group hover:-translate-y-1 transition-all duration-500">
+                        <div className="w-20 h-20 bg-blue-50 rounded-3xl flex items-center justify-center shrink-0 border border-blue-100 group-hover:bg-blue-600 group-hover:text-white transition-all duration-500 shadow-inner">
+                            <FaFileInvoiceDollar size={32} />
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-black text-gray-800 uppercase tracking-tighter mb-4 group-hover:text-blue-600 transition-colors inline-flex items-center gap-3">
+                                RREO
+                                <span className="text-[10px] bg-blue-50 text-blue-600 px-3 py-1 rounded-full border border-blue-100 uppercase tracking-widest font-black">Bimestral</span>
+                            </h3>
+                            <p className="text-gray-500 text-sm font-medium leading-relaxed mb-4">
+                                o **Relatório Resumido da Execução Orçamentária** apresenta o balanço da execução do orçamento (Receitas e Despesas) e demonstrativos de resultados primário e nominal.
+                            </p>
+                            <div className="flex gap-4">
+                                <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">LC 101 Art. 52</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-white rounded-[3rem] p-10 shadow-2xl shadow-emerald-900/5 border border-white flex flex-col md:flex-row gap-8 items-center md:items-start group hover:-translate-y-1 transition-all duration-500">
+                        <div className="w-20 h-20 bg-emerald-50 rounded-3xl flex items-center justify-center shrink-0 border border-emerald-100 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-500 shadow-inner">
+                            <FaChartLine size={32} />
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-black text-gray-800 uppercase tracking-tighter mb-4 group-hover:text-emerald-600 transition-colors inline-flex items-center gap-3">
+                                RGF
+                                <span className="text-[10px] bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full border border-emerald-100 uppercase tracking-widest font-black">Quadrimestral</span>
+                            </h3>
+                            <p className="text-gray-500 text-sm font-medium leading-relaxed mb-4">
+                                o **Relatório de Gestão Fiscal** foca nos limites da LRF, como gastos com pessoal, dívida consolidada, garantias e disponibilidades de caixa.
+                            </p>
+                            <div className="flex gap-4">
+                                <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">LC 101 Art. 54</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <ListaDocumentosClient tipoDocumento="lrf" tituloVazio="Nenhum relatório fiscal" />
+
+            {/* Conteúdo Principal */}
+            <div className="pt-8">
+                <ListaDocumentosClient 
+                    tipoDocumento="lrf" 
+                    tituloVazio="Nenhum relatório fiscal" 
+                />
+            </div>
+            
+            {/* Banner PNTP Final */}
+            <div className="max-w-[1240px] mx-auto px-6 pb-24">
+                <div className="bg-slate-900 rounded-[3rem] p-12 text-center relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-blue-600 opacity-0 group-hover:opacity-10 transition-opacity duration-700" />
+                    <FaScaleBalanced size={48} className="text-blue-500 mx-auto mb-6 opacity-50" />
+                    <h4 className="text-white font-black text-2xl uppercase tracking-tighter mb-4">Lei de Responsabilidade Fiscal</h4>
+                    <p className="text-slate-400 font-medium max-w-2xl mx-auto leading-relaxed">
+                        A transparência na gestão fiscal é um pilar da democracia. Lajes Pintadas assegura que todos os limites e metas 
+                        sejam públicos e auditáveis em conformidade com a Lei Complementar 101/2000.
+                    </p>
+                </div>
+            </div>
         </div>
     );
 }

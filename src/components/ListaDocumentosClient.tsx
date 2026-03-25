@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { FaFileAlt, FaDownload, FaCalendarAlt, FaSearch } from "react-icons/fa";
+import { FaFileAlt, FaDownload, FaCalendarAlt, FaSearch, FaHistory, FaInfoCircle } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
 
 type Documento = {
     id: string;
@@ -54,7 +55,6 @@ export default function ListaDocumentosClient({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [anoFiltro]);
 
-    // Filtragem local por título
     const documentosFiltrados = documentos.filter(doc => 
         doc.titulo.toLowerCase().includes(buscaFiltro.toLowerCase())
     );
@@ -65,91 +65,133 @@ export default function ListaDocumentosClient({
     };
 
     return (
-        <div className="max-w-[1200px] mx-auto px-6 py-16">
-            {/* Aviso de atualização */}
-            <div className="bg-amber-50 border border-amber-100 rounded-2xl p-6 mb-10 flex items-start gap-4">
-                <span className="text-2xl">⚠️</span>
-                <div>
-                    <p className="font-black text-amber-800 text-sm uppercase tracking-wider mb-1">Documentos Oficiais</p>
-                    <p className="text-amber-700 text-sm font-medium">
-                        Os arquivos são disponibilizados rigorosamente conforme as diretrizes do Programa Nacional de Transparência Pública (PNTP) 2025.
-                        Para acesso a registros históricos não listados, entre em contato via e-SIC.
-                    </p>
-                    <Link href="/servicos/esic" className="inline-block mt-3 text-xs font-black uppercase tracking-widest text-amber-800 underline underline-offset-4">
-                        Acessar e-SIC →
+        <div className="max-w-[1240px] mx-auto px-6 py-20 font-['Montserrat',sans-serif]">
+            {/* Aviso de Transparência Ativa */}
+            <motion.div 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[2.5rem] p-8 md:p-12 mb-16 text-white shadow-2xl shadow-blue-200 relative overflow-hidden"
+            >
+                <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-32 -mt-32" />
+                <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
+                    <div className="w-20 h-20 bg-white/20 backdrop-blur-md rounded-3xl flex items-center justify-center shrink-0 border border-white/30">
+                        <FaInfoCircle size={32} className="text-white" />
+                    </div>
+                    <div className="flex-1 text-center md:text-left">
+                        <h2 className="text-2xl font-black uppercase tracking-tight mb-2">Transparência Ativa PNTP 2025</h2>
+                        <p className="text-blue-50 font-medium leading-relaxed max-w-2xl">
+                            Estes arquivos são disponibilizados rigorosamente conforme as diretrizes do Programa Nacional de Transparência Pública. 
+                            Acesso fácil, rápido e em formatos abertos para o controle social.
+                        </p>
+                    </div>
+                    <Link href="/servicos/esic" className="shrink-0 bg-white text-blue-700 font-black px-8 py-4 rounded-2xl hover:bg-blue-50 transition-all uppercase tracking-widest text-[10px] shadow-lg">
+                        Solicitar via e-SIC
                     </Link>
                 </div>
-            </div>
+            </motion.div>
 
-            {/* Painel de Filtros e Busca */}
-            <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-8 shadow-sm">
-                <form onSubmit={handleSearchSubmit} className="flex flex-col md:flex-row gap-4">
-                    <div className="flex-1 relative">
+            {/* Painel de Filtros e Busca de Luxo */}
+            <div className="bg-white rounded-[3rem] p-8 mb-12 shadow-xl shadow-gray-200/40 border border-gray-100/50 flex flex-col lg:flex-row lg:items-center gap-6">
+                <form onSubmit={handleSearchSubmit} className="flex-1 flex flex-col md:flex-row gap-4">
+                    <div className="flex-1 relative group">
+                        <FaSearch className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-500 transition-colors" />
                         <input
                             type="text"
                             placeholder="Buscar no título do documento..."
                             value={buscaFiltro}
                             onChange={(e) => setBuscaFiltro(e.target.value)}
-                            className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 focus:border-[#01b0ef] focus:ring-1 focus:ring-[#01b0ef] outline-none transition-all"
+                            className="w-full pl-14 pr-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all outline-none"
                         />
-                        <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                     </div>
-                    <div className="w-full md:w-48">
+                    <div className="w-full md:w-48 relative group">
+                        <FaCalendarAlt className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-500 transition-colors" />
                         <input
                             type="number"
-                            placeholder="Ano (ex: 2024)"
+                            placeholder="Ano"
                             value={anoFiltro}
                             onChange={(e) => setAnoFiltro(e.target.value)}
-                            className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#01b0ef] focus:ring-1 focus:ring-[#01b0ef] outline-none transition-all"
+                            className="w-full pl-14 pr-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all outline-none"
                         />
                     </div>
-                    <button type="submit" className="bg-[#01b0ef] hover:bg-[#0088b9] text-white px-8 py-3 rounded-xl font-bold uppercase tracking-wider transition-all">
+                    <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all shadow-lg shadow-blue-200 active:scale-95">
                         Filtrar
                     </button>
                 </form>
             </div>
 
             {loading ? (
-                <div className="flex justify-center items-center py-20">
-                    <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#01b0ef] border-t-transparent"></div>
+                <div className="flex flex-col justify-center items-center py-32 gap-6">
+                    <div className="relative w-20 h-20">
+                        <div className="absolute inset-0 border-4 border-blue-100 rounded-full" />
+                        <div className="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin" />
+                    </div>
+                    <p className="font-black text-gray-400 text-[10px] uppercase tracking-[0.3em] animate-pulse">Carregando Acervo...</p>
                 </div>
             ) : documentosFiltrados.length === 0 ? (
-                <div className="bg-white rounded-2xl border border-gray-100 p-16 text-center shadow-sm">
-                    <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gray-50 text-gray-300 mb-6">
+                <motion.div 
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="bg-white rounded-[4rem] border border-dashed border-gray-200 p-24 text-center shadow-inner"
+                >
+                    <div className="inline-flex items-center justify-center w-24 h-24 rounded-[2rem] bg-gray-50 text-gray-300 mb-8 border border-gray-100">
                         <FaSearch size={32} />
                     </div>
-                    <h3 className="text-xl font-bold text-gray-800 mb-2">{tituloVazio}</h3>
-                    <p className="text-gray-500">{mensagemVazia}</p>
-                </div>
+                    <h3 className="text-2xl font-black text-gray-800 uppercase tracking-tight mb-3">{tituloVazio}</h3>
+                    <p className="text-gray-400 font-medium max-w-sm mx-auto">{mensagemVazia}</p>
+                </motion.div>
             ) : (
-                <div className="space-y-4">
-                    {documentosFiltrados.map((doc) => (
-                        <div key={doc.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all p-6 flex items-start gap-6">
-                            <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border bg-blue-50 text-blue-600 border-blue-100">
-                                <FaFileAlt size={20} />
-                            </div>
-                            <div className="flex-1">
-                                <div className="flex flex-wrap items-center gap-3 mb-2">
-                                    <span className="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border bg-gray-100 text-gray-600 border-gray-200">
-                                        Formato PDF
-                                    </span>
-                                    {doc.ano && (
-                                        <span className="flex items-center gap-1 text-gray-400 text-[10px] font-bold">
-                                            <FaCalendarAlt size={10} /> Exercício {doc.ano}
-                                        </span>
-                                    )}
+                <div className="grid grid-cols-1 gap-6">
+                    <AnimatePresence mode="popLayout">
+                        {documentosFiltrados.map((doc, idx) => (
+                            <motion.div 
+                                key={doc.id}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                transition={{ delay: idx * 0.05 }}
+                                className="group relative bg-white rounded-[2.5rem] border border-gray-100 p-8 flex flex-col md:flex-row items-center gap-8 shadow-xl shadow-gray-200/40 hover:shadow-2xl hover:shadow-blue-900/10 hover:-translate-y-1 transition-all duration-500"
+                            >
+                                <div className="w-20 h-20 bg-gray-50 rounded-3xl flex items-center justify-center shrink-0 border border-gray-100 shadow-inner group-hover:bg-blue-50 group-hover:border-blue-100 transition-colors">
+                                    <FaFileAlt size={28} className="text-gray-400 group-hover:text-blue-500 transition-colors" />
                                 </div>
-                                <h3 className="font-black text-[#0088b9] text-base mb-1">{doc.titulo}</h3>
-                                <p className="text-gray-500 text-sm leading-relaxed font-medium"> Publicado em: {new Date(doc.criadoEm).toLocaleDateString("pt-BR")}</p>
-                            </div>
-                            <a href={doc.arquivo} target="_blank" rel="noopener noreferrer"
-                                className="shrink-0 flex items-center gap-2 bg-blue-50 text-blue-600 hover:bg-[#01b0ef] hover:text-white px-4 py-2 rounded-xl transition-all text-xs font-black uppercase tracking-widest">
-                                <FaDownload /> Baixar
-                            </a>
-                        </div>
-                    ))}
+                                <div className="flex-1 text-center md:text-left">
+                                    <div className="flex flex-wrap justify-center md:justify-start items-center gap-3 mb-3">
+                                        <span className="px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest bg-emerald-50 text-emerald-600 border border-emerald-100">
+                                            Documento Oficial
+                                        </span>
+                                        {doc.ano && (
+                                            <span className="flex items-center gap-2 text-gray-400 text-[10px] font-black uppercase tracking-widest">
+                                                <FaCalendarAlt size={10} className="text-blue-500" /> Exercício {doc.ano}
+                                            </span>
+                                        )}
+                                        <span className="flex items-center gap-2 text-gray-400 text-[10px] font-black uppercase tracking-widest">
+                                            <FaHistory size={10} className="text-amber-500" /> {new Date(doc.criadoEm).toLocaleDateString("pt-BR")}
+                                        </span>
+                                    </div>
+                                    <h3 className="font-black text-gray-800 text-lg uppercase tracking-tight group-hover:text-blue-600 transition-colors mb-1">
+                                        {doc.titulo}
+                                    </h3>
+                                    <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">Lajes Pintadas – Rio Grande do Norte</p>
+                                </div>
+                                <a 
+                                    href={doc.arquivo} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="w-full md:w-auto shrink-0 flex items-center justify-center gap-3 bg-blue-600 text-white hover:bg-blue-700 px-8 py-5 rounded-[1.5rem] transition-all text-[10px] font-black uppercase tracking-widest shadow-lg shadow-blue-200 active:scale-95"
+                                >
+                                    <FaDownload /> Baixar PDF
+                                </a>
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
                 </div>
             )}
+
+            {/* Rodapé Informativo */}
+            <div className="mt-24 text-center">
+                <p className="text-gray-400 text-[9px] font-black uppercase tracking-[0.4em] mb-4">Lei de Responsabilidade Fiscal • LDP • PNTP</p>
+                <div className="w-16 h-1 bg-gray-200 mx-auto rounded-full" />
+            </div>
         </div>
     );
 }

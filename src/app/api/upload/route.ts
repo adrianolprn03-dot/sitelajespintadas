@@ -23,17 +23,37 @@ export async function POST(req: NextRequest) {
             await mkdir(uploadDir, { recursive: true });
         }
 
-        // Gera um nome único para o arquivo
-        const fileName = `${Date.now()}-${file.name.replace(/\s+/g, "_")}`;
+        // Gera um nome único e limpo para o arquivo
+        const timestamp = Date.now();
+        const safeName = file.name
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "") // remove acentos
+            .replace(/[^a-z0-9.]/g, "_") // remove caracs especiais
+            .replace(/_+/g, "_"); // remove duplicatas de _
+
+        const fileName = `${timestamp}-${safeName}`;
         const path = join(uploadDir, fileName);
 
-        await writeFile(path, buffer);
-        console.log(`Arquivo salvo em: ${path}`);
+        try {
+            await writeFile(path, buffer);
+            console.log(`✅ Arquivo salvo com sucesso em: ${path}`);
+        } catch (writeError: any) {
+            console.error("❌ Erro ao gravar arquivo no disco:", writeError);
+            return NextResponse.json({ 
+                error: "Erro ao gravar no disco", 
+                details: writeError.message 
+            }, { status: 500 });
+        }
 
         const fileUrl = `/uploads/${fileName}`;
+        console.log(`🔗 URL gerada: ${fileUrl}`);
         return NextResponse.json({ url: fileUrl });
-    } catch (error) {
-        console.error("Erro no upload:", error);
-        return NextResponse.json({ error: "Erro interno no servidor" }, { status: 500 });
+    } catch (error: any) {
+        console.error("❌ Erro crítico no upload:", error);
+        return NextResponse.json({ 
+            error: "Erro interno no servidor", 
+            details: error.message 
+        }, { status: 500 });
     }
 }
