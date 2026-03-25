@@ -23,30 +23,29 @@ export default function ImageUpload({ value, onChange, label }: ImageUploadProps
             return;
         }
 
+        // Limite de 2MB para evitar Strings muito granes no Banco de Dados
+        const MAX_SIZE = 2 * 1024 * 1024;
+        if (file.size > MAX_SIZE) {
+            toast.error("O arquivo é muito grande. O limite máximo é 2MB.");
+            return;
+        }
+
         setUploading(true);
-        const formData = new FormData();
-        formData.append("file", file);
 
-        try {
-            const res = await fetch("/api/upload", {
-                method: "POST",
-                body: formData,
-            });
-
-            if (res.ok) {
-                const data = await res.json();
-                onChange(data.url);
-                toast.success("Upload concluído!");
-            } else {
-                toast.error("Erro ao fazer upload");
-            }
-        } catch (error) {
-            console.error("Erro no upload:", error);
-            toast.error("Erro na conexão");
-        } finally {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            const base64String = reader.result as string;
+            onChange(base64String);
+            toast.success("Foto carregada! Clique em 'Salvar Alterações' para confirmar.");
             setUploading(false);
             if (fileInputRef.current) fileInputRef.current.value = "";
-        }
+        };
+        reader.onerror = () => {
+            toast.error("Erro ao processar a imagem.");
+            setUploading(false);
+        };
+        
+        reader.readAsDataURL(file);
     };
 
     return (
