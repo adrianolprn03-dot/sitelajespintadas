@@ -47,6 +47,7 @@ build_output*.log
 dirs.txt
 
 # temp files
+/tmp/
 *.html
 prefeitura_redesign*.png
 
