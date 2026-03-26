@@ -1,13 +1,23 @@
 import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
 import Image from "next/image";
+import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
     title: "Nossa História | Prefeitura de Lajes Pintadas",
     description: "Conheça a história, origens e o desenvolvimento do município de Lajes Pintadas – RN.",
 };
 
-export default function HistoriaPage() {
+async function getConfig(chave: string, padrao: string) {
+    const config = await prisma.configuracao.findUnique({ where: { chave } });
+    return config?.valor || padrao;
+}
+
+export default async function HistoriaPage() {
+    const historiaDb = await getConfig("municipio_historia", "");
+    const hinoDb = await getConfig("municipio_hino", "");
+    const paragrafos = historiaDb ? historiaDb.split('\n\n').filter(p => p.trim() !== '') : [];
+
     return (
         <div className="min-h-screen bg-white">
             <PageHeader
@@ -36,27 +46,35 @@ export default function HistoriaPage() {
                         </div>
 
                         <h2>Origens e Fundação</h2>
-                        <p>
-                            O município de Lajes Pintadas, situado na região do Agreste Potiguar, tem suas raízes ligadas ao desbravamento do interior do Rio Grande do Norte. O nome "Lajes Pintadas" remete às formações rochosas características da região, que exibiam marcas e cores peculiares, servindo como ponto de referência para os primeiros viajantes e criadores de gado.
-                        </p>
-                        <p>
-                            O povoamento inicial consolidou-se em torno da atividade agropecuária, base da economia local por décadas. A fé religiosa também desempenhou papel fundamental na união da comunidade, com a construção da primeira capela que se tornou o coração do vilarejo.
-                        </p>
+                        {paragrafos.length > 0 ? (
+                            paragrafos.map((p, idx) => (
+                                <p key={idx}>{p}</p>
+                            ))
+                        ) : (
+                            <>
+                                <p>
+                                    O município de Lajes Pintadas, situado na região do Agreste Potiguar, tem suas raízes ligadas ao desbravamento do interior do Rio Grande do Norte. O nome "Lajes Pintadas" remete às formações rochosas características da região, que exibiam marcas e cores peculiares, servindo como ponto de referência para os primeiros viajantes e criadores de gado.
+                                </p>
+                                <p>
+                                    O povoamento inicial consolidou-se em torno da atividade agropecuária, base da economia local por décadas. A fé religiosa também desempenhou papel fundamental na união da comunidade, com a construção da primeira capela que se tornou o coração do vilarejo.
+                                </p>
+                            </>
+                        )}
                     </section>
 
-                    <section className="mb-16 p-12 bg-gray-50 rounded-[3rem] border border-gray-100 italic font-medium text-lg leading-relaxed text-gray-700">
-                        "Lajes Pintadas é mais que um ponto no mapa; é o lar de um povo acolhedor e trabalhador que transformou a paisagem com suor e esperança."
-                    </section>
+                    {hinoDb ? (
+                        <section className="mb-16 p-12 bg-blue-50 rounded-[3rem] border border-blue-100 text-center">
+                            <h2 className="text-blue-900 font-black uppercase tracking-widest mb-6">Hino de Lajes Pintadas</h2>
+                            <div className="whitespace-pre-line text-blue-800 font-medium italic text-lg leading-relaxed">
+                                {hinoDb}
+                            </div>
+                        </section>
+                    ) : (
+                        <section className="mb-16 p-12 bg-gray-50 rounded-[3rem] border border-gray-100 italic font-medium text-lg leading-relaxed text-gray-700 text-center">
+                            "Lajes Pintadas é mais que um ponto no mapa; é o lar de um povo acolhedor e trabalhador que transformou a paisagem com suor e esperança."
+                        </section>
+                    )}
 
-                    <section className="mb-16">
-                        <h2>Emancipação Política</h2>
-                        <p>
-                            Após anos de crescimento e organização social, o anseio pela autonomia política tornou-se realidade. A emancipação foi um marco que permitiu ao município gerir seus próprios recursos e focar nas necessidades específicas de sua população.
-                        </p>
-                        <p>
-                            Desde então, Lajes Pintadas vem trilhando um caminho de desenvolvimento, investindo em infraestrutura, educação e saúde, sem nunca perder de vista a preservação de sua identidade cultural e de seus valores tradicionais.
-                        </p>
-                    </section>
 
                     <section>
                         <h2>Símbolos Municipais</h2>
