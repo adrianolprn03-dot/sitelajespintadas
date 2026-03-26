@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { FaBuilding, FaSpinner } from "react-icons/fa";
 import PageHeader from "@/components/PageHeader";
+import { getSecretariaIcon } from "@/lib/icons";
 
 
 
@@ -86,9 +87,10 @@ export default function SecretariasPage() {
                                             <div className="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center shrink-0 backdrop-blur-sm shadow-inner">
                                                 {s.imagem ? (
                                                     <img src={s.imagem} alt="" className="w-12 h-12 object-contain" />
-                                                ) : (
-                                                    <FaBuilding className="text-white text-4xl" />
-                                                )}
+                                                ) : (() => {
+                                                    const IconCard = getSecretariaIcon(s.nome);
+                                                    return <IconCard className="text-white text-4xl" />;
+                                                })()}
                                             </div>
                                             <div>
                                                 <h2 className="font-black text-white text-xl leading-tight uppercase tracking-tighter">{s.nome}</h2>

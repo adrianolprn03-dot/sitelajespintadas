@@ -3,6 +3,7 @@ import PageHeader from "@/components/PageHeader";
 import { FaBuilding, FaUserTie, FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock, FaNewspaper } from "react-icons/fa";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getSecretariaIcon } from "@/lib/icons";
 
 export default async function SecretariaDetalhesPage({ params }: { params: { slug: string } }) {
     const secretaria = await prisma.secretaria.findUnique({
@@ -46,7 +47,11 @@ export default async function SecretariaDetalhesPage({ params }: { params: { slu
                     <div className="lg:col-span-2 space-y-12">
                         <section>
                             <h2 className="text-2xl font-black text-gray-800 uppercase tracking-tighter mb-6 flex items-center gap-3">
-                                <FaBuilding className="text-blue-600" /> Sobre a Secretaria
+                                {(() => {
+                                    const IconHeader = getSecretariaIcon(secretaria.nome);
+                                    return <IconHeader className="text-blue-600" />;
+                                })()}
+                                Sobre a Secretaria
                             </h2>
                             <p className="text-gray-600 text-lg leading-relaxed font-medium">
                                 {secretaria.descricao}

@@ -1,6 +1,28 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { FaBuilding, FaUserTie, FaArrowRight } from "react-icons/fa";
+import { 
+    FaBuilding, FaUserTie, FaArrowRight, FaHeartbeat, FaGraduationCap, 
+    FaHardHat, FaTractor, FaHandsHelping, FaFileInvoiceDollar, FaBalanceScale,
+    FaBus, FaTheaterMasks, FaLandmark, FaShieldAlt
+} from "react-icons/fa";
+
+// Função para retornar o ícone correto de acordo com a área
+function getSecretariaIcon(nome: string) {
+    const n = nome.toLowerCase();
+    if (n.includes('saúde') || n.includes('saude')) return FaHeartbeat;
+    if (n.includes('educação') || n.includes('educacao') || n.includes('cultura')) return FaGraduationCap;
+    if (n.includes('obras') || n.includes('infraestrutura') || n.includes('urbanismo')) return FaHardHat;
+    if (n.includes('agricultura') || n.includes('meio ambiente') || n.includes('recursos hídricos')) return FaTractor;
+    if (n.includes('social') || n.includes('trabalho') || n.includes('habitação')) return FaHandsHelping;
+    if (n.includes('finanças') || n.includes('financas') || n.includes('tributação') || n.includes('tributacao')) return FaFileInvoiceDollar;
+    if (n.includes('procuradoria') || n.includes('jurídico')) return FaBalanceScale;
+    if (n.includes('transporte') || n.includes('trânsito')) return FaBus;
+    if (n.includes('esporte') || n.includes('lazer') || n.includes('turismo')) return FaTheaterMasks;
+    if (n.includes('gabinete') || n.includes('prefeito')) return FaLandmark;
+    if (n.includes('controladoria') || n.includes('controle')) return FaShieldAlt;
+    
+    return FaBuilding; // Ícone Padrão
+}
 
 export default async function SecretariasSlider() {
     const secretarias = await prisma.secretaria.findMany({
@@ -38,6 +60,7 @@ export default async function SecretariasSlider() {
             <div className="pl-6 md:pl-[calc((100vw-1252px)/2)] pb-12 overflow-x-auto snap-x snap-mandatory hide-scrollbar flex gap-6">
                 {secretarias.map((sec) => {
                     const nomeCurto = sec.nome.replace('Secretaria Municipal de ', '').replace('Secretaria Municipal da ', '').replace('Secretaria do ', '');
+                    const IconeSec = getSecretariaIcon(sec.nome);
 
                     return (
                         <Link key={sec.id} href={`/secretarias/${sec.slug}`} className="snap-center sm:snap-start shrink-0 w-[85vw] sm:w-[380px] group block pb-6">
@@ -45,7 +68,7 @@ export default async function SecretariasSlider() {
                                 
                                 <div>
                                     <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center mb-8 group-hover:scale-110 group-hover:bg-[#01b0ef] group-hover:text-white transition-all duration-500 shadow-sm">
-                                        <FaBuilding size={24} />
+                                        <IconeSec size={28} />
                                     </div>
                                     
                                     <h3 className="text-xl font-black text-gray-800 uppercase tracking-tight leading-snug mb-4 group-hover:text-[#0088b9] transition-colors line-clamp-2">
