@@ -1,13 +1,24 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
+import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
     title: "Política de Privacidade | Prefeitura de Lajes Pintadas – RN",
     description: "Política de Privacidade e Proteção de Dados Pessoais da Prefeitura Municipal de Lajes Pintadas, em conformidade com a LGPD (Lei 13.709/2018).",
 };
 
-export default function PrivacidadePage() {
+async function getConfig(chave: string, padrao: string) {
+    const config = await prisma.configuracao.findUnique({ where: { chave } });
+    return config?.valor || padrao;
+}
+
+export default async function PrivacidadePage() {
+    const razaoSocial = await getConfig("municipio_nome", "Prefeitura Municipal de Lajes Pintadas");
+    const cnpj = await getConfig("cnpj", "08.000.000/0001-00");
+    const endereco = await getConfig("endereco_sede", "Palácio Municipal, Centro, Lajes Pintadas - RN");
+    const email = await getConfig("contato_email", "contato@lajespintadas.rn.gov.br");
+
     return (
         <div className="min-h-screen bg-gray-50">
             <PageHeader
@@ -35,9 +46,9 @@ export default function PrivacidadePage() {
                     {
                         id: "1",
                         titulo: "1. Quem somos",
-                        conteudo: `A Prefeitura Municipal de Lajes Pintadas, inscrita no CNPJ sob o nº XX.XXX.XXX/0001-XX, com sede na Rua Principal, s/n, Centro, Lajes Pintadas – RN, CEP 59.233-000, é a controladora dos dados pessoais coletados por este portal, nos termos da LGPD.
+                        conteudo: `${razaoSocial}, inscrita no CNPJ sob o nº ${cnpj}, com sede na ${endereco}, é a controladora dos dados pessoais coletados por este portal, nos termos da LGPD.
 
-Encarregado de Proteção de Dados (DPO): secretaria@lajespintadas.rn.gov.br`
+Encarregado de Proteção de Dados (DPO): ${email}`
                     },
                     {
                         id: "2",
@@ -136,7 +147,7 @@ Você também pode registrar reclamações junto à Autoridade Nacional de Prote
                 {/* Rodapé da política */}
                 <div className="bg-gray-100 rounded-2xl p-6 text-center">
                     <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">
-                        Prefeitura Municipal de Lajes Pintadas – RN • CNPJ 08.XXX.XXX/0001-XX<br />
+                        {razaoSocial} • CNPJ {cnpj}<br />
                         Esta política poderá ser revisada para atualizar disposições legais ou melhorar a clareza do texto.
                     </p>
                     <Link href="/servicos/esic" className="inline-block mt-4 text-[#01b0ef] text-xs font-black uppercase tracking-widest hover:underline">

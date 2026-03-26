@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { FaFacebook, FaInstagram, FaYoutube, FaEnvelope, FaPhone, FaMapMarkerAlt, FaWhatsapp } from "react-icons/fa";
+import { prisma } from "@/lib/prisma";
 
 const footerLinks = [
     {
@@ -43,7 +44,18 @@ const footerLinks = [
     },
 ];
 
-export default function Footer() {
+async function getConfig(chave: string, padrao: string) {
+    const config = await prisma.configuracao.findUnique({ where: { chave } });
+    return config?.valor || padrao;
+}
+
+export default async function Footer() {
+    const cnpj = await getConfig("cnpj", "08.000.000/0001-00");
+    const endereco = await getConfig("endereco_sede", "Palácio Municipal, Centro, Lajes Pintadas - RN");
+    const email = await getConfig("contato_email", "contato@lajespintadas.rn.gov.br");
+    const telefone = await getConfig("contato_telefone", "(84) 3000-0000");
+    const razaoSocial = await getConfig("municipio_nome", "Prefeitura Municipal de Lajes Pintadas");
+
     return (
         <footer className="bg-[#0088b9] text-blue-50/70" role="contentinfo">
             {/* Newsletter / CTA */}
@@ -100,20 +112,20 @@ export default function Footer() {
                                 <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center shrink-0">
                                     <FaMapMarkerAlt className="text-[#FDB913]" />
                                 </div>
-                                <span className="leading-tight">Rua Principal, s/n – Centro<br /><span className="text-[11px] text-blue-100/40 uppercase">Lajes Pintadas – RN • CEP 59.233-000</span></span>
+                                <span className="leading-tight">{endereco}</span>
                             </div>
                             <div className="flex items-center gap-4 text-blue-100/80">
                                 <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center shrink-0">
                                     <FaPhone className="text-[#FDB913]" />
                                 </div>
-                                <span>(84) 3000-0000</span>
+                                <span>{telefone}</span>
                             </div>
                             <div className="flex items-center gap-4 text-blue-100/80">
                                 <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center shrink-0">
                                     <FaEnvelope className="text-[#FDB913]" />
                                 </div>
-                                <a href="mailto:contato@lajespintadas.rn.gov.br" className="hover:text-white transition-colors">
-                                    contato@lajespintadas.rn.gov.br
+                                <a href={`mailto:${email}`} className="hover:text-white transition-colors">
+                                    {email}
                                 </a>
                             </div>
                         </div>
@@ -177,7 +189,7 @@ export default function Footer() {
                 {/* Copyright */}
                 <div className="mt-12 text-center">
                     <div className="text-[10px] font-bold text-blue-100/20 uppercase tracking-[0.2em] space-y-2">
-                        <p>© {new Date().getFullYear()} Prefeitura Municipal de Lajes Pintadas – RN. CNPJ 08.XXX.XXX/0001-XX</p>
+                        <p>© {new Date().getFullYear()} {razaoSocial}. CNPJ {cnpj}</p>
                         <p>Desenvolvido com foco em acessibilidade e transparência pública.</p>
                     </div>
                 </div>

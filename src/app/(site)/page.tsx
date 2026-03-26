@@ -6,7 +6,7 @@ import ServicosRapidos from "@/components/home/ServicosRapidos";
 import RadarTransparencia from "@/components/home/RadarTransparencia";
 import AcessoRapido from "@/components/home/AcessoRapido";
 import UltimasNoticias from "@/components/home/UltimasNoticias";
-import ObrasDestaque from "@/components/home/ObrasDestaque";
+import SecretariasSlider from "@/components/home/SecretariasSlider";
 import UnidadesAtendimento from "@/components/home/UnidadesAtendimento";
 
 export const metadata: Metadata = {
@@ -21,7 +21,7 @@ export default function Home() {
             <ServicosRapidos />
             <UltimasNoticias />
             <AcessoRapido />
-            <ObrasDestaque />
+            <SecretariasSlider />
             <UnidadesAtendimento />
             <RadarTransparencia />
         </main>
