@@ -1,12 +1,15 @@
 import PageHeader from "@/components/PageHeader";
 import { FaUserGraduate, FaInfoCircle } from "react-icons/fa";
+import BannerPNTP from "@/components/transparencia/BannerPNTP";
 
 export default function EstagiariosPage() {
     return (
-        <div className="min-h-screen bg-gray-50 font-['Montserrat',sans-serif]">
+        <div className="min-h-screen bg-[#f8fafc] font-['Montserrat',sans-serif]">
             <PageHeader
                 title="Estagiários"
                 subtitle="Relação de estudantes em regime de estágio na administração pública municipal."
+                variant="premium"
+                icon={<FaUserGraduate />}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
                     { label: "Transparência", href: "/transparencia" },
@@ -15,7 +18,7 @@ export default function EstagiariosPage() {
                 ]}
             />
 
-            <div className="max-w-[1240px] mx-auto px-6 py-16 text-center">
+            <div className="max-w-[1240px] mx-auto px-6 py-16 -mt-24 relative z-30 text-center">
                 <div className="bg-white rounded-[3rem] p-20 shadow-xl shadow-gray-200/40 border border-white">
                     <div className="w-24 h-24 bg-pink-50 text-pink-500 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-inner">
                         <FaUserGraduate size={40} />
@@ -32,6 +35,11 @@ export default function EstagiariosPage() {
                         Modulo sob revisão administrativa
                     </div>
                 </div>
+            </div>
+
+            {/* Rodapé Informativo */}
+            <div className="pb-24 border-t border-slate-100 pt-16">
+                <BannerPNTP />
             </div>
         </div>
     );

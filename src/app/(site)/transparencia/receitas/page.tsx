@@ -25,6 +25,9 @@ const categoriaLabel: Record<string, string> = {
     outras: "Outras",
 };
 
+import PageHeader from "@/components/PageHeader";
+import BannerPNTP from "@/components/transparencia/BannerPNTP";
+
 export default function ReceitasPage() {
     const [dados, setDados] = useState<Receita[]>([]);
     const [loading, setLoading] = useState(true);
@@ -95,20 +98,18 @@ export default function ReceitasPage() {
     })).filter((d) => d.valor > 0);
 
     return (
-        <div className="min-h-screen bg-gray-50">
-            <div className="bg-gradient-to-r from-emerald-600 to-teal-700 py-12 px-4 font-['Montserrat',sans-serif]">
-                <div className="max-w-7xl mx-auto">
-                    <nav className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-200 mb-6 flex items-center gap-2">
-                        <a href="/transparencia" className="hover:text-white transition-colors">Transparência</a>
-                        <span className="opacity-50">/</span>
-                        <span className="text-white">Receitas Públicas</span>
-                    </nav>
-                    <h1 className="text-4xl font-black text-white uppercase tracking-tighter mb-4">Receitas Públicas</h1>
-                    <p className="text-emerald-100/80 max-w-2xl font-medium leading-relaxed">
-                        Acesso simplificado à arrecadação pública do município de Lajes Pintadas em conformidade com o Programa Nacional de Transparência Pública (PNTP).
-                    </p>
-                </div>
-            </div>
+        <div className="min-h-screen bg-[#f8fafc] font-['Montserrat',sans-serif]">
+            <PageHeader
+                title="Receitas Públicas"
+                subtitle="Acompanhe a arrecadação e as fontes de recursos que sustentam as ações do município."
+                variant="premium"
+                icon={<FaChartBar />}
+                breadcrumbs={[
+                    { label: "Início", href: "/" },
+                    { label: "Transparência", href: "/transparencia" },
+                    { label: "Receitas" }
+                ]}
+            />
 
             <div className="max-w-7xl mx-auto px-4 py-8 -mt-8">
                 {/* Filtros PNTP 2024 */}
@@ -233,6 +234,16 @@ export default function ReceitasPage() {
                             </ResponsiveContainer>
                         </div>
                     )}
+                </div>
+            </div>
+
+            {/* Rodapé Informativo */}
+            <div className="mt-24 pb-24 border-t border-slate-100 pt-20">
+                <BannerPNTP />
+                
+                <div className="mt-16 text-center space-y-4">
+                    <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.4em]">Lei de Responsabilidade Fiscal • Município de Lajes Pintadas</p>
+                    <div className="w-12 h-1 bg-indigo-500/20 mx-auto rounded-full" />
                 </div>
             </div>
         </div>

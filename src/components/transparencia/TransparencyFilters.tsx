@@ -38,87 +38,92 @@ export default function TransparencyFilters({
     ];
 
     return (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
-            <div className="flex flex-wrap items-end gap-4">
+        <div className="bg-white rounded-[2rem] shadow-xl shadow-slate-200/50 border border-slate-100 p-8 mb-10 relative z-40">
+            <div className="flex flex-wrap items-end gap-6">
                 {/* Busca Textual */}
                 <div className="flex-1 min-w-[300px]">
-                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Busca Textual</label>
-                    <div className="relative">
-                        <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 ml-1">Busca Textual</label>
+                    <div className="relative group">
+                        <FaSearch className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-500 transition-colors" />
                         <input
                             type="text"
                             value={searchValue}
                             onChange={(e) => onSearch(e.target.value)}
                             placeholder={placeholder}
-                            className="w-full bg-gray-50 border-none rounded-xl py-3 pl-11 pr-4 text-sm focus:ring-2 focus:ring-primary-500 transition-all font-medium"
+                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4 pl-14 pr-6 text-sm focus:ring-4 focus:ring-indigo-500/10 focus:bg-white focus:border-indigo-100 transition-all font-bold text-slate-700 placeholder:text-slate-300 outline-none"
                         />
                     </div>
                 </div>
 
-                {/* Filtro de Ano */}
-                <div className="w-full sm:w-32">
-                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Exercício</label>
-                    <select
-                        value={currentYear}
-                        onChange={(e) => onYearChange(e.target.value)}
-                        className="w-full bg-gray-50 border-none rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-primary-500 transition-all font-bold text-gray-700"
-                    >
-                        {availableYears.map(y => <option key={y} value={y}>{y}</option>)}
-                    </select>
-                </div>
-
-                {/* Filtro de Mês */}
-                <div className="w-full sm:w-48">
-                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Período</label>
-                    <select
-                        value={currentMonth}
-                        onChange={(e) => onMonthChange(e.target.value)}
-                        className="w-full bg-gray-50 border-none rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-primary-500 transition-all font-bold text-gray-700"
-                    >
-                        {meses.map(m => <option key={m.v} value={m.v}>{m.l}</option>)}
-                    </select>
-                </div>
-
-                {/* Ações */}
-                <div className="flex items-center gap-2">
-                    <button
-                        onClick={onClear}
-                        className="bg-gray-100 hover:bg-gray-200 text-gray-600 p-3.5 rounded-xl transition-all"
-                        title="Limpar Filtros"
-                    >
-                        <FaTimes />
-                    </button>
-
-                    <div className="relative">
-                        <button
-                            onClick={() => setShowExport(!showExport)}
-                            className="bg-primary-500 hover:bg-primary-600 text-white font-black text-[10px] uppercase tracking-widest px-6 py-4 rounded-xl transition-all shadow-md flex items-center gap-2"
+                <div className="flex flex-wrap items-end gap-4 w-full lg:w-auto">
+                    {/* Filtro de Ano */}
+                    <div className="w-full sm:w-32">
+                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 ml-1">Exercício</label>
+                        <select
+                            value={currentYear}
+                            onChange={(e) => onYearChange(e.target.value)}
+                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4 px-5 text-sm focus:ring-4 focus:ring-indigo-500/10 focus:bg-white focus:border-indigo-100 transition-all font-black text-slate-700 outline-none appearance-none cursor-pointer"
                         >
-                            <FaDownload /> Exportar
+                            {availableYears.map(y => <option key={y} value={y}>{y}</option>)}
+                        </select>
+                    </div>
+
+                    {/* Filtro de Mês */}
+                    <div className="w-full sm:w-48">
+                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 ml-1">Período</label>
+                        <select
+                            value={currentMonth}
+                            onChange={(e) => onMonthChange(e.target.value)}
+                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4 px-5 text-sm focus:ring-4 focus:ring-indigo-500/10 focus:bg-white focus:border-indigo-100 transition-all font-black text-slate-700 outline-none appearance-none cursor-pointer"
+                        >
+                            {meses.map(m => <option key={m.v} value={m.v}>{m.l}</option>)}
+                        </select>
+                    </div>
+
+                    {/* Ações */}
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={onClear}
+                            className="bg-slate-50 hover:bg-slate-100 text-slate-400 p-4.5 rounded-2xl transition-all border border-slate-100 flex items-center justify-center min-w-[56px] min-h-[56px]"
+                            title="Limpar Filtros"
+                        >
+                            <FaTimes size={18} />
                         </button>
 
-                        {showExport && (
-                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-2xl border border-gray-100 py-2 z-50">
-                                <button
-                                    onClick={() => { onExport("pdf"); setShowExport(false); }}
-                                    className="w-full text-left px-4 py-3 text-sm font-bold text-gray-700 hover:bg-gray-50 flex items-center gap-3"
-                                >
-                                    <FaFilePdf className="text-red-500" /> Baixar em PDF
-                                </button>
-                                <button
-                                    onClick={() => { onExport("csv"); setShowExport(false); }}
-                                    className="w-full text-left px-4 py-3 text-sm font-bold text-gray-700 hover:bg-gray-50 flex items-center gap-3"
-                                >
-                                    <FaFileCsv className="text-green-600" /> Baixar em CSV
-                                </button>
-                                <button
-                                    onClick={() => { onExport("json"); setShowExport(false); }}
-                                    className="w-full text-left px-4 py-3 text-sm font-bold text-gray-700 hover:bg-gray-50 flex items-center gap-3"
-                                >
-                                    <FaFileCode className="text-blue-500" /> Baixar em JSON
-                                </button>
-                            </div>
-                        )}
+                        <div className="relative">
+                            <button
+                                onClick={() => setShowExport(!showExport)}
+                                className="bg-indigo-600 hover:bg-indigo-700 text-white font-black text-[10px] uppercase tracking-widest px-8 py-4.5 rounded-2xl transition-all shadow-lg shadow-indigo-100 flex items-center gap-3 active:scale-95"
+                            >
+                                <FaDownload /> Exportar
+                            </button>
+
+                            {showExport && (
+                                <div className="absolute right-0 mt-3 w-56 bg-white rounded-[2rem] shadow-2xl shadow-slate-200/40 border border-slate-100 p-3 z-50 animate-in fade-in zoom-in duration-200">
+                                    <button
+                                        onClick={() => { onExport("pdf"); setShowExport(false); }}
+                                        className="w-full text-left px-5 py-4 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-slate-50 rounded-xl flex items-center gap-3 transition-colors"
+                                    >
+                                        <div className="w-8 h-8 bg-red-50 text-red-500 rounded-lg flex items-center justify-center"><FaFilePdf /></div>
+                                        PDF
+                                    </button>
+                                    <button
+                                        onClick={() => { onExport("csv"); setShowExport(false); }}
+                                        className="w-full text-left px-5 py-4 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-slate-50 rounded-xl flex items-center gap-3 transition-colors"
+                                    >
+                                        <div className="w-8 h-8 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center"><FaFileCsv /></div>
+                                        CSV
+                                    </button>
+                                    <button
+                                        onClick={() => { onExport("json"); setShowExport(false); }}
+                                        className="w-full text-left px-5 py-4 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-slate-50 rounded-xl flex items-center gap-3 transition-colors"
+                                    >
+                                        <div className="w-8 h-8 bg-blue-50 text-blue-500 rounded-lg flex items-center justify-center"><FaFileCode /></div>
+                                        JSON
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>

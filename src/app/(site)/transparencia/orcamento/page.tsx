@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { FaBalanceScale, FaDownload, FaSearch, FaSpinner, FaCalendarAlt, FaFileContract, FaInfoCircle, FaCheckCircle, FaChevronRight } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
+import BannerPNTP from "@/components/transparencia/BannerPNTP";
 
 type Documento = {
     id: string;
@@ -105,7 +106,7 @@ export default function OrcamentoPage() {
                 {/* Painel de Filtros e Card Informativo */}
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-stretch">
                     {/* Filtros */}
-                    <div className="lg:col-span-3 bg-white rounded-[3rem] shadow-2xl shadow-slate-200/60 p-8 md:p-10 border border-white flex flex-col md:flex-row items-stretch md:items-end gap-6">
+                    <div className="w-full bg-white rounded-[3rem] shadow-2xl shadow-slate-200/60 p-8 md:p-10 border border-white flex flex-col md:flex-row items-stretch md:items-end gap-6 text-slate-700">
                         <div className="flex-1">
                             <label className="block text-[10px] font-black text-slate-400 uppercase mb-3 tracking-[0.2em] ml-2">Qual instrumento deseja consultar?</label>
                             <div className="relative group">
@@ -151,21 +152,6 @@ export default function OrcamentoPage() {
                         </button>
                     </div>
 
-                    {/* Card PNTP Info */}
-                    <div className="bg-[#1E293B] rounded-[3rem] p-8 text-white shadow-2xl shadow-slate-900/10 flex flex-col justify-center relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 w-24 h-24 bg-blue-600/20 rounded-full -translate-y-12 translate-x-12 blur-2xl group-hover:scale-150 transition-transform duration-700" />
-                        <div className="relative z-10">
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="w-8 h-8 bg-blue-600/20 rounded-lg flex items-center justify-center border border-blue-500/20">
-                                    <FaInfoCircle className="text-blue-400" />
-                                </div>
-                                <span className="text-[10px] font-black uppercase tracking-widest text-blue-400">PNTP 2025</span>
-                            </div>
-                            <p className="text-xs font-bold leading-relaxed text-slate-300">
-                                Dados atualizados em conformidade com o Programa Nacional de Transparência Pública.
-                            </p>
-                        </div>
-                    </div>
                 </div>
 
                 {/* Lista de Documentos */}
@@ -289,30 +275,12 @@ export default function OrcamentoPage() {
             </div>
             
             {/* Footer de Apoio */}
-            <div className="bg-white border-t border-slate-100 py-24">
-                <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div className="bg-emerald-600 rounded-[3.5rem] p-12 text-white shadow-2xl shadow-emerald-500/20 group hover:scale-[1.02] transition-transform">
-                        <h3 className="text-2xl md:text-3xl font-black tracking-tight mb-4">Acesso à Informação</h3>
-                        <p className="text-emerald-50 font-medium mb-10 leading-relaxed text-lg opacity-90">
-                            Em dúvida sobre algum dado orçamentário? Nossa equipe está pronta para ajudar através dos canais oficiais da Ouvidoria.
-                        </p>
-                        <a href="/ouvidoria" className="inline-flex bg-white text-emerald-600 px-10 py-5 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-emerald-50 transition-all shadow-xl shadow-emerald-700/20 items-center gap-3">
-                            Abrir Chamado <FaChevronRight size={10} />
-                        </a>
-                    </div>
-                    
-                    <div className="bg-blue-600 rounded-[3.5rem] p-12 text-white shadow-2xl shadow-blue-500/20 group hover:scale-[1.02] transition-transform flex flex-col justify-between">
-                        <div>
-                            <h3 className="text-2xl md:text-3xl font-black tracking-tight mb-4">Transparência Ativa</h3>
-                            <p className="text-blue-50 font-medium mb-10 leading-relaxed text-lg opacity-90">
-                                Compromisso com o PNTP 2025 para garantir que todo cidadão tenha acesso fácil e rápido aos recursos públicos.
-                            </p>
-                        </div>
-                        <div className="flex flex-wrap gap-3">
-                            <span className="bg-white/10 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-white/10">Lei 12.527/11</span>
-                            <span className="bg-white/10 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-white/10">LC 101/00</span>
-                        </div>
-                    </div>
+            <div className="bg-white border-t border-slate-100 pt-20 pb-24">
+                <BannerPNTP />
+                
+                <div className="max-w-7xl mx-auto px-6 mt-16 text-center">
+                    <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.4em]">Lei de Responsabilidade Fiscal • Município de Lajes Pintadas</p>
+                    <div className="w-12 h-1 bg-indigo-500/20 mx-auto rounded-full mt-4" />
                 </div>
             </div>
         </div>

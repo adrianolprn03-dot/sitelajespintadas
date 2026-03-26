@@ -1,5 +1,6 @@
 import PageHeader from "@/components/PageHeader";
 import { FaMoneyCheckAlt, FaFilePdf, FaArrowRight } from "react-icons/fa";
+import BannerPNTP from "@/components/transparencia/BannerPNTP";
 
 const tabelas = [
     {
@@ -21,10 +22,12 @@ const tabelas = [
 
 export default function CargosSalariosPage() {
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-[#f8fafc] font-['Montserrat',sans-serif]">
             <PageHeader
                 title="Padrão Remuneratório"
                 subtitle="Consulte a estrutura remuneratória e a tabela de vencimentos dos servidores municipais."
+                variant="premium"
+                icon={<FaMoneyCheckAlt />}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
                     { label: "Transparência", href: "/transparencia" },
@@ -33,15 +36,15 @@ export default function CargosSalariosPage() {
                 ]}
             />
 
-            <div className="max-w-[1240px] mx-auto px-6 py-16">
+            <div className="max-w-[1240px] mx-auto px-6 py-16 -mt-24 relative z-30">
                 <div className="grid grid-cols-1 gap-12">
                     {tabelas.map((tab, idx) => (
-                        <div key={idx} className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
-                            <div className="bg-primary-600 px-8 py-6 text-white flex items-center justify-between">
+                        <div key={idx} className="bg-white rounded-[2.5rem] shadow-2xl shadow-blue-900/5 border border-white overflow-hidden">
+                            <div className="bg-[#1E293B] px-8 py-6 text-white flex items-center justify-between">
                                 <h2 className="text-xl font-black uppercase tracking-tight flex items-center gap-3">
-                                    <FaMoneyCheckAlt /> {tab.categoria}
+                                    <FaMoneyCheckAlt className="text-blue-400" /> {tab.categoria}
                                 </h2>
-                                <button className="flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">
+                                <button className="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border border-white/10">
                                     <FaFilePdf /> Lei Completa
                                 </button>
                             </div>
@@ -82,6 +85,16 @@ export default function CargosSalariosPage() {
                             Baixar Legislação <FaArrowRight />
                         </button>
                     </div>
+                </div>
+            </div>
+
+            {/* Rodapé Informativo */}
+            <div className="mt-20 pb-24 border-t border-slate-100 pt-16">
+                <BannerPNTP />
+                
+                <div className="max-w-7xl mx-auto px-6 mt-16 text-center">
+                    <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.4em]">Lei de Responsabilidade Fiscal • Município de Lajes Pintadas</p>
+                    <div className="w-12 h-1 bg-indigo-500/20 mx-auto rounded-full mt-4" />
                 </div>
             </div>
         </div>

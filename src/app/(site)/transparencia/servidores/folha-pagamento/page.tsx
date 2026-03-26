@@ -4,6 +4,8 @@ import Link from "next/link";
 import { FaSpinner, FaMoneyCheckAlt } from "react-icons/fa";
 import { exportToCSV, exportToJSON, exportToPDF } from "@/lib/exportUtils";
 import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
+import PageHeader from "@/components/PageHeader";
+import BannerPNTP from "@/components/transparencia/BannerPNTP";
 
 type Servidor = {
     id: string;
@@ -94,30 +96,20 @@ export default function ServidoresPage() {
 
     return (
         <div className="min-h-screen bg-gray-50 font-['Montserrat',sans-serif]">
-            <div className="bg-gradient-to-r from-teal-700 to-emerald-900 py-16 px-4 shadow-xl">
-                <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                    <div>
-                        <nav className="text-[10px] font-black uppercase tracking-[0.2em] text-teal-200 mb-6 flex items-center gap-2">
-                            <Link href="/transparencia" className="hover:text-white transition-colors">Transparência</Link>
-                            <span className="opacity-50">/</span>
-                            <Link href="/transparencia/servidores" className="hover:text-white transition-colors">Quadro de Pessoal</Link>
-                            <span className="opacity-50">/</span>
-                            <span className="text-white">Folha de Pagamento</span>
-                        </nav>
-                        <h1 className="text-4xl font-black text-white uppercase tracking-tighter mb-4 flex items-center gap-4">
-                            <div className="w-12 h-1 bg-white rounded-full"></div>
-                            Folha de Pagamento
-                        </h1>
-                        <div className="flex flex-wrap items-center gap-4 text-teal-100/80 text-sm font-medium">
-                            <span>Lei Complementar 131/2009</span>
-                            <span className="opacity-30">•</span>
-                            <span>Transparência Ativa</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <PageHeader
+                title="Folha de Pagamento"
+                subtitle="Transparência detalhada sobre a remuneração dos servidores públicos municipais."
+                variant="premium"
+                icon={<FaMoneyCheckAlt />}
+                breadcrumbs={[
+                    { label: "Início", href: "/" },
+                    { label: "Transparência", href: "/transparencia" },
+                    { label: "Quadro de Pessoal", href: "/transparencia/servidores" },
+                    { label: "Folha de Pagamento" }
+                ]}
+            />
 
-            <div className="max-w-7xl mx-auto px-4 py-8 -mt-8">
+            <div className="max-w-7xl mx-auto px-6 py-12 -mt-24 relative z-30">
                 {/* Filtros Padronizados PNTP 2024 */}
                 <div id="filtros-servidores">
                     <TransparencyFilters
@@ -211,6 +203,16 @@ export default function ServidoresPage() {
                             )}
                         </table>
                     </div>
+                </div>
+            </div>
+
+            {/* Rodapé Informativo */}
+            <div className="mt-24 pb-24 border-t border-slate-100 pt-20">
+                <BannerPNTP />
+                
+                <div className="mt-16 text-center space-y-4">
+                    <p className="text-slate-400 text-[9px] font-black uppercase tracking-[0.4em]">Lei de Responsabilidade Fiscal • Município de Lajes Pintadas</p>
+                    <div className="w-12 h-1 bg-indigo-500/20 mx-auto rounded-full" />
                 </div>
             </div>
         </div>

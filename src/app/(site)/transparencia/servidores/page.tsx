@@ -9,6 +9,7 @@ import {
     FaUserGraduate, 
     FaIdCardAlt 
 } from "react-icons/fa";
+import BannerPNTP from "@/components/transparencia/BannerPNTP";
 
 const cards = [
     {
@@ -67,6 +68,8 @@ export default function QuadroPessoalHub() {
             <PageHeader
                 title="Quadro de Pessoal"
                 subtitle="Portal centralizado de informações sobre recursos humanos e gestão de pessoas."
+                variant="premium"
+                icon={<FaUsers />}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
                     { label: "Transparência", href: "/transparencia" },
@@ -111,22 +114,8 @@ export default function QuadroPessoalHub() {
                     ))}
                 </div>
 
-                <div className="mt-20 p-10 bg-gradient-to-br from-gray-900 to-slate-800 rounded-[3rem] text-white overflow-hidden relative shadow-2xl">
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-[100px] -mr-48 -mt-48" />
-                    <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-                        <div>
-                            <h2 className="text-2xl font-black uppercase tracking-tighter mb-2 italic">Transparência Ativa</h2>
-                            <p className="text-gray-400 font-medium max-w-xl text-sm italic leading-relaxed">
-                                Este portal segue rigorosamente as diretrizes da Lei de Acesso à Informação (LAI) e da Lei Complementar 131/2009, garantindo o direito do cidadão ao acompanhamento dos gastos públicos com pessoal.
-                            </p>
-                        </div>
-                        <Link 
-                            href="/transparencia"
-                            className="px-10 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap"
-                        >
-                            Voltar para Transparência
-                        </Link>
-                    </div>
+                <div className="mt-24 pb-20 border-t border-gray-100 pt-20">
+                    <BannerPNTP />
                 </div>
             </div>
         </div>

@@ -1,12 +1,15 @@
 import PageHeader from "@/components/PageHeader";
 import { FaUserTie, FaInfoCircle } from "react-icons/fa";
+import BannerPNTP from "@/components/transparencia/BannerPNTP";
 
 export default function TerceirizadosPage() {
     return (
-        <div className="min-h-screen bg-gray-50 font-['Montserrat',sans-serif]">
+        <div className="min-h-screen bg-[#f8fafc] font-['Montserrat',sans-serif]">
             <PageHeader
                 title="Terceirizados"
                 subtitle="Relação de postos de trabalho e prestadores de serviço terceirizados."
+                variant="premium"
+                icon={<FaUserTie />}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
                     { label: "Transparência", href: "/transparencia" },
@@ -15,7 +18,7 @@ export default function TerceirizadosPage() {
                 ]}
             />
 
-            <div className="max-w-[1240px] mx-auto px-6 py-16 text-center">
+            <div className="max-w-[1240px] mx-auto px-6 py-16 -mt-24 relative z-30 text-center">
                 <div className="bg-white rounded-[3rem] p-20 shadow-xl shadow-gray-200/40 border border-white">
                     <div className="w-24 h-24 bg-orange-50 text-orange-500 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-inner">
                         <FaUserTie size={40} />
@@ -32,6 +35,11 @@ export default function TerceirizadosPage() {
                         Previsão de publicação: Próxima quinzena
                     </div>
                 </div>
+            </div>
+
+            {/* Rodapé Informativo */}
+            <div className="pb-24 border-t border-slate-100 pt-16">
+                <BannerPNTP />
             </div>
         </div>
     );

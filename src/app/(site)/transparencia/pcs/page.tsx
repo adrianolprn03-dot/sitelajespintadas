@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
 import ListaDocumentosClient from "@/components/ListaDocumentosClient";
+import { FaBuildingColumns } from "react-icons/fa6";
 
 export const metadata: Metadata = {
     title: "PCS - Prestação de Contas de Gestão | Prefeitura de Lajes Pintadas – RN",
@@ -9,26 +10,25 @@ export const metadata: Metadata = {
 
 export default function PCSPage() {
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-[#f8fafc] font-['Montserrat',sans-serif]">
             <PageHeader
                 title="Prestação de Contas de Gestão (PCS)"
-                subtitle="Relatórios dos administradores e demais responsáveis por dinheiros públicos"
+                subtitle="Relatórios anuais dos administradores e demais responsáveis por bens e valores públicos."
+                variant="premium"
+                icon={<FaBuildingColumns />}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
                     { label: "Transparência", href: "/transparencia" },
                     { label: "PCS" }
                 ]}
             />
-            <div className="bg-[#01b0ef]/10 py-5 px-6 border-b border-blue-100">
-                <div className="max-w-[1200px] mx-auto flex flex-wrap items-center justify-center gap-6 text-[#0088b9] text-[10px] font-black uppercase tracking-widest">
-                    {["Lei de Responsabilidade Fiscal", "Instruções Normativas TCE", "PNTP 2025"].map((item) => (
-                        <span key={item} className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border border-blue-100">
-                            <span className="text-[#50B749]">✓</span> {item}
-                        </span>
-                    ))}
-                </div>
+
+            <div className="pt-0">
+                <ListaDocumentosClient 
+                    tipoDocumento="pcs" 
+                    tituloVazio="Nenhuma Prestação de Contas de Gestão encontrada" 
+                />
             </div>
-            <ListaDocumentosClient tipoDocumento="pcs" tituloVazio="Nenhuma Prestação de Contas de Gestão encontrada" />
         </div>
     );
 }

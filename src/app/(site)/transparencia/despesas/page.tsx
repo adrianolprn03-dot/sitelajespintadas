@@ -16,6 +16,9 @@ type Despesa = {
     data: string;
 };
 
+import PageHeader from "@/components/PageHeader";
+import BannerPNTP from "@/components/transparencia/BannerPNTP";
+
 export default function DespesasPage() {
     const [despesas, setDespesas] = useState<Despesa[]>([]);
     const [loading, setLoading] = useState(true);
@@ -96,23 +99,18 @@ export default function DespesasPage() {
     const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899"];
 
     return (
-        <div className="min-h-screen bg-gray-50 font-['Montserrat',sans-serif]">
-            <div className="bg-gradient-to-r from-blue-700 to-indigo-900 py-16 px-4 shadow-xl border-b border-white/10">
-                <div className="max-w-7xl mx-auto">
-                    <nav className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-200 mb-6 flex items-center gap-2">
-                        <a href="/transparencia" className="hover:text-white transition-colors">Transparência</a>
-                        <span className="opacity-50">/</span>
-                        <span className="text-white">Despesas Públicas</span>
-                    </nav>
-                    <h1 className="text-4xl font-black text-white uppercase tracking-tighter mb-4 flex items-center gap-4">
-                        <div className="w-12 h-1 bg-white rounded-full"></div>
-                        Despesas Públicas
-                    </h1>
-                    <p className="text-blue-100/80 max-w-2xl font-medium leading-relaxed">
-                        Acompanhe em tempo real a aplicação dos recursos do município. Transparência total sobre empenhos, liquidações e pagamentos.
-                    </p>
-                </div>
-            </div>
+        <div className="min-h-screen bg-[#f8fafc] font-['Montserrat',sans-serif]">
+            <PageHeader
+                title="Despesas Públicas"
+                subtitle="Acompanhe em tempo real a aplicação dos recursos públicos municipais."
+                variant="premium"
+                icon={<FaChartBar />}
+                breadcrumbs={[
+                    { label: "Início", href: "/" },
+                    { label: "Transparência", href: "/transparencia" },
+                    { label: "Despesas" }
+                ]}
+            />
 
             <div className="max-w-7xl mx-auto px-4 py-8 -mt-10">
                 <TransparencyFilters
@@ -257,6 +255,16 @@ export default function DespesasPage() {
                             </tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+
+            {/* Rodapé Informativo */}
+            <div className="mt-24 pb-24 border-t border-slate-100 pt-20">
+                <BannerPNTP />
+                
+                <div className="mt-16 text-center space-y-4">
+                    <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.4em]">Lei de Responsabilidade Fiscal • Município de Lajes Pintadas</p>
+                    <div className="w-12 h-1 bg-indigo-500/20 mx-auto rounded-full" />
                 </div>
             </div>
         </div>

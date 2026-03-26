@@ -14,6 +14,8 @@ export default function LRFPage() {
             <PageHeader
                 title="Transparência Fiscal (LRF)"
                 subtitle="Acompanhamento rigoroso da gestão fiscal e execução orçamentária do município."
+                variant="premium"
+                icon={<FaScaleBalanced />}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
                     { label: "Transparência", href: "/transparencia" },
@@ -68,19 +70,6 @@ export default function LRFPage() {
                     tipoDocumento="lrf" 
                     tituloVazio="Nenhum relatório fiscal" 
                 />
-            </div>
-            
-            {/* Banner PNTP Final */}
-            <div className="max-w-[1240px] mx-auto px-6 pb-24">
-                <div className="bg-slate-900 rounded-[3rem] p-12 text-center relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-blue-600 opacity-0 group-hover:opacity-10 transition-opacity duration-700" />
-                    <FaScaleBalanced size={48} className="text-blue-500 mx-auto mb-6 opacity-50" />
-                    <h4 className="text-white font-black text-2xl uppercase tracking-tighter mb-4">Lei de Responsabilidade Fiscal</h4>
-                    <p className="text-slate-400 font-medium max-w-2xl mx-auto leading-relaxed">
-                        A transparência na gestão fiscal é um pilar da democracia. Lajes Pintadas assegura que todos os limites e metas 
-                        sejam públicos e auditáveis em conformidade com a Lei Complementar 101/2000.
-                    </p>
-                </div>
             </div>
         </div>
     );

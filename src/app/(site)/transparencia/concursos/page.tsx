@@ -20,6 +20,8 @@ export default async function ConcursosTransparencyPage() {
             <PageHeader
                 title="Concursos e Seleções"
                 subtitle="Acompanhe os editais, convocações e resultados dos processos seletivos municipais."
+                variant="premium"
+                icon={<FaBriefcase />}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
                     { label: "Transparência", href: "/transparencia" },

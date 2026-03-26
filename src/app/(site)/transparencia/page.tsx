@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import PageHeader from "@/components/PageHeader";
+import BannerPNTP from "@/components/transparencia/BannerPNTP";
 import { useEffect, useState } from "react";
 
 // Como estamos usando client component para as animações, 
@@ -147,6 +148,8 @@ export default function TransparenciaPage() {
             <PageHeader
                 title="Portal da Transparência"
                 subtitle="Acesso integral aos dados públicos de Lajes Pintadas – RN, promovendo clareza e controle social."
+                variant="premium"
+                icon={<Landmark />}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
                     { label: "Transparência" }
@@ -287,6 +290,11 @@ export default function TransparenciaPage() {
                         </div>
                     </div>
                 </div>
+            </div>
+
+            {/* Seção PNTP 2025 no Rodapé */}
+            <div className="bg-white pt-10 pb-20 border-t border-gray-100">
+                <BannerPNTP />
             </div>
 
             {/* Rodapé Interno */}
