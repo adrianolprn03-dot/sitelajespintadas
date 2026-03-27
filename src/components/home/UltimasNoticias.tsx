@@ -20,7 +20,7 @@ export default function UltimasNoticias() {
     useEffect(() => {
         const fetchNoticias = async () => {
             try {
-                const res = await fetch("/api/noticias?limit=4&publicada=true");
+                const res = await fetch("/api/noticias?limit=5&publicada=true");
                 const data = await res.json();
                 setNoticias(data.items || []);
             } catch (error) {
@@ -46,83 +46,81 @@ export default function UltimasNoticias() {
     return (
         <section className="bg-white py-24 relative overflow-hidden" aria-labelledby="noticias-titulo">
             {/* Background Decorations */}
-            <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-gray-50/80 to-transparent" />
+            <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-blue-50/50 rounded-full -mr-[200px] -mt-[400px] blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-green-50/50 rounded-full -ml-[200px] -mb-[300px] blur-3xl pointer-events-none" />
             
             <div className="max-w-[1240px] mx-auto px-6 relative z-10">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row items-end justify-between mb-16 gap-6">
                     <div className="max-w-2xl">
-                        <div className="flex items-center gap-3 mb-4">
-                            <span className="flex items-center justify-center w-10 h-10 rounded-full bg-primary-50 text-primary-600">
-                                <HiOutlineNewspaper className="w-5 h-5" />
-                            </span>
-                            <span className="text-primary-600 font-bold text-sm tracking-widest uppercase">
-                                Portal de Notícias
-                            </span>
-                        </div>
-                        <h2 id="noticias-titulo" className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight leading-tight">
-                            Acompanhe as <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-tertiary-500">ações da prefeitura</span>
+                        <span className="text-[#01b0ef] font-black text-[10px] uppercase tracking-[0.3em] mb-4 block">Portal de Notícias</span>
+                        <h2 id="noticias-titulo" className="text-3xl md:text-5xl font-black text-[#0088b9] uppercase tracking-tighter leading-tight">
+                            Acompanhe as <br /> <span className="text-[#50B749]">ações da prefeitura</span>
                         </h2>
                     </div>
                     <Link 
                         href="/noticias" 
-                        className="group flex items-center gap-3 px-6 py-3 rounded-full bg-gray-50 hover:bg-primary-50 text-gray-700 font-semibold text-sm transition-all border border-gray-100 hover:border-primary-100 hover:text-primary-600"
+                        className="group flex items-center gap-3 text-[11px] font-black uppercase tracking-widest text-[#01b0ef] hover:text-[#0088b9] transition-all"
                     >
                         Ver todas as notícias
-                        <HiArrowLongRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                        <div className="w-10 h-10 rounded-full border border-blue-100 flex items-center justify-center group-hover:bg-blue-50 transition-colors cursor-pointer">
+                            <HiArrowLongRight className="w-5 h-5" />
+                        </div>
                     </Link>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
                     {/* Destaque Principal - Left col */}
-                    <div className="lg:col-span-7 xl:col-span-8 flex">
+                    <div className="lg:col-span-6 flex">
                         <Link 
                             href={`/noticias/${destaque.slug}`} 
-                            className="group relative flex flex-col w-full min-h-[500px] rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 will-change-transform hover:-translate-y-1"
+                            className="group relative flex flex-col w-full min-h-[500px] lg:h-full rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-blue-900/10 transition-all duration-500 will-change-transform hover:-translate-y-2"
                         >
-                            <div className="absolute inset-0 bg-gray-900/60 z-10 transition-opacity group-hover:bg-gray-900/40" />
+                            <div className="absolute inset-0 bg-gray-900/40 z-10 transition-opacity duration-500 group-hover:bg-gray-900/20" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-gray-900/95 via-gray-900/60 to-transparent z-10" />
+                            
                             {destaque.imagem ? (
                                 <img 
                                     src={destaque.imagem} 
                                     alt={destaque.titulo} 
-                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" 
+                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
                                 />
                             ) : (
-                                <div className="absolute inset-0 bg-gradient-to-br from-primary-600 to-tertiary-700" />
+                                <div className="absolute inset-0 bg-gradient-to-br from-[#0088b9] to-[#01b0ef]" />
                             )}
                             
-                            <div className="relative z-20 flex flex-col justify-end h-full p-8 md:p-12 bg-gradient-to-t from-gray-900/90 via-gray-900/40 to-transparent">
+                            <div className="relative z-20 flex flex-col justify-end h-full p-8 md:p-10">
                                 <div className="flex items-center gap-3 mb-6">
-                                    <span className="px-4 py-1.5 rounded-full bg-primary-500 text-white text-xs font-bold uppercase tracking-wider shadow-sm">
+                                    <span className="px-4 py-1.5 rounded-full bg-[#50B749] text-white text-[10px] font-black uppercase tracking-widest shadow-sm">
                                         Destaque
                                     </span>
-                                    <span className="text-white/80 text-sm font-medium flex items-center gap-2">
+                                    <span className="text-white/90 text-xs font-bold uppercase tracking-widest flex items-center gap-2">
                                         <div className="w-1.5 h-1.5 rounded-full bg-white/50" />
                                         {formatarData(destaque.publicadoEm)}
                                     </span>
                                 </div>
-                                <h3 className="text-3xl md:text-4xl font-black text-white leading-tight mb-4 group-hover:text-primary-300 transition-colors">
+                                <h3 className="text-3xl md:text-4xl font-black text-white leading-tight mb-4 group-hover:text-[#50B749] transition-colors line-clamp-3">
                                     {destaque.titulo}
                                 </h3>
-                                <p className="text-white/80 text-lg line-clamp-2 md:line-clamp-3 mb-6 max-w-3xl leading-relaxed">
+                                <p className="text-white/80 text-sm md:text-base line-clamp-2 md:line-clamp-3 mb-8 max-w-2xl font-medium leading-relaxed">
                                     {destaque.resumo}
                                 </p>
-                                <div className="mt-auto inline-flex items-center gap-2 text-white font-bold text-sm tracking-wide group-hover:gap-4 transition-all w-fit">
-                                    Ler matéria completa <span className="text-primary-400">→</span>
+                                <div className="mt-auto inline-flex items-center gap-3 text-white font-black uppercase tracking-widest text-[11px] group-hover:gap-5 transition-all w-fit bg-white/10 backdrop-blur-md px-6 py-3 rounded-full border border-white/20 hover:bg-white/20">
+                                    Ler matéria <HiArrowLongRight className="w-4 h-4 text-[#50B749]" />
                                 </div>
                             </div>
                         </Link>
                     </div>
 
-                    {/* Lateral News - Right col */}
-                    <div className="lg:col-span-5 xl:col-span-4 flex flex-col gap-6">
-                        {laterais.map((n, index) => (
+                    {/* Lateral News - Right col (Grid 2x2) */}
+                    <div className="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        {laterais.map((n) => (
                             <Link 
                                 key={n.id} 
                                 href={`/noticias/${n.slug}`} 
-                                className="group flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-5 p-4 rounded-3xl bg-white border border-gray-100 hover:border-primary-100 hover:shadow-xl transition-all duration-300 flex-1 hover:-translate-y-1"
+                                className="group flex flex-col bg-gray-50 rounded-[2rem] border border-gray-100 overflow-hidden hover:shadow-2xl hover:shadow-blue-900/5 transition-all duration-500 hover:-translate-y-2 h-full"
                             >
-                                <div className="relative w-full sm:w-32 lg:w-full xl:w-32 aspect-video sm:aspect-square lg:aspect-video xl:aspect-square flex-shrink-0 overflow-hidden rounded-2xl bg-gray-100">
+                                <div className="relative w-full aspect-[4/3] overflow-hidden bg-gray-200">
                                     {n.imagem ? (
                                         <img 
                                             src={n.imagem} 
@@ -132,14 +130,23 @@ export default function UltimasNoticias() {
                                     ) : (
                                         <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200" />
                                     )}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
                                 </div>
-                                <div className="flex flex-col flex-1 justify-center py-1 text-left">
-                                    <span className="text-xs text-primary-600 font-bold tracking-widest uppercase mb-2">
+                                
+                                <div className="flex flex-col flex-1 p-6 md:p-8 bg-white">
+                                    <span className="text-[10px] text-[#01b0ef] font-black tracking-widest uppercase mb-3 block">
                                         {formatarData(n.publicadoEm)}
                                     </span>
-                                    <h3 className="font-bold text-gray-900 text-base leading-snug group-hover:text-primary-600 transition-colors line-clamp-3">
+                                    <h3 className="font-black text-gray-800 text-lg leading-snug group-hover:text-[#0088b9] transition-colors line-clamp-3 mb-4">
                                         {n.titulo}
                                     </h3>
+                                    
+                                    <div className="mt-auto pt-6 border-t border-gray-100 flex items-center justify-between">
+                                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Acessar</span>
+                                        <div className="w-8 h-8 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center text-[#01b0ef] group-hover:bg-[#01b0ef] group-hover:text-white transition-all">
+                                            <HiArrowLongRight className="w-4 h-4" />
+                                        </div>
+                                    </div>
                                 </div>
                             </Link>
                         ))}

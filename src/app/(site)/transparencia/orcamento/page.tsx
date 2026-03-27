@@ -106,7 +106,7 @@ export default function OrcamentoPage() {
                 {/* Painel de Filtros e Card Informativo */}
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-stretch">
                     {/* Filtros */}
-                    <div className="w-full bg-white rounded-[3rem] shadow-2xl shadow-slate-200/60 p-8 md:p-10 border border-white flex flex-col md:flex-row items-stretch md:items-end gap-6 text-slate-700">
+                    <div className="w-full lg:col-span-4 bg-white rounded-[3rem] shadow-2xl shadow-slate-200/60 p-8 md:p-10 border border-white flex flex-col md:flex-row items-stretch md:items-end gap-6 text-slate-700">
                         <div className="flex-1">
                             <label className="block text-[10px] font-black text-slate-400 uppercase mb-3 tracking-[0.2em] ml-2">Qual instrumento deseja consultar?</label>
                             <div className="relative group">
