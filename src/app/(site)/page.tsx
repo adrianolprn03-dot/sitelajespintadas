@@ -21,8 +21,8 @@ export default function Home() {
             <ServicosRapidos />
             <UltimasNoticias />
             <AcessoRapido />
-            <SecretariasSlider />
             <UnidadesAtendimento />
+            <SecretariasSlider />
             <RadarTransparencia />
         </main>
     );
