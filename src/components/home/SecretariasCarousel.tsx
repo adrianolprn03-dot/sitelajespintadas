@@ -24,75 +24,82 @@ export default function SecretariasCarousel({ secretarias }: { secretarias: Secr
     };
 
     return (
-        <section className="py-16 bg-[#f4f7fa] border-y border-gray-200">
+        <section className="py-20 bg-white border-y border-gray-100">
             <div className="max-w-[1300px] mx-auto px-6">
-                
+
                 {/* Header & Controls */}
-                <div className="flex flex-col md:flex-row items-center justify-between mb-10 gap-6">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-10 gap-6">
                     <div>
-                        <h2 className="text-3xl font-black text-[#003670] uppercase tracking-tighter">
-                            Nossas <span className="text-[#01b0ef]">Secretarias</span>
+                        <div className="flex items-center gap-3 mb-3">
+                            <div className="w-6 h-0.5 bg-secondary-400 rounded-full" />
+                            <span className="text-primary-500 font-black text-[10px] uppercase tracking-[0.35em]">Administração Municipal</span>
+                        </div>
+                        <h2 className="text-3xl font-black text-[#002241] uppercase tracking-tighter">
+                            Nossas <span className="text-primary-500">Secretarias</span>
                         </h2>
-                        <p className="text-gray-500 text-sm font-medium mt-1">Navegue pelas pastas da administração municipal</p>
+                        <p className="text-gray-400 text-sm font-medium mt-1">Navegue pelas pastas da administração municipal</p>
                     </div>
-                    
+
                     <div className="flex gap-3">
-                        <button 
+                        <button
                             onClick={() => scroll("left")}
-                            className="w-10 h-10 rounded-full bg-white text-[#0088b9] border border-blue-100 flex items-center justify-center hover:bg-[#0088b9] hover:text-white transition-all shadow-sm"
+                            className="w-10 h-10 rounded-full bg-white text-primary-500 border-2 border-primary-100 flex items-center justify-center hover:bg-primary-500 hover:text-white hover:border-primary-500 transition-all shadow-sm"
                             aria-label="Anterior"
                         >
-                            <FaChevronLeft size={14} className="ml-[-2px]" />
+                            <FaChevronLeft size={13} className="ml-[-1px]" />
                         </button>
-                        <button 
+                        <button
                             onClick={() => scroll("right")}
-                            className="w-10 h-10 rounded-full bg-white text-[#0088b9] border border-blue-100 flex items-center justify-center hover:bg-[#0088b9] hover:text-white transition-all shadow-sm"
+                            className="w-10 h-10 rounded-full bg-white text-primary-500 border-2 border-primary-100 flex items-center justify-center hover:bg-primary-500 hover:text-white hover:border-primary-500 transition-all shadow-sm"
                             aria-label="Próximo"
                         >
-                            <FaChevronRight size={14} className="mr-[-2px]" />
+                            <FaChevronRight size={13} className="mr-[-1px]" />
                         </button>
                     </div>
                 </div>
 
                 {/* Carousel */}
-                <div 
+                <div
                     ref={scrollRef}
-                    className="flex gap-5 overflow-x-auto hide-scrollbar pb-6 snap-x snap-mandatory"
+                    className="flex gap-5 overflow-x-auto hide-scrollbar pb-4 snap-x snap-mandatory"
                 >
                     {secretarias.map((sec) => {
-                        const nomeCurto = sec.nome.replace('Secretaria Municipal de ', '').replace('Secretaria Municipal da ', '').replace('Secretaria do ', '');
+                        const nomeCurto = sec.nome
+                            .replace("Secretaria Municipal de ", "")
+                            .replace("Secretaria Municipal da ", "")
+                            .replace("Secretaria do ", "");
                         const Icone = getSecretariaIcon(sec.nome);
 
                         return (
                             <Link key={sec.id} href={`/secretarias/${sec.slug}`} className="snap-start shrink-0 w-[260px] group block">
-                                <div className="h-full bg-white rounded-2xl p-6 shadow-md shadow-gray-200/50 border border-gray-100 flex flex-col justify-between hover:shadow-xl hover:border-[#01b0ef] hover:-translate-y-1 transition-all duration-300">
-                                    
+                                <div className="h-full bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:border-primary-300 hover:shadow-lg flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 border-l-4 border-l-transparent hover:border-l-primary-500">
+
                                     <div>
                                         <div className="flex items-center gap-4 mb-4">
-                                            <div className="w-12 h-12 bg-blue-50 text-[#01b0ef] rounded-xl flex items-center justify-center group-hover:bg-[#01b0ef] group-hover:text-white transition-colors">
+                                            <div className="w-12 h-12 bg-primary-50 text-primary-500 rounded-xl flex items-center justify-center group-hover:bg-primary-500 group-hover:text-white transition-colors shrink-0">
                                                 <Icone size={20} />
                                             </div>
-                                            <h3 className="text-sm font-black text-[#003670] uppercase tracking-tight leading-tight line-clamp-2">
+                                            <h3 className="text-sm font-black text-[#002241] uppercase tracking-tight leading-tight line-clamp-2">
                                                 {nomeCurto}
                                             </h3>
                                         </div>
-                                        <p className="text-gray-500 text-[11px] font-medium leading-relaxed line-clamp-3 mb-5">
+                                        <p className="text-gray-400 text-[11px] font-medium leading-relaxed line-clamp-3 mb-5">
                                             {sec.descricao || "Acesse para mais detalhes."}
                                         </p>
                                     </div>
 
                                     <div className="pt-4 border-t border-gray-100">
                                         <div className="flex items-center gap-2">
-                                            <FaUserTie className="text-gray-400" size={12} />
+                                            <FaUserTie className="text-gray-300" size={11} />
                                             <div className="flex flex-col">
-                                                <span className="text-[8px] font-black uppercase tracking-widest text-[#0088b9]">Gestor(a)</span>
-                                                <span className="text-[11px] font-bold text-gray-700 truncate max-w-[180px]">
+                                                <span className="text-[8px] font-black uppercase tracking-widest text-primary-500">Gestor(a)</span>
+                                                <span className="text-[11px] font-bold text-gray-600 truncate max-w-[180px]">
                                                     {sec.secretario || "A nomear"}
                                                 </span>
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                 </div>
                             </Link>
                         );

@@ -228,9 +228,16 @@ export default function TransparenciaPage() {
                                                         <h2 className="font-black text-gray-800 text-base uppercase tracking-tight group-hover:text-blue-600 transition-colors">
                                                             {m.titulo}
                                                         </h2>
-                                                        <span className="text-[9px] font-black uppercase tracking-widest text-gray-400 bg-gray-50 px-2.5 py-1 rounded-lg border border-gray-100 mt-0.5">
-                                                            {m.badge}
-                                                        </span>
+                                                        <div className="flex flex-col items-end gap-1.5">
+                                                            <span className="text-[9px] font-black uppercase tracking-widest text-gray-400 bg-gray-50 px-2.5 py-1 rounded-lg border border-gray-100">
+                                                                {m.badge}
+                                                            </span>
+                                                            {isExternal && (
+                                                                <span className="bg-primary-500 text-white text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-md shadow-sm flex items-center gap-1 animate-pulse">
+                                                                    <ExternalLink size={8} /> Externo
+                                                                </span>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                     
                                                     <p className="text-gray-500 text-xs leading-relaxed font-medium mb-8 grow">
@@ -239,7 +246,7 @@ export default function TransparenciaPage() {
 
                                                     <div className="flex items-center justify-between pt-4 border-t border-gray-50 mt-auto">
                                                         <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-blue-500 group-hover:text-blue-700 transition-colors">
-                                                            {isExternal ? "Portal Externo" : "Ver Detalhes"}
+                                                            {isExternal ? "Acessar Portal Externo" : "Ver Detalhes"}
                                                             <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                                                         </div>
                                                         {isExternal && <ExternalLink size={12} className="text-gray-300" />}
