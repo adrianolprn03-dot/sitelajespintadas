@@ -232,6 +232,18 @@ model Esic {
   respostaRecurso     String?
   dataRespostaRecurso DateTime?
   criadoEm            DateTime  @default(now())
+  cidadaoId           String?
+  cidadao             CidadaoEsic? @relation(fields: [cidadaoId], references: [id])
+}
+
+model CidadaoEsic {
+  id           String   @id @default(cuid())
+  nome         String
+  cpf          String?  @unique
+  email        String   @unique
+  senha        String
+  criadoEm     DateTime @default(now())
+  pedidos      Esic[]
 }
 
 model GaleriaFoto {

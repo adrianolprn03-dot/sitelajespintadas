@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { verifyESICToken } from "@/lib/esic-auth";
 
 export async function POST(req: NextRequest) {
     try {
@@ -13,6 +14,15 @@ export async function POST(req: NextRequest) {
         const prazo = new Date();
         prazo.setDate(prazo.getDate() + 20); // 20 dias corridos
 
+        // Tentar autenticar o cidadão opcionalmente
+        const authHeader = req.headers.get("authorization");
+        let cidadaoId = null;
+        if (authHeader && authHeader.startsWith("Bearer ")) {
+            const token = authHeader.split(" ")[1];
+            const decoded = await verifyESICToken(token);
+            if (decoded) cidadaoId = decoded.id;
+        }
+
         const esic = await prisma.esic.create({
             data: { 
                 orgao, 
@@ -20,7 +30,8 @@ export async function POST(req: NextRequest) {
                 nome: nome || null, 
                 email: email || null,
                 formaRetorno: formaRetorno || "sistema",
-                prazo
+                prazo,
+                cidadaoId
             },
         });
 
