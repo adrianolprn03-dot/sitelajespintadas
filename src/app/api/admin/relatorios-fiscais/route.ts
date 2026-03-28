@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 
 export async function GET(req: NextRequest) {
     try {
@@ -31,6 +32,9 @@ export async function POST(req: NextRequest) {
                 dataPublicacao: new Date(),
             },
         });
+
+        revalidatePath("/transparencia/lrf");
+        revalidatePath("/admin/relatorios-fiscais");
 
         return NextResponse.json(novoRelatorio, { status: 201 });
     } catch (error) {
