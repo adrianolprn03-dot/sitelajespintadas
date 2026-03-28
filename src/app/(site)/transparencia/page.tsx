@@ -58,6 +58,7 @@ const categoriasDeModulos = [
             { icon: Briefcase, titulo: "Processo Seletivo", desc: "Contratações temporárias e seleções.", href: "/transparencia/processo-seletivo", cor: "from-orange-400 to-amber-500", badge: "RH" },
             { icon: Handshake, titulo: "Convênios e Parcerias", desc: "Termos firmados com terceiros.", href: "/transparencia/convenios", cor: "from-pink-400 to-rose-500", badge: "Convênios" },
             { icon: Construction, titulo: "Obras Públicas", desc: "Acompanhamento de obras e medições.", href: "/transparencia/obras", cor: "from-orange-500 to-red-500", badge: "Obras" },
+            { icon: Files, titulo: "Publicações", desc: "Atos oficiais, editais e publicações diversas.", href: "/transparencia/publicacoes", cor: "from-slate-400 to-gray-600", badge: "Atos" },
             { icon: Users2, titulo: "Terceirizados", desc: "Relação de postos terceirizados.", href: "/transparencia/servidores/terceirizados", cor: "from-amber-500 to-orange-600", badge: "RH" },
             { icon: UserCircle2, titulo: "Estagiários", desc: "Relação de estagiários contratados.", href: "/transparencia/servidores/estagiarios", cor: "from-pink-500 to-rose-600", badge: "RH" },
             { icon: AlertTriangle, titulo: "Covid-19", desc: "Ações e gastos no combate à pandemia.", href: "/transparencia/covid19", cor: "from-red-500 to-red-700", badge: "Saúde" },

@@ -93,6 +93,7 @@ const modulosAlvo = [
     { value: "concursos", label: "Card: Concursos e Seleções" },
     { value: "terceirizados", label: "Card: Terceirizados" },
     { value: "agentes-politicos", label: "Card: Agentes Políticos" },
+    { value: "publicacoes", label: "Card: Publicações" },
     { value: "unidades-saude", label: "Card: Unidades de Saúde" },
 ];
 

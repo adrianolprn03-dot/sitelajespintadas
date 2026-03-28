@@ -452,3 +452,15 @@ model ServicoCarta {
   ordem      Int      @default(0)
   criadoEm   DateTime @default(now())
 }
+
+model RelatorioFiscal {
+  id              String   @id @default(cuid())
+  titulo          String
+  tipo            String   // RREO, RGF, etc.
+  periodo         String   // 1º Bimestre, 2º Quadrimestre, etc.
+  ano             Int
+  arquivo         String   // URL ou base64 do arquivo
+  dataPublicacao  DateTime @default(now())
+  criadoEm        DateTime @default(now())
+  atualizadoEm    DateTime @updatedAt
+}
