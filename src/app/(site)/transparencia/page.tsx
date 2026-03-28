@@ -13,6 +13,7 @@ import {
 import { motion } from "framer-motion";
 import PageHeader from "@/components/PageHeader";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
+import RadarTransparencia from "@/components/home/RadarTransparencia";
 import { useEffect, useState } from "react";
 
 // Como estamos usando client component para as animações, 
@@ -299,6 +300,9 @@ export default function TransparenciaPage() {
                     </div>
                 </div>
             </div>
+
+            {/* Seção Radar */}
+            <RadarTransparencia />
 
             {/* Seção PNTP 2025 no Rodapé */}
             <div className="bg-white pt-10 pb-20 border-t border-gray-100">

@@ -8,7 +8,7 @@ export default async function RadarTransparencia() {
         where: { ativo: true, moduloAlvo: "home-radar" }
     });
 
-    const defaultUrl = "https://radar.tce.mt.gov.br/pnl/";
+    const defaultUrl = "https://radardatransparencia.atricon.org.br/index.html";
     const finalHref = override ? override.url : defaultUrl;
     const isOverride = !!override;
 

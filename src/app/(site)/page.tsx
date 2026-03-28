@@ -3,7 +3,6 @@ export const dynamic = "force-dynamic";
 import VideoHero from "@/components/home/VideoHero";
 import HeroSection from "@/components/home/HeroSection";
 import ServicosRapidos from "@/components/home/ServicosRapidos";
-import RadarTransparencia from "@/components/home/RadarTransparencia";
 import AcessoRapido from "@/components/home/AcessoRapido";
 import UltimasNoticias from "@/components/home/UltimasNoticias";
 import SecretariasSlider from "@/components/home/SecretariasSlider";
@@ -23,7 +22,6 @@ export default function Home() {
             <AcessoRapido />
             <UnidadesAtendimento />
             <SecretariasSlider />
-            <RadarTransparencia />
         </main>
     );
 }
