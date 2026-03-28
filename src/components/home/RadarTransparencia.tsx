@@ -1,16 +1,10 @@
 import Link from "next/link";
 import { HiOutlineArrowTopRightOnSquare } from "react-icons/hi2";
-import { prisma } from "@/lib/prisma";
 import { FaExternalLinkAlt } from "react-icons/fa";
-
-export default async function RadarTransparencia() {
-    const override = await (prisma as any).linkExterno.findFirst({
-        where: { ativo: true, moduloAlvo: "home-radar" }
-    });
-
+export default function RadarTransparencia({ overrideUrl }: { overrideUrl?: string }) {
     const defaultUrl = "https://radardatransparencia.atricon.org.br/index.html";
-    const finalHref = override ? override.url : defaultUrl;
-    const isOverride = !!override;
+    const finalHref = overrideUrl || defaultUrl;
+    const isOverride = !!overrideUrl;
 
     return (
         <section className="bg-white py-12 px-6">

@@ -302,7 +302,7 @@ export default function TransparenciaPage() {
             </div>
 
             {/* Seção Radar */}
-            <RadarTransparencia />
+            <RadarTransparencia overrideUrl={linksExternos.find((l: any) => l.moduloAlvo === "home-radar")?.url} />
 
             {/* Seção PNTP 2025 no Rodapé */}
             <div className="bg-white pt-10 pb-20 border-t border-gray-100">
