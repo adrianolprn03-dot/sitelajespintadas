@@ -42,7 +42,7 @@ const menuItems = [
     { label: "Relatórios Fiscais", href: "/admin/relatorios-fiscais", icon: FaChartBar },
     { label: "Concursos", href: "/admin/concursos", icon: FaUsers },
     { label: "Carta de Serviços", href: "/admin/carta-servicos", icon: FaFileAlt },
-    { label: "Identidade Visual", href: "/admin/configuracoes/simbolos", icon: FaImages },
+    { label: "Símbolos Oficiais", href: "/admin/configuracoes/simbolos", icon: FaImages },
     { label: "Importar CSV", href: "/admin/importacao", icon: FaUpload },
 ];
 

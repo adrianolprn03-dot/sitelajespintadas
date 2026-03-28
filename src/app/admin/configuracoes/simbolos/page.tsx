@@ -80,7 +80,7 @@ export default function SimbolosMunicipaisPage() {
         <div className="p-6 max-w-5xl mx-auto font-['Montserrat',sans-serif]">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
                 <div>
-                    <h1 className="text-3xl font-black text-gray-800 uppercase tracking-tighter">Identidade Municipal</h1>
+                    <h1 className="text-3xl font-black text-gray-800 uppercase tracking-tighter">Símbolos Oficiais</h1>
                     <p className="text-gray-500 text-sm font-medium">Gestão dos símbolos oficiais: Brasão, Bandeira e Hino.</p>
                 </div>
                 <button 
