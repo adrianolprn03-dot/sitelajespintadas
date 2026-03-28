@@ -70,7 +70,7 @@ export default async function ServicosRapidos() {
                         const override = linksExternos.find((l: any) =>
                             l.moduloAlvo?.toLowerCase() === identifier.toLowerCase()
                         );
-                        const finalHref = override ? override.url : s.href;
+                        const finalHref = (override && override.url) ? override.url : s.href;
                         const isExternal = !!override;
 
                         return (

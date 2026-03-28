@@ -88,6 +88,11 @@ const modulosAlvo = [
     { value: "terceirizados", label: "Card: Terceirizados" },
     { value: "transferencias", label: "Card: Transferências" },
     { value: "lrf", label: "Card: Transparência Fiscal (LRF)" },
+    { value: "folha-pagamento", label: "Card: Folha de Pagamento" },
+    { value: "padrao-remuneratorio", label: "Card: Padrão Remuneratório" },
+    { value: "concursos-selecoes", label: "Card: Concursos e Seleções" },
+    { value: "terceirizacao", label: "Card: Terceirização" },
+    { value: "agentes-politicos", label: "Card: Agentes Políticos" },
     { value: "unidades-saude", label: "Card: Unidades de Saúde" },
 ];
 

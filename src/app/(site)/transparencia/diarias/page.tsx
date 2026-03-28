@@ -16,6 +16,7 @@ type Diaria = {
     dataInicio: string;
     dataFim: string;
     valor: number;
+    valorUnitario: number;
     quantidadeDias: number;
     secretaria: string;
 };
@@ -221,14 +222,23 @@ export default function DiariasPage() {
                                             </div>
                                         </div>
 
-                                        <div className="w-full lg:w-48 text-right bg-gray-50 lg:bg-transparent p-6 lg:p-0 rounded-2xl border border-gray-100 lg:border-none flex lg:flex-col items-center lg:items-end justify-between">
-                                            <div>
-                                                <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1 lg:hidden">VALOR</p>
-                                                <p className="text-2xl font-black text-blue-600 tracking-tighter">{formatCurrency(d.valor)}</p>
+                                        <div className="w-full lg:w-64 text-right bg-gray-50 lg:bg-transparent p-6 lg:p-0 rounded-2xl border border-gray-100 lg:border-none flex lg:flex-col items-center lg:items-end justify-between gap-4">
+                                            <div className="text-right">
+                                                <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1">UNITÁRIO</p>
+                                                <p className="text-sm font-bold text-gray-600 tracking-tight">{formatCurrency(d.valorUnitario || (d.valor / d.quantidadeDias))}</p>
                                             </div>
                                             <div className="text-right">
-                                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{d.quantidadeDias} {d.quantidadeDias === 1 ? "dia" : "dias"}</p>
+                                                <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1 lg:hidden">TOTAL</p>
+                                                <p className="text-2xl font-black text-blue-600 tracking-tighter leading-none">{formatCurrency(d.valor)}</p>
+                                                <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-1">{d.quantidadeDias} {d.quantidadeDias === 1 ? "dia" : "dias"}</p>
                                             </div>
+                                            <button 
+                                                onClick={() => window.print()} 
+                                                className="flex items-center gap-2 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all border border-blue-100/50"
+                                                title="Baixar Comprovante PDF"
+                                            >
+                                                <FaDownload /> PDF
+                                            </button>
                                         </div>
                                     </motion.div>
                                 ))}

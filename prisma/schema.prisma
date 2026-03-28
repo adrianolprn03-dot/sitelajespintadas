@@ -113,6 +113,7 @@ model Diaria {
   dataInicio     DateTime
   dataFim        DateTime
   valor          Float
+  valorUnitario  Float    @default(0)
   quantidadeDias Int      @default(1)
   secretaria     String
   mes            Int

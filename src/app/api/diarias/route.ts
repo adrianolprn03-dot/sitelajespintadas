@@ -35,12 +35,13 @@ export async function POST(req: NextRequest) {
             dataInicio: new Date(body.dataInicio),
             dataFim: new Date(body.dataFim),
             valor: parseFloat(body.valor) || 0,
+            valorUnitario: parseFloat(body.valorUnitario) || 0,
             quantidadeDias: parseInt(body.quantidadeDias) || 1,
             mes: parseInt(body.mes) || new Date().getMonth() + 1,
             ano: parseInt(body.ano) || new Date().getFullYear(),
         };
 
-        const diaria = await prisma.diaria.create({ data });
+        const diaria = await (prisma as any).diaria.create({ data });
         return NextResponse.json(diaria, { status: 201 });
     } catch (error) {
         console.error("Erro ao criar diária:", error);
