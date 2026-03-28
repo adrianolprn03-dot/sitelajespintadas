@@ -70,6 +70,23 @@ export default function Header() {
     const [scrolled, setScrolled] = useState(false);
     const { toggleHighContrast, increaseFontSize, decreaseFontSize } = useAccessibility();
     const pathname = usePathname();
+    const [logo, setLogo] = useState("/logo_oficial.png");
+
+    useEffect(() => {
+        const fetchLogo = async () => {
+            try {
+                const res = await fetch("/api/admin/configuracoes");
+                if (res.ok) {
+                    const data = await res.json();
+                    const brasao = data.find((c: any) => c.chave === "simbolo_brasao")?.valor;
+                    if (brasao) setLogo(brasao);
+                }
+            } catch (error) {
+                console.error("Erro ao carregar logos:", error);
+            }
+        };
+        fetchLogo();
+    }, []);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -115,13 +132,10 @@ export default function Header() {
                 {/* Logo */}
                 <div className="flex-shrink-0">
                     <Link href="/" className="flex items-center">
-                        <Image
-                            src="/logo_oficial.png"
+                        <img
+                            src={logo}
                             alt="Prefeitura de Lajes Pintadas"
-                            width={280}
-                            height={80}
                             className="object-contain h-9 w-auto md:h-11"
-                            priority
                         />
                     </Link>
                 </div>
@@ -132,6 +146,7 @@ export default function Header() {
                         { label: "Serviços", href: "/servicos/saude" },
                         { label: "Notícias", href: "/noticias" },
                         { label: "Transparência", href: "/transparencia" },
+                        { label: "Símbolos", href: "/municipio/simbolos" },
                         { label: "Ouvidoria", href: "/servicos/ouvidoria" },
                         { label: "Contato", href: "/contato" }
                     ].map((item, index) => {
