@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FaGlobe, FaImage, FaHistory, FaSave, FaQuoteRight } from "react-icons/fa";
+import { FaGlobe, FaImage, FaHistory, FaSave, FaQuoteRight, FaMusic } from "react-icons/fa";
 import toast from "react-hot-toast";
 
 export default function SimbolosMunicipaisPage() {
@@ -11,6 +11,7 @@ export default function SimbolosMunicipaisPage() {
         "simbolo_brasao": "",
         "simbolo_bandeira": "",
         "simbolo_hino": "",
+        "simbolo_hino_audio": "",
     });
 
     useEffect(() => {
@@ -23,6 +24,7 @@ export default function SimbolosMunicipaisPage() {
                         "simbolo_brasao": data.find((c: any) => c.chave === "simbolo_brasao")?.valor || "",
                         "simbolo_bandeira": data.find((c: any) => c.chave === "simbolo_bandeira")?.valor || "",
                         "simbolo_hino": data.find((c: any) => c.chave === "simbolo_hino")?.valor || "",
+                        "simbolo_hino_audio": data.find((c: any) => c.chave === "simbolo_hino_audio")?.valor || "",
                     };
                     setConfigs(filtered);
                 }
@@ -39,8 +41,11 @@ export default function SimbolosMunicipaisPage() {
         const file = e.target.files?.[0];
         if (!file) return;
 
-        if (file.size > 2 * 1024 * 1024) {
-            toast.error("Imagem muito grande (máx 2MB)");
+        const isAudio = file.type.startsWith("audio/");
+        const maxSize = isAudio ? 10 * 1024 * 1024 : 2 * 1024 * 1024;
+
+        if (file.size > maxSize) {
+            toast.error(isAudio ? "Áudio muito grande (máx 10MB)" : "Imagem muito grande (máx 2MB)");
             return;
         }
 
@@ -148,12 +153,23 @@ export default function SimbolosMunicipaisPage() {
                             <h2 className="text-lg font-black text-gray-800 uppercase tracking-tight">Letra do Hino</h2>
                         </div>
                         <textarea 
-                            className="flex-1 w-full p-8 bg-gray-50 border border-transparent rounded-[2rem] text-sm font-medium leading-relaxed focus:bg-white focus:ring-4 focus:ring-amber-50 transition-all outline-none min-h-[400px]"
+                            className="flex-1 w-full p-8 bg-gray-50 border border-transparent rounded-[2rem] text-sm font-medium leading-relaxed focus:bg-white focus:ring-4 focus:ring-amber-50 transition-all outline-none min-h-[300px]"
                             placeholder="Insira a letra oficial do hino aqui..."
                             value={configs.simbolo_hino}
                             onChange={(e) => setConfigs({ ...configs, simbolo_hino: e.target.value })}
                         />
-                        <p className="mt-4 text-[10px] text-gray-400 font-bold uppercase tracking-widest text-center">Este texto será exibido na página de Símbolos do Portal.</p>
+                        <div className="mt-6 p-6 bg-amber-50/50 rounded-[2rem] border border-amber-100 flex flex-col gap-4">
+                            <h3 className="text-xs font-black text-amber-800 uppercase tracking-widest flex items-center gap-2"><FaMusic /> Áudio do Hino (MP3/WAV)</h3>
+                            {configs.simbolo_hino_audio && (
+                                <audio controls src={configs.simbolo_hino_audio} className="w-full" />
+                            )}
+                            <input 
+                                type="file" accept="audio/*"
+                                onChange={(e) => handleFileUpload(e, "simbolo_hino_audio")}
+                                className="text-xs text-amber-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-amber-100 file:text-amber-800 hover:file:bg-amber-200 transition-all cursor-pointer mt-2"
+                            />
+                        </div>
+                        <p className="mt-4 text-[10px] text-gray-400 font-bold uppercase tracking-widest text-center">A letra e o áudio serão exibidos no Portal.</p>
                     </div>
                 </div>
             </div>

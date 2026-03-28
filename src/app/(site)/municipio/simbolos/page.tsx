@@ -10,6 +10,7 @@ export default function SimbolosPage() {
         "simbolo_brasao": "",
         "simbolo_bandeira": "",
         "simbolo_hino": "",
+        "simbolo_hino_audio": "",
     });
 
     useEffect(() => {
@@ -22,6 +23,7 @@ export default function SimbolosPage() {
                         "simbolo_brasao": data.find((c: any) => c.chave === "simbolo_brasao")?.valor || "",
                         "simbolo_bandeira": data.find((c: any) => c.chave === "simbolo_bandeira")?.valor || "",
                         "simbolo_hino": data.find((c: any) => c.chave === "simbolo_hino")?.valor || "",
+                        "simbolo_hino_audio": data.find((c: any) => c.chave === "simbolo_hino_audio")?.valor || "",
                     };
                     setConfigs(filtered);
                 }
@@ -110,6 +112,14 @@ export default function SimbolosPage() {
                                 {configs.simbolo_hino || "A letra do hino oficial está sendo processada pela administração municipal."}
                             </div>
                         </div>
+                        
+                        {configs.simbolo_hino_audio && (
+                            <div className="mt-8 flex justify-center">
+                                <div className="bg-white/50 backdrop-blur border border-primary-100 p-4 rounded-3xl shadow-xl shadow-primary-500/5 w-full max-w-md">
+                                    <audio controls src={configs.simbolo_hino_audio} className="w-full h-10 outline-none" />
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     <div className="mt-20 flex flex-col items-center gap-4 opacity-40">
