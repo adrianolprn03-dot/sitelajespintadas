@@ -39,6 +39,8 @@ export async function POST(req: Request) {
         await Promise.all(updates);
 
         revalidatePath("/", "layout");
+        revalidatePath("/municipio/simbolos");
+        revalidatePath("/transparencia/simbolos");
 
         return NextResponse.json({ success: true });
     } catch (error) {
