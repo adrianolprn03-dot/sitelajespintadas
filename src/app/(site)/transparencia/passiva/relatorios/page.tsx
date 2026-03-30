@@ -1,0 +1,162 @@
+import type { Metadata } from "next";
+import PageHeader from "@/components/PageHeader";
+import { FileStack, ShieldCheck, Eye, Download, FileText, ChevronRight, BarChart, Info, Filter } from "lucide-react";
+import Link from "next/link";
+import { prisma } from "@/lib/prisma";
+
+export const metadata: Metadata = {
+    title: "Relatórios do SIC | Portal da Transparência",
+    description: "Acesse os relatórios estatísticos e listagens de pedidos de informação realizados ao município.",
+};
+
+async function getStats() {
+    const total = await prisma.esic.count();
+    const atendidos = await prisma.esic.count({ where: { status: "concluido" } });
+    const comSigilo = await prisma.esic.count({ where: { NOT: { grauSigilo: "Sem Sigilo" } } });
+    const semSigilo = await prisma.esic.count({ where: { grauSigilo: "Sem Sigilo" } });
+    
+    return { total, atendidos, comSigilo, semSigilo };
+}
+
+export default async function SICRelatoriosPage() {
+    const stats = await getStats();
+
+    const basesRelatorios = [
+        {
+            titulo: "Pedidos com Grau de Sigilo",
+            desc: "Relação de informações classificadas como reservadas, secretas ou ultrassecretas, conforme a LAI.",
+            href: "/transparencia/passiva/relatorios/com-sigilo",
+            icon: ShieldCheck,
+            color: "text-purple-600 bg-purple-50",
+            count: stats.comSigilo
+        },
+        {
+            titulo: "Pedidos sem Grau de Sigilo",
+            desc: "Listagem de todas as solicitações de acesso público que não possuem restrição de sigilo.",
+            href: "/transparencia/passiva/relatorios/sem-sigilo",
+            icon: Eye,
+            color: "text-blue-600 bg-blue-50",
+            count: stats.semSigilo
+        }
+    ];
+
+    return (
+        <div className="min-h-screen bg-[#f8fafc] font-['Montserrat',sans-serif]">
+            <PageHeader
+                title="Relatórios Estatísticos SIC"
+                subtitle="Transparência plena: acompanhe a relação de pedidos e o desempenho do e-SIC."
+                variant="premium"
+                icon={<FileStack />}
+                breadcrumbs={[
+                    { label: "Início", href: "/" },
+                    { label: "Transparência", href: "/transparencia" },
+                    { label: "Transparência Passiva", href: "/transparencia/passiva" },
+                    { label: "Relatórios" }
+                ]}
+            />
+
+            <div className="max-w-[1240px] mx-auto px-6 py-20">
+                {/* Métricas de Cabeçalho */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-16">
+                   {[
+                       { label: "Total de Pedidos", val: stats.total, color: "blue" },
+                       { label: "Pedidos Concluídos", val: stats.atendidos, color: "emerald" },
+                       { label: "Aguardando Resposta", val: stats.total - stats.atendidos, color: "amber" },
+                       { label: "Acesso Público", val: stats.semSigilo, color: "cyan" }
+                   ].map((s, idx) => (
+                       <div key={idx} className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-lg shadow-gray-200/40">
+                           <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">{s.label}</p>
+                           <p className={`text-4xl font-black text-${s.color}-600`}>{s.val}</p>
+                       </div>
+                   ))}
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                    
+                    {/* Seleção de Relatórios Detalhados */}
+                    <div className="lg:col-span-2 space-y-8">
+                        <div className="flex items-center gap-4 mb-10">
+                            <div className="w-10 h-1 bg-blue-600 rounded-full"></div>
+                            <h2 className="text-2xl font-black text-gray-800 uppercase tracking-tighter">Bases de Dados</h2>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                           {basesRelatorios.map((rel, idx) => (
+                               <Link key={idx} href={rel.href} className="group">
+                                   <div className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-xl shadow-gray-200/40 hover:shadow-2xl transition-all duration-500 h-full flex flex-col">
+                                       <div className={`w-16 h-16 ${rel.color} rounded-3xl flex items-center justify-center mb-8 shadow-sm group-hover:scale-110 transition-transform`}>
+                                           <rel.icon size={32} />
+                                       </div>
+                                       <h3 className="text-xl font-black text-gray-800 uppercase tracking-tighter mb-4">{rel.titulo}</h3>
+                                       <p className="text-gray-500 font-medium text-sm leading-relaxed mb-10 grow">
+                                           {rel.desc}
+                                       </p>
+                                       <div className="flex items-center justify-between pt-8 border-t border-gray-50 mt-auto">
+                                           <span className="text-xs font-black text-blue-600 uppercase tracking-widest">{rel.count} Registros</span>
+                                           <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center group-hover:translate-x-2 transition-transform">
+                                              <ChevronRight size={20} />
+                                           </div>
+                                       </div>
+                                   </div>
+                               </Link>
+                           ))}
+                        </div>
+
+                        {/* Download de Relatórios Consolidados */}
+                        <div className="mt-16 bg-white p-12 rounded-[3.5rem] border border-gray-100 shadow-xl shadow-gray-200/40">
+                            <h3 className="text-2xl font-black text-gray-800 uppercase tracking-tighter mb-10 flex items-center gap-4">
+                               <FileText className="text-blue-600" size={28} />
+                               Relatórios Consolidados (LAI)
+                            </h3>
+                            <div className="space-y-4">
+                                {[2024, 2023, 2022].map((ano) => (
+                                    <div key={ano} className="flex flex-col sm:flex-row sm:items-center justify-between p-8 bg-gray-50 rounded-[2rem] border border-gray-100 group hover:bg-blue-600 hover:border-blue-600 transition-all cursor-pointer">
+                                        <div className="flex items-center gap-6">
+                                            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                                               <Download size={20} />
+                                            </div>
+                                            <div>
+                                               <span className="block font-black text-gray-800 uppercase text-sm tracking-tight group-hover:text-white transition-colors">Relatório Estatístico Consolidado - {ano}</span>
+                                               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest group-hover:text-blue-100 transition-colors">PDF • 1.4 MB • Atualizado em Jan/{ano+1}</p>
+                                            </div>
+                                        </div>
+                                        <button className="mt-6 sm:mt-0 bg-white text-blue-600 px-8 py-3 rounded-full font-black uppercase text-[10px] tracking-widest shadow-sm group-hover:bg-white group-hover:text-blue-600 transition-all active:scale-95">
+                                            Baixar PDF
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Sidebar Informativa */}
+                    <div className="space-y-8">
+                        <div className="bg-gray-900 rounded-[3rem] p-10 text-white shadow-2xl shadow-blue-900/10">
+                            <BarChart size={32} className="text-blue-500 mb-8" />
+                            <h3 className="text-xl font-black uppercase tracking-tighter mb-4">Análise Visual</h3>
+                            <p className="text-gray-400 text-sm font-medium leading-relaxed mb-10">
+                                Quer ver os dados de forma simplificada em gráficos de pizza, barras e evolução temporal?
+                            </p>
+                            <Link href="/transparencia/passiva/graficos" className="flex items-center justify-center gap-3 bg-blue-600 text-white w-full py-5 rounded-full font-black uppercase text-[10px] tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-blue-900/20">
+                                Ver Gráficos SIC <ArrowRight size={16} />
+                            </Link>
+                        </div>
+
+                        <div className="bg-blue-50/50 p-10 rounded-[3rem] border border-blue-100">
+                             <div className="w-12 h-12 bg-blue-600 text-white rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-blue-200">
+                                <Info size={24} />
+                             </div>
+                             <h4 className="font-black text-blue-900 uppercase tracking-tighter mb-4">Proteção de Dados</h4>
+                             <p className="text-sm text-blue-800/60 font-bold leading-relaxed mb-6">
+                                Respeitando a LGPD e o sigilo de dados pessoais, informações como CPF e endereços de solicitantes não são exibidas em relatórios públicos.
+                             </p>
+                             <div className="flex items-center gap-2 text-blue-600 text-[10px] font-black uppercase tracking-widest">
+                                <Filter size={12} /> Dados Tratados
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}

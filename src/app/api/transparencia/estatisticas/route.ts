@@ -25,6 +25,11 @@ export async function GET() {
             _count: { _all: true },
         });
 
+        const esicPorSigilo = await prisma.esic.groupBy({
+            by: ["grauSigilo"],
+            _count: { _all: true },
+        });
+
         return NextResponse.json({
             ouvidoria: {
                 porTipo: ouvidoriaPorTipo.map(item => ({
@@ -43,6 +48,10 @@ export async function GET() {
                 })),
                 porStatus: esicPorStatus.map(item => ({
                     name: item.status.charAt(0).toUpperCase() + item.status.slice(1),
+                    value: item._count._all
+                })),
+                porSigilo: esicPorSigilo.map(item => ({
+                    name: item.grauSigilo,
                     value: item._count._all
                 }))
             }

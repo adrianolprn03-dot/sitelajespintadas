@@ -223,6 +223,7 @@ model Esic {
   email               String?
   formaRetorno        String    @default("sistema")
   status              String    @default("aberto")
+  grauSigilo          String    @default("Sem Sigilo")
   resposta            String?
   respondidoEm        DateTime?
   prazo               DateTime?

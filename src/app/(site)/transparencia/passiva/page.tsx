@@ -1,5 +1,16 @@
+"use client";
 import PageHeader from "@/components/PageHeader";
-import { FaChartBar, FaUserCheck, FaClock, FaClipboardList } from "react-icons/fa";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { 
+    FaChartBar, FaUserCheck, FaClock, FaClipboardList 
+} from "react-icons/fa";
+import { 
+    Building2, HelpCircle, CalendarClock, ScrollText, 
+    FileStack, ShieldCheck, Eye, BarChart3, 
+    Search, ArrowRight, Check, ExternalLink,
+    Landmark, Info, Lock
+} from "lucide-react";
 
 const estatisticas = [
     { label: "Pedidos Recebidos", valor: "42", icone: FaClipboardList, cor: "text-blue-600 bg-blue-100" },
@@ -8,12 +19,35 @@ const estatisticas = [
     { label: "Tempo Médio (Dias)", valor: "6.5", icone: FaChartBar, cor: "text-purple-600 bg-purple-100" },
 ];
 
+const categoriasSIC = [
+    {
+        titulo: "Informações do SIC",
+        modulos: [
+            { icon: Building2, titulo: "Institucional do SIC", desc: "Autoridade de monitoramento, contatos e horários.", href: "/transparencia/passiva/institucional", cor: "from-blue-600 to-indigo-700", badge: "Institucional" },
+            { icon: HelpCircle, titulo: "Perguntas Frequentes", desc: "Respostas para as dúvidas mais comuns sobre a LAI.", href: "/transparencia/passiva/perguntas", cor: "from-amber-500 to-orange-600", badge: "FAQ" },
+            { icon: CalendarClock, titulo: "Prazos de Resposta", desc: "Prazos legais e procedimentos de atendimento.", href: "/transparencia/passiva/prazos", cor: "from-emerald-500 to-teal-700", badge: "Prazos" },
+            { icon: ScrollText, titulo: "Regulamentação", desc: "Leis e decretos que regulamentam o SIC no município.", href: "/transparencia/passiva/regulamentacao", cor: "from-slate-600 to-slate-800", badge: "Leis" },
+        ]
+    },
+    {
+        titulo: "Relatórios e Estatísticas",
+        modulos: [
+            { icon: FileStack, titulo: "Relatório de Solicitações", desc: "Listagem detalhada de todos os pedidos protocolados.", href: "/transparencia/passiva/relatorios", cor: "from-rose-500 to-red-700", badge: "Geral" },
+            { icon: ShieldCheck, titulo: "Com Grau de Sigilo", desc: "Relatórios de informações classificadas com sigilo.", href: "/transparencia/passiva/relatorios/com-sigilo", cor: "from-purple-600 to-indigo-800", badge: "Sigilo" },
+            { icon: Eye, titulo: "Sem Grau de Sigilo", desc: "Relatórios de informações de acesso público.", href: "/transparencia/passiva/relatorios/sem-sigilo", cor: "from-cyan-500 to-blue-600", badge: "Público" },
+            { icon: BarChart3, titulo: "Gráficos e Estatísticas", desc: "Indicadores de desempenho e estatísticas do SIC.", href: "/transparencia/passiva/graficos", cor: "from-teal-400 to-emerald-500", badge: "Dados" },
+        ]
+    }
+];
+
 export default function TransparenciaPassivaPage() {
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-[#f8fafc] font-['Montserrat',sans-serif]">
             <PageHeader
-                title="Transparência Passiva"
-                subtitle="Relatórios estatísticos de acesso à informação (e-SIC) – Lei 12.527/2011."
+                title="Transparência Passiva (e-SIC)"
+                subtitle="Serviço de Informação ao Cidadão – Acesse dados públicos e acompanhe suas solicitações."
+                variant="premium"
+                icon={<Landmark />}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
                     { label: "Transparência", href: "/transparencia" },
@@ -21,44 +55,121 @@ export default function TransparenciaPassivaPage() {
                 ]}
             />
 
-            <div className="max-w-[1240px] mx-auto px-6 py-16">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+            <div className="max-w-[1300px] mx-auto px-6 py-16">
+                {/* Cards de Métricas Rápidas */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
                     {estatisticas.map((item, idx) => (
-                        <div key={idx} className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-gray-100 flex flex-col items-center text-center">
-                            <div className={`w-14 h-14 ${item.cor} rounded-2xl flex items-center justify-center mb-6`}>
+                        <motion.div 
+                            key={idx}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: idx * 0.1 }}
+                            className="bg-white rounded-[2.5rem] p-8 shadow-xl shadow-gray-200/40 border border-gray-100 flex flex-col items-center text-center group hover:shadow-2xl transition-all duration-500"
+                        >
+                            <div className={`w-14 h-14 ${item.cor} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
                                 <item.icone size={28} />
                             </div>
                             <span className="text-3xl font-black text-gray-800 mb-1">{item.valor}</span>
                             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{item.label}</span>
+                        </motion.div>
+                    ))}
+                </div>
+
+                {/* Seções de Módulos */}
+                <div className="space-y-24">
+                    {categoriasSIC.map((categoria, catIdx) => (
+                        <div key={categoria.titulo} className="relative">
+                            <div className="flex items-center gap-4 mb-10">
+                                <div className="w-10 h-1 bg-blue-600 rounded-full"></div>
+                                <h2 className="text-3xl font-black text-gray-800 uppercase tracking-tighter">
+                                    {categoria.titulo}
+                                </h2>
+                            </div>
+                            
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                                {categoria.modulos.map((m, idx) => (
+                                    <motion.div
+                                        key={m.href}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: (catIdx * 0.2) + (idx * 0.05) }}
+                                    >
+                                        <Link href={m.href} className="group block h-full">
+                                            <div className="relative h-full bg-white rounded-[2.5rem] border border-gray-100 shadow-xl shadow-gray-200/40 hover:shadow-2xl hover:shadow-blue-900/10 transition-all duration-500 group-hover:-translate-y-2 overflow-hidden">
+                                                <div className={`h-24 bg-gradient-to-br ${m.cor} relative overflow-hidden`}>
+                                                    <div className="absolute inset-0 bg-white/10 backdrop-blur-[2px]" />
+                                                    <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
+                                                </div>
+
+                                                <div className="absolute top-12 left-8">
+                                                    <div className="w-16 h-16 bg-white rounded-3xl shadow-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500 border border-gray-50">
+                                                        <m.icon className="text-gray-800 lg:group-hover:text-blue-600 transition-colors" size={32} strokeWidth={1.5} />
+                                                    </div>
+                                                </div>
+
+                                                <div className="pt-12 p-8 h-full flex flex-col">
+                                                    <div className="flex justify-between items-start mb-4">
+                                                        <h2 className="font-black text-gray-800 text-sm uppercase tracking-tight group-hover:text-blue-600 transition-colors">
+                                                            {m.titulo}
+                                                        </h2>
+                                                        <span className="text-[9px] font-black uppercase tracking-widest text-gray-400 bg-gray-50 px-2.5 py-1 rounded-lg border border-gray-100">
+                                                            {m.badge}
+                                                        </span>
+                                                    </div>
+                                                    
+                                                    <p className="text-gray-500 text-[11px] leading-relaxed font-medium mb-8 grow">
+                                                        {m.desc}
+                                                    </p>
+
+                                                    <div className="flex items-center justify-between pt-4 border-t border-gray-50 mt-auto">
+                                                        <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-blue-500 group-hover:text-blue-700 transition-colors">
+                                                            Acessar
+                                                            <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    </motion.div>
+                                ))}
+                            </div>
                         </div>
                     ))}
                 </div>
 
-                <div className="bg-white rounded-[3rem] p-12 shadow-sm border border-gray-100 mb-12">
-                    <h2 className="text-2xl font-black text-gray-800 mb-8 uppercase tracking-tighter">Relatórios Anuais de Gestão (LAI)</h2>
-                    <div className="space-y-4">
-                        {[2023, 2022, 2021].map((ano) => (
-                            <div key={ano} className="flex items-center justify-between p-6 bg-gray-50 rounded-2xl group hover:bg-primary-50 transition-all cursor-pointer">
-                                <span className="font-bold text-gray-700 group-hover:text-primary-600 transition-colors">Relatório Estatístico Consolidado - {ano}</span>
-                                <div className="flex items-center gap-4">
-                                    <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest hidden sm:block">PDF - 1.2 MB</span>
-                                    <button className="bg-white p-3 rounded-xl shadow-sm text-primary-500 group-hover:bg-primary-500 group-hover:text-white transition-all">
-                                        Baixar
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
+                {/* Call to Action - Abrir Solicitação */}
+                <div className="mt-32">
+                    <div className="relative rounded-[4rem] bg-gradient-to-br from-blue-600 to-indigo-800 p-1 md:p-1.5 shadow-2xl shadow-blue-900/20 overflow-hidden">
+                        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
+                        
+                        <div className="relative bg-white/5 backdrop-blur-3xl rounded-[3.8rem] p-12 md:p-20 text-center text-white overflow-hidden">
+                             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-32 -mt-32" />
+                             <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-400/20 rounded-full blur-3xl -ml-32 -mb-32" />
 
-                <div className="text-center p-12 bg-gray-900 rounded-[3rem] text-white">
-                    <h3 className="text-2xl font-black mb-4 uppercase tracking-tighter">Pedido de Informação Online</h3>
-                    <p className="text-gray-400 max-w-xl mx-auto mb-8 font-medium">
-                        Qualquer cidadão pode solicitar informações que não estejam disponíveis de forma ativa no portal.
-                    </p>
-                    <a href="/servicos/esic" className="inline-block bg-[#01b0ef] text-white px-10 py-4 rounded-full font-black uppercase text-xs tracking-widest shadow-lg hover:bg-blue-600 transition-all">
-                        Ir para o e-SIC
-                    </a>
+                             <motion.div 
+                                initial={{ scale: 0.9, opacity: 0 }}
+                                whileInView={{ scale: 1, opacity: 1 }}
+                                className="inline-flex items-center justify-center w-24 h-24 bg-white rounded-[2rem] shadow-xl mb-10"
+                             >
+                                <FaClipboardList size={40} className="text-blue-600" />
+                             </motion.div>
+
+                             <h2 className="text-3xl md:text-5xl font-black mb-6 tracking-tighter uppercase">Quer solicitar uma informação?</h2>
+                             <p className="max-w-2xl mx-auto text-blue-100/80 text-lg font-medium leading-relaxed mb-12">
+                                Caso não tenha encontrado o que procura, você pode abrir um pedido de informação através do nosso sistema eletrônico (e-SIC).
+                             </p>
+
+                             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+                                <Link href="/servicos/esic" className="w-full sm:w-auto bg-white text-blue-700 px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest shadow-xl hover:bg-blue-50 transition-all hover:scale-105 active:scale-95 duration-300">
+                                    Abrir Nova Solicitação
+                                </Link>
+                                <Link href="/servicos/consulta-protocolo" className="w-full sm:w-auto bg-transparent border-2 border-white/30 text-white px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest hover:bg-white/10 transition-all flex items-center justify-center gap-3 group">
+                                    <Search size={16} />
+                                    Consultar Protocolo
+                                </Link>
+                             </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
