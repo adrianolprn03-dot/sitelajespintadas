@@ -5,12 +5,21 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const ano = searchParams.get("ano");
     const mes = searchParams.get("mes");
-    const servidor = searchParams.get("servidor");
+    const query = searchParams.get("query");
+    const secretaria = searchParams.get("secretaria");
 
     const where: any = {};
     if (ano) where.ano = parseInt(ano);
     if (mes) where.mes = parseInt(mes);
-    if (servidor) where.servidor = { contains: servidor };
+    if (secretaria) where.secretaria = { contains: secretaria, mode: 'insensitive' };
+    
+    if (query) {
+        where.OR = [
+            { servidor: { contains: query, mode: 'insensitive' } },
+            { destino: { contains: query, mode: 'insensitive' } },
+            { motivo: { contains: query, mode: 'insensitive' } },
+        ];
+    }
 
     try {
         const [items, total] = await Promise.all([
@@ -23,6 +32,7 @@ export async function GET(req: NextRequest) {
         const totalValor = items.reduce((sum, d) => sum + d.valor, 0);
         return NextResponse.json({ items, total, totalValor });
     } catch (error) {
+        console.error("Erro ao buscar diárias:", error);
         return NextResponse.json({ error: "Erro interno" }, { status: 500 });
     }
 }

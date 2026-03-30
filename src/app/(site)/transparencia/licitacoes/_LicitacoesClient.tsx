@@ -1,18 +1,21 @@
 "use client";
 import { useState, useEffect } from "react";
-import { FaDownload, FaFilter, FaSearch, FaExternalLinkAlt, FaSpinner } from "react-icons/fa";
+import { FaChartBar, FaSpinner, FaExternalLinkAlt, FaBuilding, FaGavel } from "react-icons/fa";
+import { exportToCSV, exportToJSON, exportToPDF } from "@/lib/exportUtils";
+import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
+import PageHeader from "@/components/PageHeader";
+import BannerPNTP from "@/components/transparencia/BannerPNTP";
 
 type Licitacao = {
     id: string; numero: string; objeto: string; modalidade: string;
     valor: number | null; status: string; secretaria: string; ano: number; dataAbertura?: string;
 };
 
-
-
 const modalidadeLabel: Record<string, string> = {
     pregao: "Pregão Eletrônico", concorrencia: "Concorrência", "tomada-precos": "Tomada de Preços",
     convite: "Convite", dispensa: "Dispensa de Licitação", inexigibilidade: "Inexigibilidade",
 };
+
 const statusConfig: Record<string, { label: string; cor: string }> = {
     aberta: { label: "Aberta", cor: "bg-green-100 text-green-700" },
     "em-andamento": { label: "Em Andamento", cor: "bg-blue-100 text-blue-700" },
@@ -21,31 +24,13 @@ const statusConfig: Record<string, { label: string; cor: string }> = {
     deserta: { label: "Deserta", cor: "bg-yellow-100 text-yellow-700" },
 };
 
-function formatarMoeda(valor: number | null) {
-    if (!valor) return "A definir";
-    return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-}
-
-function baixarCSV(dados: Licitacao[]) {
-    const header = "Número,Modalidade,Objeto,Secretaria,Valor,Status,Ano\n";
-    const rows = dados.map((l) =>
-        `"${l.numero}","${modalidadeLabel[l.modalidade] || l.modalidade}","${l.objeto}","${l.secretaria}","${l.valor || ""}","${l.status}","${l.ano}"`
-    ).join("\n");
-    const blob = new Blob([header + rows], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a"); a.href = url; a.download = "licitacoes.csv"; a.click();
-    URL.revokeObjectURL(url);
-}
-
-import PageHeader from "@/components/PageHeader";
-
 export default function LicitacoesClient() {
     const [licitacoes, setLicitacoes] = useState<Licitacao[]>([]);
     const [loading, setLoading] = useState(true);
     const [busca, setBusca] = useState("");
     const [statusFiltro, setStatusFiltro] = useState("");
     const [modalidadeFiltro, setModalidadeFiltro] = useState("");
-    const [anoFiltro, setAnoFiltro] = useState("");
+    const [anoFiltro, setAnoFiltro] = useState(new Date().getFullYear().toString());
 
     useEffect(() => {
         const fetchLicitacoes = async () => {
@@ -68,101 +53,166 @@ export default function LicitacoesClient() {
         fetchLicitacoes();
     }, [statusFiltro, modalidadeFiltro, anoFiltro]);
 
+    const formatarMoeda = (valor: number | null) => {
+        if (!valor) return "A definir";
+        return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+    };
+
+    const handleClearFilters = () => {
+        setBusca("");
+        setStatusFiltro("");
+        setModalidadeFiltro("");
+        setAnoFiltro(new Date().getFullYear().toString());
+    };
+
     const filtrados = licitacoes.filter((l) => {
-        const buscaOk = !busca || l.objeto.toLowerCase().includes(busca.toLowerCase()) || l.numero.includes(busca);
-        return buscaOk;
+        const b = busca.toLowerCase();
+        return !busca || 
+            l.objeto.toLowerCase().includes(b) || 
+            l.numero.toLowerCase().includes(b) ||
+            l.secretaria.toLowerCase().includes(b);
     });
 
+    const handleExport = (format: "pdf" | "csv" | "json") => {
+        const payload = filtrados.map(l => ({
+            "Número": l.numero,
+            "Modalidade": modalidadeLabel[l.modalidade] || l.modalidade,
+            "Objeto": l.objeto,
+            "Secretaria": l.secretaria,
+            "Valor Estimado": formatarMoeda(l.valor),
+            "Status": statusConfig[l.status]?.label || l.status,
+            "Ano": l.ano
+        }));
+
+        const filename = `licitacoes_municipais_${anoFiltro}`;
+        const title = `Relatório de Licitações e Processos – Lajes Pintadas/RN (${anoFiltro})`;
+
+        if (format === "csv") exportToCSV(payload, filename);
+        else if (format === "json") exportToJSON(payload, filename);
+        else exportToPDF(payload, filename, title);
+    };
+
+    const totalEstimado = filtrados.reduce((acc, curr) => acc + (curr.valor || 0), 0);
+
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-[#f8fafc] font-['Montserrat',sans-serif]">
             <PageHeader 
                 title="Licitações e Processos"
-                subtitle="Editais, processos licitatórios e resultados de julgamento • Lei 14.133/2021"
+                subtitle="Editais, processos licitatórios e resultados de julgamento em conformidade com a Lei 14.133/2021."
+                variant="premium"
+                icon={<FaGavel />}
                 breadcrumbs={[
+                    { label: "Início", href: "/" },
                     { label: "Transparência", href: "/transparencia" },
                     { label: "Licitações" }
                 ]}
             />
 
-            <div className="max-w-7xl mx-auto px-4 py-8">
-                {/* Filtros */}
-                <div className="bg-white rounded-2xl shadow p-5 mb-6">
-                    <div className="flex items-center gap-2 mb-4 font-semibold text-gray-700">
-                        <FaFilter className="text-purple-600" /> Filtros
+            <div className="max-w-7xl mx-auto px-4 py-8 -mt-10">
+                <TransparencyFilters
+                    searchValue={busca}
+                    onSearch={setBusca}
+                    currentYear={anoFiltro}
+                    onYearChange={setAnoFiltro}
+                    currentMonth="" // Licitações geralmente não filtram por mês no hub principal
+                    onMonthChange={() => {}}
+                    onClear={handleClearFilters}
+                    onExport={handleExport}
+                    placeholder="Pesquisar por número, objeto ou secretaria..."
+                >
+                    {/* Filtros Avançados Específicos */}
+                    <div className="flex flex-wrap gap-4">
+                        <select 
+                            value={modalidadeFiltro} 
+                            onChange={(e) => setModalidadeFiltro(e.target.value)}
+                            className="bg-white border border-gray-200 rounded-xl px-4 py-2 text-[11px] font-bold text-gray-700 focus:ring-2 focus:ring-blue-500/20 outline-none"
+                        >
+                            <option value="">Todas as Modalidades</option>
+                            {Object.entries(modalidadeLabel).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+                        </select>
+                        <select 
+                            value={statusFiltro} 
+                            onChange={(e) => setStatusFiltro(e.target.value)}
+                            className="bg-white border border-gray-200 rounded-xl px-4 py-2 text-[11px] font-bold text-gray-700 focus:ring-2 focus:ring-blue-500/20 outline-none"
+                        >
+                            <option value="">Todos os Status</option>
+                            {Object.entries(statusConfig).map(([v, c]) => <option key={v} value={v}>{c.label}</option>)}
+                        </select>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                        <div>
-                            <label className="block text-xs font-medium text-gray-600 mb-1">Buscar</label>
-                            <div className="relative">
-                                <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs" />
-                                <input value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Número ou objeto..." className="input-field pl-8 text-sm py-2" />
-                            </div>
-                        </div>
-                        <div>
-                            <label className="block text-xs font-medium text-gray-600 mb-1">Ano</label>
-                            <select value={anoFiltro} onChange={(e) => setAnoFiltro(e.target.value)} className="input-field text-sm py-2">
-                                <option value="">Todos</option>
-                                {["2024", "2023", "2022"].map((a) => <option key={a} value={a}>{a}</option>)}
-                            </select>
-                        </div>
-                        <div>
-                            <label className="block text-xs font-medium text-gray-600 mb-1">Modalidade</label>
-                            <select value={modalidadeFiltro} onChange={(e) => setModalidadeFiltro(e.target.value)} className="input-field text-sm py-2">
-                                <option value="">Todas</option>
-                                {Object.entries(modalidadeLabel).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
-                            </select>
-                        </div>
-                        <div>
-                            <label className="block text-xs font-medium text-gray-600 mb-1">Status</label>
-                            <select value={statusFiltro} onChange={(e) => setStatusFiltro(e.target.value)} className="input-field text-sm py-2">
-                                <option value="">Todos</option>
-                                {Object.entries(statusConfig).map(([v, c]) => <option key={v} value={v}>{c.label}</option>)}
-                            </select>
-                        </div>
+                </TransparencyFilters>
+
+                {/* Cards de Resumo */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+                    <div className="bg-white rounded-[2rem] shadow-sm p-8 border border-gray-100 border-l-4 border-l-blue-500">
+                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Valor Total Estimado</div>
+                        <div className="text-3xl font-black text-blue-600">{formatarMoeda(totalEstimado)}</div>
+                    </div>
+                    <div className="bg-white rounded-[2rem] shadow-sm p-8 border border-gray-100 border-l-4 border-l-purple-500">
+                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Processos Encontrados</div>
+                        <div className="text-3xl font-black text-purple-600">{filtrados.length}</div>
+                    </div>
+                    <div className="bg-white rounded-[2rem] shadow-sm p-8 border border-gray-100 border-l-4 border-l-emerald-500">
+                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Exercício Fiscal</div>
+                        <div className="text-3xl font-black text-emerald-600">{anoFiltro}</div>
                     </div>
                 </div>
 
-                {/* Tabela */}
-                <div className="bg-white rounded-2xl shadow overflow-hidden">
-                    <div className="flex items-center justify-between p-4 border-b border-gray-100">
-                        <span className="text-sm text-gray-500">{filtrados.length} registro(s) encontrado(s)</span>
-                        <button onClick={() => baixarCSV(filtrados)} className="flex items-center gap-2 bg-secondary-500 hover:bg-secondary-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">
-                            <FaDownload /> CSV
-                        </button>
-                    </div>
+                {/* Tabela de Resultados */}
+                <div className="bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
                     <div className="overflow-x-auto">
-                        <table className="w-full" aria-label="Tabela de licitações">
+                        <table className="w-full text-left" aria-label="Tabela de licitações">
                             <thead>
-                                <tr>
-                                    <th className="table-header">Número</th>
-                                    <th className="table-header">Objeto</th>
-                                    <th className="table-header">Modalidade</th>
-                                    <th className="table-header">Secretaria</th>
-                                    <th className="table-header">Valor Est.</th>
-                                    <th className="table-header">Status</th>
-                                    <th className="table-header">Ações</th>
+                                <tr className="bg-gray-50/50 border-b border-gray-100 text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                                    <th className="px-8 py-6">Número / Ano</th>
+                                    <th className="px-8 py-6">Objeto do Processo</th>
+                                    <th className="px-8 py-6">Modalidade</th>
+                                    <th className="px-8 py-6 text-right">Valor Estimado</th>
+                                    <th className="px-8 py-6">Status</th>
+                                    <th className="px-8 py-6 text-center">Ações</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                {filtrados.length === 0 ? (
-                                    <tr><td colSpan={7} className="text-center py-12 text-gray-400">Nenhuma licitação encontrada</td></tr>
-                                ) : filtrados.map((l) => (
-                                    <tr key={l.id} className="hover:bg-gray-50 transition-colors">
-                                        <td className="table-cell font-bold text-purple-700">{l.numero}</td>
-                                        <td className="table-cell max-w-xs">
-                                            <span className="line-clamp-2 text-sm" title={l.objeto}>{l.objeto}</span>
+                            <tbody className="divide-y divide-gray-50">
+                                {loading ? (
+                                    <tr>
+                                        <td colSpan={6} className="px-8 py-12 text-center text-blue-500">
+                                            <FaSpinner className="animate-spin inline-block text-2xl mr-3" />
+                                            <span className="font-bold text-xs uppercase tracking-widest">Carregando dados...</span>
                                         </td>
-                                        <td className="table-cell text-xs">{modalidadeLabel[l.modalidade]}</td>
-                                        <td className="table-cell text-xs">{l.secretaria}</td>
-                                        <td className="table-cell font-semibold text-gray-700">{formatarMoeda(l.valor)}</td>
-                                        <td className="table-cell">
-                                            <span className={`badge text-xs ${statusConfig[l.status]?.cor || "bg-gray-100"}`}>
+                                    </tr>
+                                ) : filtrados.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={6} className="px-8 py-16 text-center text-gray-400 italic">
+                                            Nenhum processo licitatório encontrado para os filtros selecionados.
+                                        </td>
+                                    </tr>
+                                ) : filtrados.map((l) => (
+                                    <tr key={l.id} className="hover:bg-blue-50/30 transition-colors group">
+                                        <td className="px-8 py-6">
+                                            <div className="font-black text-gray-800 text-sm group-hover:text-blue-700 transition-colors">{l.numero}</div>
+                                            <div className="text-[10px] font-bold text-gray-400 uppercase">{l.ano}</div>
+                                        </td>
+                                        <td className="px-8 py-6 max-w-md">
+                                            <div className="text-xs font-semibold text-gray-600 line-clamp-2 leading-relaxed" title={l.objeto}>{l.objeto}</div>
+                                            <div className="flex items-center gap-1.5 mt-2 text-[9px] font-bold text-gray-400 uppercase">
+                                                <FaBuilding size={10} /> {l.secretaria}
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-6">
+                                            <span className="inline-block px-3 py-1 bg-gray-100 text-gray-600 text-[9px] font-black uppercase rounded-lg border border-gray-200">
+                                                {modalidadeLabel[l.modalidade] || l.modalidade}
+                                            </span>
+                                        </td>
+                                        <td className="px-8 py-6 text-right">
+                                            <span className="font-black text-gray-800 text-sm">{formatarMoeda(l.valor)}</span>
+                                        </td>
+                                        <td className="px-8 py-6">
+                                            <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider ${statusConfig[l.status]?.cor || "bg-gray-100 text-gray-600"}`}>
                                                 {statusConfig[l.status]?.label || l.status}
                                             </span>
                                         </td>
-                                        <td className="table-cell">
-                                            <button className="text-purple-600 hover:text-purple-800 text-xs flex items-center gap-1 font-medium">
-                                                <FaExternalLinkAlt className="text-xs" /> Ver edital
+                                        <td className="px-8 py-6 text-center">
+                                            <button className="inline-flex items-center gap-2 bg-white border border-gray-200 text-gray-600 hover:text-blue-600 hover:border-blue-200 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all hover:scale-105 shadow-sm">
+                                                <FaExternalLinkAlt size={10} /> Detalhes
                                             </button>
                                         </td>
                                     </tr>
@@ -170,6 +220,10 @@ export default function LicitacoesClient() {
                             </tbody>
                         </table>
                     </div>
+                </div>
+
+                <div className="mt-24 pb-24">
+                     <BannerPNTP />
                 </div>
             </div>
         </div>

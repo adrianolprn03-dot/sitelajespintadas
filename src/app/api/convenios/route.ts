@@ -5,15 +5,26 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const ano = searchParams.get("ano");
     const status = searchParams.get("status");
+    const query = searchParams.get("query");
 
     const where: any = {};
     if (ano) {
+        const year = parseInt(ano);
         where.dataInicio = {
-            gte: new Date(`${ano}-01-01`),
-            lte: new Date(`${ano}-12-31`),
+            gte: new Date(`${year}-01-01T00:00:00.000Z`),
+            lte: new Date(`${year}-12-31T23:59:59.999Z`),
         };
     }
-    if (status) where.status = status;
+    
+    if (status) where.status = { contains: status, mode: 'insensitive' };
+    
+    if (query) {
+        where.OR = [
+            { objeto: { contains: query, mode: 'insensitive' } },
+            { concedente: { contains: query, mode: 'insensitive' } },
+            { numero: { contains: query, mode: 'insensitive' } },
+        ];
+    }
 
     try {
         const [items, total] = await Promise.all([
@@ -25,6 +36,7 @@ export async function GET(req: NextRequest) {
         ]);
         return NextResponse.json({ items, total });
     } catch (error) {
+        console.error("Erro ao buscar convênios:", error);
         return NextResponse.json({ error: "Erro interno" }, { status: 500 });
     }
 }

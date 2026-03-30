@@ -138,7 +138,7 @@ export default async function SICRelatoriosPage() {
                                 Quer ver os dados de forma simplificada em gráficos de pizza, barras e evolução temporal?
                             </p>
                             <Link href="/transparencia/passiva/graficos" className="flex items-center justify-center gap-3 bg-blue-600 text-white w-full py-5 rounded-full font-black uppercase text-[10px] tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-blue-900/20">
-                                Ver Gráficos SIC <ArrowRight size={16} />
+                                Ver Gráficos SIC <ChevronRight size={16} />
                             </Link>
                         </div>
 

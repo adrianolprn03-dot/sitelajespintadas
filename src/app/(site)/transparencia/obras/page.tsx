@@ -1,30 +1,96 @@
-import type { Metadata } from "next";
-import { FaHammer, FaMapMarkerAlt, FaCalendarAlt, FaBuilding, FaChartLine } from "react-icons/fa";
-import ObrasExport from "./ObrasExport";
-import { prisma } from "@/lib/prisma";
+"use client";
+import { useState, useEffect } from "react";
+import { FaHammer, FaMapMarkerAlt, FaCalendarAlt, FaBuilding, FaChartLine, FaSpinner, FaArrowRight, FaImage } from "react-icons/fa";
 import PageHeader from "@/components/PageHeader";
+import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
+import { exportToCSV, exportToJSON, exportToPDF } from "@/lib/exportUtils";
+import BannerPNTP from "@/components/transparencia/BannerPNTP";
 import Image from "next/image";
 
-export default async function ObrasPublicasPage() {
-    const obras = await prisma.obra.findMany({
-        orderBy: { criadoEm: "desc" }
-    });
+type Obra = {
+    id: string;
+    titulo: string;
+    descricao: string;
+    local: string;
+    valor: number;
+    status: string;
+    dataInicio: string | null;
+    previsaoTermino: string | null;
+    empresa: string | null;
+    percentual: number;
+    imagem: string | null;
+    documentos: string;
+    criadoEm: string;
+};
 
-    const getStatusInfo = (status: string) => {
-        switch (status) {
-            case "concluida": return { label: "Concluída", color: "text-[#50B749] bg-green-50" };
-            case "em-andamento": return { label: "Em Andamento", color: "text-[#01b0ef] bg-blue-50" };
-            case "paralisada": return { label: "Paralisada", color: "text-red-600 bg-red-50" };
-            case "licitacao": return { label: "Licitação", color: "text-amber-600 bg-amber-50" };
-            default: return { label: status, color: "text-gray-600 bg-gray-50" };
-        }
+const getStatusInfo = (status: string) => {
+    switch (status.toLowerCase()) {
+        case "concluida": return { label: "Concluída", color: "bg-emerald-50 text-emerald-700 border-emerald-100" };
+        case "em-andamento": return { label: "Em Andamento", color: "bg-blue-50 text-blue-700 border-blue-100" };
+        case "paralisada": return { label: "Paralisada", color: "bg-rose-50 text-rose-700 border-rose-100" };
+        case "licitacao": return { label: "Licitação", color: "bg-amber-50 text-amber-700 border-amber-100" };
+        default: return { label: status, color: "bg-gray-50 text-gray-500 border-gray-100" };
+    }
+};
+
+export default function ObrasPublicasPage() {
+    const [obras, setObras] = useState<Obra[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [busca, setBusca] = useState("");
+    const [status, setStatus] = useState("");
+
+    useEffect(() => {
+        const fetchObras = async () => {
+            setLoading(true);
+            try {
+                const query = new URLSearchParams({ 
+                    query: busca,
+                    status 
+                });
+                const res = await fetch(`/api/obras?${query.toString()}`);
+                const data = await res.json();
+                setObras(data.items || []);
+            } catch (error) {
+                console.error("Erro ao buscar obras:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchObras();
+    }, [busca, status]);
+
+    const handleClearFilters = () => {
+        setBusca("");
+        setStatus("");
     };
 
+    const handleExport = (format: "pdf" | "csv" | "json") => {
+        const payload = obras.map(o => ({
+            "Título": o.titulo,
+            "Local": o.local,
+            "Valor": o.valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }),
+            "Empresa": o.empresa || "Não informada",
+            "Progresso": `${o.percentual}%`,
+            "Status": o.status
+        }));
+
+        const filename = `obras_publicas`;
+        const title = `Relatório de Acompanhamento de Obras Públicas – Lajes Pintadas/RN`;
+
+        if (format === "csv") exportToCSV(payload, filename);
+        else if (format === "json") exportToJSON(payload, filename);
+        else exportToPDF(payload, filename, title);
+    };
+
+    const totalInvestimento = obras.reduce((acc, curr) => acc + curr.valor, 0);
+
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-[#f8fafc] font-['Montserrat',sans-serif]">
             <PageHeader
                 title="Acompanhamento de Obras"
                 subtitle="Consulte o andamento, valores e prazos das obras públicas em execução no nosso município."
+                variant="premium"
+                icon={<FaHammer />}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
                     { label: "Transparência", href: "/transparencia" },
@@ -32,97 +98,154 @@ export default async function ObrasPublicasPage() {
                 ]}
             />
 
-            <div className="max-w-[1200px] mx-auto px-6 pt-8 flex justify-end">
-                <ObrasExport data={obras} />
-            </div>
-
-            <div className="max-w-[1200px] mx-auto px-6 py-16">
-                {obras.length === 0 ? (
-                    <div className="text-center py-20 bg-white rounded-3xl shadow-sm border border-gray-100">
-                        <span className="text-6xl block mb-4">🏗️</span>
-                        <p className="text-gray-500 font-medium italic">Informações sobre obras sendo carregadas...</p>
+            <div className="max-w-[1240px] mx-auto px-6 py-12 -mt-10 relative z-30">
+                <TransparencyFilters
+                    searchValue={busca}
+                    onSearch={setBusca}
+                    onClear={handleClearFilters}
+                    onExport={handleExport}
+                    currentYear=""
+                    onYearChange={() => {}}
+                    currentMonth=""
+                    onMonthChange={() => {}}
+                    placeholder="Buscar por título, local ou empresa..."
+                >
+                    <div className="flex items-center gap-3">
+                        <select 
+                            value={status} 
+                            onChange={(e) => setStatus(e.target.value)}
+                            className="bg-white border border-gray-200 px-4 py-2 rounded-xl text-[11px] font-bold text-gray-700 outline-none hover:border-blue-400 transition-colors shadow-sm"
+                        >
+                            <option value="">Todos os Status</option>
+                            <option value="concluida">Concluída</option>
+                            <option value="em-andamento">Em Andamento</option>
+                            <option value="paralisada">Paralisada</option>
+                            <option value="licitacao">Licitação</option>
+                        </select>
                     </div>
-                ) : (
-                    <div className="grid grid-cols-1 gap-8">
-                        {obras.map((o) => {
-                            const status = getStatusInfo(o.status);
+                </TransparencyFilters>
+
+                {/* Resumo da Gestão de Obras */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                    <div className="bg-white rounded-3xl p-8 shadow-sm border border-emerald-100/50 border-l-4 border-l-emerald-500 group">
+                        <div className="flex justify-between items-start mb-4 text-emerald-100 group-hover:text-emerald-500 transition-colors">
+                            <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Investimento Ativo</div>
+                            <FaChartLine size={24} />
+                        </div>
+                        <div className="text-2xl font-black text-gray-800 tracking-tight">{loading ? "..." : totalInvestimento.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</div>
+                        <div className="mt-2 text-[10px] font-bold text-emerald-500 uppercase tracking-tighter">Total em obras no filtro</div>
+                    </div>
+
+                    <div className="bg-white rounded-3xl p-8 shadow-sm border border-blue-100/50 border-l-4 border-l-blue-500 group">
+                        <div className="flex justify-between items-start mb-4 text-blue-100 group-hover:text-blue-500 transition-colors">
+                            <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Projetos</div>
+                            <FaHammer size={24} />
+                        </div>
+                        <div className="text-2xl font-black text-gray-800 tracking-tight">{loading ? "..." : obras.length} Obras</div>
+                        <div className="mt-2 text-[10px] font-bold text-blue-500 uppercase tracking-tighter">Intervenções capturadas</div>
+                    </div>
+                </div>
+
+                {/* Lista de Obras */}
+                <div className="space-y-8">
+                    {loading ? (
+                        <div className="bg-white rounded-[3rem] p-24 text-center border border-gray-100">
+                             <FaSpinner className="animate-spin text-blue-500 text-4xl mb-4 mx-auto" />
+                             <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Consultando cronogramas de infraestrutura...</p>
+                        </div>
+                    ) : obras.length === 0 ? (
+                        <div className="bg-white rounded-[3rem] p-24 text-center border-2 border-dashed border-gray-100">
+                            <div className="w-20 h-20 bg-gray-50 text-gray-200 rounded-full flex items-center justify-center mx-auto mb-8">
+                               <FaHammer size={40} />
+                            </div>
+                            <h4 className="text-xl font-black text-gray-800 uppercase tracking-tighter mb-4">Nenhuma obra localizada</h4>
+                            <p className="text-gray-400 font-medium text-sm max-w-sm mx-auto italic">
+                                Tente ajustar os filtros ou pesquisar por outro termo.
+                            </p>
+                        </div>
+                    ) : (
+                        obras.map((o) => {
+                            const statusInfo = getStatusInfo(o.status);
                             return (
-                                <div key={o.id} className="bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/40 border border-white overflow-hidden flex flex-col lg:flex-row hover:shadow-2xl transition-all duration-500 group">
-                                    {/* Imagem (opcional) */}
-                                    <div className="lg:w-1/3 relative h-64 lg:h-auto overflow-hidden bg-gray-100">
+                                <div key={o.id} className="bg-white rounded-[3rem] border border-white shadow-xl shadow-gray-200/40 overflow-hidden flex flex-col lg:flex-row group hover:shadow-2xl transition-all duration-500">
+                                    <div className="lg:w-1/3 relative h-64 lg:h-auto overflow-hidden bg-gray-100 shrink-0">
                                         {o.imagem ? (
-                                            <Image
-                                                src={o.imagem}
-                                                alt={o.titulo}
-                                                fill
-                                                className="object-cover group-hover:scale-105 transition-transform duration-700"
+                                            <Image 
+                                                src={o.imagem} 
+                                                alt={o.titulo} 
+                                                fill 
+                                                className="object-cover group-hover:scale-105 transition-all duration-700" 
                                             />
                                         ) : (
-                                            <div className="inset-0 flex items-center justify-center text-gray-200">
-                                                <FaHammer size={80} />
+                                            <div className="h-full flex items-center justify-center text-gray-300">
+                                                <FaImage size={64} />
                                             </div>
                                         )}
-                                        <div className="absolute top-6 left-6">
-                                            <span className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm backdrop-blur-md ${status.color}`}>
-                                                {status.label}
+                                        <div className="absolute top-8 left-8">
+                                            <span className={`px-5 py-2 rounded-2xl text-[9px] font-black uppercase tracking-widest shadow-lg backdrop-blur-md border ${statusInfo.color}`}>
+                                                {statusInfo.label}
                                             </span>
                                         </div>
                                     </div>
 
-                                    {/* Conteúdo */}
-                                    <div className="p-8 lg:p-12 flex-1 flex flex-col justify-between">
-                                        <div>
-                                            <div className="flex items-center gap-2 text-[#01b0ef] text-[10px] font-black uppercase tracking-widest mb-4">
+                                    <div className="p-10 lg:p-14 flex-1 flex flex-col">
+                                        <div className="mb-8">
+                                            <div className="flex items-center gap-2 text-blue-500 text-[10px] font-black uppercase tracking-[0.2em] mb-4">
                                                 <FaMapMarkerAlt /> {o.local}
                                             </div>
-                                            <h2 className="text-2xl font-black text-gray-800 mb-4 leading-tight group-hover:text-[#01b0ef] transition-colors">{o.titulo}</h2>
-                                            <p className="text-gray-500 text-sm leading-relaxed mb-8 font-medium line-clamp-3">
-                                                {o.descricao}
+                                            <h3 className="text-2xl font-black text-gray-800 uppercase tracking-tighter group-hover:text-blue-600 transition-colors mb-4">{o.titulo}</h3>
+                                            <p className="text-gray-500 leading-relaxed font-medium line-clamp-3 italic text-sm">
+                                                "{o.descricao}"
                                             </p>
+                                        </div>
 
-                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8 pt-8 border-t border-gray-50">
-                                                <div>
-                                                    <span className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Valor do Contrato</span>
-                                                    <span className="font-bold text-gray-700 font-mono">
-                                                        {o.valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
-                                                    </span>
-                                                </div>
-                                                <div>
-                                                    <span className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Empresa</span>
-                                                    <span className="text-xs font-bold text-gray-700">{o.empresa || "Não informada"}</span>
-                                                </div>
-                                                <div>
-                                                    <span className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Previsão</span>
-                                                    <span className="text-xs font-bold text-gray-700">
-                                                        {o.previsaoTermino ? new Date(o.previsaoTermino).toLocaleDateString("pt-BR") : "---"}
-                                                    </span>
-                                                </div>
-                                                <div>
-                                                    <span className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Documentação</span>
-                                                    <button className="text-[10px] font-black text-[#01b0ef] uppercase hover:underline">Ver Edital</button>
-                                                </div>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 py-8 border-y border-gray-50 mb-8">
+                                            <div>
+                                                <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">Valor da Obra</p>
+                                                <p className="font-black text-gray-800 text-lg tracking-tighter">{o.valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">Executor</p>
+                                                <p className="font-black text-gray-800 text-sm uppercase tracking-tight truncate flex items-center gap-2">
+                                                    <FaBuilding className="text-gray-300" /> {o.empresa || "Não Informada"}
+                                                </p>
+                                            </div>
+                                            <div className="text-right sm:text-left">
+                                                <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">Previsão</p>
+                                                <p className="font-black text-blue-600 text-sm uppercase tracking-tight flex items-center gap-2">
+                                                    <FaCalendarAlt className="text-blue-100" /> {o.previsaoTermino ? new Date(o.previsaoTermino).toLocaleDateString("pt-BR") : "Não definida"}
+                                                </p>
                                             </div>
                                         </div>
 
-                                        {/* Barra de Progresso */}
-                                        <div className="space-y-3 p-6 bg-gray-50 rounded-2xl border border-gray-100">
-                                            <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest">
-                                                <span className="text-gray-400">Progresso da Execução</span>
+                                        <div className="space-y-4 mb-8">
+                                            <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
+                                                <span className="text-gray-400">Progresso Físico-Financeiro</span>
                                                 <span className="text-blue-600">{o.percentual}%</span>
                                             </div>
-                                            <div className="w-full h-3 bg-white rounded-full p-0.5 border border-gray-100 overflow-hidden shadow-inner">
-                                                <div
-                                                    className="h-full bg-gradient-to-r from-blue-400 to-[#01b0ef] rounded-full transition-all duration-1000 shadow-[0_0_10px_rgba(1,176,239,0.5)]"
+                                            <div className="h-3 w-full bg-blue-50 rounded-full overflow-hidden p-0.5 shadow-inner">
+                                                <div 
+                                                    className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full transition-all duration-1000 shadow-lg shadow-blue-500/20"
                                                     style={{ width: `${o.percentual}%` }}
                                                 />
                                             </div>
                                         </div>
+
+                                        <div className="flex justify-end pt-4">
+                                            <button className="text-blue-600 font-black uppercase text-[10px] tracking-widest flex items-center gap-3 hover:gap-5 transition-all">
+                                                Visualizar Detalhamento <FaArrowRight size={12} />
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             );
-                        })}
-                    </div>
-                )}
+                        })
+                    )}
+                </div>
+
+                <div className="mt-20">
+                    <BannerPNTP />
+                </div>
             </div>
         </div>
     );

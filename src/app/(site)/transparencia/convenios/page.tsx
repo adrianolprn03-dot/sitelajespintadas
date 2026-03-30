@@ -1,6 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
-import { FaHandshake, FaSearch, FaSpinner, FaCalendarAlt, FaHistory, FaBuilding, FaCoins } from "react-icons/fa";
+import { FaHandshake, FaSpinner, FaBuilding, FaCalendarAlt, FaMoneyBillWave, FaArrowRight, FaHistory, FaCheckCircle, FaTimesCircle, FaInfoCircle } from "react-icons/fa";
+import PageHeader from "@/components/PageHeader";
+import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
+import { exportToCSV, exportToJSON, exportToPDF } from "@/lib/exportUtils";
+import BannerPNTP from "@/components/transparencia/BannerPNTP";
 
 type Convenio = {
     id: string;
@@ -11,170 +15,230 @@ type Convenio = {
     contrapartida: number;
     dataInicio: string;
     dataFim: string;
-    status: string;
     secretaria: string;
+    status: string;
+};
+
+function fmt(v: number) {
+    return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
+
+const getStatusStyles = (status: string) => {
+    switch (status.toLowerCase()) {
+        case "vigente": return "bg-emerald-50 text-emerald-700 border-emerald-100";
+        case "concluido": return "bg-blue-50 text-blue-700 border-blue-100";
+        case "cancelado": return "bg-rose-50 text-rose-700 border-rose-100";
+        default: return "bg-gray-50 text-gray-500 border-gray-100";
+    }
 };
 
 export default function ConveniosPage() {
-    const [items, setItems] = useState<Convenio[]>([]);
+    const [convenios, setConvenios] = useState<Convenio[]>([]);
     const [loading, setLoading] = useState(true);
+    const [busca, setBusca] = useState("");
     const [ano, setAno] = useState(new Date().getFullYear().toString());
     const [status, setStatus] = useState("");
 
-    const anos = Array.from({ length: 5 }, (_, i) => (new Date().getFullYear() - i).toString());
-
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchConvenios = async () => {
             setLoading(true);
             try {
-                const query = new URLSearchParams();
-                if (ano) query.append("ano", ano);
-                if (status) query.append("status", status);
-
+                const query = new URLSearchParams({
+                    ano,
+                    status,
+                    query: busca
+                });
                 const res = await fetch(`/api/convenios?${query.toString()}`);
                 const data = await res.json();
-                setItems(data.items || []);
+                setConvenios(data.items || []);
             } catch (error) {
                 console.error("Erro ao buscar convênios:", error);
             } finally {
                 setLoading(false);
             }
         };
-        fetchData();
-    }, [ano, status]);
+        fetchConvenios();
+    }, [ano, status, busca]);
 
-    const formatCurrency = (val: number) => {
-        return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(val);
+    const handleClearFilters = () => {
+        setBusca("");
+        setAno(new Date().getFullYear().toString());
+        setStatus("");
     };
 
-    return (
-        <div className="min-h-screen bg-gray-50">
-            {/* Header */}
-            <div className="bg-gradient-to-r from-pink-600 to-rose-700 py-12 px-4 shadow-lg border-b border-rose-500">
-                <div className="max-w-7xl mx-auto">
-                    <nav className="text-sm text-pink-100 mb-4 flex items-center gap-2">
-                        <a href="/transparencia" className="hover:text-white transition-colors">Transparência</a>
-                        <span>›</span>
-                        <span className="text-white font-medium">Convênios</span>
-                    </nav>
-                    <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
-                        <FaHandshake className="text-pink-200" /> Convênios Públicos
-                    </h1>
-                    <p className="text-pink-100 max-w-2xl">
-                        Acompanhe os acordos firmados entre a Prefeitura e outros órgãos (Estaduais ou Federais) para a realização de obras e serviços.
-                    </p>
-                </div>
-            </div>
+    const handleExport = (format: "pdf" | "csv" | "json") => {
+        const payload = convenios.map(c => ({
+            "Número": c.numero,
+            "Concedente": c.concedente,
+            "Objeto": c.objeto,
+            "Vigência": `${new Date(c.dataInicio).toLocaleDateString("pt-BR")} a ${new Date(c.dataFim).toLocaleDateString("pt-BR")}`,
+            "Valor Repasse": fmt(c.valor),
+            "Contrapartida": fmt(c.contrapartida),
+            "Status": c.status
+        }));
 
-            <div className="max-w-7xl mx-auto px-4 py-8">
-                {/* Filtros */}
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8 flex flex-wrap items-end gap-4">
-                    <div className="flex-1 min-w-[200px]">
-                        <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-wider">Ano de Início</label>
-                        <div className="relative">
-                            <FaCalendarAlt className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                            <select
-                                className="input-field pl-10"
-                                value={ano}
-                                onChange={(e) => setAno(e.target.value)}
-                            >
-                                <option value="">Todos os anos</option>
-                                {anos.map(a => <option key={a} value={a}>{a}</option>)}
-                            </select>
-                        </div>
-                    </div>
-                    <div className="flex-1 min-w-[200px]">
-                        <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-wider">Situação</label>
-                        <select
-                            className="input-field"
-                            value={status}
+        const filename = `convenios_${ano}`;
+        const title = `Relatório de Convênios e Repasses – Lajes Pintadas/RN (${ano})`;
+
+        if (format === "csv") exportToCSV(payload, filename);
+        else if (format === "json") exportToJSON(payload, filename);
+        else exportToPDF(payload, filename, title);
+    };
+
+    const totalValor = convenios.reduce((acc, curr) => acc + curr.valor, 0);
+
+    return (
+        <div className="min-h-screen bg-[#f8fafc] font-['Montserrat',sans-serif]">
+            <PageHeader
+                title="Convênios e Repasses"
+                subtitle="Consulte os acordos firmados entre o município e outros entes federativos ou entidades privadas."
+                variant="premium"
+                icon={<FaHandshake />}
+                breadcrumbs={[
+                    { label: "Início", href: "/" },
+                    { label: "Transparência", href: "/transparencia" },
+                    { label: "Convênios" }
+                ]}
+            />
+
+            <div className="max-w-[1240px] mx-auto px-6 py-12 -mt-10 relative z-30">
+                <TransparencyFilters
+                    searchValue={busca}
+                    onSearch={setBusca}
+                    currentYear={ano}
+                    onYearChange={setAno}
+                    currentMonth=""
+                    onMonthChange={() => {}}
+                    onClear={handleClearFilters}
+                    onExport={handleExport}
+                    placeholder="Buscar por objeto, número ou concedente..."
+                >
+                    <div className="flex items-center gap-3">
+                        <select 
+                            value={status} 
                             onChange={(e) => setStatus(e.target.value)}
+                            className="bg-white border border-gray-200 px-4 py-2 rounded-xl text-[11px] font-bold text-gray-700 outline-none hover:border-blue-400 transition-colors shadow-sm"
                         >
-                            <option value="">Todas</option>
-                            <option value="vigente">Em Vigência</option>
+                            <option value="">Todos os Status</option>
+                            <option value="vigente">Vigente</option>
                             <option value="concluido">Concluído</option>
-                            <option value="prestacao_contas">Prestação de Contas</option>
+                            <option value="cancelado">Cancelado</option>
                         </select>
                     </div>
-                    <button className="btn-primary flex items-center gap-2 h-[42px] px-8 bg-pink-600 hover:bg-pink-700 border-none">
-                        <FaSearch size={14} /> Filtrar
-                    </button>
+                </TransparencyFilters>
+
+                {/* Cards de Resumo */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                    <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-blue-100/50 border-l-4 border-l-blue-500 group">
+                        <div className="flex justify-between items-start mb-4 text-blue-100 group-hover:text-blue-500 transition-colors">
+                            <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Valor em Repasses</div>
+                            <FaMoneyBillWave size={24} />
+                        </div>
+                        <div className="text-2xl font-black text-gray-800 tracking-tight">{loading ? "..." : fmt(totalValor)}</div>
+                        <div className="mt-2 text-[10px] font-bold text-blue-500 uppercase tracking-tighter">Soma dos convênios filtrados</div>
+                    </div>
+
+                    <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-emerald-100/50 border-l-4 border-l-emerald-500 group">
+                        <div className="flex justify-between items-start mb-4 text-emerald-100 group-hover:text-emerald-500 transition-colors">
+                            <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Acordos Ativos</div>
+                            <FaHandshake size={24} />
+                        </div>
+                        <div className="text-2xl font-black text-gray-800 tracking-tight">{loading ? "..." : convenios.length} Convênios</div>
+                        <div className="mt-2 text-[10px] font-bold text-emerald-500 uppercase tracking-tighter">Instrumentos localizados</div>
+                    </div>
                 </div>
 
                 {/* Lista de Convênios */}
-                <div className="grid grid-cols-1 gap-6">
+                <div className="space-y-8">
                     {loading ? (
-                        <div className="flex flex-col items-center justify-center py-20 bg-white rounded-2xl border border-gray-100">
-                            <FaSpinner className="animate-spin text-pink-500 text-4xl mb-3" />
-                            <p className="text-gray-500 font-medium tracking-wide">Buscando convênios...</p>
+                        <div className="bg-white rounded-[3rem] p-24 text-center border border-gray-100">
+                             <FaSpinner className="animate-spin text-blue-500 text-4xl mb-4 mx-auto" />
+                             <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Sincronizando termos de convênio...</p>
                         </div>
-                    ) : items.length === 0 ? (
-                        <div className="text-center py-20 bg-white rounded-2xl shadow-sm border border-gray-100">
-                            <span className="text-6xl mb-4 block opacity-20">🤝</span>
-                            <h2 className="text-xl font-bold text-gray-700 mb-2">Nenhum convênio encontrado</h2>
-                            <p className="text-gray-500">Tente buscar por um ano diferente ou outra situação.</p>
+                    ) : convenios.length === 0 ? (
+                        <div className="bg-white rounded-[3rem] p-24 text-center border-2 border-dashed border-gray-100">
+                            <div className="w-20 h-20 bg-gray-50 text-gray-200 rounded-full flex items-center justify-center mx-auto mb-8">
+                               <FaHandshake size={40} />
+                            </div>
+                            <h4 className="text-xl font-black text-gray-800 uppercase tracking-tighter mb-4">Nenhum convênio localizado</h4>
+                            <p className="text-gray-400 font-medium text-sm max-w-sm mx-auto italic">
+                                Tente ajustar os filtros ou pesquisar por outro período.
+                            </p>
                         </div>
                     ) : (
-                        items.map((i) => (
-                            <div key={i.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all group overflow-hidden relative">
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-pink-50 rounded-full -mr-16 -mt-16 opacity-50 group-hover:scale-110 transition-transform"></div>
-
-                                <div className="relative flex flex-col lg:flex-row justify-between gap-8">
-                                    <div className="flex-1">
-                                        <div className="flex items-center gap-3 mb-4">
-                                            <span className="bg-pink-50 text-pink-700 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full border border-pink-100">
-                                                Nº {i.numero}
-                                            </span>
-                                            <span className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-gray-100 text-gray-600 border border-gray-200">
-                                                {i.status}
-                                            </span>
-                                        </div>
-                                        <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-pink-600 transition-colors line-clamp-2">
-                                            {i.objeto}
-                                        </h3>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                                            <div className="flex items-start gap-3">
-                                                <FaBuilding className="text-gray-400 mt-1" />
-                                                <div>
-                                                    <p className="text-xs text-gray-400 font-bold uppercase">Concedente</p>
-                                                    <p className="text-gray-700 font-medium">{i.concedente}</p>
+                        convenios.map((c) => (
+                            <div key={c.id} className="bg-white rounded-[2.5rem] border border-gray-100 shadow-xl shadow-gray-200/40 overflow-hidden group hover:shadow-2xl transition-all duration-500">
+                                <div className="p-10">
+                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+                                        <div className="flex items-center gap-6">
+                                            <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center shrink-0 border border-blue-50 group-hover:bg-blue-600 group-hover:text-white transition-all duration-500 shadow-sm">
+                                                <FaHandshake size={24} />
+                                            </div>
+                                            <div>
+                                                <div className="flex items-center gap-3 mb-1">
+                                                    <h3 className="text-xl font-black text-gray-800 uppercase tracking-tighter">Convênio Nº {c.numero}</h3>
+                                                </div>
+                                                <div className="flex items-center gap-4">
+                                                    <span className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                                                        <FaHistory size={12} className="text-blue-200" /> Vigência: {new Date(c.dataInicio).toLocaleDateString("pt-BR")} a {new Date(c.dataFim).toLocaleDateString("pt-BR")}
+                                                    </span>
+                                                    <span className="w-1 h-1 bg-gray-200 rounded-full" />
+                                                    <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest flex items-center gap-2">
+                                                        <FaBuilding size={12} /> Órgão: {c.secretaria}
+                                                    </span>
                                                 </div>
                                             </div>
-                                            <div className="flex items-start gap-3">
-                                                <FaHistory className="text-gray-400 mt-1" />
+                                        </div>
+                                        <div className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2 border ${getStatusStyles(c.status)}`}>
+                                            {c.status.toLowerCase() === 'vigente' ? <FaCheckCircle size={14} /> : c.status.toLowerCase() === 'cancelado' ? <FaTimesCircle size={14} /> : <FaInfoCircle size={14} />}
+                                            {c.status}
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-gray-50/50 rounded-[2rem] p-8 border border-gray-50 mb-8">
+                                        <div className="mb-6">
+                                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Objeto do Acordo</p>
+                                            <p className="text-gray-600 font-medium leading-relaxed italic">"{c.objeto}"</p>
+                                        </div>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-gray-100">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-12 h-12 bg-white text-blue-600 rounded-2xl flex items-center justify-center shadow-sm border border-gray-100 shrink-0">
+                                                    <FaBuilding size={20} />
+                                                </div>
                                                 <div>
-                                                    <p className="text-xs text-gray-400 font-bold uppercase">Vigência</p>
-                                                    <p className="text-gray-600">
-                                                        {new Date(i.dataInicio).toLocaleDateString("pt-BR")} a {new Date(i.dataFim).toLocaleDateString("pt-BR")}
-                                                    </p>
+                                                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Ente Concedente</p>
+                                                    <p className="text-sm font-black text-gray-800 uppercase tracking-tight">{c.concedente}</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex justify-between md:justify-end gap-12">
+                                                <div className="text-right">
+                                                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Repasse (União/Estado)</p>
+                                                    <p className="text-xl font-black text-emerald-600 tracking-tighter">{fmt(c.valor)}</p>
+                                                </div>
+                                                <div className="text-right border-l border-gray-100 pl-8">
+                                                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Contrapartida Município</p>
+                                                    <p className="text-xl font-black text-blue-600 tracking-tighter">{fmt(c.contrapartida)}</p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="flex flex-col justify-center gap-4 lg:min-w-[240px]">
-                                        <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100">
-                                            <div className="flex justify-between items-center mb-2">
-                                                <span className="text-[10px] text-gray-400 font-black uppercase">Repasse</span>
-                                                <span className="text-lg font-black text-pink-600">{formatCurrency(i.valor)}</span>
-                                            </div>
-                                            <div className="flex justify-between items-center text-xs">
-                                                <span className="text-gray-400">Contrapartida:</span>
-                                                <span className="font-bold text-gray-500">{formatCurrency(i.contrapartida)}</span>
-                                            </div>
-                                            <div className="mt-3 pt-3 border-t border-gray-200 flex justify-between items-center">
-                                                <span className="text-xs font-bold text-gray-400">VALOR TOTAL</span>
-                                                <span className="text-sm font-black text-gray-800">{formatCurrency(i.valor + i.contrapartida)}</span>
-                                            </div>
-                                        </div>
-                                        <button className="w-full text-center text-xs font-bold text-pink-600 hover:text-pink-700 underline underline-offset-4">
-                                            Ver detalhes e documentos
+                                    <div className="flex justify-end gap-4">
+                                        <button className="bg-white text-gray-400 border border-gray-100 px-8 py-3 rounded-full text-[9px] font-black uppercase tracking-widest hover:bg-gray-50 transition-all">
+                                            Ver Justificativa
+                                        </button>
+                                        <button className="bg-blue-600 text-white px-8 py-3 rounded-full text-[9px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 flex items-center gap-2">
+                                            Visualizar Instrumento na Íntegra <FaArrowRight size={10} />
                                         </button>
                                     </div>
                                 </div>
                             </div>
                         ))
                     )}
+                </div>
+
+                <div className="mt-20">
+                    <BannerPNTP />
                 </div>
             </div>
         </div>

@@ -1,6 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
-import { FaFileContract, FaSearch, FaSpinner, FaCalendarAlt, FaHistory, FaCheckCircle, FaExclamationTriangle } from "react-icons/fa";
+import { FaFileContract, FaSpinner, FaHistory, FaCheckCircle, FaExclamationTriangle, FaTimesCircle, FaBuilding, FaWallet } from "react-icons/fa";
+import PageHeader from "@/components/PageHeader";
+import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
+import { exportToCSV, exportToJSON, exportToPDF } from "@/lib/exportUtils";
+import BannerPNTP from "@/components/transparencia/BannerPNTP";
 
 type Contrato = {
     id: string;
@@ -8,28 +12,37 @@ type Contrato = {
     objeto: string;
     valor: number;
     fornecedor: string;
-    dataAssinatura: string;
-    dataVencimento: string;
+    dataInicio: string;
+    dataFim: string;
     status: string;
-    secretaria?: { nome: string };
+    secretaria: string;
+};
+
+const getStatusStyles = (status: string) => {
+    switch (status.toLowerCase()) {
+        case "vigente": return "bg-emerald-50 text-emerald-700 border-emerald-100 icon-check";
+        case "finalizado": return "bg-blue-50 text-blue-700 border-blue-100 icon-history";
+        case "cancelado": return "bg-rose-50 text-rose-700 border-rose-100 icon-times";
+        default: return "bg-gray-50 text-gray-500 border-gray-100 icon-info";
+    }
 };
 
 export default function ContratosPage() {
     const [contratos, setContratos] = useState<Contrato[]>([]);
     const [loading, setLoading] = useState(true);
+    const [busca, setBusca] = useState("");
     const [ano, setAno] = useState(new Date().getFullYear().toString());
     const [status, setStatus] = useState("");
-
-    const anos = Array.from({ length: 5 }, (_, i) => (new Date().getFullYear() - i).toString());
 
     useEffect(() => {
         const fetchContratos = async () => {
             setLoading(true);
             try {
-                const query = new URLSearchParams();
-                if (ano) query.append("ano", ano);
-                if (status) query.append("status", status);
-
+                const query = new URLSearchParams({ 
+                    ano, 
+                    status,
+                    query: busca 
+                });
                 const res = await fetch(`/api/contratos?${query.toString()}`);
                 const data = await res.json();
                 setContratos(data.items || []);
@@ -40,131 +53,185 @@ export default function ContratosPage() {
             }
         };
         fetchContratos();
-    }, [ano, status]);
+    }, [ano, status, busca]);
 
     const formatCurrency = (val: number) => {
         return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(val);
     };
 
-    const getStatusColor = (status: string) => {
-        switch (status.toLowerCase()) {
-            case "vigente": return "bg-green-100 text-green-700 border-green-200";
-            case "finalizado": return "bg-blue-100 text-blue-700 border-blue-200";
-            case "cancelado": return "bg-red-100 text-red-700 border-red-200";
-            default: return "bg-gray-100 text-gray-700 border-gray-200";
-        }
+    const handleClearFilters = () => {
+        setBusca("");
+        setAno(new Date().getFullYear().toString());
+        setStatus("");
     };
 
-    return (
-        <div className="min-h-screen bg-gray-50">
-            {/* Header */}
-            <div className="bg-gradient-to-r from-orange-600 to-amber-700 py-12 px-4 shadow-lg border-b border-orange-500">
-                <div className="max-w-7xl mx-auto">
-                    <nav className="text-sm text-orange-100 mb-4 flex items-center gap-2">
-                        <a href="/transparencia" className="hover:text-white transition-colors">Transparência</a>
-                        <span>›</span>
-                        <span className="text-white font-medium">Contratos Administrativos</span>
-                    </nav>
-                    <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
-                        <FaFileContract className="text-orange-200" /> Contratos Administrativos
-                    </h1>
-                    <p className="text-orange-100 max-w-2xl">
-                        Consulte os contratos celebrados pela Prefeitura, incluindo valores, vigência, objeto e fornecedores contratados.
-                    </p>
-                </div>
-            </div>
+    const handleExport = (format: "pdf" | "csv" | "json") => {
+        const payload = contratos.map(c => ({
+            "Contrato": c.numero,
+            "Fornecedor": c.fornecedor,
+            "Objeto": c.objeto,
+            "Vigência": `${new Date(c.dataInicio).toLocaleDateString("pt-BR")} a ${new Date(c.dataFim).toLocaleDateString("pt-BR")}`,
+            "Valor": formatCurrency(c.valor),
+            "Status": c.status
+        }));
 
-            <div className="max-w-7xl mx-auto px-4 py-8">
-                {/* Filtros */}
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8 flex flex-wrap items-end gap-4">
-                    <div className="flex-1 min-w-[200px]">
-                        <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-wider">Ano da Assinatura</label>
-                        <div className="relative">
-                            <FaCalendarAlt className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                            <select
-                                className="input-field pl-10"
-                                value={ano}
-                                onChange={(e) => setAno(e.target.value)}
-                            >
-                                <option value="">Todos os anos</option>
-                                {anos.map(a => <option key={a} value={a}>{a}</option>)}
-                            </select>
-                        </div>
-                    </div>
-                    <div className="flex-1 min-w-[200px]">
-                        <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-wider">Status do Contrato</label>
-                        <select
-                            className="input-field"
-                            value={status}
+        const filename = `contratos_${ano}`;
+        const title = `Relatório de Contratos Administrativos – Lajes Pintadas/RN (${ano})`;
+
+        if (format === "csv") exportToCSV(payload, filename);
+        else if (format === "json") exportToJSON(payload, filename);
+        else exportToPDF(payload, filename, title);
+    };
+
+    const totalValor = contratos.reduce((acc, curr) => acc + curr.valor, 0);
+
+    return (
+        <div className="min-h-screen bg-[#f8fafc] font-['Montserrat',sans-serif]">
+            <PageHeader
+                title="Contratos Administrativos"
+                subtitle="Acompanhe todos os pactos, acordos e demais instrumentos contratuais celebrados pelo município."
+                variant="premium"
+                icon={<FaFileContract />}
+                breadcrumbs={[
+                    { label: "Início", href: "/" },
+                    { label: "Transparência", href: "/transparencia" },
+                    { label: "Contratos Administrativos" }
+                ]}
+            />
+
+            <div className="max-w-[1240px] mx-auto px-6 py-12 -mt-10 relative z-30">
+                <TransparencyFilters
+                    searchValue={busca}
+                    onSearch={setBusca}
+                    currentYear={ano}
+                    onYearChange={setAno}
+                    currentMonth=""
+                    onMonthChange={() => {}}
+                    onClear={handleClearFilters}
+                    onExport={handleExport}
+                    placeholder="Buscar por objeto, fornecedor ou número..."
+                >
+                    <div className="flex items-center gap-3">
+                        <select 
+                            value={status} 
                             onChange={(e) => setStatus(e.target.value)}
+                            className="bg-white border border-gray-200 px-4 py-2 rounded-xl text-[11px] font-bold text-gray-700 outline-none hover:border-orange-400 transition-colors shadow-sm"
                         >
-                            <option value="">Todos os status</option>
+                            <option value="">Todos os Status</option>
                             <option value="vigente">Vigente</option>
                             <option value="finalizado">Finalizado</option>
                             <option value="cancelado">Cancelado</option>
                         </select>
                     </div>
-                    <button className="btn-primary flex items-center gap-2 h-[42px] px-8 bg-orange-600 hover:bg-orange-700 border-none">
-                        <FaSearch size={14} /> Pesquisar
-                    </button>
+                </TransparencyFilters>
+
+                {/* Cards de Resumo */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                    <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-orange-100/50 border-l-4 border-l-orange-500 group hover:shadow-xl hover:shadow-orange-500/5 transition-all">
+                        <div className="flex justify-between items-start mb-4">
+                            <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Comprometimento Total</div>
+                            <FaWallet className="text-orange-100 group-hover:text-orange-500 transition-colors" size={24} />
+                        </div>
+                        <div className="text-2xl font-black text-gray-800 tracking-tight">{loading ? "..." : formatCurrency(totalValor)}</div>
+                        <div className="mt-2 text-[10px] font-bold text-orange-500 uppercase tracking-tighter">Soma dos contratos filtrados</div>
+                    </div>
+
+                    <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-blue-100/50 border-l-4 border-l-blue-500 group hover:shadow-xl hover:shadow-blue-500/5 transition-all">
+                        <div className="flex justify-between items-start mb-4">
+                            <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Acordos Firmados</div>
+                            <FaFileContract className="text-blue-100 group-hover:text-blue-500 transition-colors" size={24} />
+                        </div>
+                        <div className="text-2xl font-black text-gray-800 tracking-tight">{loading ? "..." : contratos.length} Contratos</div>
+                        <div className="mt-2 text-[10px] font-bold text-blue-500 uppercase tracking-tighter">Volume de instrumentos</div>
+                    </div>
                 </div>
 
                 {/* Lista de Contratos */}
-                <div className="space-y-4">
+                <div className="space-y-6">
                     {loading ? (
-                        <div className="flex flex-col items-center justify-center py-20 bg-white rounded-2xl border border-gray-100">
-                            <FaSpinner className="animate-spin text-orange-500 text-4xl mb-3" />
-                            <p className="text-gray-500 font-medium tracking-wide">Buscando contratos no sistema...</p>
+                        <div className="bg-white rounded-[3rem] p-24 text-center border border-gray-100">
+                             <FaSpinner className="animate-spin text-orange-500 text-4xl mb-4 mx-auto" />
+                             <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Consultando instrumentos contratuais...</p>
                         </div>
                     ) : contratos.length === 0 ? (
-                        <div className="text-center py-20 bg-white rounded-2xl shadow-sm border border-gray-100">
-                            <span className="text-6xl mb-4 block opacity-20">📜</span>
-                            <h2 className="text-xl font-bold text-gray-700 mb-2">Nenhum contrato encontrado</h2>
-                            <p className="text-gray-500">Tente ajustar seus filtros para encontrar o que procura.</p>
+                        <div className="bg-white rounded-[3rem] p-24 text-center border-2 border-dashed border-gray-100">
+                            <div className="w-20 h-20 bg-gray-50 text-gray-200 rounded-full flex items-center justify-center mx-auto mb-8">
+                               <FaFileContract size={40} />
+                            </div>
+                            <h4 className="text-xl font-black text-gray-800 uppercase tracking-tighter mb-4">Nenhum contrato localizado</h4>
+                            <p className="text-gray-400 font-medium text-sm max-w-sm mx-auto italic">
+                                Tente ajustar os filtros ou pesquisar por outro termo.
+                            </p>
                         </div>
                     ) : (
                         contratos.map((c) => (
-                            <div key={c.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow group">
-                                <div className="flex flex-col lg:flex-row justify-between gap-6">
-                                    <div className="flex-1">
-                                        <div className="flex items-center gap-3 mb-3">
-                                            <span className="bg-orange-50 text-orange-700 text-xs font-bold px-3 py-1 rounded-full border border-orange-100">
-                                                Nº {c.numero}
-                                            </span>
-                                            <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-md border ${getStatusColor(c.status)}`}>
-                                                {c.status}
-                                            </span>
-                                        </div>
-                                        <h3 className="text-lg font-bold text-gray-800 mb-2 group-hover:text-orange-600 transition-colors">
-                                            {c.objeto}
-                                        </h3>
-                                        <div className="flex flex-wrap gap-y-2 gap-x-6 text-sm text-gray-500">
-                                            <div className="flex items-center gap-2">
-                                                <span className="font-semibold text-gray-700">Fornecedor:</span> {c.fornecedor}
+                            <div key={c.id} className="bg-white rounded-[2.5rem] border border-gray-100 shadow-xl shadow-gray-200/40 overflow-hidden group hover:shadow-2xl transition-all duration-500">
+                                <div className="p-10">
+                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+                                        <div className="flex items-center gap-6">
+                                            <div className="w-14 h-14 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center shrink-0 border border-orange-50 group-hover:bg-orange-600 group-hover:text-white transition-all duration-500 shadow-sm">
+                                                <FaFileContract size={24} />
                                             </div>
-                                            <div className="flex items-center gap-2">
-                                                <span className="font-semibold text-gray-700">Vigência:</span>
-                                                <FaHistory className="text-gray-400 text-xs" />
-                                                {new Date(c.dataAssinatura).toLocaleDateString("pt-BR")} a {new Date(c.dataVencimento).toLocaleDateString("pt-BR")}
-                                            </div>
-                                            {c.secretaria && (
-                                                <div className="flex items-center gap-2">
-                                                    <span className="font-semibold text-gray-700">Orgão:</span> {c.secretaria.nome}
+                                            <div>
+                                                <div className="flex items-center gap-3 mb-1">
+                                                    <h3 className="text-xl font-black text-gray-800 uppercase tracking-tighter">Contrato Nº {c.numero}</h3>
+                                                    <span className={`px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border border-orange-100 bg-orange-50 text-orange-700`}>
+                                                        ID: {c.id.substring(0,6).toUpperCase()}
+                                                    </span>
                                                 </div>
-                                            )}
+                                                <div className="flex items-center gap-4">
+                                                    <span className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                                                        <FaHistory size={12} className="text-orange-200" /> Vigência: {new Date(c.dataInicio).toLocaleDateString("pt-BR")} a {new Date(c.dataFim).toLocaleDateString("pt-BR")}
+                                                    </span>
+                                                    <span className="w-1 h-1 bg-gray-200 rounded-full" />
+                                                    <span className="text-[10px] font-black text-orange-500 uppercase tracking-widest select-none">Órgão: {c.secretaria}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2 border ${getStatusStyles(c.status).split(' icon-')[0]}`}>
+                                            {c.status.toLowerCase() === 'vigente' ? <FaCheckCircle size={14} /> : c.status.toLowerCase() === 'cancelado' ? <FaTimesCircle size={14} /> : <FaHistory size={14} />}
+                                            {c.status}
                                         </div>
                                     </div>
-                                    <div className="lg:text-right flex flex-col justify-center gap-2 bg-gray-50 p-4 lg:bg-transparent lg:p-0 rounded-xl">
-                                        <div className="text-xs text-gray-400 font-bold uppercase tracking-wider">Valor do Contrato</div>
-                                        <div className="text-2xl font-black text-orange-600">{formatCurrency(c.valor)}</div>
-                                        <button className="text-xs font-bold text-gray-500 hover:text-orange-600 underline transition-colors">
-                                            Ver documento completo
+
+                                    <div className="bg-gray-50/50 rounded-[2rem] p-8 border border-gray-50 mb-8">
+                                        <div className="mb-6">
+                                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Objeto do Contrato</p>
+                                            <p className="text-gray-600 font-medium leading-relaxed italic">"{c.objeto}"</p>
+                                        </div>
+                                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pt-6 border-t border-gray-100">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
+                                                    <FaBuilding size={18} />
+                                                </div>
+                                                <div>
+                                                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Fornecedor Contratado</p>
+                                                    <p className="text-sm font-black text-gray-800 uppercase tracking-tight">{c.fornecedor}</p>
+                                                </div>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Valor do Ajuste</p>
+                                                <p className="text-2xl font-black text-orange-600 tracking-tighter">{formatCurrency(c.valor)}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center justify-end gap-3">
+                                        <button className="bg-white text-gray-500 px-6 py-3 rounded-full font-black uppercase text-[9px] tracking-widest border border-gray-100 hover:bg-gray-50 transition-all flex items-center gap-2">
+                                            Visualizar Justificativa
+                                        </button>
+                                        <button className="bg-orange-600 text-white px-8 py-3 rounded-full font-black uppercase text-[9px] tracking-widest hover:bg-orange-700 transition-all shadow-lg shadow-orange-900/10 flex items-center gap-2">
+                                            Ver Documentos do Contrato
                                         </button>
                                     </div>
                                 </div>
                             </div>
                         ))
                     )}
+                </div>
+
+                <div className="mt-20">
+                    <BannerPNTP />
                 </div>
             </div>
         </div>

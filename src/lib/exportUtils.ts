@@ -48,18 +48,42 @@ export function exportToPDF(data: any[], filename: string, title?: string) {
     const tableColumn = Object.keys(data[0]);
     const tableRows = data.map(obj => Object.values(obj));
 
+    // Logo Mockup/Text (PNTP Requisito: Identificação da Entidade)
+    doc.setFontSize(18);
+    doc.setTextColor(1, 136, 185); // Azul Lajes Pintadas
+    doc.text("Prefeitura Municipal de Lajes Pintadas", 14, 20);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(100, 116, 139);
+    doc.text("Estado do Rio Grande do Norte | Portal da Transparência", 14, 26);
+
     if (title) {
-        doc.text(title, 14, 15);
-        doc.setFontSize(10);
-        doc.text(`Gerado em: ${new Date().toLocaleString("pt-BR")}`, 14, 22);
+        doc.setFontSize(12);
+        doc.setTextColor(30, 41, 59);
+        doc.text(title, 14, 38);
     }
+
+    doc.setFontSize(8);
+    doc.setTextColor(148, 163, 184);
+    doc.text(`Gerado em: ${new Date().toLocaleString("pt-BR")}`, 14, 44);
 
     autoTable(doc, {
         head: [tableColumn],
         body: tableRows as any,
-        startY: title ? 25 : 15,
-        styles: { fontSize: 8 },
-        headStyles: { fillColor: [1, 176, 239] } // Cor azul do site
+        startY: 50,
+        styles: { fontSize: 8, font: "helvetica", cellPadding: 3 },
+        headStyles: { fillColor: [1, 136, 185], textColor: 255, fontStyle: "bold" },
+        alternateRowStyles: { fillColor: [248, 250, 252] },
+        margin: { top: 50 },
+        didDrawPage: (data) => {
+            // Rodapé
+            doc.setFontSize(7);
+            doc.text(
+                "Documento extraído do Portal da Transparência – Lajes Pintadas/RN. Em conformidade com a Lei de Acesso à Informação (LAI).",
+                14,
+                doc.internal.pageSize.height - 10
+            );
+        }
     });
 
     doc.save(`${filename}.pdf`);

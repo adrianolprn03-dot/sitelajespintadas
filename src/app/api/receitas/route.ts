@@ -5,21 +5,32 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const ano = searchParams.get("ano");
     const mes = searchParams.get("mes");
-    const secretaria = searchParams.get("secretaria");
+    const query = searchParams.get("query");
+    const categoria = searchParams.get("categoria");
 
-    const where: Record<string, unknown> = {};
+    const where: any = {};
     if (ano) where.ano = parseInt(ano);
     if (mes) where.mes = parseInt(mes);
-    if (secretaria) where.secretaria = { contains: secretaria };
+    if (categoria) where.categoria = { contains: categoria, mode: 'insensitive' };
+    
+    if (query) {
+        where.OR = [
+            { descricao: { contains: query, mode: 'insensitive' } },
+        ];
+    }
 
     try {
         const [items, total] = await Promise.all([
-            prisma.receita.findMany({ where, orderBy: [{ ano: "desc" }, { mes: "desc" }] }),
+            prisma.receita.findMany({ 
+                where, 
+                orderBy: [{ ano: "desc" }, { mes: "desc" }, { criadoEm: "desc" }] 
+            }),
             prisma.receita.count({ where }),
         ]);
         const totalValor = items.reduce((sum, r) => sum + r.valor, 0);
         return NextResponse.json({ items, total, totalValor });
-    } catch {
+    } catch (error) {
+        console.error("Erro ao buscar receitas:", error);
         return NextResponse.json({ error: "Erro interno" }, { status: 500 });
     }
 }

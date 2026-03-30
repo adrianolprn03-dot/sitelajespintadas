@@ -8,11 +8,23 @@ export async function GET(req: NextRequest) {
     const secretaria = searchParams.get("secretaria");
     const ativo = searchParams.get("ativo");
 
-    const where: Record<string, unknown> = {};
+    const query = searchParams.get("query");
+    const vinculo = searchParams.get("vinculo");
+
+    const where: any = {};
     if (ano) where.ano = parseInt(ano);
     if (mes) where.mes = parseInt(mes);
-    if (secretaria) where.secretaria = { contains: secretaria };
+    if (secretaria) where.secretaria = { contains: secretaria, mode: 'insensitive' };
+    if (vinculo) where.vinculo = { contains: vinculo, mode: 'insensitive' };
     if (ativo !== null) where.ativo = ativo === "true";
+    
+    if (query) {
+        where.OR = [
+            { nome: { contains: query, mode: 'insensitive' } },
+            { cargo: { contains: query, mode: 'insensitive' } },
+            { cpf: { contains: query, mode: 'insensitive' } },
+        ];
+    }
 
     try {
         const [items, total] = await Promise.all([

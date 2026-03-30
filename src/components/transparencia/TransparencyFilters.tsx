@@ -13,6 +13,7 @@ interface TransparencyFiltersProps {
     currentMonth: string;
     searchValue: string;
     placeholder?: string;
+    children?: React.ReactNode;
 }
 
 export default function TransparencyFilters({
@@ -25,7 +26,8 @@ export default function TransparencyFilters({
     currentYear,
     currentMonth,
     searchValue,
-    placeholder = "Pesquisar nos resultados..."
+    placeholder = "Pesquisar nos resultados...",
+    children
 }: TransparencyFiltersProps) {
     const [showExport, setShowExport] = useState(false);
 
@@ -126,6 +128,14 @@ export default function TransparencyFilters({
                         </div>
                     </div>
                 </div>
+
+                {/* Filtros Extras (Children) */}
+                {children && (
+                    <div className="w-full flex flex-wrap items-center gap-4 pt-6 border-t border-slate-50 mt-2">
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-4 border-r border-slate-100 hidden sm:block italic">Filtros Avançados</span>
+                        {children}
+                    </div>
+                )}
             </div>
         </div>
     );

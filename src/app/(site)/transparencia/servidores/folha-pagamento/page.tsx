@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import Link from "next/link";
-import { FaSpinner, FaMoneyCheckAlt } from "react-icons/fa";
+import { FaSpinner, FaMoneyCheckAlt, FaBuilding, FaUserTie, FaCheckCircle, FaWallet } from "react-icons/fa";
 import { exportToCSV, exportToJSON, exportToPDF } from "@/lib/exportUtils";
 import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
 import PageHeader from "@/components/PageHeader";
@@ -21,9 +20,11 @@ type Servidor = {
 };
 
 const vinculoCores: Record<string, string> = {
-    efetivo: "bg-green-100 text-green-700",
-    comissionado: "bg-blue-100 text-blue-700",
-    contratado: "bg-orange-100 text-orange-700",
+    efetivo: "bg-emerald-50 text-emerald-700 border-emerald-100",
+    comissionado: "bg-blue-50 text-blue-700 border-blue-100",
+    contratado: "bg-amber-50 text-amber-700 border-amber-100",
+    estagiario: "bg-purple-50 text-purple-700 border-purple-100",
+    "agente político": "bg-indigo-50 text-indigo-700 border-indigo-100",
 };
 
 const mesesLabels = [
@@ -38,18 +39,26 @@ function fmt(v: number) {
 export default function ServidoresPage() {
     const [servidores, setServidores] = useState<Servidor[]>([]);
     const [loading, setLoading] = useState(true);
-    const [ano, setAno] = useState("2024");
-    const [mes, setMes] = useState("3");
+    const [ano, setAno] = useState(new Date().getFullYear().toString());
+    const [mes, setMes] = useState((new Date().getMonth() + 1).toString());
     const [busca, setBusca] = useState("");
+    const [vinculoFiltro, setVinculoFiltro] = useState("");
+    const [secretariaFiltro, setSecretariaFiltro] = useState("");
 
     useEffect(() => {
         fetchServidores();
-    }, [ano, mes]);
+    }, [ano, mes, vinculoFiltro, secretariaFiltro]);
 
     const fetchServidores = async () => {
         setLoading(true);
         try {
-            const res = await fetch(`/api/servidores?ano=${ano}&mes=${mes}`);
+            const query = new URLSearchParams({
+                ano,
+                mes,
+                vinculo: vinculoFiltro,
+                secretaria: secretariaFiltro
+            });
+            const res = await fetch(`/api/servidores?${query.toString()}`);
             const data = await res.json();
             setServidores(data.items || []);
         } catch (error) {
@@ -61,8 +70,10 @@ export default function ServidoresPage() {
 
     const handleClearFilters = () => {
         setBusca("");
-        setAno("2024");
-        setMes("3");
+        setAno(new Date().getFullYear().toString());
+        setMes((new Date().getMonth() + 1).toString());
+        setVinculoFiltro("");
+        setSecretariaFiltro("");
     };
 
     const handleExport = (format: "pdf" | "csv" | "json") => {
@@ -95,7 +106,7 @@ export default function ServidoresPage() {
     const totalLiquido = filtrados.reduce((acc: number, curr: Servidor) => acc + curr.totalLiquido, 0);
 
     return (
-        <div className="min-h-screen bg-gray-50 font-['Montserrat',sans-serif]">
+        <div className="min-h-screen bg-[#f8fafc] font-['Montserrat',sans-serif]">
             <PageHeader
                 title="Folha de Pagamento"
                 subtitle="Transparência detalhada sobre a remuneração dos servidores públicos municipais."
@@ -109,10 +120,8 @@ export default function ServidoresPage() {
                 ]}
             />
 
-            <div className="max-w-7xl mx-auto px-6 py-12 -mt-24 relative z-30">
-                {/* Filtros Padronizados PNTP 2024 */}
-                <div id="filtros-servidores">
-                    <TransparencyFilters
+            <div className="max-w-7xl mx-auto px-6 py-12 -mt-10 relative z-30">
+                <TransparencyFilters
                     searchValue={busca}
                     onSearch={setBusca}
                     currentYear={ano}
@@ -121,81 +130,136 @@ export default function ServidoresPage() {
                     onMonthChange={setMes}
                     onClear={handleClearFilters}
                     onExport={handleExport}
-                    placeholder="Pesquisar por nome, cargo ou secretaria..."
-                />
+                    placeholder="Pesquisar por nome ou cargo..."
+                >
+                    <div className="flex flex-wrap gap-3">
+                        <select 
+                            value={vinculoFiltro} 
+                            onChange={(e) => setVinculoFiltro(e.target.value)}
+                            className="bg-white border border-gray-200 px-4 py-2 rounded-xl text-[11px] font-bold text-gray-700 outline-none hover:border-blue-400 transition-colors shadow-sm"
+                        >
+                            <option value="">Todos os Vínculos</option>
+                            <option value="efetivo">Efetivo</option>
+                            <option value="comissionado">Comissionado</option>
+                            <option value="contratado">Contratado</option>
+                            <option value="estagiario">Estagiário</option>
+                            <option value="agente politico">Agente Político</option>
+                        </select>
+                        <select 
+                            value={secretariaFiltro} 
+                            onChange={(e) => setSecretariaFiltro(e.target.value)}
+                            className="bg-white border border-gray-200 px-4 py-2 rounded-xl text-[11px] font-bold text-gray-700 outline-none hover:border-blue-400 transition-colors shadow-sm"
+                        >
+                            <option value="">Todas as Secretarias</option>
+                            <option value="educacao">Educação</option>
+                            <option value="saude">Saúde</option>
+                            <option value="assistencia social">Assistência Social</option>
+                            <option value="administracao">Administração</option>
+                            <option value="obras">Obras e Serviços Públicos</option>
+                        </select>
+                    </div>
+                </TransparencyFilters>
+
+                {/* Cards de TOTAIS ESTILIZADOS */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+                    <div className="bg-white rounded-[2rem] shadow-sm p-8 border border-gray-100 border-l-4 border-l-blue-500 hover:shadow-xl hover:shadow-blue-500/5 transition-all group">
+                        <div className="flex justify-between items-start mb-4">
+                            <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Total Bruto</div>
+                            <FaWallet className="text-blue-100 group-hover:text-blue-500 transition-colors" size={24} />
+                        </div>
+                        <div className="text-3xl font-black text-gray-800">{loading ? "..." : fmt(totalBruto)}</div>
+                        <div className="mt-2 text-[10px] font-bold text-blue-500 uppercase">Período Selecionado</div>
+                    </div>
+                    
+                    <div className="bg-white rounded-[2rem] shadow-sm p-8 border border-gray-100 border-l-4 border-l-emerald-500 hover:shadow-xl hover:shadow-emerald-500/5 transition-all group">
+                        <div className="flex justify-between items-start mb-4">
+                            <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Total Líquido</div>
+                            <FaCheckCircle className="text-emerald-100 group-hover:text-emerald-500 transition-colors" size={24} />
+                        </div>
+                        <div className="text-3xl font-black text-emerald-600">{loading ? "..." : fmt(totalLiquido)}</div>
+                        <div className="mt-2 text-[10px] font-bold text-emerald-500 uppercase">Valores a Pagar</div>
+                    </div>
+
+                    <div className="bg-white rounded-[2rem] shadow-sm p-8 border border-gray-100 border-l-4 border-l-indigo-500 hover:shadow-xl hover:shadow-indigo-500/5 transition-all group">
+                        <div className="flex justify-between items-start mb-4">
+                            <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Nº de Servidores</div>
+                            <FaUserTie className="text-indigo-100 group-hover:text-indigo-500 transition-colors" size={24} />
+                        </div>
+                        <div className="text-3xl font-black text-indigo-600">{loading ? "..." : filtrados.length}</div>
+                        <div className="mt-2 text-[10px] font-bold text-indigo-500 uppercase">Quadro Ativo</div>
+                    </div>
                 </div>
 
-                {/* Cards de totais */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                    <div className="bg-white rounded-xl shadow p-5 border-l-4 border-teal-500">
-                        <div className="text-xs font-semibold text-gray-500 uppercase mb-1">Total de Servidores</div>
-                        <div className="text-2xl font-bold text-teal-600">{loading ? "..." : filtrados.length}</div>
+                {/* Tabela de Resultados */}
+                <div className="bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
+                    <div className="p-8 border-b border-gray-50 flex items-center justify-between bg-gray-50/50">
+                       <h3 className="text-sm font-black text-gray-800 uppercase tracking-widest flex items-center gap-2">
+                           <span className="w-2 h-5 bg-blue-600 rounded-full"></span> Detalhamento da Folha
+                       </h3>
+                       <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                           {mesesLabels[Number(mes)-1]} de {ano}
+                       </div>
                     </div>
-                    <div className="bg-white rounded-xl shadow p-5 border-l-4 border-green-500">
-                        <div className="text-xs font-semibold text-gray-500 uppercase mb-1">Total Folha (Bruto)</div>
-                        <div className="text-2xl font-bold text-green-600">{loading ? "..." : fmt(totalBruto)}</div>
-                    </div>
-                    <div className="bg-white rounded-xl shadow p-5 border-l-4 border-blue-500">
-                        <div className="text-xs font-semibold text-gray-500 uppercase mb-1">Mês de Referência</div>
-                        <div className="text-2xl font-bold text-blue-600">{mes}/{ano}</div>
-                    </div>
-                </div>
-
-                {/* Tabela */}
-                <div className="bg-white rounded-2xl shadow overflow-hidden">
-                    <div className="p-4 border-b border-gray-100 flex justify-between items-center">
-                        <span className="text-sm text-gray-500">{filtrados.length} servidores</span>
-                        <span className="text-xs text-gray-400">Dados de {mes}/{ano}</span>
-                    </div>
-                    <div className="overflow-x-auto min-h-[200px] relative">
+                    
+                    <div className="overflow-x-auto min-h-[300px] relative">
                         {loading && (
-                            <div className="absolute inset-0 bg-white bg-opacity-70 flex items-center justify-center z-10">
-                                <FaSpinner className="animate-spin text-teal-500 text-3xl" />
+                            <div className="absolute inset-0 bg-white/70 flex flex-col items-center justify-center z-10 backdrop-blur-sm">
+                                <FaSpinner className="animate-spin text-blue-600 text-4xl mb-4" />
+                                <div className="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em]">Consultando Folha...</div>
                             </div>
                         )}
-                        <table className="w-full" aria-label="Tabela de servidores públicos">
+                        <table className="w-full text-left" aria-label="Tabela de servidores públicos">
                             <thead>
-                                <tr>
-                                    <th className="table-header">Nome</th>
-                                    <th className="table-header">Cargo</th>
-                                    <th className="table-header">Vínculo</th>
-                                    <th className="table-header">Secretaria</th>
-                                    <th className="table-header text-right">Sal. Base</th>
-                                    <th className="table-header text-right">Total Bruto</th>
-                                    <th className="table-header text-right">Total Líquido</th>
+                                <tr className="bg-gray-50/50 text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-100">
+                                    <th className="px-8 py-6">Servidor / Cargo</th>
+                                    <th className="px-8 py-6">Secretaria</th>
+                                    <th className="px-8 py-6">Situação / Vínculo</th>
+                                    <th className="px-8 py-6 text-right">Total Bruto</th>
+                                    <th className="px-8 py-6 text-right">Total Líquido</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody className="divide-y divide-gray-50">
                                 {filtrados.length === 0 && !loading ? (
                                     <tr>
-                                        <td colSpan={7} className="text-center py-10 text-gray-500">
-                                            Nenhum servidor encontrado para este período.
+                                        <td colSpan={5} className="px-8 py-20 text-center text-gray-400 italic">
+                                            Nenhum servidor encontrado para esta combinação de filtros.
                                         </td>
                                     </tr>
                                 ) : (
                                     filtrados.map((s: Servidor) => (
-                                        <tr key={s.id} className="hover:bg-gray-50 transition-colors">
-                                            <td className="table-cell font-medium">{s.nome}</td>
-                                            <td className="table-cell text-sm">{s.cargo}</td>
-                                            <td className="table-cell">
-                                                <span className={`badge text-xs capitalize ${vinculoCores[s.vinculo.toLowerCase()] || "bg-gray-100"}`}>
+                                        <tr key={s.id} className="hover:bg-blue-50/30 transition-all group">
+                                            <td className="px-8 py-6">
+                                                <div className="font-black text-gray-800 text-sm group-hover:text-blue-700 transition-colors">{s.nome}</div>
+                                                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{s.cargo}</div>
+                                            </td>
+                                            <td className="px-8 py-6">
+                                                <div className="flex items-center gap-2 text-[10px] font-bold text-gray-500 bg-gray-100 px-3 py-1 rounded-lg w-fit">
+                                                    <FaBuilding size={10} className="text-gray-400" /> {s.secretaria}
+                                                </div>
+                                            </td>
+                                            <td className="px-8 py-6">
+                                                <span className={`inline-block px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${vinculoCores[s.vinculo.toLowerCase()] || "bg-gray-50 text-gray-400 border-gray-200"}`}>
                                                     {s.vinculo}
                                                 </span>
                                             </td>
-                                            <td className="table-cell text-sm">{s.secretaria}</td>
-                                            <td className="table-cell text-right text-sm">{fmt(s.salarioBase)}</td>
-                                            <td className="table-cell text-right font-semibold text-gray-800">{fmt(s.totalBruto)}</td>
-                                            <td className="table-cell text-right text-green-600 font-semibold">{fmt(s.totalLiquido)}</td>
+                                            <td className="px-8 py-6 text-right font-black text-gray-800 text-sm">
+                                                {fmt(s.totalBruto)}
+                                            </td>
+                                            <td className="px-8 py-6 text-right">
+                                                <span className="font-black text-emerald-600 text-sm bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-100 shadow-sm">
+                                                    {fmt(s.totalLiquido)}
+                                                </span>
+                                            </td>
                                         </tr>
                                     ))
                                 )}
                             </tbody>
                             {!loading && servidores.length > 0 && (
                                 <tfoot>
-                                    <tr className="bg-gray-50 border-t-2 border-gray-200">
-                                        <td colSpan={5} className="px-4 py-3 text-sm font-bold text-gray-700">Total Geral</td>
-                                        <td className="px-4 py-3 text-right font-bold text-teal-700 text-lg">{fmt(totalBruto)}</td>
-                                        <td className="px-4 py-3 text-right font-bold text-green-600">
+                                    <tr className="bg-gray-900 border-t-2 border-gray-800 text-white">
+                                        <td colSpan={3} className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Total Consolidados (Filtro)</td>
+                                        <td className="px-8 py-6 text-right font-black text-lg text-blue-400">{fmt(totalBruto)}</td>
+                                        <td className="px-8 py-6 text-right font-black text-lg text-emerald-400">
                                             {fmt(totalLiquido)}
                                         </td>
                                     </tr>
@@ -204,15 +268,9 @@ export default function ServidoresPage() {
                         </table>
                     </div>
                 </div>
-            </div>
 
-            {/* Rodapé Informativo */}
-            <div className="mt-24 pb-24 border-t border-slate-100 pt-20">
-                <BannerPNTP />
-                
-                <div className="mt-16 text-center space-y-4">
-                    <p className="text-slate-400 text-[9px] font-black uppercase tracking-[0.4em]">Lei de Responsabilidade Fiscal • Município de Lajes Pintadas</p>
-                    <div className="w-12 h-1 bg-indigo-500/20 mx-auto rounded-full" />
+                <div className="mt-20">
+                    <BannerPNTP />
                 </div>
             </div>
         </div>

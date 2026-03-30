@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { FaFileAlt, FaScroll, FaGavel, FaDownload, FaCalendarAlt, FaSearch, FaHistory, FaInfoCircle, FaCheckCircle, FaGavel as FaLaw } from "react-icons/fa";
+import { FaFileAlt, FaScroll, FaGavel, FaDownload, FaCalendarAlt, FaSearch, FaHistory, FaInfoCircle, FaCheckCircle, FaSpinner, FaArrowRight, FaFilter } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
+import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
+import { exportToCSV, exportToJSON, exportToPDF } from "@/lib/exportUtils";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
 
 type Legislacao = {
@@ -33,13 +35,13 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
 
-    const currentYear = new Date().getFullYear();
-    const anos = Array.from({ length: 20 }, (_, i) => (currentYear - i).toString());
-
     const fetchLeis = async () => {
         setLoading(true);
         try {
-            const query = new URLSearchParams({ page: page.toString(), limit: "15" });
+            const query = new URLSearchParams({ 
+                page: page.toString(), 
+                limit: "15" 
+            });
             if (tipoFiltro && tipoFiltro !== "Todos") query.append("tipo", tipoFiltro);
             if (anoFiltro) query.append("ano", anoFiltro);
             if (buscaFiltro) query.append("busca", buscaFiltro);
@@ -59,111 +61,69 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
 
     useEffect(() => {
         fetchLeis();
-    }, [tipoFiltro, anoFiltro, page]);
+    }, [tipoFiltro, anoFiltro, page, buscaFiltro]);
 
-    const handleSearchSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleClearFilters = () => {
+        setBuscaFiltro("");
+        setAnoFiltro("");
+        setTipoFiltro(initialTipo);
         setPage(1);
-        fetchLeis();
+    };
+
+    const handleExport = (format: "pdf" | "csv" | "json") => {
+        const payload = leis.map(l => ({
+            "Tipo": tipoInfo[l.tipo]?.label || l.tipo,
+            "Número": l.numero,
+            "Ano": l.ano,
+            "Ementa": l.ementa
+        }));
+
+        const filename = `legislacao_${anoFiltro || 'geral'}`;
+        const title = `Relatório de Legislação Municipal – Lajes Pintadas/RN`;
+
+        if (format === "csv") exportToCSV(payload, filename);
+        else if (format === "json") exportToJSON(payload, filename);
+        else exportToPDF(payload, filename, title);
     };
 
     return (
-        <div className="max-w-7xl mx-auto px-6 py-12 font-['Montserrat',sans-serif]">
-            {/* Filtros e Info PNTP */}
-            <div className="flex flex-col lg:flex-row gap-8 mb-16 -mt-24 relative z-30">
-                <div className="flex-1 bg-white rounded-[2.5rem] p-8 md:p-10 shadow-2xl shadow-blue-900/5 border border-white flex flex-col gap-8">
-                    <form onSubmit={handleSearchSubmit} className="flex flex-col md:flex-row items-end gap-6">
-                        <div className="flex-1 w-full space-y-4">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-blue-600 ml-2">Pesquisar Legislação</label>
-                            <div className="relative group">
-                                <FaSearch className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-500 transition-colors" />
-                                <input
-                                    type="text"
-                                    placeholder="Número, ano ou termo da ementa..."
-                                    value={buscaFiltro}
-                                    onChange={(e) => setBuscaFiltro(e.target.value)}
-                                    className="w-full pl-14 pr-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold focus:ring-4 focus:ring-blue-500/10 focus:bg-white transition-all outline-none"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="w-full md:w-48 space-y-4">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-blue-600 ml-2">Ano</label>
-                            <div className="relative">
-                                <FaCalendarAlt className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none" />
-                                <select
-                                    value={anoFiltro}
-                                    onChange={(e) => { setAnoFiltro(e.target.value); setPage(1); }}
-                                    className="w-full pl-14 pr-10 py-4 bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold appearance-none focus:ring-4 focus:ring-blue-500/10 transition-all outline-none cursor-pointer"
-                                >
-                                    <option value="">Todos</option>
-                                    {anos.map(a => <option key={a} value={a}>{a}</option>)}
-                                </select>
-                            </div>
-                        </div>
-
-                        <button type="submit" className="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all shadow-lg active:scale-95">
-                            Filtrar
-                        </button>
-                    </form>
-
+        <div className="max-w-[1240px] mx-auto px-6 py-12 font-['Montserrat',sans-serif]">
+            <div className="flex flex-col gap-8 mb-16 -mt-24 relative z-30">
+                <TransparencyFilters
+                    searchValue={buscaFiltro}
+                    onSearch={setBuscaFiltro}
+                    currentYear={anoFiltro}
+                    onYearChange={(y) => { setAnoFiltro(y); setPage(1); }}
+                    currentMonth=""
+                    onMonthChange={() => {}}
+                    onClear={handleClearFilters}
+                    onExport={handleExport}
+                    placeholder="Número, ano ou termo da ementa..."
+                >
                     {!hideTipoFilter && (
-                        <div className="flex flex-wrap gap-2 pt-4 border-t border-gray-50">
-                            {["Todos", "lei", "decreto", "portaria", "resolucao", "lei-organica"].map((f) => {
-                                const labels: Record<string, string> = {
-                                    "Todos": "Todos os Tipos",
-                                    "lei": "Leis",
-                                    "decreto": "Decretos",
-                                    "portaria": "Portarias",
-                                    "resolucao": "Resoluções",
-                                    "lei-organica": "Lei Orgânica"
-                                };
-                                const isActive = tipoFiltro === f || (f === "Todos" && (tipoFiltro === "" || tipoFiltro === "Todos"));
-                                return (
-                                    <button 
-                                        key={f} 
-                                        onClick={() => { setTipoFiltro(f === "Todos" ? "" : f); setPage(1); }}
-                                        className={`px-5 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${
-                                            isActive 
-                                            ? "bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-200" 
-                                            : "bg-gray-50 text-gray-400 border-gray-100 hover:bg-gray-100"
-                                        }`}
-                                    >
-                                        {labels[f]}
-                                    </button>
-                                );
-                            })}
+                        <div className="flex items-center gap-3">
+                           <select 
+                                value={tipoFiltro} 
+                                onChange={(e) => { setTipoFiltro(e.target.value); setPage(1); }}
+                                className="bg-white border border-gray-200 px-4 py-2 rounded-xl text-[11px] font-bold text-gray-700 outline-none hover:border-blue-400 transition-colors shadow-sm"
+                            >
+                                <option value="">Todos os Tipos</option>
+                                <option value="lei">Leis</option>
+                                <option value="decreto">Decretos</option>
+                                <option value="portaria">Portarias</option>
+                                <option value="resolucao">Resoluções</option>
+                                <option value="lei-organica">Lei Orgânica</option>
+                            </select>
                         </div>
                     )}
-                </div>
-
-                {/* Card PNTP */}
-                <div className="lg:w-80 bg-[#1E293B] rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-2xl shadow-blue-900/20">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/20 rounded-full blur-3xl -mr-16 -mt-16" />
-                    <div className="relative z-10">
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
-                                <FaCheckCircle className="text-white" />
-                            </div>
-                            <span className="text-[10px] font-black uppercase tracking-widest text-blue-400">LEGALIDADE</span>
-                        </div>
-                        <h4 className="text-sm font-black uppercase tracking-tight mb-2">Transparência Ativa</h4>
-                        <p className="text-[11px] text-slate-400 font-medium leading-relaxed">
-                            Atos oficiais publicados em conformidade com a Lei de Acesso à Informação (Lei 12.527/2011).
-                        </p>
-                    </div>
-                </div>
+                </TransparencyFilters>
             </div>
 
-            {/* Listagem */}
-            <div className="space-y-6">
+            <div className="space-y-6 min-h-[400px]">
                 {loading ? (
                     <div className="flex flex-col justify-center items-center py-32 gap-6">
-                        <div className="relative w-16 h-16">
-                            <div className="absolute inset-0 border-4 border-blue-100 rounded-full" />
-                            <div className="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin" />
-                        </div>
-                        <p className="font-black text-gray-300 text-[9px] uppercase tracking-[0.4em] animate-pulse">Consultando Atos Oficiais...</p>
+                        <FaSpinner className="animate-spin text-blue-600 text-4xl" />
+                        <p className="font-black text-gray-300 text-[9px] uppercase tracking-[0.4em]">Consultando Atos Oficiais...</p>
                     </div>
                 ) : leis.length === 0 ? (
                     <div className="bg-white rounded-[3.5rem] border border-dashed border-gray-200 p-24 text-center">
@@ -171,7 +131,7 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                             <FaSearch size={24} />
                         </div>
                         <h3 className="text-xl font-black text-gray-800 uppercase tracking-tight mb-3">Nenhum documento encontrado</h3>
-                        <p className="text-gray-400 font-medium text-sm">Tente ajustar seus filtros ou termos de pesquisa.</p>
+                        <p className="text-gray-400 font-medium text-sm italic">Tente ajustar seus filtros ou termos de pesquisa.</p>
                     </div>
                 ) : (
                     <>
@@ -186,63 +146,69 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                                             initial={{ opacity: 0, y: 20 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: idx * 0.03 }}
-                                            className="group relative bg-white rounded-[2rem] border border-gray-100 p-6 md:p-8 flex flex-col md:flex-row items-center gap-8 shadow-xl shadow-gray-200/40 hover:shadow-2xl hover:shadow-blue-900/10 transition-all duration-500"
+                                            className="group relative bg-white rounded-[2.5rem] border border-gray-100 p-8 md:p-10 flex flex-col md:flex-row items-center gap-10 shadow-xl shadow-gray-200/40 hover:shadow-2xl hover:shadow-blue-900/10 transition-all duration-500 overflow-hidden"
                                         >
-                                            <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 border transition-all duration-500 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 ${info.corClass}`}>
-                                                <Icon size={22} className="group-hover:text-white" />
+                                            <div className={`w-20 h-20 rounded-2xl flex items-center justify-center shrink-0 border transition-all duration-500 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 ${info.corClass}`}>
+                                                <Icon size={28} className="group-hover:text-white" />
                                             </div>
                                             <div className="flex-1 text-center md:text-left">
-                                                <div className="flex flex-wrap justify-center md:justify-start items-center gap-3 mb-3">
-                                                    <span className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border ${info.corClass}`}>
+                                                <div className="flex flex-wrap justify-center md:justify-start items-center gap-4 mb-4">
+                                                    <span className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border shadow-sm ${info.corClass}`}>
                                                         {info.label}
                                                     </span>
-                                                    <span className="flex items-center gap-2 text-gray-300 font-black text-[9px] uppercase tracking-widest">
-                                                        <FaCalendarAlt size={10} className="text-amber-500/70" /> {lei.ano}
+                                                    <span className="flex items-center gap-2 text-gray-400 font-black text-[10px] uppercase tracking-widest">
+                                                        <FaCalendarAlt size={12} className="text-amber-500/50" /> Exercício de {lei.ano}
                                                     </span>
                                                 </div>
-                                                <h3 className="font-black text-gray-800 text-lg uppercase tracking-tight group-hover:text-blue-600 transition-colors mb-2">
+                                                <h3 className="font-black text-gray-800 text-2xl uppercase tracking-tighter group-hover:text-blue-600 transition-colors mb-4">
                                                     {lei.numero}
                                                 </h3>
-                                                <p className="text-gray-500 text-sm leading-relaxed font-medium line-clamp-2 uppercase tracking-tight opacity-80">
-                                                    {lei.ementa}
-                                                </p>
+                                                <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-50 group-hover:bg-white transition-colors">
+                                                    <p className="text-gray-500 text-sm leading-relaxed font-medium line-clamp-3 italic opacity-90">
+                                                        "{lei.ementa}"
+                                                    </p>
+                                                </div>
                                             </div>
-                                            {lei.arquivo ? (
-                                                <a href={lei.arquivo} target="_blank" rel="noopener noreferrer"
-                                                    className="w-full md:w-auto shrink-0 flex items-center justify-center gap-3 bg-[#1E293B] text-white hover:bg-blue-600 px-8 py-5 rounded-2xl transition-all text-[10px] font-black uppercase tracking-widest shadow-xl shadow-blue-900/10">
-                                                    <FaDownload size={12} /> Ver PDF
-                                                </a>
-                                            ) : (
-                                                <Link href="/servicos/esic"
-                                                    className="w-full md:w-auto shrink-0 flex items-center justify-center gap-3 bg-gray-50 text-gray-400 hover:bg-gray-100 px-8 py-5 rounded-2xl transition-all text-[10px] font-black uppercase tracking-widest border border-gray-100">
-                                                    Solicitar
-                                                </Link>
-                                            )}
+                                            <div className="flex flex-col gap-3 group-hover:scale-105 transition-transform duration-500">
+                                                {lei.arquivo ? (
+                                                    <a href={lei.arquivo} target="_blank" rel="noopener noreferrer"
+                                                        className="w-full md:w-48 shrink-0 flex items-center justify-center gap-3 bg-[#1E293B] text-white hover:bg-blue-600 px-8 py-5 rounded-[2rem] transition-all text-[10px] font-black uppercase tracking-widest shadow-xl shadow-blue-900/10">
+                                                        <FaDownload size={12} /> Baixar PDF
+                                                    </a>
+                                                ) : (
+                                                    <Link href="/servicos/esic"
+                                                        className="w-full md:w-48 shrink-0 flex items-center justify-center gap-3 bg-gray-50 text-gray-400 hover:bg-gray-100 px-8 py-5 rounded-[2rem] transition-all text-[10px] font-black uppercase tracking-widest border border-gray-100">
+                                                        Solicitar LAI
+                                                    </Link>
+                                                )}
+                                                <button className="text-blue-600 text-[9px] font-black uppercase tracking-widest hover:underline text-center">
+                                                    Ver Detalhes do Ato
+                                                </button>
+                                            </div>
                                         </motion.div>
                                     );
                                 })}
                             </AnimatePresence>
                         </div>
 
-                        {/* Paginação Premium */}
                         {totalPages > 1 && (
-                            <div className="flex justify-center items-center gap-4 mt-16">
+                            <div className="flex justify-center items-center gap-6 mt-20">
                                 <button
                                     disabled={page === 1}
-                                    onClick={() => { setPage(p => p - 1); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                                    className="px-6 py-3 rounded-xl bg-white border border-gray-100 text-[10px] font-black uppercase tracking-widest hover:bg-gray-50 disabled:opacity-30 shadow-sm transition-all"
+                                    onClick={() => { setPage(p => p - 1); window.scrollTo({ top: 400, behavior: 'smooth' }); }}
+                                    className="px-8 py-4 rounded-[2rem] bg-white border border-gray-100 text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 hover:text-white disabled:opacity-30 disabled:hover:bg-white disabled:hover:text-gray-400 shadow-xl shadow-blue-900/5 transition-all outline-none"
                                 >
-                                    Anterior
+                                    Página Anterior
                                 </button>
-                                <div className="px-6 py-3 bg-blue-50 text-blue-600 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] border border-blue-100/50">
-                                    Página {page} / {totalPages}
+                                <div className="px-10 py-4 bg-blue-50 text-blue-600 rounded-[2rem] text-[11px] font-black uppercase tracking-[0.3em] border border-blue-100/50 shadow-inner">
+                                    {page} / {totalPages}
                                 </div>
                                 <button
                                     disabled={page === totalPages}
-                                    onClick={() => { setPage(p => p + 1); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                                    className="px-6 py-3 rounded-xl bg-white border border-gray-100 text-[10px] font-black uppercase tracking-widest hover:bg-gray-50 disabled:opacity-30 shadow-sm transition-all"
+                                    onClick={() => { setPage(p => p + 1); window.scrollTo({ top: 400, behavior: 'smooth' }); }}
+                                    className="px-8 py-4 rounded-[2rem] bg-white border border-gray-100 text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 hover:text-white disabled:opacity-30 disabled:hover:bg-white disabled:hover:text-gray-400 shadow-xl shadow-blue-900/5 transition-all outline-none"
                                 >
-                                    Próxima
+                                    Próxima Página
                                 </button>
                             </div>
                         )}
@@ -250,12 +216,11 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                 )}
             </div>
 
-            {/* Rodapé Informativo */}
-            <div className="mt-32 pt-16 border-t border-gray-100">
+            <div className="mt-32 pt-16">
                 <BannerPNTP />
                 
                 <div className="mt-16 space-y-4 text-center">
-                    <p className="text-gray-400 text-[9px] font-black uppercase tracking-[0.4em]">Diário Oficial do Município • Legislação Municipal de Lajes Pintadas</p>
+                    <p className="text-gray-400 text-[9px] font-black uppercase tracking-[0.4em]">Diário Oficial do Município • Legislação Municipal de Lajes Pintadas/RN</p>
                     <div className="w-12 h-1 bg-blue-500/20 mx-auto rounded-full" />
                 </div>
             </div>
