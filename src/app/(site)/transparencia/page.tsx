@@ -288,7 +288,7 @@ export default function TransparenciaPage() {
                              </p>
 
                              <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-                                <Link href="/servicos/esic" className="w-full sm:w-auto bg-white text-blue-700 px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest shadow-xl hover:bg-blue-50 hover-scale-105 transition-all">
+                                <Link href="/servicos/esic" className="w-full sm:w-auto bg-white text-blue-700 px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest shadow-xl hover:bg-blue-50 hover:scale-105 transition-all">
                                     Abrir Solicitação
                                 </Link>
                                 <Link href="/servicos/ouvidoria" className="w-full sm:w-auto bg-transparent border-2 border-white/30 text-white px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest hover:bg-white/10 transition-all flex items-center justify-center gap-3 group">
