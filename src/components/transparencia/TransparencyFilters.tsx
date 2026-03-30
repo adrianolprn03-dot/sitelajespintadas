@@ -86,7 +86,7 @@ export default function TransparencyFilters({
                     <div className="flex items-center gap-3">
                         <button
                             onClick={onClear}
-                            className="bg-slate-50 hover:bg-slate-100 text-slate-400 p-4.5 rounded-2xl transition-all border border-slate-100 flex items-center justify-center min-w-[56px] min-h-[56px]"
+                            className="bg-slate-50 hover:bg-slate-100 text-slate-400 w-[56px] h-[56px] rounded-2xl transition-all border border-slate-100 flex items-center justify-center shrink-0"
                             title="Limpar Filtros"
                         >
                             <FaTimes size={18} />
@@ -95,7 +95,7 @@ export default function TransparencyFilters({
                         <div className="relative">
                             <button
                                 onClick={() => setShowExport(!showExport)}
-                                className="bg-indigo-600 hover:bg-indigo-700 text-white font-black text-[10px] uppercase tracking-widest px-8 py-4.5 rounded-2xl transition-all shadow-lg shadow-indigo-100 flex items-center gap-3 active:scale-95"
+                                className="bg-indigo-600 hover:bg-indigo-700 text-white font-black text-[10px] uppercase tracking-widest px-8 h-[56px] rounded-2xl transition-all shadow-lg shadow-indigo-100 flex items-center justify-center gap-3 active:scale-95 whitespace-nowrap"
                             >
                                 <FaDownload /> Exportar
                             </button>
