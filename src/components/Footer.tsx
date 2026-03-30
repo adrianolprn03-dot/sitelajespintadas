@@ -25,6 +25,7 @@ const footerLinks = [
             { label: "Dados Abertos", href: "/transparencia/dados-abertos" },
             { label: "Transferências e Emendas", href: "/transparencia/transferencias" },
             { label: "Dívida Ativa", href: "/transparencia/divida-ativa" },
+            { label: "Transparência Passiva (e-SIC)", href: "/transparencia/passiva" },
         ],
     },
     {

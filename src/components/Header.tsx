@@ -28,6 +28,7 @@ const navItems = [
             { label: "Transferências Const.", href: "/transparencia/transferencias" },
             { label: "Dívida Ativa", href: "/transparencia/divida-ativa" },
             { label: "Conselhos Municipais", href: "/transparencia/conselhos" },
+            { label: "Transparência Passiva (e-SIC)", href: "/transparencia/passiva" },
         ]
     },
     {
