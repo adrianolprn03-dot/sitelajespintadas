@@ -25,7 +25,7 @@ const categoriasDeModulos = [
     {
         tituloCategoria: "Atendimento ao Cidadão",
         modulos: [
-            { icon: ClipboardList, titulo: "E-sic", desc: "Serviço de Informação ao Cidadão.", href: "/transparencia/passiva", cor: "from-amber-500 to-orange-600", badge: "LAI" },
+            { icon: ClipboardList, titulo: "E-sic", desc: "Serviço de Informação ao Cidadão.", href: "/servicos/esic", cor: "from-amber-500 to-orange-600", badge: "LAI" },
             { icon: Headset, titulo: "Ouvidoria", desc: "Canal de denúncias, reclamações e sugestões.", href: "/servicos/ouvidoria", cor: "from-blue-500 to-cyan-500", badge: "Atendimento" },
             { icon: Mail, titulo: "Fale Conosco", desc: "Entre em contato com a prefeitura.", href: "/contato", cor: "from-teal-400 to-green-500", badge: "Contato" },
             { icon: MapPinned, titulo: "Carta de Serviço", desc: "Guia de serviços oferecidos pelo município.", href: "/transparencia/carta-servicos", cor: "from-emerald-500 to-green-600", badge: "Cidadão" },
