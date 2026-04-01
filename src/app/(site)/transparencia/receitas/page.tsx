@@ -6,7 +6,7 @@ import {
 } from "recharts";
 import PageHeader from "@/components/PageHeader";
 import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
-import { exportToCSV, exportToJSON, exportToPDF } from "@/lib/exportUtils";
+import { exportToCSV, exportToJSON, exportToPDF, exportToXLSX } from "@/lib/exportUtils";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
 
 type Receita = {
@@ -70,7 +70,7 @@ export default function ReceitasPage() {
         setCategoria("");
     };
 
-    const handleExport = (format: "pdf" | "csv" | "json") => {
+    const handleExport = (format: "pdf" | "csv" | "json" | "xlsx") => {
         const payload = receitas.map(r => ({
             "Descrição": r.descricao,
             "Categoria": r.categoria,
@@ -84,6 +84,7 @@ export default function ReceitasPage() {
 
         if (format === "csv") exportToCSV(payload, filename);
         else if (format === "json") exportToJSON(payload, filename);
+        else if (format === "xlsx") exportToXLSX(payload, filename);
         else exportToPDF(payload, filename, title);
     };
 
@@ -137,23 +138,23 @@ export default function ReceitasPage() {
                 </TransparencyFilters>
 
                 {/* Resumo Financeiro */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                    <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-emerald-100/50 border-l-4 border-l-emerald-500 group">
-                        <div className="flex justify-between items-start mb-4 text-emerald-100 group-hover:text-emerald-500 transition-colors">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-emerald-100/50 border-l-4 border-l-emerald-500 group">
+                        <div className="flex justify-between items-start mb-3 text-emerald-100 group-hover:text-emerald-500 transition-colors">
                             <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Arrecadação Total</div>
-                            <FaWallet size={24} />
+                            <FaWallet size={20} />
                         </div>
-                        <div className="text-2xl font-black text-gray-800 tracking-tight">{loading ? "..." : fmt(totalArrecadado)}</div>
-                        <div className="mt-2 text-[10px] font-bold text-emerald-500 uppercase tracking-tighter">Soma das receitas filtradas</div>
+                        <div className="text-xl font-black text-gray-800 tracking-tight">{loading ? "..." : fmt(totalArrecadado)}</div>
+                        <div className="mt-2 text-[9px] font-bold text-emerald-500 uppercase tracking-tighter">Soma das receitas filtradas</div>
                     </div>
 
-                    <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-blue-100/50 border-l-4 border-l-blue-500 group">
-                        <div className="flex justify-between items-start mb-4 text-blue-100 group-hover:text-blue-500 transition-colors">
+                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-blue-100/50 border-l-4 border-l-blue-500 group">
+                        <div className="flex justify-between items-start mb-3 text-blue-100 group-hover:text-blue-500 transition-colors">
                             <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Exercício</div>
-                            <FaHistory size={24} />
+                            <FaHistory size={20} />
                         </div>
-                        <div className="text-2xl font-black text-gray-800 tracking-tight">{ano}</div>
-                        <div className="mt-2 text-[10px] font-bold text-blue-500 uppercase tracking-tighter">Ano de referência</div>
+                        <div className="text-xl font-black text-gray-800 tracking-tight">{ano}</div>
+                        <div className="mt-2 text-[9px] font-bold text-blue-500 uppercase tracking-tighter">Ano de referência</div>
                     </div>
                 </div>
 
@@ -173,7 +174,7 @@ export default function ReceitasPage() {
                         </button>
                     </div>
 
-                    <div className="p-10">
+                    <div className="p-6">
                         {aba === "tabela" ? (
                             <div className="space-y-6">
                                 {loading ? (
@@ -188,39 +189,39 @@ export default function ReceitasPage() {
                                     </div>
                                 ) : (
                                     <div className="overflow-x-auto">
-                                        <table className="w-full">
+                                        <table className="w-full border-collapse">
                                             <thead>
-                                                <tr>
-                                                    <th className="px-6 py-4 text-left text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] border-b border-gray-50">Descrição da Receita</th>
-                                                    <th className="px-6 py-4 text-left text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] border-b border-gray-50">Categoria</th>
-                                                    <th className="px-6 py-4 text-center text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] border-b border-gray-50">Mês/Ano</th>
-                                                    <th className="px-6 py-4 text-right text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] border-b border-gray-50">Arrecadado</th>
+                                                <tr className="bg-gray-50 border-b border-gray-100">
+                                                    <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Descrição da Receita</th>
+                                                    <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Categoria</th>
+                                                    <th className="px-6 py-4 text-center text-[10px] font-black text-gray-400 uppercase tracking-widest">Mês / Ano</th>
+                                                    <th className="px-6 py-4 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Arrecadado</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
+                                            <tbody className="divide-y divide-gray-50">
                                                 {receitas.map((r) => (
-                                                    <tr key={r.id} className="group hover:bg-emerald-50/30 transition-colors">
-                                                        <td className="px-6 py-5 border-b border-gray-50">
-                                                            <p className="text-sm font-bold text-gray-700 uppercase group-hover:text-emerald-700 transition-colors">{r.descricao}</p>
+                                                    <tr key={r.id} className="group hover:bg-emerald-50/40 transition-colors">
+                                                        <td className="px-6 py-4">
+                                                            <p className="text-xs font-black text-gray-800 uppercase tracking-tight group-hover:text-emerald-700 transition-colors">{r.descricao}</p>
                                                         </td>
-                                                        <td className="px-6 py-5 border-b border-gray-50">
-                                                            <span className="px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-[9px] font-black uppercase tracking-widest border border-blue-100">
+                                                        <td className="px-6 py-4 whitespace-nowrap">
+                                                            <span className="px-2 py-1 rounded-lg bg-blue-50 text-blue-600 text-[9px] font-black uppercase tracking-widest border border-blue-100">
                                                                 {r.categoria}
                                                             </span>
                                                         </td>
-                                                        <td className="px-6 py-5 border-b border-gray-50 text-center">
-                                                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{mesesAbrev[r.mes-1]} / {r.ano}</p>
+                                                        <td className="px-6 py-4 text-center whitespace-nowrap">
+                                                            <p className="text-[10px] font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded inline-block uppercase tracking-widest">{mesesAbrev[r.mes-1]} / {r.ano}</p>
                                                         </td>
-                                                        <td className="px-6 py-5 border-b border-gray-50 text-right">
+                                                        <td className="px-6 py-4 text-right whitespace-nowrap">
                                                             <p className="text-sm font-black text-emerald-600 tracking-tighter">{fmt(r.valor)}</p>
                                                         </td>
                                                     </tr>
                                                 ))}
                                             </tbody>
                                             <tfoot>
-                                                <tr className="bg-emerald-50/50">
-                                                    <td colSpan={3} className="px-6 py-6 text-[10px] font-black text-emerald-800 uppercase tracking-widest">Soma Total Arrecadada</td>
-                                                    <td className="px-6 py-6 text-right text-xl font-black text-emerald-700 tracking-tighter">{fmt(totalArrecadado)}</td>
+                                                <tr className="bg-emerald-50/30 border-t border-emerald-100">
+                                                    <td colSpan={3} className="px-6 py-5 text-[10px] font-black text-emerald-800 uppercase tracking-widest">Soma Total Arrecadada</td>
+                                                    <td className="px-6 py-5 text-right text-lg font-black text-emerald-700 tracking-tighter">{fmt(totalArrecadado)}</td>
                                                 </tr>
                                             </tfoot>
                                         </table>

@@ -1,5 +1,6 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import * as XLSX from 'xlsx';
 
 export function exportToCSV(data: any[], filename: string) {
     if (typeof window === "undefined" || !data || !data.length) return;
@@ -87,4 +88,15 @@ export function exportToPDF(data: any[], filename: string, title?: string) {
     });
 
     doc.save(`${filename}.pdf`);
+}
+
+export function exportToXLSX(data: any[], filename: string) {
+    if (typeof window === "undefined" || !data || !data.length) return;
+
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Dados");
+    
+    // Gerar arquivo e disparar download
+    XLSX.writeFile(workbook, `${filename}.xlsx`);
 }

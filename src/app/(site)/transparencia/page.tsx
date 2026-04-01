@@ -179,12 +179,12 @@ export default function TransparenciaPage() {
             </div>
 
             {/* Secões Categorizadas de Módulos */}
-            <div className="max-w-[1300px] mx-auto px-6 py-24 space-y-24">
+            <div className="max-w-[1300px] mx-auto px-6 py-16 space-y-16">
                 {categoriasDeModulos.map((categoria, catIdx) => (
                     <div key={categoria.tituloCategoria} className="relative">
-                        <div className="flex items-center gap-4 mb-10">
-                            <div className="w-10 h-1 bg-blue-600 rounded-full"></div>
-                            <h2 className="text-3xl font-black text-gray-800 uppercase tracking-tighter">
+                        <div className="flex items-center gap-4 mb-8">
+                            <div className="w-8 h-1 bg-blue-600 rounded-full"></div>
+                            <h2 className="text-2xl font-black text-gray-800 uppercase tracking-tighter">
                                 {categoria.tituloCategoria}
                             </h2>
                         </div>
@@ -211,47 +211,47 @@ export default function TransparenciaPage() {
                                             rel={isExternal ? "noopener noreferrer" : undefined}
                                             className="group block h-full"
                                         >
-                                            <div className="relative h-full bg-white rounded-[2.5rem] border border-gray-100 shadow-xl shadow-gray-200/40 hover:shadow-2xl hover:shadow-blue-900/10 transition-all duration-500 group-hover:-translate-y-2 overflow-hidden">
+                                            <div className="relative h-full bg-white rounded-2xl border border-gray-100 shadow-xl shadow-gray-200/40 hover:shadow-2xl hover:shadow-blue-900/10 transition-all duration-500 group-hover:-translate-y-2 overflow-hidden">
                                                 {/* Efeito de Glossmorphism no Topo */}
-                                                <div className={`h-24 bg-gradient-to-br ${m.cor} relative overflow-hidden`}>
+                                                <div className={`h-20 bg-gradient-to-br ${m.cor} relative overflow-hidden`}>
                                                     <div className="absolute inset-0 bg-white/10 backdrop-blur-[2px]" />
-                                                    <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
+                                                    <div className="absolute -right-4 -top-4 w-20 h-20 bg-white/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
                                                 </div>
 
                                                 {/* Ícone sobreposto */}
-                                                <div className="absolute top-12 left-8">
-                                                    <div className="w-16 h-16 bg-white rounded-3xl shadow-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500 border border-gray-50">
-                                                        <m.icon className="text-gray-800 lg:group-hover:text-blue-600 transition-colors" size={32} strokeWidth={1.5} />
+                                                <div className="absolute top-10 left-6">
+                                                    <div className="w-12 h-12 bg-white rounded-2xl shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-500 border border-gray-50">
+                                                        <m.icon className="text-gray-800 lg:group-hover:text-blue-600 transition-colors" size={24} strokeWidth={1.5} />
                                                     </div>
                                                 </div>
 
-                                                <div className="pt-12 p-8 h-full flex flex-col">
-                                                    <div className="flex justify-between items-start mb-4">
-                                                        <h2 className="font-black text-gray-800 text-base uppercase tracking-tight group-hover:text-blue-600 transition-colors">
+                                                <div className="pt-10 p-6 h-full flex flex-col">
+                                                    <div className="flex justify-between items-start mb-3">
+                                                        <h2 className="font-black text-gray-800 text-sm uppercase tracking-tight group-hover:text-blue-600 transition-colors">
                                                             {m.titulo}
                                                         </h2>
-                                                        <div className="flex flex-col items-end gap-1.5">
-                                                            <span className="text-[9px] font-black uppercase tracking-widest text-gray-400 bg-gray-50 px-2.5 py-1 rounded-lg border border-gray-100">
+                                                        <div className="flex flex-col items-end gap-1">
+                                                            <span className="text-[8px] font-black uppercase tracking-widest text-gray-400 bg-gray-50 px-2 py-0.5 rounded-lg border border-gray-100">
                                                                 {m.badge}
                                                             </span>
                                                             {isExternal && (
-                                                                <span className="bg-primary-500 text-white text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-md shadow-sm flex items-center gap-1 animate-pulse">
-                                                                    <ExternalLink size={8} /> Externo
+                                                                <span className="bg-primary-500 text-white text-[7px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-md shadow-sm flex items-center gap-1 animate-pulse">
+                                                                    <ExternalLink size={7} /> Externo
                                                                 </span>
                                                             )}
                                                         </div>
                                                     </div>
                                                     
-                                                    <p className="text-gray-500 text-xs leading-relaxed font-medium mb-8 grow">
+                                                    <p className="text-gray-500 text-[11px] leading-relaxed font-medium mb-6 grow">
                                                         {m.desc}
                                                     </p>
 
-                                                    <div className="flex items-center justify-between pt-4 border-t border-gray-50 mt-auto">
-                                                        <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-blue-500 group-hover:text-blue-700 transition-colors">
+                                                    <div className="flex items-center justify-between pt-3 border-t border-gray-50 mt-auto">
+                                                        <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-blue-500 group-hover:text-blue-700 transition-colors">
                                                             {isExternal ? "Acessar Portal Externo" : "Ver Detalhes"}
-                                                            <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                                                            <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
                                                         </div>
-                                                        {isExternal && <ExternalLink size={12} className="text-gray-300" />}
+                                                        {isExternal && <ExternalLink size={10} className="text-gray-300" />}
                                                     </div>
                                                 </div>
                                             </div>
@@ -282,8 +282,8 @@ export default function TransparenciaPage() {
                                 <HelpCircle size={48} className="text-blue-600" />
                              </motion.div>
 
-                             <h2 className="text-4xl md:text-5xl font-black mb-6 tracking-tighter uppercase">Acesso à Informação (e-SIC)</h2>
-                             <p className="max-w-2xl mx-auto text-blue-100/80 text-lg font-medium leading-relaxed mb-12">
+                             <h2 className="text-3xl md:text-4xl font-black mb-4 tracking-tighter uppercase">Acesso à Informação (e-SIC)</h2>
+                             <p className="max-w-2xl mx-auto text-blue-100/80 text-base font-medium leading-relaxed mb-8">
                                 Direito do cidadão, dever do Estado. Use nossos canais oficiais para solicitar informações não disponíveis no portal.
                              </p>
 

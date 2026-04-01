@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { FaChartBar, FaSpinner, FaExternalLinkAlt, FaBuilding, FaGavel } from "react-icons/fa";
-import { exportToCSV, exportToJSON, exportToPDF } from "@/lib/exportUtils";
+import { exportToCSV, exportToJSON, exportToPDF, exportToXLSX } from "@/lib/exportUtils";
 import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
 import PageHeader from "@/components/PageHeader";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
@@ -73,7 +73,7 @@ export default function LicitacoesClient() {
             l.secretaria.toLowerCase().includes(b);
     });
 
-    const handleExport = (format: "pdf" | "csv" | "json") => {
+    const handleExport = (format: "pdf" | "csv" | "json" | "xlsx") => {
         const payload = filtrados.map(l => ({
             "Número": l.numero,
             "Modalidade": modalidadeLabel[l.modalidade] || l.modalidade,
@@ -89,6 +89,7 @@ export default function LicitacoesClient() {
 
         if (format === "csv") exportToCSV(payload, filename);
         else if (format === "json") exportToJSON(payload, filename);
+        else if (format === "xlsx") exportToXLSX(payload, filename);
         else exportToPDF(payload, filename, title);
     };
 
@@ -142,77 +143,77 @@ export default function LicitacoesClient() {
                 </TransparencyFilters>
 
                 {/* Cards de Resumo */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
-                    <div className="bg-white rounded-[2rem] shadow-sm p-8 border border-gray-100 border-l-4 border-l-blue-500">
-                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Valor Total Estimado</div>
-                        <div className="text-3xl font-black text-blue-600">{formatarMoeda(totalEstimado)}</div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                    <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 border-l-4 border-l-blue-500">
+                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Valor Total Estimado</div>
+                        <div className="text-xl font-black text-blue-600">{formatarMoeda(totalEstimado)}</div>
                     </div>
-                    <div className="bg-white rounded-[2rem] shadow-sm p-8 border border-gray-100 border-l-4 border-l-purple-500">
-                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Processos Encontrados</div>
-                        <div className="text-3xl font-black text-purple-600">{filtrados.length}</div>
+                    <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 border-l-4 border-l-purple-500">
+                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Processos Encontrados</div>
+                        <div className="text-xl font-black text-purple-600">{filtrados.length}</div>
                     </div>
-                    <div className="bg-white rounded-[2rem] shadow-sm p-8 border border-gray-100 border-l-4 border-l-emerald-500">
-                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Exercício Fiscal</div>
-                        <div className="text-3xl font-black text-emerald-600">{anoFiltro}</div>
+                    <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 border-l-4 border-l-emerald-500">
+                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Exercício Fiscal</div>
+                        <div className="text-xl font-black text-emerald-600">{anoFiltro}</div>
                     </div>
                 </div>
 
                 {/* Tabela de Resultados */}
-                <div className="bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
+                <div className="bg-white rounded-2xl shadow-xl shadow-gray-200/40 border border-gray-100 overflow-hidden">
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left" aria-label="Tabela de licitações">
+                        <table className="w-full text-left border-collapse" aria-label="Tabela de licitações">
                             <thead>
-                                <tr className="bg-gray-50/50 border-b border-gray-100 text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                                    <th className="px-8 py-6">Número / Ano</th>
-                                    <th className="px-8 py-6">Objeto do Processo</th>
-                                    <th className="px-8 py-6">Modalidade</th>
-                                    <th className="px-8 py-6 text-right">Valor Estimado</th>
-                                    <th className="px-8 py-6">Status</th>
-                                    <th className="px-8 py-6 text-center">Ações</th>
+                                <tr className="bg-gray-50 border-b border-gray-100 text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                                    <th className="px-6 py-4">Número / Ano</th>
+                                    <th className="px-6 py-4">Objeto do Processo</th>
+                                    <th className="px-6 py-4">Modalidade</th>
+                                    <th className="px-6 py-4 text-right">Valor Estimado</th>
+                                    <th className="px-6 py-4">Status</th>
+                                    <th className="px-6 py-4 text-center">Ações</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-50">
                                 {loading ? (
                                     <tr>
-                                        <td colSpan={6} className="px-8 py-12 text-center text-blue-500">
+                                        <td colSpan={6} className="px-6 py-12 text-center text-blue-500">
                                             <FaSpinner className="animate-spin inline-block text-2xl mr-3" />
-                                            <span className="font-bold text-xs uppercase tracking-widest">Carregando dados...</span>
+                                            <span className="font-bold text-[10px] uppercase tracking-widest">Carregando dados...</span>
                                         </td>
                                     </tr>
                                 ) : filtrados.length === 0 ? (
                                     <tr>
-                                        <td colSpan={6} className="px-8 py-16 text-center text-gray-400 italic">
+                                        <td colSpan={6} className="px-6 py-16 text-center text-gray-400 text-xs italic">
                                             Nenhum processo licitatório encontrado para os filtros selecionados.
                                         </td>
                                     </tr>
                                 ) : filtrados.map((l) => (
-                                    <tr key={l.id} className="hover:bg-blue-50/30 transition-colors group">
-                                        <td className="px-8 py-6">
-                                            <div className="font-black text-gray-800 text-sm group-hover:text-blue-700 transition-colors">{l.numero}</div>
-                                            <div className="text-[10px] font-bold text-gray-400 uppercase">{l.ano}</div>
+                                    <tr key={l.id} className="hover:bg-blue-50/40 transition-colors group">
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="font-black text-gray-800 text-xs group-hover:text-blue-700 transition-colors">{l.numero}</div>
+                                            <div className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">{l.ano}</div>
                                         </td>
-                                        <td className="px-8 py-6 max-w-md">
-                                            <div className="text-xs font-semibold text-gray-600 line-clamp-2 leading-relaxed" title={l.objeto}>{l.objeto}</div>
-                                            <div className="flex items-center gap-1.5 mt-2 text-[9px] font-bold text-gray-400 uppercase">
-                                                <FaBuilding size={10} /> {l.secretaria}
+                                        <td className="px-6 py-4 max-w-md">
+                                            <div className="text-[11px] font-semibold text-gray-600 line-clamp-2 leading-relaxed" title={l.objeto}>{l.objeto}</div>
+                                            <div className="flex items-center gap-1.5 mt-1.5 text-[9px] font-bold text-blue-500/60 uppercase tracking-tighter">
+                                                <FaBuilding size={8} /> {l.secretaria}
                                             </div>
                                         </td>
-                                        <td className="px-8 py-6">
-                                            <span className="inline-block px-3 py-1 bg-gray-100 text-gray-600 text-[9px] font-black uppercase rounded-lg border border-gray-200">
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <span className="inline-block px-2 py-1 bg-gray-50 text-gray-500 text-[9px] font-black uppercase rounded-lg border border-gray-100">
                                                 {modalidadeLabel[l.modalidade] || l.modalidade}
                                             </span>
                                         </td>
-                                        <td className="px-8 py-6 text-right">
-                                            <span className="font-black text-gray-800 text-sm">{formatarMoeda(l.valor)}</span>
+                                        <td className="px-6 py-4 text-right whitespace-nowrap">
+                                            <span className="font-black text-gray-800 text-xs">{formatarMoeda(l.valor)}</span>
                                         </td>
-                                        <td className="px-8 py-6">
-                                            <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider ${statusConfig[l.status]?.cor || "bg-gray-100 text-gray-600"}`}>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <span className={`px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider ${statusConfig[l.status]?.cor || "bg-gray-100 text-gray-600"}`}>
                                                 {statusConfig[l.status]?.label || l.status}
                                             </span>
                                         </td>
-                                        <td className="px-8 py-6 text-center">
-                                            <button className="inline-flex items-center gap-2 bg-white border border-gray-200 text-gray-600 hover:text-blue-600 hover:border-blue-200 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all hover:scale-105 shadow-sm">
-                                                <FaExternalLinkAlt size={10} /> Detalhes
+                                        <td className="px-6 py-4 text-center">
+                                            <button className="p-2 text-blue-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all" title="Ver Detalhes">
+                                                <FaExternalLinkAlt size={12} />
                                             </button>
                                         </td>
                                     </tr>
