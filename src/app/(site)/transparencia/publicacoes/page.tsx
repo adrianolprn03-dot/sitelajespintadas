@@ -4,7 +4,7 @@ import { FaNewspaper, FaSpinner, FaDownload, FaSearch, FaCalendarAlt, FaTag, FaF
 import { FileText } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
-import { exportToCSV, exportToJSON, exportToPDF } from "@/lib/exportUtils";
+import { exportToCSV, exportToJSON, exportToPDF, exportToXLSX } from "@/lib/exportUtils";
 import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
 
 type Publicacao = {
@@ -78,7 +78,7 @@ export default function PublicacoesPage() {
         setBusca(""); setAno(new Date().getFullYear().toString()); setMes(""); setTipoFiltro("");
     };
 
-    const handleExport = (format: "pdf" | "csv" | "json") => {
+    const handleExport = (format: "pdf" | "csv" | "json" | "xlsx") => {
         const payload = filtradas.map(p => ({
             "Título": p.titulo, "Tipo": p.tipo, "Secretaria": p.secretaria,
             "Data": new Date(p.dataPublicacao).toLocaleDateString("pt-BR"),
@@ -88,6 +88,7 @@ export default function PublicacoesPage() {
         const title = `Publicações Oficiais – Lajes Pintadas/RN (${ano})`;
         if (format === "csv") exportToCSV(payload, filename);
         else if (format === "json") exportToJSON(payload, filename);
+        else if (format === "xlsx") exportToXLSX(payload, filename);
         else exportToPDF(payload, filename, title);
     };
 
@@ -128,18 +129,18 @@ export default function PublicacoesPage() {
                 </TransparencyFilters>
 
                 {/* Resumo */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
-                    <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100 border-l-4 border-l-slate-500">
-                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Total de Publicações</div>
-                        <div className="text-2xl font-black text-slate-600">{filtradas.length}</div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
+                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 border-l-4 border-l-slate-500">
+                        <div className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">Total de Publicações</div>
+                        <div className="text-xl font-black text-slate-600">{filtradas.length}</div>
                     </div>
-                    <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-blue-100 border-l-4 border-l-blue-500">
-                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Tipos Diferentes</div>
-                        <div className="text-2xl font-black text-blue-600">{new Set(filtradas.map(p => p.tipo)).size}</div>
+                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-blue-100 border-l-4 border-l-blue-500">
+                        <div className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">Tipos Diferentes</div>
+                        <div className="text-xl font-black text-blue-600">{new Set(filtradas.map(p => p.tipo)).size}</div>
                     </div>
-                    <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-emerald-100 border-l-4 border-l-emerald-500">
-                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Exercício</div>
-                        <div className="text-2xl font-black text-emerald-600">{ano}</div>
+                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-emerald-100 border-l-4 border-l-emerald-500">
+                        <div className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">Exercício</div>
+                        <div className="text-xl font-black text-emerald-600">{ano}</div>
                     </div>
                 </div>
 
@@ -156,39 +157,41 @@ export default function PublicacoesPage() {
                             <h4 className="text-xl font-black text-gray-800 uppercase tracking-tighter mb-3">Nenhuma publicação localizada</h4>
                             <p className="text-gray-400 text-sm italic">Ajuste os filtros para encontrar a publicação desejada.</p>
                         </div>
-                    ) : filtradas.map(pub => (
-                        <div key={pub.id} className="group bg-white rounded-[2rem] border border-gray-100 shadow-lg shadow-gray-200/30 hover:shadow-xl hover:shadow-slate-200/40 transition-all duration-300 p-8">
-                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
-                                <div className="flex items-start gap-5 flex-1">
-                                    <div className="w-12 h-12 bg-slate-50 text-slate-500 rounded-2xl flex items-center justify-center shrink-0 border border-slate-100 group-hover:bg-slate-700 group-hover:text-white transition-all duration-500">
-                                        <FaNewspaper size={18} />
-                                    </div>
+                    ) : (
+                        filtradas.map(pub => (
+                            <div key={pub.id} className="group bg-white rounded-2xl border border-gray-100 shadow-lg shadow-gray-200/30 hover:shadow-xl hover:shadow-slate-200/40 transition-all duration-300 p-6">
+                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                    <div className="flex items-start gap-4 flex-1">
+                                        <div className="w-10 h-10 bg-slate-50 text-slate-500 rounded-xl flex items-center justify-center shrink-0 border border-slate-100 group-hover:bg-slate-700 group-hover:text-white transition-all duration-500">
+                                            <FaNewspaper size={16} />
+                                        </div>
                                     <div className="flex-1">
-                                        <div className="flex flex-wrap items-center gap-2 mb-2">
-                                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${TIPO_COR[pub.tipo] || "bg-gray-100 text-gray-600 border-gray-200"}`}>
-                                                <FaTag size={8} /> {pub.tipo}
+                                        <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                                            <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest border ${TIPO_COR[pub.tipo] || "bg-gray-100 text-gray-600 border-gray-200"}`}>
+                                                <FaTag size={7} /> {pub.tipo}
                                             </span>
-                                            <span className="flex items-center gap-1.5 text-[10px] font-bold text-gray-400">
-                                                <FaCalendarAlt size={9} className="text-gray-300" />
-                                                {new Date(pub.dataPublicacao).toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}
+                                            <span className="flex items-center gap-1 text-[9px] font-bold text-gray-400 uppercase">
+                                                <FaCalendarAlt size={8} className="text-gray-300" />
+                                                {new Date(pub.dataPublicacao).toLocaleDateString("pt-BR")}
                                             </span>
                                         </div>
-                                        <h3 className="font-black text-gray-800 text-sm uppercase tracking-tight mb-1 group-hover:text-slate-700 transition-colors">{pub.titulo}</h3>
-                                        <p className="text-xs text-gray-400 font-medium leading-relaxed line-clamp-2">{pub.descricao}</p>
+                                        <h3 className="font-black text-gray-800 text-[11px] uppercase tracking-tight mb-1 group-hover:text-slate-700 transition-colors">{pub.titulo}</h3>
+                                        <p className="text-[10px] text-gray-400 font-bold leading-relaxed line-clamp-2 italic opacity-80">"{pub.descricao}"</p>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-3 shrink-0">
-                                    <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100">
+                                <div className="flex items-center gap-2 shrink-0">
+                                    <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest bg-gray-50 px-2 py-1 rounded-lg border border-gray-100">
                                         {pub.secretaria}
                                     </span>
-                                    <button className="inline-flex items-center gap-2 bg-white border border-gray-200 text-gray-500 hover:text-slate-700 hover:border-slate-300 px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm">
-                                        <FaDownload size={10} />
+                                    <button className="inline-flex items-center gap-1.5 bg-white border border-gray-200 text-gray-500 hover:text-slate-700 hover:border-slate-300 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all shadow-sm">
+                                        <FaDownload size={8} />
                                         {pub.arquivo ? "Baixar" : "Ver"}
                                     </button>
                                 </div>
                             </div>
                         </div>
-                    ))}
+                        ))
+                    )}
                 </div>
 
                 <div className="mt-20">

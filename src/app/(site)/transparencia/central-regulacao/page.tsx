@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { FaHeartbeat, FaUserMd, FaFlask, FaScalpel, FaAmbulance, FaInfoCircle, FaPhoneAlt, FaExternalLinkAlt } from "react-icons/fa";
+import { FaHeartbeat, FaUserMd, FaFlask, FaStethoscope, FaAmbulance, FaInfoCircle, FaPhoneAlt, FaExternalLinkAlt } from "react-icons/fa";
 import PageHeader from "@/components/PageHeader";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
 import Link from "next/link";
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 const FILAS = [
     { tipo: "Consultas Especializadas", icone: FaUserMd, cor: "from-blue-500 to-indigo-600", total: 287, espera: "15 a 60 dias úteis", exemplo: "Cardiologia, Ortopedia, Neurologia..." },
     { tipo: "Exames de Imagem e Laboratoriais", icone: FaFlask, cor: "from-teal-500 to-emerald-600", total: 143, espera: "7 a 30 dias úteis", exemplo: "Tomografia, Ressonância, Ecocardiograma..." },
-    { tipo: "Cirurgias Eletivas", icone: FaScalpel, cor: "from-purple-500 to-violet-600", total: 62, espera: "30 a 120 dias úteis", exemplo: "Herniorrafia, Colelitíase, Artroscopia..." },
+    { tipo: "Cirurgias Eletivas", icone: FaStethoscope, cor: "from-purple-500 to-violet-600", total: 62, espera: "30 a 120 dias úteis", exemplo: "Herniorrafia, Colelitíase, Artroscopia..." },
     { tipo: "Urgências Referenciadas", icone: FaAmbulance, cor: "from-rose-500 to-red-600", total: 18, espera: "Prioritário (até 24h)", exemplo: "Casos com indicação urgente e regulação ativa." },
 ];
 

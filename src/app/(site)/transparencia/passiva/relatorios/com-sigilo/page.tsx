@@ -4,7 +4,7 @@ import PageHeader from "@/components/PageHeader";
 import { FaShieldAlt, FaLock, FaExclamationTriangle, FaInfoCircle, FaFileAlt, FaCalendarAlt, FaCheckCircle, FaUserShield, FaChevronRight, FaBalanceScale, FaSpinner, FaArrowCircleRight } from "react-icons/fa";
 import Link from "next/link";
 import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
-import { exportToCSV, exportToJSON, exportToPDF } from "@/lib/exportUtils";
+import { exportToCSV, exportToJSON, exportToPDF, exportToXLSX } from "@/lib/exportUtils";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
 
 type Pedido = {
@@ -58,7 +58,7 @@ export default function SICRelatoriosComSigiloPage() {
                (!sigilo || p.grauSigilo.toLowerCase() === s);
     });
 
-    const handleExport = (format: "pdf" | "csv" | "json") => {
+    const handleExport = (format: "pdf" | "csv" | "json" | "xlsx") => {
         const payload = filtrados.map(p => ({
             "Protocolo": p.protocolo,
             "Data": new Date(p.criadoEm).toLocaleDateString('pt-BR'),
@@ -72,6 +72,7 @@ export default function SICRelatoriosComSigiloPage() {
 
         if (format === "csv") exportToCSV(payload, filename);
         else if (format === "json") exportToJSON(payload, filename);
+        else if (format === "xlsx") exportToXLSX(payload, filename);
         else exportToPDF(payload, filename, title);
     };
 
@@ -120,40 +121,40 @@ export default function SICRelatoriosComSigiloPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mt-4">
                    {/* Coluna de Explicação sobre Sigilo */}
                    <div className="lg:col-span-1 space-y-8">
-                      <div className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-xl shadow-gray-200/40 relative overflow-hidden">
-                         <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full -mr-16 -mt-16" />
-                         <div className="w-14 h-14 bg-purple-600 text-white rounded-2xl flex items-center justify-center mb-8 shadow-xl shadow-purple-200">
-                             <FaLock size={24} />
-                         </div>
-                         <h2 className="text-2xl font-black text-gray-800 uppercase tracking-tighter mb-6 leading-tight">Classificação de Sigilo</h2>
-                         <p className="text-gray-500 text-sm font-medium leading-relaxed mb-8">
-                            A LAI estabelece que a informação em poder dos órgãos e entidades públicas poderá ser classificada nos graus:
-                         </p>
-                         <div className="space-y-4">
-                            {[
-                                { g: "Reservado", p: "5 anos", c: "bg-amber-100 text-amber-700" },
-                                { g: "Secreto", p: "15 anos", c: "bg-orange-100 text-orange-700" },
-                                { g: "Ultrassecreto", p: "25 anos", c: "bg-rose-100 text-rose-700" }
-                            ].map((item, idx) => (
-                                <div key={idx} className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                                   <div className="flex items-center gap-3">
-                                      <div className={`w-2 h-2 rounded-full ${item.c.split(' ')[0]}`} />
-                                      <span className="text-[10px] font-black uppercase tracking-widest text-gray-700">{item.g}</span>
-                                   </div>
-                                   <span className="text-[9px] font-black text-gray-400">Prazo: {item.p}</span>
-                                </div>
-                            ))}
-                         </div>
-                      </div>
+                      <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-xl shadow-gray-200/40 relative overflow-hidden">
+                          <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/5 rounded-full -mr-12 -mt-12" />
+                          <div className="w-12 h-12 bg-purple-600 text-white rounded-xl flex items-center justify-center mb-6 shadow-xl shadow-purple-200">
+                              <FaLock size={20} />
+                          </div>
+                          <h2 className="text-xl font-black text-gray-800 uppercase tracking-tighter mb-4 leading-tight">Classificação de Sigilo</h2>
+                          <p className="text-gray-500 text-[11px] font-bold leading-relaxed mb-6 italic opacity-80">
+                             A LAI define graus de classificação para a informação pública:
+                          </p>
+                          <div className="space-y-3">
+                             {[
+                                 { g: "Reservado", p: "5 anos", c: "bg-amber-100 text-amber-700 font-black" },
+                                 { g: "Secreto", p: "15 anos", c: "bg-orange-100 text-orange-700 font-black" },
+                                 { g: "Ultrassecreto", p: "25 anos", c: "bg-rose-100 text-rose-700 font-black" }
+                             ].map((item, idx) => (
+                                 <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100">
+                                    <div className="flex items-center gap-2">
+                                       <div className={`w-1.5 h-1.5 rounded-full ${item.c.split(' ')[0]}`} />
+                                       <span className="text-[9px] font-black uppercase tracking-widest text-gray-700">{item.g}</span>
+                                    </div>
+                                    <span className="text-[8px] font-black text-gray-400 uppercase">Prazo: {item.p}</span>
+                                 </div>
+                             ))}
+                          </div>
+                       </div>
 
-                      <div className="bg-amber-50 rounded-[2.5rem] p-10 border border-amber-100">
-                         <h3 className="text-lg font-black text-amber-900 uppercase tracking-tighter mb-4 flex items-center gap-3">
-                            <FaExclamationTriangle size={18} className="text-amber-600" /> Fundamentação
-                         </h3>
-                         <p className="text-xs text-amber-800/70 font-medium leading-relaxed">
-                            Nesta seção, listamos os pedidos que foram negados ou restritos com base na Lei Federal nº 12.527/2011. Toda classificação deve possuir um TCI.
-                         </p>
-                      </div>
+                       <div className="bg-amber-50 rounded-2xl p-8 border border-amber-100">
+                          <h3 className="text-sm font-black text-amber-900 uppercase tracking-tighter mb-3 flex items-center gap-2">
+                             <FaExclamationTriangle size={14} className="text-amber-600" /> Fundamentação
+                          </h3>
+                          <p className="text-[10px] text-amber-800/70 font-bold leading-relaxed opacity-80 italic">
+                             Listagem de pedidos restritos com base na Lei 12.527/2011. Toda classificação requer um TCI.
+                          </p>
+                       </div>
                    </div>
 
                    {/* Listagem de Pedidos Sigilosos */}
@@ -170,47 +171,47 @@ export default function SICRelatoriosComSigiloPage() {
                         </div>
                       ) : filtrados.length > 0 ? (
                          filtrados.map((p) => (
-                            <div key={p.id} className="bg-white rounded-[2.5rem] border border-gray-100 shadow-xl shadow-gray-200/40 overflow-hidden group hover:shadow-2xl transition-all duration-500">
-                               <div className="p-10">
-                                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
-                                     <div className="flex items-center gap-6">
-                                        <div className="w-14 h-14 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center shrink-0 border border-purple-50 shadow-sm">
-                                           <FaShieldAlt size={24} />
+                            <div key={p.id} className="bg-white rounded-2xl border border-gray-100 shadow-xl shadow-gray-200/40 overflow-hidden group hover:shadow-2xl transition-all duration-500">
+                               <div className="p-8">
+                                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                                     <div className="flex items-center gap-4">
+                                        <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center shrink-0 border border-purple-50 shadow-sm">
+                                           <FaShieldAlt size={20} />
                                         </div>
                                         <div>
-                                           <h3 className="text-lg font-black text-gray-800 uppercase tracking-tighter mb-1">PROTOCOLO #{p.protocolo}</h3>
-                                           <div className="flex items-center gap-4">
-                                              <span className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                                                 <FaCalendarAlt size={12} /> {new Date(p.criadoEm).toLocaleDateString('pt-BR')}
+                                           <h3 className="text-base font-black text-gray-800 uppercase tracking-tighter mb-0.5">PROTOCOLO #{p.protocolo}</h3>
+                                           <div className="flex items-center gap-3">
+                                              <span className="flex items-center gap-1.5 text-[9px] font-black text-gray-400 uppercase tracking-widest">
+                                                 <FaCalendarAlt size={10} /> {new Date(p.criadoEm).toLocaleDateString('pt-BR')}
                                               </span>
                                               <span className="w-1 h-1 bg-gray-200 rounded-full" />
-                                              <span className="text-[10px] font-black text-purple-500 uppercase tracking-widest">{p.orgao}</span>
+                                              <span className="text-[9px] font-black text-purple-500 uppercase tracking-widest">{p.orgao}</span>
                                            </div>
                                         </div>
                                      </div>
-                                     <div className={`px-5 py-2 rounded-full text-[9px] font-black uppercase tracking-widest ring-1 ring-purple-100 ${p.grauSigilo === 'Reservado' ? 'bg-amber-50 text-amber-600' : 'bg-rose-50 text-rose-600'}`}>
+                                     <div className={`px-4 py-1.5 rounded-full text-[8px] font-black uppercase tracking-widest ring-1 ring-purple-100 ${p.grauSigilo === 'Reservado' ? 'bg-amber-50 text-amber-600' : 'bg-rose-50 text-rose-600'}`}>
                                         Sigilo: {p.grauSigilo}
                                      </div>
                                   </div>
 
-                                  <div className="bg-gray-900 rounded-[2rem] p-8 text-white relative overflow-hidden">
-                                     <div className="absolute right-0 top-0 p-8 opacity-10">
-                                        <FaLock size={60} />
+                                  <div className="bg-gray-900 rounded-xl p-6 text-white relative overflow-hidden">
+                                     <div className="absolute right-0 top-0 p-6 opacity-10">
+                                        <FaLock size={40} />
                                      </div>
-                                     <p className="text-[9px] font-black text-blue-400 uppercase tracking-widest mb-3 flex items-center gap-2">
-                                        <FaBalanceScale size={12} /> Fundamentação Legal
+                                     <p className="text-[8px] font-black text-blue-400 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                                        <FaBalanceScale size={10} /> Fundamentação Legal
                                      </p>
-                                     <p className="text-xs text-gray-400 font-medium leading-relaxed italic mb-0">
-                                        "Informação classificada conforme previsto na Lei 12.527/2011 por comprometer a segurança pública ou atividades de inteligência."
+                                     <p className="text-[10px] text-gray-400 font-bold leading-relaxed italic mb-0 opacity-80">
+                                        "Informação classificada por comprometer a segurança pública ou atividades de inteligência."
                                      </p>
                                   </div>
 
-                                  <div className="mt-8 pt-8 border-t border-gray-50 flex items-center justify-between">
-                                     <div className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                                        <FaInfoCircle size={12} /> Prazo de Desclassificação: +{p.grauSigilo === 'Reservado' ? '5' : '15'} Anos
+                                  <div className="mt-6 pt-6 border-t border-gray-50 flex items-center justify-between">
+                                     <div className="flex items-center gap-1.5 text-[9px] font-black text-gray-400 uppercase tracking-widest">
+                                        <FaInfoCircle size={10} /> Desclassificação: +{p.grauSigilo === 'Reservado' ? '5' : '15'} Anos
                                      </div>
-                                     <Link href={`/servicos/consulta-protocolo?id=${p.protocolo}`} className="text-purple-600 font-black uppercase text-[10px] tracking-widest hover:text-purple-800 transition-colors flex items-center gap-2">
-                                        Detalhes <FaChevronRight size={12} />
+                                     <Link href={`/servicos/consulta-protocolo?id=${p.protocolo}`} className="text-purple-600 font-black uppercase text-[9px] tracking-widest hover:text-purple-800 transition-colors flex items-center gap-1.5">
+                                        Detalhes <FaChevronRight size={10} />
                                      </Link>
                                   </div>
                                </div>
@@ -228,10 +229,10 @@ export default function SICRelatoriosComSigiloPage() {
                         </div>
                       )}
                       
-                      <div className="bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm text-center">
-                         <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-6">Deseja solicitar a desclassificação?</p>
-                         <Link href="/servicos/esic" className="inline-flex items-center gap-3 bg-purple-600 text-white px-8 py-4 rounded-full font-black uppercase text-[10px] tracking-widest hover:bg-purple-700 transition-all shadow-lg shadow-purple-900/10">
-                            Abrir Pedido de Desclassificação <FaArrowCircleRight size={14} />
+                      <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm text-center">
+                         <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-4">Deseja solicitar a desclassificação?</p>
+                         <Link href="/servicos/esic" className="inline-flex items-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-full font-black uppercase text-[9px] tracking-widest hover:bg-purple-700 transition-all shadow-lg shadow-purple-900/10">
+                            Abrir Pedido <FaArrowCircleRight size={12} />
                          </Link>
                       </div>
                    </div>

@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { FaListOl, FaSpinner, FaBuilding, FaCalendarCheck, FaInfoCircle } from "react-icons/fa";
 import PageHeader from "@/components/PageHeader";
 import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
-import { exportToCSV, exportToJSON, exportToPDF } from "@/lib/exportUtils";
+import { exportToCSV, exportToJSON, exportToPDF, exportToXLSX } from "@/lib/exportUtils";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
 
 type Pagamento = {
@@ -85,7 +85,7 @@ export default function OrdemCronologicaClient() {
         setStatusFiltro("");
     };
 
-    const handleExport = (format: "pdf" | "csv" | "json") => {
+    const handleExport = (format: "pdf" | "csv" | "json" | "xlsx") => {
         const payload = filtrados.map(p => ({
             "Ordem": p.ordem,
             "Fornecedor": p.fornecedor,
@@ -104,6 +104,7 @@ export default function OrdemCronologicaClient() {
 
         if (format === "csv") exportToCSV(payload, filename);
         else if (format === "json") exportToJSON(payload, filename);
+        else if (format === "xlsx") exportToXLSX(payload, filename);
         else exportToPDF(payload, filename, title);
     };
 
@@ -126,13 +127,13 @@ export default function OrdemCronologicaClient() {
 
             <div className="max-w-7xl mx-auto px-4 py-8 -mt-10 relative z-30">
                 {/* Aviso Legal */}
-                <div className="bg-amber-50 border border-amber-200 rounded-[2rem] p-6 mb-8 flex items-start gap-4">
-                    <FaInfoCircle className="text-amber-500 mt-1 shrink-0" size={20} />
+                <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 mb-8 flex items-start gap-4">
+                    <FaInfoCircle className="text-amber-500 mt-0.5 shrink-0" size={16} />
                     <div>
-                        <p className="font-black text-amber-800 text-[10px] uppercase tracking-widest mb-1">Transparência Ativa – PNTP 2025</p>
-                        <p className="text-amber-700 text-xs font-semibold leading-relaxed">
+                        <p className="font-black text-amber-800 text-[9px] uppercase tracking-widest mb-1">Transparência Ativa – PNTP 2025</p>
+                        <p className="text-amber-700 text-[10px] font-bold leading-relaxed">
                             A publicação da ordem cronológica de pagamentos é exigência da Lei 14.133/2021. 
-                            Os pagamentos obedecem à ordem de liquidação das obrigações, salvo as exceções legais justificadas.
+                            Os pagamentos obedecem à ordem de liquidação, salvo exceções legais justificadas.
                         </p>
                     </div>
                 </div>
@@ -162,80 +163,80 @@ export default function OrdemCronologicaClient() {
                 </TransparencyFilters>
 
                 {/* Resumo */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
-                    <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-gray-100 border-l-4 border-l-amber-500">
-                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Aguardando Pagamento</div>
-                        <div className="text-2xl font-black text-amber-600">{fmt(totalPendente)}</div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
+                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 border-l-4 border-l-amber-500">
+                        <div className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">Aguardando Pagamento</div>
+                        <div className="text-xl font-black text-amber-600">{fmt(totalPendente)}</div>
                     </div>
-                    <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-gray-100 border-l-4 border-l-emerald-500">
-                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Total Pago no Período</div>
-                        <div className="text-2xl font-black text-emerald-600">{fmt(totalPago)}</div>
+                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 border-l-4 border-l-emerald-500">
+                        <div className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">Total Pago no Período</div>
+                        <div className="text-xl font-black text-emerald-600">{fmt(totalPago)}</div>
                     </div>
-                    <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-gray-100 border-l-4 border-l-blue-500">
-                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Registros Encontrados</div>
-                        <div className="text-2xl font-black text-blue-600">{filtrados.length} pedidos</div>
+                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 border-l-4 border-l-blue-500">
+                        <div className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">Registros Encontrados</div>
+                        <div className="text-xl font-black text-blue-600">{filtrados.length} pedidos</div>
                     </div>
                 </div>
 
                 {/* Tabela */}
-                <div className="bg-white rounded-[2.5rem] shadow-xl border border-gray-100 overflow-hidden">
+                <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left" aria-label="Ordem cronológica de pagamentos">
                             <thead>
-                                <tr className="bg-gray-50/50 border-b border-gray-100 text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                                    <th className="px-6 py-5 w-16">Ordem</th>
-                                    <th className="px-6 py-5">Fornecedor / CNPJ</th>
-                                    <th className="px-6 py-5">Descrição</th>
-                                    <th className="px-6 py-5">Secretaria</th>
-                                    <th className="px-6 py-5">Liquidação</th>
-                                    <th className="px-6 py-5 text-right">Valor</th>
-                                    <th className="px-6 py-5 text-center">Status</th>
+                                <tr className="bg-gray-50/50 border-b border-gray-100 text-[9px] font-black text-gray-400 uppercase tracking-widest">
+                                    <th className="px-5 py-4 w-16">Ordem</th>
+                                    <th className="px-5 py-4">Fornecedor / CNPJ</th>
+                                    <th className="px-5 py-4">Descrição</th>
+                                    <th className="px-5 py-4">Secretaria</th>
+                                    <th className="px-5 py-4">Liquidação</th>
+                                    <th className="px-5 py-4 text-right">Valor</th>
+                                    <th className="px-5 py-4 text-center">Status</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-50">
                                 {loading ? (
                                     <tr>
-                                        <td colSpan={7} className="px-6 py-12 text-center">
-                                            <FaSpinner className="animate-spin inline-block text-blue-500 text-2xl mr-3" />
-                                            <span className="font-black text-xs uppercase tracking-widest text-gray-400">Carregando...</span>
+                                        <td colSpan={7} className="px-5 py-10 text-center">
+                                            <FaSpinner className="animate-spin inline-block text-blue-500 text-xl mr-3" />
+                                            <span className="font-black text-[10px] uppercase tracking-widest text-gray-400">Carregando...</span>
                                         </td>
                                     </tr>
                                 ) : filtrados.length === 0 ? (
                                     <tr>
-                                        <td colSpan={7} className="px-6 py-16 text-center text-gray-400 italic text-sm">
-                                            Nenhum registro encontrado para os filtros selecionados.
+                                        <td colSpan={7} className="px-5 py-16 text-center text-gray-400 italic text-xs font-bold uppercase tracking-widest">
+                                            Nenhum registro localizado.
                                         </td>
                                     </tr>
                                 ) : filtrados.map((p) => (
                                     <tr key={p.id} className="hover:bg-blue-50/20 transition-colors group">
-                                        <td className="px-6 py-5 text-center">
-                                            <div className="w-10 h-10 bg-slate-100 text-slate-600 rounded-xl flex items-center justify-center font-black text-xs group-hover:bg-blue-600 group-hover:text-white transition-all">
+                                        <td className="px-5 py-4 text-center">
+                                            <div className="w-8 h-8 bg-slate-100 text-slate-600 rounded-lg flex items-center justify-center font-black text-[10px] group-hover:bg-blue-600 group-hover:text-white transition-all">
                                                 {p.ordem}
                                             </div>
                                         </td>
-                                        <td className="px-6 py-5">
-                                            <div className="font-black text-gray-800 text-sm group-hover:text-blue-700 transition-colors uppercase tracking-tight">{p.fornecedor}</div>
-                                            <div className="text-[10px] font-mono font-bold text-gray-400 mt-1">{p.cnpj}</div>
+                                        <td className="px-5 py-4">
+                                            <div className="font-black text-gray-800 text-[11px] group-hover:text-blue-700 transition-colors uppercase tracking-tight">{p.fornecedor}</div>
+                                            <div className="text-[9px] font-mono font-bold text-gray-400 mt-0.5">{p.cnpj}</div>
                                         </td>
-                                        <td className="px-6 py-5 max-w-xs">
-                                            <div className="text-xs font-semibold text-gray-600 line-clamp-2 leading-relaxed">{p.descricao}</div>
+                                        <td className="px-5 py-4 max-w-xs">
+                                            <div className="text-[10px] font-bold text-gray-600 line-clamp-2 leading-relaxed italic opacity-90">"{p.descricao}"</div>
                                         </td>
-                                        <td className="px-6 py-5">
-                                            <div className="flex items-center gap-2 text-[10px] font-black text-gray-500 uppercase">
-                                                <FaBuilding size={10} className="text-gray-300" /> {p.secretaria}
+                                        <td className="px-5 py-4">
+                                            <div className="flex items-center gap-1.5 text-[9px] font-black text-gray-500 uppercase">
+                                                <FaBuilding size={9} className="text-gray-300" /> {p.secretaria}
                                             </div>
                                         </td>
-                                        <td className="px-6 py-5">
-                                            <div className="flex items-center gap-2 text-[10px] font-black text-gray-500">
-                                                <FaCalendarCheck size={10} className="text-emerald-400" />
+                                        <td className="px-5 py-4">
+                                            <div className="flex items-center gap-1.5 text-[9px] font-black text-gray-500">
+                                                <FaCalendarCheck size={9} className="text-emerald-400" />
                                                 {new Date(p.dataLiquidacao).toLocaleDateString("pt-BR")}
                                             </div>
                                         </td>
-                                        <td className="px-6 py-5 text-right font-black text-gray-800 text-sm">
+                                        <td className="px-5 py-4 text-right font-black text-gray-800 text-[11px]">
                                             {fmt(p.valor)}
                                         </td>
-                                        <td className="px-6 py-5 text-center">
-                                            <span className={`inline-flex px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${statusConfig[p.status]?.cor}`}>
+                                        <td className="px-5 py-4 text-center">
+                                            <span className={`inline-flex px-2 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest border ${statusConfig[p.status]?.cor}`}>
                                                 {statusConfig[p.status]?.label}
                                             </span>
                                         </td>

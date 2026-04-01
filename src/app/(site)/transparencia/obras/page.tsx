@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { FaHammer, FaMapMarkerAlt, FaCalendarAlt, FaBuilding, FaChartLine, FaSpinner, FaArrowRight, FaImage } from "react-icons/fa";
 import PageHeader from "@/components/PageHeader";
 import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
-import { exportToCSV, exportToJSON, exportToPDF } from "@/lib/exportUtils";
+import { exportToCSV, exportToJSON, exportToPDF, exportToXLSX } from "@/lib/exportUtils";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
 import Image from "next/image";
 
@@ -64,7 +64,7 @@ export default function ObrasPublicasPage() {
         setStatus("");
     };
 
-    const handleExport = (format: "pdf" | "csv" | "json") => {
+    const handleExport = (format: "pdf" | "csv" | "json" | "xlsx") => {
         const payload = obras.map(o => ({
             "Título": o.titulo,
             "Local": o.local,
@@ -79,6 +79,7 @@ export default function ObrasPublicasPage() {
 
         if (format === "csv") exportToCSV(payload, filename);
         else if (format === "json") exportToJSON(payload, filename);
+        else if (format === "xlsx") exportToXLSX(payload, filename);
         else exportToPDF(payload, filename, title);
     };
 
@@ -126,23 +127,23 @@ export default function ObrasPublicasPage() {
                 </TransparencyFilters>
 
                 {/* Resumo da Gestão de Obras */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                    <div className="bg-white rounded-3xl p-8 shadow-sm border border-emerald-100/50 border-l-4 border-l-emerald-500 group">
-                        <div className="flex justify-between items-start mb-4 text-emerald-100 group-hover:text-emerald-500 transition-colors">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-emerald-100/50 border-l-4 border-l-emerald-500 group transition-all hover:shadow-xl">
+                        <div className="flex justify-between items-start mb-3 text-emerald-100 group-hover:text-emerald-500 transition-colors">
                             <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Investimento Ativo</div>
-                            <FaChartLine size={24} />
+                            <FaChartLine size={20} />
                         </div>
-                        <div className="text-2xl font-black text-gray-800 tracking-tight">{loading ? "..." : totalInvestimento.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</div>
-                        <div className="mt-2 text-[10px] font-bold text-emerald-500 uppercase tracking-tighter">Total em obras no filtro</div>
+                        <div className="text-xl font-black text-gray-800 tracking-tight">{loading ? "..." : totalInvestimento.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</div>
+                        <div className="mt-2 text-[9px] font-bold text-emerald-500 uppercase tracking-tighter">Total em obras</div>
                     </div>
 
-                    <div className="bg-white rounded-3xl p-8 shadow-sm border border-blue-100/50 border-l-4 border-l-blue-500 group">
-                        <div className="flex justify-between items-start mb-4 text-blue-100 group-hover:text-blue-500 transition-colors">
+                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-blue-100/50 border-l-4 border-l-blue-500 group transition-all hover:shadow-xl">
+                        <div className="flex justify-between items-start mb-3 text-blue-100 group-hover:text-blue-500 transition-colors">
                             <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Projetos</div>
-                            <FaHammer size={24} />
+                            <FaHammer size={20} />
                         </div>
-                        <div className="text-2xl font-black text-gray-800 tracking-tight">{loading ? "..." : obras.length} Obras</div>
-                        <div className="mt-2 text-[10px] font-bold text-blue-500 uppercase tracking-tighter">Intervenções capturadas</div>
+                        <div className="text-xl font-black text-gray-800 tracking-tight">{loading ? "..." : obras.length} Obras</div>
+                        <div className="mt-2 text-[9px] font-bold text-blue-500 uppercase tracking-tighter">Volume de projetos</div>
                     </div>
                 </div>
 
@@ -167,8 +168,8 @@ export default function ObrasPublicasPage() {
                         obras.map((o) => {
                             const statusInfo = getStatusInfo(o.status);
                             return (
-                                <div key={o.id} className="bg-white rounded-[3rem] border border-white shadow-xl shadow-gray-200/40 overflow-hidden flex flex-col lg:flex-row group hover:shadow-2xl transition-all duration-500">
-                                    <div className="lg:w-1/3 relative h-64 lg:h-auto overflow-hidden bg-gray-100 shrink-0">
+                                <div key={o.id} className="bg-white rounded-2xl border border-gray-100 shadow-xl shadow-gray-200/40 overflow-hidden flex flex-col lg:flex-row group hover:shadow-2xl transition-all duration-500">
+                                    <div className="lg:w-72 relative h-48 lg:h-auto overflow-hidden bg-gray-100 shrink-0">
                                         {o.imagem ? (
                                             <Image 
                                                 src={o.imagem} 
@@ -178,52 +179,52 @@ export default function ObrasPublicasPage() {
                                             />
                                         ) : (
                                             <div className="h-full flex items-center justify-center text-gray-300">
-                                                <FaImage size={64} />
+                                                <FaImage size={40} />
                                             </div>
                                         )}
-                                        <div className="absolute top-8 left-8">
-                                            <span className={`px-5 py-2 rounded-2xl text-[9px] font-black uppercase tracking-widest shadow-lg backdrop-blur-md border ${statusInfo.color}`}>
+                                        <div className="absolute top-4 left-4">
+                                            <span className={`px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest shadow-lg backdrop-blur-md border ${statusInfo.color}`}>
                                                 {statusInfo.label}
                                             </span>
                                         </div>
                                     </div>
 
-                                    <div className="p-10 lg:p-14 flex-1 flex flex-col">
-                                        <div className="mb-8">
-                                            <div className="flex items-center gap-2 text-blue-500 text-[10px] font-black uppercase tracking-[0.2em] mb-4">
-                                                <FaMapMarkerAlt /> {o.local}
+                                    <div className="p-6 lg:p-8 flex-1 flex flex-col">
+                                        <div className="mb-4">
+                                            <div className="flex items-center gap-2 text-blue-500 text-[8px] font-black uppercase tracking-[0.2em] mb-3">
+                                                <FaMapMarkerAlt size={10} /> {o.local}
                                             </div>
-                                            <h3 className="text-2xl font-black text-gray-800 uppercase tracking-tighter group-hover:text-blue-600 transition-colors mb-4">{o.titulo}</h3>
-                                            <p className="text-gray-500 leading-relaxed font-medium line-clamp-3 italic text-sm">
+                                            <h3 className="text-base font-black text-gray-800 uppercase tracking-tighter group-hover:text-blue-600 transition-colors mb-2">{o.titulo}</h3>
+                                            <p className="text-gray-500 leading-relaxed font-bold line-clamp-2 italic text-xs">
                                                 "{o.descricao}"
                                             </p>
                                         </div>
 
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 py-8 border-y border-gray-50 mb-8">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 py-4 border-y border-gray-50 mb-4">
                                             <div>
-                                                <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">Valor da Obra</p>
-                                                <p className="font-black text-gray-800 text-lg tracking-tighter">{o.valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</p>
+                                                <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Valor da Obra</p>
+                                                <p className="font-black text-gray-800 text-sm tracking-tighter">{o.valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</p>
                                             </div>
                                             <div>
-                                                <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">Executor</p>
-                                                <p className="font-black text-gray-800 text-sm uppercase tracking-tight truncate flex items-center gap-2">
-                                                    <FaBuilding className="text-gray-300" /> {o.empresa || "Não Informada"}
+                                                <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Executor</p>
+                                                <p className="font-black text-gray-800 text-[10px] uppercase tracking-tight truncate flex items-center gap-1.5">
+                                                    <FaBuilding size={12} className="text-gray-300" /> {o.empresa || "N/I"}
                                                 </p>
                                             </div>
                                             <div className="text-right sm:text-left">
-                                                <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">Previsão</p>
-                                                <p className="font-black text-blue-600 text-sm uppercase tracking-tight flex items-center gap-2">
-                                                    <FaCalendarAlt className="text-blue-100" /> {o.previsaoTermino ? new Date(o.previsaoTermino).toLocaleDateString("pt-BR") : "Não definida"}
+                                                <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Previsão</p>
+                                                <p className="font-black text-blue-600 text-[10px] uppercase tracking-tight flex items-center gap-1.5">
+                                                    <FaCalendarAlt size={12} className="text-blue-100" /> {o.previsaoTermino ? new Date(o.previsaoTermino).toLocaleDateString("pt-BR") : "—"}
                                                 </p>
                                             </div>
                                         </div>
 
-                                        <div className="space-y-4 mb-8">
-                                            <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
-                                                <span className="text-gray-400">Progresso Físico-Financeiro</span>
+                                        <div className="space-y-2.5 mb-4">
+                                            <div className="flex justify-between items-center text-[8px] font-black uppercase tracking-widest">
+                                                <span className="text-gray-400">Progresso</span>
                                                 <span className="text-blue-600">{o.percentual}%</span>
                                             </div>
-                                            <div className="h-3 w-full bg-blue-50 rounded-full overflow-hidden p-0.5 shadow-inner">
+                                            <div className="h-2 w-full bg-blue-50 rounded-full overflow-hidden p-0.5 shadow-inner">
                                                 <div 
                                                     className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full transition-all duration-1000 shadow-lg shadow-blue-500/20"
                                                     style={{ width: `${o.percentual}%` }}
@@ -231,9 +232,9 @@ export default function ObrasPublicasPage() {
                                             </div>
                                         </div>
 
-                                        <div className="flex justify-end pt-4">
-                                            <button className="text-blue-600 font-black uppercase text-[10px] tracking-widest flex items-center gap-3 hover:gap-5 transition-all">
-                                                Visualizar Detalhamento <FaArrowRight size={12} />
+                                        <div className="flex justify-end pt-2">
+                                            <button className="text-blue-600 font-black uppercase text-[9px] tracking-widest flex items-center gap-2 hover:gap-3 transition-all">
+                                                Detalhamento <FaArrowRight size={10} />
                                             </button>
                                         </div>
                                     </div>

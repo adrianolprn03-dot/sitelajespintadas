@@ -5,7 +5,7 @@ import Link from "next/link";
 import { FaFileAlt, FaScroll, FaGavel, FaDownload, FaCalendarAlt, FaSearch, FaHistory, FaInfoCircle, FaCheckCircle, FaSpinner, FaArrowRight, FaFilter } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
-import { exportToCSV, exportToJSON, exportToPDF } from "@/lib/exportUtils";
+import { exportToCSV, exportToJSON, exportToPDF, exportToXLSX } from "@/lib/exportUtils";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
 
 type Legislacao = {
@@ -70,7 +70,7 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
         setPage(1);
     };
 
-    const handleExport = (format: "pdf" | "csv" | "json") => {
+    const handleExport = (format: "pdf" | "csv" | "json" | "xlsx") => {
         const payload = leis.map(l => ({
             "Tipo": tipoInfo[l.tipo]?.label || l.tipo,
             "Número": l.numero,
@@ -83,6 +83,7 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
 
         if (format === "csv") exportToCSV(payload, filename);
         else if (format === "json") exportToJSON(payload, filename);
+        else if (format === "xlsx") exportToXLSX(payload, filename);
         else exportToPDF(payload, filename, title);
     };
 
@@ -146,43 +147,43 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                                             initial={{ opacity: 0, y: 20 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: idx * 0.03 }}
-                                            className="group relative bg-white rounded-[2.5rem] border border-gray-100 p-8 md:p-10 flex flex-col md:flex-row items-center gap-10 shadow-xl shadow-gray-200/40 hover:shadow-2xl hover:shadow-blue-900/10 transition-all duration-500 overflow-hidden"
+                                            className="group relative bg-white rounded-2xl border border-gray-100 p-6 flex flex-col md:flex-row items-center gap-6 shadow-xl shadow-gray-200/40 hover:shadow-2xl hover:shadow-blue-900/10 transition-all duration-500 overflow-hidden"
                                         >
-                                            <div className={`w-20 h-20 rounded-2xl flex items-center justify-center shrink-0 border transition-all duration-500 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 ${info.corClass}`}>
-                                                <Icon size={28} className="group-hover:text-white" />
+                                            <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 border transition-all duration-500 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 ${info.corClass}`}>
+                                                <Icon size={24} className="group-hover:text-white" />
                                             </div>
                                             <div className="flex-1 text-center md:text-left">
-                                                <div className="flex flex-wrap justify-center md:justify-start items-center gap-4 mb-4">
-                                                    <span className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border shadow-sm ${info.corClass}`}>
+                                                <div className="flex flex-wrap justify-center md:justify-start items-center gap-3 mb-3">
+                                                    <span className={`px-3 py-1.5 rounded-lg text-[8px] font-black uppercase tracking-widest border shadow-sm ${info.corClass}`}>
                                                         {info.label}
                                                     </span>
-                                                    <span className="flex items-center gap-2 text-gray-400 font-black text-[10px] uppercase tracking-widest">
-                                                        <FaCalendarAlt size={12} className="text-amber-500/50" /> Exercício de {lei.ano}
+                                                    <span className="flex items-center gap-1.5 text-gray-400 font-black text-[9px] uppercase tracking-widest">
+                                                        <FaCalendarAlt size={10} className="text-amber-500/50" /> {lei.ano}
                                                     </span>
                                                 </div>
-                                                <h3 className="font-black text-gray-800 text-2xl uppercase tracking-tighter group-hover:text-blue-600 transition-colors mb-4">
+                                                <h3 className="font-black text-gray-800 text-lg uppercase tracking-tighter group-hover:text-blue-600 transition-colors mb-3">
                                                     {lei.numero}
                                                 </h3>
-                                                <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-50 group-hover:bg-white transition-colors">
-                                                    <p className="text-gray-500 text-sm leading-relaxed font-medium line-clamp-3 italic opacity-90">
+                                                <div className="bg-gray-50/40 p-4 rounded-xl border border-gray-50 group-hover:bg-white transition-colors">
+                                                    <p className="text-gray-500 text-xs leading-relaxed font-bold line-clamp-2 italic opacity-95">
                                                         "{lei.ementa}"
                                                     </p>
                                                 </div>
                                             </div>
-                                            <div className="flex flex-col gap-3 group-hover:scale-105 transition-transform duration-500">
+                                            <div className="flex flex-col gap-2 group-hover:scale-105 transition-transform duration-500">
                                                 {lei.arquivo ? (
                                                     <a href={lei.arquivo} target="_blank" rel="noopener noreferrer"
-                                                        className="w-full md:w-48 shrink-0 flex items-center justify-center gap-3 bg-[#1E293B] text-white hover:bg-blue-600 px-8 py-5 rounded-[2rem] transition-all text-[10px] font-black uppercase tracking-widest shadow-xl shadow-blue-900/10">
-                                                        <FaDownload size={12} /> Baixar PDF
+                                                        className="w-full md:w-40 shrink-0 flex items-center justify-center gap-2 bg-[#1E293B] text-white hover:bg-blue-600 px-6 py-3.5 rounded-xl transition-all text-[9px] font-black uppercase tracking-widest shadow-xl shadow-blue-900/10">
+                                                        <FaDownload size={10} /> Baixar PDF
                                                     </a>
                                                 ) : (
                                                     <Link href="/servicos/esic"
-                                                        className="w-full md:w-48 shrink-0 flex items-center justify-center gap-3 bg-gray-50 text-gray-400 hover:bg-gray-100 px-8 py-5 rounded-[2rem] transition-all text-[10px] font-black uppercase tracking-widest border border-gray-100">
+                                                        className="w-full md:w-40 shrink-0 flex items-center justify-center gap-2 bg-gray-50 text-gray-400 hover:bg-gray-100 px-6 py-3.5 rounded-xl transition-all text-[9px] font-black uppercase tracking-widest border border-gray-100">
                                                         Solicitar LAI
                                                     </Link>
                                                 )}
-                                                <button className="text-blue-600 text-[9px] font-black uppercase tracking-widest hover:underline text-center">
-                                                    Ver Detalhes do Ato
+                                                <button className="text-blue-600 text-[8px] font-black uppercase tracking-widest hover:underline text-center">
+                                                    Ver Detalhes
                                                 </button>
                                             </div>
                                         </motion.div>

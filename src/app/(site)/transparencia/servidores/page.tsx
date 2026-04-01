@@ -97,7 +97,7 @@ export default function QuadroPessoalHub() {
             />
 
             <div className="max-w-[1240px] mx-auto px-6 py-16">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {cards.map((card, index) => {
                         const identifier = card.href.split("/").pop()?.toLowerCase() || "";
                         const override = linksExternos.find((l: any) => 
@@ -112,39 +112,39 @@ export default function QuadroPessoalHub() {
                                 href={finalHref}
                                 target={isExternal ? "_blank" : undefined}
                                 rel={isExternal ? "noopener noreferrer" : undefined}
-                                className="group relative overflow-hidden bg-white rounded-[2.5rem] p-8 shadow-xl border border-white hover:border-gray-100 hover:shadow-2xl hover:shadow-gray-200/50 transition-all duration-500 flex flex-col h-full"
+                                className="group relative overflow-hidden bg-white rounded-2xl p-6 shadow-xl border border-white hover:border-gray-100 hover:shadow-2xl hover:shadow-gray-200/50 transition-all duration-500 flex flex-col h-full"
                             >
                                 {/* Efeito de Fundo */}
-                                <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${card.color} opacity-[0.03] rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700`} />
+                                <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${card.color} opacity-[0.03] rounded-full -mr-12 -mt-12 group-hover:scale-150 transition-transform duration-700`} />
                                 
-                                <div className="mb-8 relative flex justify-between items-start">
-                                    <div className={`w-16 h-16 bg-gradient-to-br ${card.color} rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-500`}>
-                                        <card.icon size={28} />
+                                <div className="mb-6 relative flex justify-between items-start">
+                                    <div className={`w-12 h-12 bg-gradient-to-br ${card.color} rounded-xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-500`}>
+                                        <card.icon size={22} />
                                     </div>
-                                    <div className="flex flex-col items-end gap-2">
-                                        <div className="bg-white px-2 py-0.5 rounded-full text-[8px] font-black text-gray-400 border border-gray-100 uppercase tracking-widest shadow-sm">
+                                    <div className="flex flex-col items-end gap-1.5">
+                                        <div className="bg-white px-2 py-0.5 rounded-lg text-[7px] font-black text-gray-400 border border-gray-100 uppercase tracking-widest shadow-sm">
                                             {card.badge}
                                         </div>
                                         {isExternal && (
-                                            <span className="bg-blue-600 text-white text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-md shadow-sm flex items-center gap-1 animate-pulse">
-                                                <FaExternalLinkAlt size={8} /> Externo
+                                            <span className="bg-blue-600 text-white text-[7px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded shadow-sm flex items-center gap-1">
+                                                <FaExternalLinkAlt size={7} /> Externo
                                             </span>
                                         )}
                                     </div>
                                 </div>
 
                                 <div className="flex-1">
-                                    <h3 className="text-xl font-black text-gray-800 uppercase tracking-tighter mb-3 group-hover:text-blue-600 transition-colors">
+                                    <h3 className="text-base font-black text-gray-800 uppercase tracking-tighter mb-2 group-hover:text-blue-600 transition-colors">
                                         {card.title}
                                     </h3>
-                                    <p className="text-gray-500 text-sm font-medium leading-relaxed">
+                                    <p className="text-gray-500 text-xs font-bold leading-relaxed line-clamp-2">
                                         {card.description}
                                     </p>
                                 </div>
 
-                                <div className="mt-8 flex items-center gap-2 text-[10px] font-black text-blue-500 uppercase tracking-widest">
-                                    {isExternal ? "Acessar Portal Externo" : "Acessar Módulo"}
-                                    <div className="w-6 h-0.5 bg-blue-500 rounded-full group-hover:w-12 transition-all duration-500"></div>
+                                <div className="mt-6 flex items-center gap-2 text-[9px] font-black text-blue-500 uppercase tracking-widest">
+                                    {isExternal ? "Acessar Portal" : "Acessar Módulo"}
+                                    <div className="w-4 h-0.5 bg-blue-500 rounded-full group-hover:w-10 transition-all duration-500"></div>
                                 </div>
                             </Link>
                         );

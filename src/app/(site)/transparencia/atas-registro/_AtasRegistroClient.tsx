@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { FaFileSignature, FaSpinner, FaCalendarAlt, FaBuilding, FaDownload, FaSearch } from "react-icons/fa";
 import PageHeader from "@/components/PageHeader";
 import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
-import { exportToCSV, exportToJSON, exportToPDF } from "@/lib/exportUtils";
+import { exportToCSV, exportToJSON, exportToPDF, exportToXLSX } from "@/lib/exportUtils";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
 
 type Ata = {
@@ -81,7 +81,7 @@ export default function AtasRegistroClient() {
         setStatusFiltro("");
     };
 
-    const handleExport = (format: "pdf" | "csv" | "json") => {
+    const handleExport = (format: "pdf" | "csv" | "json" | "xlsx") => {
         const payload = filtradas.map(a => ({
             "Número": a.numero,
             "Objeto": a.objeto,
@@ -99,6 +99,7 @@ export default function AtasRegistroClient() {
 
         if (format === "csv") exportToCSV(payload, filename);
         else if (format === "json") exportToJSON(payload, filename);
+        else if (format === "xlsx") exportToXLSX(payload, filename);
         else exportToPDF(payload, filename, title);
     };
 
@@ -142,18 +143,18 @@ export default function AtasRegistroClient() {
                 </TransparencyFilters>
 
                 {/* Resumo */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
-                    <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-gray-100 border-l-4 border-l-emerald-500">
-                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Atas Vigentes</div>
-                        <div className="text-2xl font-black text-emerald-600">{filtradas.filter(a => a.status === "vigente").length}</div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
+                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 border-l-4 border-l-emerald-500">
+                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Atas Vigentes</div>
+                        <div className="text-xl font-black text-emerald-600">{filtradas.filter(a => a.status === "vigente").length}</div>
                     </div>
-                    <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-gray-100 border-l-4 border-l-indigo-500">
-                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Total de Atas no Filtro</div>
-                        <div className="text-2xl font-black text-indigo-600">{filtradas.length}</div>
+                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 border-l-4 border-l-indigo-500">
+                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Total de Atas</div>
+                        <div className="text-xl font-black text-indigo-600">{filtradas.length}</div>
                     </div>
-                    <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-gray-100 border-l-4 border-l-blue-500">
-                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Valor Total Registrado</div>
-                        <div className="text-2xl font-black text-blue-600">{fmt(filtradas.reduce((s, a) => s + a.valor, 0))}</div>
+                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 border-l-4 border-l-blue-500">
+                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Valor Registrado</div>
+                        <div className="text-xl font-black text-blue-600">{fmt(filtradas.reduce((s, a) => s + a.valor, 0))}</div>
                     </div>
                 </div>
 
@@ -171,52 +172,52 @@ export default function AtasRegistroClient() {
                         </div>
                     ) : (
                         filtradas.map((a) => (
-                            <div key={a.id} className="bg-white rounded-[2.5rem] border border-gray-100 shadow-xl shadow-gray-200/40 overflow-hidden group hover:shadow-2xl transition-all duration-500">
-                                <div className="p-10">
-                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-6">
-                                        <div className="flex items-center gap-5">
-                                            <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500 shadow-sm">
-                                                <FaFileSignature size={24} />
+                            <div key={a.id} className="bg-white rounded-2xl border border-gray-100 shadow-xl shadow-gray-200/40 overflow-hidden group hover:shadow-2xl transition-all duration-500">
+                                <div className="p-6">
+                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500 shadow-sm border border-indigo-100">
+                                                <FaFileSignature size={20} />
                                             </div>
                                             <div>
-                                                <div className="font-black text-xl text-gray-800 uppercase tracking-tight group-hover:text-indigo-600 transition-colors">ARP Nº {a.numero}</div>
-                                                <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2 mt-1">
-                                                    <FaBuilding size={10} className="text-gray-300" /> {a.secretaria}
+                                                <div className="font-black text-base text-gray-800 uppercase tracking-tight group-hover:text-indigo-600 transition-colors">ARP Nº {a.numero}</div>
+                                                <div className="text-[9px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2 mt-1">
+                                                    <FaBuilding size={9} className="text-gray-300" /> {a.secretaria}
                                                 </div>
                                             </div>
                                         </div>
-                                        <span className={`inline-flex px-5 py-2 rounded-full text-[9px] font-black uppercase tracking-widest border ${statusConfig[a.status]?.cor}`}>
+                                        <span className={`inline-flex px-4 py-1.5 rounded-lg text-[8px] font-black uppercase tracking-widest border ${statusConfig[a.status]?.cor}`}>
                                             {statusConfig[a.status]?.label}
                                         </span>
                                     </div>
 
-                                    <div className="bg-gray-50/50 rounded-[2rem] p-8 border border-gray-50 mb-6">
-                                        <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">Objeto do Registro</p>
-                                        <p className="text-gray-600 font-semibold italic text-sm leading-relaxed">&ldquo;{a.objeto}&rdquo;</p>
+                                    <div className="bg-gray-50/40 rounded-2xl p-5 border border-gray-50 mb-5">
+                                        <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Objeto do Registro</p>
+                                        <p className="text-gray-600 font-bold italic text-xs leading-relaxed">&ldquo;{a.objeto}&rdquo;</p>
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                         <div>
-                                            <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Fornecedor Registrado</p>
-                                            <p className="font-black text-gray-800 text-sm uppercase tracking-tight">{a.fornecedor}</p>
-                                            <p className="text-[10px] font-mono font-bold text-gray-400">{a.cnpj}</p>
+                                            <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Fornecedor</p>
+                                            <p className="font-black text-gray-800 text-[11px] uppercase tracking-tight">{a.fornecedor}</p>
+                                            <p className="text-[9px] font-mono font-bold text-gray-400">{a.cnpj}</p>
                                         </div>
                                         <div>
-                                            <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Prazo de Vigência</p>
-                                            <div className="flex items-center gap-2 text-sm font-black text-gray-700">
-                                                <FaCalendarAlt size={12} className="text-indigo-400" />
-                                                {new Date(a.dataRegistro).toLocaleDateString("pt-BR")} &rarr; {new Date(a.dataVencimento).toLocaleDateString("pt-BR")}
+                                            <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Vigência</p>
+                                            <div className="flex items-center gap-2 text-[11px] font-black text-gray-700">
+                                                <FaCalendarAlt size={10} className="text-indigo-400" />
+                                                {new Date(a.dataRegistro).toLocaleDateString("pt-BR")} – {new Date(a.dataVencimento).toLocaleDateString("pt-BR")}
                                             </div>
                                         </div>
                                         <div className="md:text-right">
-                                            <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Valor Estimado / Saldo</p>
-                                            <p className="text-2xl font-black text-indigo-600 tracking-tighter">{fmt(a.valor)}</p>
+                                            <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Valor Registrado</p>
+                                            <p className="text-lg font-black text-indigo-600 tracking-tighter">{fmt(a.valor)}</p>
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center justify-end gap-3 mt-10 pt-6 border-t border-gray-50">
-                                        <button className="inline-flex items-center gap-2 bg-white border border-gray-200 text-gray-500 hover:text-indigo-600 hover:border-indigo-200 px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm active:scale-95">
-                                            <FaDownload size={10} /> Baixar Instrumento ARP
+                                    <div className="flex items-center justify-end gap-3 mt-6 pt-5 border-t border-gray-50">
+                                        <button className="inline-flex items-center gap-2 bg-white border border-gray-200 text-gray-500 hover:text-indigo-600 hover:border-indigo-200 px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all shadow-sm active:scale-95">
+                                            <FaDownload size={10} /> Baixar ARP
                                         </button>
                                     </div>
                                 </div>

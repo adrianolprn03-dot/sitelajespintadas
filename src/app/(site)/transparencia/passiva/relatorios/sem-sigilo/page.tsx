@@ -4,7 +4,7 @@ import PageHeader from "@/components/PageHeader";
 import { FaEye, FaFileAlt, FaCheckCircle, FaClock, FaArrowRight, FaSpinner } from "react-icons/fa";
 import Link from "next/link";
 import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
-import { exportToCSV, exportToJSON, exportToPDF } from "@/lib/exportUtils";
+import { exportToCSV, exportToJSON, exportToPDF, exportToXLSX } from "@/lib/exportUtils";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
 
 type Pedido = {
@@ -56,7 +56,7 @@ export default function SICRelatoriosSemSigiloPage() {
             p.orgao.toLowerCase().includes(b);
     });
 
-    const handleExport = (format: "pdf" | "csv" | "json") => {
+    const handleExport = (format: "pdf" | "csv" | "json" | "xlsx") => {
         const payload = filtrados.map(p => ({
             "Protocolo": p.protocolo,
             "Data": new Date(p.criadoEm).toLocaleDateString('pt-BR'),
@@ -70,6 +70,7 @@ export default function SICRelatoriosSemSigiloPage() {
 
         if (format === "csv") exportToCSV(payload, filename);
         else if (format === "json") exportToJSON(payload, filename);
+        else if (format === "xlsx") exportToXLSX(payload, filename);
         else exportToPDF(payload, filename, title);
     };
 
@@ -123,43 +124,43 @@ export default function SICRelatoriosSemSigiloPage() {
                         </div>
                     ) : filtrados.length > 0 ? (
                         filtrados.map((p) => (
-                            <div key={p.id} className="bg-white rounded-[2.5rem] border border-gray-50 shadow-lg shadow-gray-200/40 overflow-hidden group hover:shadow-2xl transition-all duration-500">
-                                <div className="p-8 md:p-10">
-                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
-                                       <div className="flex items-center gap-6">
-                                          <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-500 shadow-sm border border-blue-50">
-                                             <FaFileAlt size={24} />
+                            <div key={p.id} className="bg-white rounded-2xl border border-gray-100 shadow-lg shadow-gray-200/40 overflow-hidden group hover:shadow-xl transition-all duration-500">
+                                <div className="p-6 md:p-8">
+                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                                       <div className="flex items-center gap-4">
+                                          <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-500 shadow-sm border border-blue-50">
+                                             <FaFileAlt size={20} />
                                           </div>
                                           <div>
-                                             <h3 className="text-xl font-black text-gray-800 uppercase tracking-tighter mb-1">PROTOCOLO #{p.protocolo}</h3>
-                                             <div className="flex items-center gap-4">
-                                                <span className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                                             <h3 className="text-base font-black text-gray-800 uppercase tracking-tighter mb-0.5">PROTOCOLO #{p.protocolo}</h3>
+                                             <div className="flex items-center gap-3">
+                                                <span className="flex items-center gap-1.5 text-[9px] font-black text-gray-400 uppercase tracking-widest">
                                                    {new Date(p.criadoEm).toLocaleDateString('pt-BR')}
                                                 </span>
                                                 <span className="w-1 h-1 bg-gray-200 rounded-full" />
-                                                <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest leading-none">Órgão: {p.orgao}</span>
+                                                <span className="text-[9px] font-black text-blue-500 uppercase tracking-widest leading-none">Órgão: {p.orgao}</span>
                                              </div>
                                           </div>
                                        </div>
-                                       <div className={`px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2 ${p.status === 'concluido' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}`}>
-                                          {p.status === 'concluido' ? <FaCheckCircle size={14} /> : <FaClock size={14} />}
-                                          {p.status === 'concluido' ? 'Informação Disponibilizada' : 'Pedido em Tramitação'}
+                                       <div className={`px-4 py-1.5 rounded-full text-[8.5px] font-black uppercase tracking-widest flex items-center gap-1.5 ${p.status === 'concluido' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}`}>
+                                          {p.status === 'concluido' ? <FaCheckCircle size={12} /> : <FaClock size={12} />}
+                                          {p.status === 'concluido' ? 'Disponibilizada' : 'Em Tramitação'}
                                        </div>
                                     </div>
 
-                                    <div className="bg-gray-50/50 rounded-[2rem] p-8 border border-gray-50">
-                                       <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Teor da Solicitação</p>
-                                       <p className="text-sm text-gray-600 font-medium leading-relaxed italic line-clamp-3">
+                                    <div className="bg-gray-50/50 rounded-xl p-6 border border-gray-100">
+                                       <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-3">Teor da Solicitação</p>
+                                       <p className="text-[11px] text-gray-600 font-bold leading-relaxed italic line-clamp-2 opacity-80">
                                           "{p.pedido}"
                                        </p>
                                     </div>
 
-                                    <div className="mt-8 pt-8 border-t border-gray-50 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                                       <div className="flex items-center gap-3 text-xs font-bold text-gray-500">
-                                          <span className="text-gray-400">Solicitante:</span> {p.nome ? 'Cidadão Identificado' : 'Anônimo'}
+                                    <div className="mt-6 pt-6 border-t border-gray-50 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                       <div className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                                          <span className="opacity-50">Solicitante:</span> <span className="text-gray-600">{p.nome ? 'Identificado' : 'Anônimo'}</span>
                                        </div>
-                                       <Link href={`/servicos/consulta-protocolo?id=${p.protocolo}`} className="bg-white text-blue-600 px-8 py-4 rounded-full font-black uppercase text-[10px] tracking-widest border border-blue-100 hover:bg-blue-600 hover:text-white transition-all shadow-sm flex items-center gap-3 self-end">
-                                          Ver Detalhes do Pedido <FaArrowRight size={14} />
+                                       <Link href={`/servicos/consulta-protocolo?id=${p.protocolo}`} className="bg-white text-blue-600 px-6 py-2.5 rounded-lg font-black uppercase text-[9px] tracking-widest border border-blue-100 hover:bg-blue-600 hover:text-white transition-all shadow-sm flex items-center gap-2 self-end">
+                                          Ver Detalhes <FaArrowRight size={12} />
                                        </Link>
                                     </div>
                                 </div>

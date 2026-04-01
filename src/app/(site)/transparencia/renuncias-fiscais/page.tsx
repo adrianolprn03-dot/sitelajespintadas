@@ -22,14 +22,14 @@ const CATEGORIAS = [
     {
         categoria: "Reduções de Alíquotas",
         itens: [
-            { descricao: "Redução de ISS – Microempreendedores Individuais (MEI)", valorEstimado: 31200, baseLocal: "LC Municipal 28/2017" },
-            { descricao: "Desconto de IPTU – Pagamento à vista (5%)", valorEstimado: 18700, baseLocal: "Lei 312/2018" },
+            { descricao: "Redução de ISS – Microempreendedores Individuais (MEI)", valorEstimado: 31200, baseLegal: "LC Municipal 28/2017" },
+            { descricao: "Desconto de IPTU – Pagamento à vista (5%)", valorEstimado: 18700, baseLegal: "Lei 312/2018" },
         ],
     },
     {
         categoria: "Anistias e Parcelamentos",
         itens: [
-            { descricao: "Anistia de multas e juros – REFIS Municipal 2023", valorEstimado: 76400, baseLocal: "Lei 389/2023" },
+            { descricao: "Anistia de multas e juros – REFIS Municipal 2023", valorEstimado: 76400, baseLegal: "Lei 389/2023" },
         ],
     },
 ];
@@ -127,7 +127,7 @@ export default function RenunciasFiscaisPage() {
                                                 <td className="px-10 py-5">
                                                     <span className="inline-flex items-center gap-1.5 text-[9px] font-mono font-black text-gray-500 bg-gray-50 border border-gray-100 px-3 py-1 rounded-lg">
                                                         <FaFileAlt size={9} className="text-gray-400" />
-                                                        {item.baseLocal ?? item.baseLocal}
+                                                        {item.baseLegal}
                                                     </span>
                                                 </td>
                                                 <td className="px-10 py-5 text-right">

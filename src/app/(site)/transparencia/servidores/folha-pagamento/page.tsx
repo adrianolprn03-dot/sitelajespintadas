@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { FaSpinner, FaMoneyCheckAlt, FaBuilding, FaUserTie, FaCheckCircle, FaWallet } from "react-icons/fa";
-import { exportToCSV, exportToJSON, exportToPDF } from "@/lib/exportUtils";
+import { exportToCSV, exportToJSON, exportToPDF, exportToXLSX } from "@/lib/exportUtils";
 import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
 import PageHeader from "@/components/PageHeader";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
@@ -76,7 +76,7 @@ export default function ServidoresPage() {
         setSecretariaFiltro("");
     };
 
-    const handleExport = (format: "pdf" | "csv" | "json") => {
+    const handleExport = (format: "pdf" | "csv" | "json" | "xlsx") => {
         const payload = filtrados.map((s: Servidor) => ({
             "Nome": s.nome,
             "Cargo": s.cargo,
@@ -91,6 +91,7 @@ export default function ServidoresPage() {
 
         if (format === "csv") exportToCSV(payload, filename);
         else if (format === "json") exportToJSON(payload, filename);
+        else if (format === "xlsx") exportToXLSX(payload, filename);
         else exportToPDF(payload, filename, title);
     };
 
@@ -161,42 +162,42 @@ export default function ServidoresPage() {
                 </TransparencyFilters>
 
                 {/* Cards de TOTAIS ESTILIZADOS */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
-                    <div className="bg-white rounded-[2rem] shadow-sm p-8 border border-gray-100 border-l-4 border-l-blue-500 hover:shadow-xl hover:shadow-blue-500/5 transition-all group">
-                        <div className="flex justify-between items-start mb-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
+                    <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 border-l-4 border-l-blue-500 hover:shadow-xl hover:shadow-blue-500/5 transition-all group">
+                        <div className="flex justify-between items-start mb-3">
                             <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Total Bruto</div>
-                            <FaWallet className="text-blue-100 group-hover:text-blue-500 transition-colors" size={24} />
+                            <FaWallet className="text-blue-100 group-hover:text-blue-500 transition-colors" size={20} />
                         </div>
-                        <div className="text-3xl font-black text-gray-800">{loading ? "..." : fmt(totalBruto)}</div>
-                        <div className="mt-2 text-[10px] font-bold text-blue-500 uppercase">Período Selecionado</div>
+                        <div className="text-xl font-black text-gray-800">{loading ? "..." : fmt(totalBruto)}</div>
+                        <div className="mt-2 text-[9px] font-bold text-blue-500 uppercase tracking-tighter">Período Selecionado</div>
                     </div>
                     
-                    <div className="bg-white rounded-[2rem] shadow-sm p-8 border border-gray-100 border-l-4 border-l-emerald-500 hover:shadow-xl hover:shadow-emerald-500/5 transition-all group">
-                        <div className="flex justify-between items-start mb-4">
+                    <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 border-l-4 border-l-emerald-500 hover:shadow-xl hover:shadow-emerald-500/5 transition-all group">
+                        <div className="flex justify-between items-start mb-3">
                             <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Total Líquido</div>
-                            <FaCheckCircle className="text-emerald-100 group-hover:text-emerald-500 transition-colors" size={24} />
+                            <FaCheckCircle className="text-emerald-100 group-hover:text-emerald-500 transition-colors" size={20} />
                         </div>
-                        <div className="text-3xl font-black text-emerald-600">{loading ? "..." : fmt(totalLiquido)}</div>
-                        <div className="mt-2 text-[10px] font-bold text-emerald-500 uppercase">Valores a Pagar</div>
+                        <div className="text-xl font-black text-emerald-600">{loading ? "..." : fmt(totalLiquido)}</div>
+                        <div className="mt-2 text-[9px] font-bold text-emerald-500 uppercase tracking-tighter">Valores Líquidos</div>
                     </div>
 
-                    <div className="bg-white rounded-[2rem] shadow-sm p-8 border border-gray-100 border-l-4 border-l-indigo-500 hover:shadow-xl hover:shadow-indigo-500/5 transition-all group">
-                        <div className="flex justify-between items-start mb-4">
+                    <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 border-l-4 border-l-indigo-500 hover:shadow-xl hover:shadow-indigo-500/5 transition-all group">
+                        <div className="flex justify-between items-start mb-3">
                             <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Nº de Servidores</div>
-                            <FaUserTie className="text-indigo-100 group-hover:text-indigo-500 transition-colors" size={24} />
+                            <FaUserTie className="text-indigo-100 group-hover:text-indigo-500 transition-colors" size={20} />
                         </div>
-                        <div className="text-3xl font-black text-indigo-600">{loading ? "..." : filtrados.length}</div>
-                        <div className="mt-2 text-[10px] font-bold text-indigo-500 uppercase">Quadro Ativo</div>
+                        <div className="text-xl font-black text-indigo-600">{loading ? "..." : filtrados.length}</div>
+                        <div className="mt-2 text-[9px] font-bold text-indigo-500 uppercase tracking-tighter">Quadro Ativo</div>
                     </div>
                 </div>
 
                 {/* Tabela de Resultados */}
-                <div className="bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
-                    <div className="p-8 border-b border-gray-50 flex items-center justify-between bg-gray-50/50">
-                       <h3 className="text-sm font-black text-gray-800 uppercase tracking-widest flex items-center gap-2">
-                           <span className="w-2 h-5 bg-blue-600 rounded-full"></span> Detalhamento da Folha
+                <div className="bg-white rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
+                    <div className="p-5 border-b border-gray-50 flex items-center justify-between bg-gray-50/50">
+                       <h3 className="text-[10px] font-black text-gray-800 uppercase tracking-widest flex items-center gap-2">
+                           <span className="w-1.5 h-4 bg-blue-600 rounded-full"></span> Detalhamento da Folha
                        </h3>
-                       <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                       <div className="text-[9px] font-black text-gray-400 uppercase tracking-widest">
                            {mesesLabels[Number(mes)-1]} de {ano}
                        </div>
                     </div>
@@ -204,49 +205,49 @@ export default function ServidoresPage() {
                     <div className="overflow-x-auto min-h-[300px] relative">
                         {loading && (
                             <div className="absolute inset-0 bg-white/70 flex flex-col items-center justify-center z-10 backdrop-blur-sm">
-                                <FaSpinner className="animate-spin text-blue-600 text-4xl mb-4" />
-                                <div className="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em]">Consultando Folha...</div>
+                                <FaSpinner className="animate-spin text-blue-600 text-3xl mb-3" />
+                                <div className="text-[9px] font-black text-blue-600 uppercase tracking-[0.2em]">Consultando Folha...</div>
                             </div>
                         )}
                         <table className="w-full text-left" aria-label="Tabela de servidores públicos">
                             <thead>
-                                <tr className="bg-gray-50/50 text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-100">
-                                    <th className="px-8 py-6">Servidor / Cargo</th>
-                                    <th className="px-8 py-6">Secretaria</th>
-                                    <th className="px-8 py-6">Situação / Vínculo</th>
-                                    <th className="px-8 py-6 text-right">Total Bruto</th>
-                                    <th className="px-8 py-6 text-right">Total Líquido</th>
+                                <tr className="bg-gray-50/50 text-[9px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-100">
+                                    <th className="px-6 py-4">Servidor / Cargo</th>
+                                    <th className="px-6 py-4">Secretaria</th>
+                                    <th className="px-6 py-4">Vínculo</th>
+                                    <th className="px-6 py-4 text-right">T. Bruto</th>
+                                    <th className="px-6 py-4 text-right">T. Líquido</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-50">
                                 {filtrados.length === 0 && !loading ? (
                                     <tr>
-                                        <td colSpan={5} className="px-8 py-20 text-center text-gray-400 italic">
-                                            Nenhum servidor encontrado para esta combinação de filtros.
+                                        <td colSpan={5} className="px-6 py-20 text-center text-gray-400 font-bold uppercase text-[10px] tracking-widest italic">
+                                            Nenhum servidor localizado.
                                         </td>
                                     </tr>
                                 ) : (
                                     filtrados.map((s: Servidor) => (
                                         <tr key={s.id} className="hover:bg-blue-50/30 transition-all group">
-                                            <td className="px-8 py-6">
-                                                <div className="font-black text-gray-800 text-sm group-hover:text-blue-700 transition-colors">{s.nome}</div>
-                                                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{s.cargo}</div>
+                                            <td className="px-6 py-4">
+                                                <div className="font-black text-gray-800 text-[11px] group-hover:text-blue-700 transition-colors uppercase tracking-tight">{s.nome}</div>
+                                                <div className="text-[9px] font-bold text-gray-400 uppercase tracking-wider opacity-80">{s.cargo}</div>
                                             </td>
-                                            <td className="px-8 py-6">
-                                                <div className="flex items-center gap-2 text-[10px] font-bold text-gray-500 bg-gray-100 px-3 py-1 rounded-lg w-fit">
-                                                    <FaBuilding size={10} className="text-gray-400" /> {s.secretaria}
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center gap-1.5 text-[9px] font-black text-gray-500 bg-gray-100/80 px-2 py-0.5 rounded-lg w-fit">
+                                                    <FaBuilding size={9} className="text-gray-400" /> {s.secretaria}
                                                 </div>
                                             </td>
-                                            <td className="px-8 py-6">
-                                                <span className={`inline-block px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${vinculoCores[s.vinculo.toLowerCase()] || "bg-gray-50 text-gray-400 border-gray-200"}`}>
+                                            <td className="px-6 py-4">
+                                                <span className={`inline-block px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest border ${vinculoCores[s.vinculo.toLowerCase()] || "bg-gray-50 text-gray-400 border-gray-200"}`}>
                                                     {s.vinculo}
                                                 </span>
                                             </td>
-                                            <td className="px-8 py-6 text-right font-black text-gray-800 text-sm">
+                                            <td className="px-6 py-4 text-right font-black text-gray-800 text-[11px]">
                                                 {fmt(s.totalBruto)}
                                             </td>
-                                            <td className="px-8 py-6 text-right">
-                                                <span className="font-black text-emerald-600 text-sm bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-100 shadow-sm">
+                                            <td className="px-6 py-4 text-right">
+                                                <span className="font-black text-emerald-600 text-[11px] bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-100 shadow-sm">
                                                     {fmt(s.totalLiquido)}
                                                 </span>
                                             </td>
@@ -257,9 +258,9 @@ export default function ServidoresPage() {
                             {!loading && servidores.length > 0 && (
                                 <tfoot>
                                     <tr className="bg-gray-900 border-t-2 border-gray-800 text-white">
-                                        <td colSpan={3} className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Total Consolidados (Filtro)</td>
-                                        <td className="px-8 py-6 text-right font-black text-lg text-blue-400">{fmt(totalBruto)}</td>
-                                        <td className="px-8 py-6 text-right font-black text-lg text-emerald-400">
+                                        <td colSpan={3} className="px-6 py-4 text-[9px] font-black uppercase tracking-[0.2em] text-gray-400">Total Consolidados (Filtro)</td>
+                                        <td className="px-6 py-4 text-right font-black text-base text-blue-400">{fmt(totalBruto)}</td>
+                                        <td className="px-6 py-4 text-right font-black text-base text-emerald-400">
                                             {fmt(totalLiquido)}
                                         </td>
                                     </tr>
