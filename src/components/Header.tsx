@@ -66,10 +66,11 @@ const ChevronDown = () => (
     </svg>
 );
 
+import AccessibilityToolbar from "./AccessibilityToolbar";
+
 export default function Header() {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
-    const { toggleHighContrast, increaseFontSize, decreaseFontSize } = useAccessibility();
     const pathname = usePathname();
     const [logo, setLogo] = useState("/logo_oficial.png");
 
@@ -106,27 +107,7 @@ export default function Header() {
 
     return (
         <header className={`w-full z-50 fixed top-0 left-0 right-0 transition-all duration-500 px-4 md:px-8 pt-1 group`}>
-            {/* TOP BAR - ULTRA SLIM */}
-            <div className={`max-w-[1000px] w-full mx-auto transition-all duration-300 overflow-hidden ${scrolled ? 'h-0 opacity-0 mb-0' : 'h-7 opacity-100 mb-1'} bg-primary-500 rounded-full flex items-center px-6 shadow-lg shadow-primary-500/10`}>
-                <div className="w-full flex items-center justify-between">
-                    <nav className="flex items-center gap-6 text-[8px] text-white font-black uppercase tracking-[0.2em] hidden lg:flex">
-                        <a href="#conteudo" className="hover:text-secondary-400">Conteúdo</a>
-                        <a href="#menu" className="hover:text-secondary-400">Menu</a>
-                        <a href="#busca" className="hover:text-secondary-400">Busca</a>
-                    </nav>
-                    <div className="flex items-center gap-4 ml-auto">
-                        <div className="flex items-center gap-3 text-white text-[9px] font-bold pr-3 border-r border-white/20">
-                            <HiOutlineCloud size={14} className="text-secondary-400" />
-                            <span className="hidden sm:inline">Lajes Pintadas, RN</span>
-                            <span className="tracking-tight uppercase">{dataAtual}</span>
-                        </div>
-                        <div className="flex items-center gap-1 shrink-0">
-                            <button onClick={toggleHighContrast} className="w-5 h-5 flex items-center justify-center hover:bg-white/20 rounded-full text-white text-[10px]">◐</button>
-                            <button onClick={increaseFontSize} className="w-5 h-5 flex items-center justify-center hover:bg-white/20 rounded-full text-white font-black text-[10px]">A+</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <AccessibilityToolbar />
 
             {/* MAIN NAVBAR - ULTRA SLIM FLOATING CAPSULE */}
             <div className={`max-w-[1050px] mx-auto transition-all duration-500 flex items-center justify-between gap-8 px-8 shadow-xl ${scrolled ? 'h-10 bg-white/30 backdrop-blur-2xl rounded-full border-white/20' : 'h-12 md:h-14 bg-white/50 backdrop-blur-xl rounded-full mt-1 border-white/40'} border relative`}>

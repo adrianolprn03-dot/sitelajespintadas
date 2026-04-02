@@ -2,13 +2,14 @@
 import Link from "next/link";
 import { FaDownload, FaDatabase, FaFileCode, FaTable } from "react-icons/fa";
 import PageHeader from "@/components/PageHeader";
+import { exportToCSV, exportToJSON, exportToXLSX } from "@/lib/exportUtils";
 
 const conjuntos = [
     {
         titulo: "Servidores Municipais",
         descricao: "Lista de servidores ativos com cargo, lotação e remuneração",
         endpoint: "/api/servidores",
-        formatos: ["JSON", "CSV"],
+        formatos: ["JSON", "CSV", "XLSX"],
         atualizacao: "Mensal",
         lei: "LC 131/2009",
         cor: "from-teal-500 to-green-600",
@@ -17,7 +18,7 @@ const conjuntos = [
         titulo: "Receitas Públicas",
         descricao: "Arrecadação municipal por categoria, mês e exercício",
         endpoint: "/api/receitas",
-        formatos: ["JSON", "CSV"],
+        formatos: ["JSON", "CSV", "XLSX"],
         atualizacao: "Mensal",
         lei: "LC 131/2009",
         cor: "from-emerald-500 to-teal-600",
@@ -26,7 +27,7 @@ const conjuntos = [
         titulo: "Despesas Públicas",
         descricao: "Empenhos, liquidações e pagamentos por secretaria",
         endpoint: "/api/despesas",
-        formatos: ["JSON", "CSV"],
+        formatos: ["JSON", "CSV", "XLSX"],
         atualizacao: "Mensal",
         lei: "LC 131/2009",
         cor: "from-blue-500 to-indigo-600",
@@ -35,7 +36,7 @@ const conjuntos = [
         titulo: "Licitações",
         descricao: "Processos licitatórios: pregões, concorrências, dispensas",
         endpoint: "/api/licitacoes",
-        formatos: ["JSON", "CSV"],
+        formatos: ["JSON", "CSV", "XLSX"],
         atualizacao: "Contínua",
         lei: "Lei 14.133/2021",
         cor: "from-purple-500 to-violet-600",
@@ -44,7 +45,7 @@ const conjuntos = [
         titulo: "Contratos",
         descricao: "Contratos celebrados com valor, objeto e fornecedor",
         endpoint: "/api/contratos",
-        formatos: ["JSON", "CSV"],
+        formatos: ["JSON", "CSV", "XLSX"],
         atualizacao: "Contínua",
         lei: "Lei 14.133/2021",
         cor: "from-orange-500 to-amber-600",
@@ -53,7 +54,7 @@ const conjuntos = [
         titulo: "Convênios",
         descricao: "Convênios firmados com órgãos estaduais e federais",
         endpoint: "/api/convenios",
-        formatos: ["JSON", "CSV"],
+        formatos: ["JSON", "CSV", "XLSX"],
         atualizacao: "Contínua",
         lei: "LAI",
         cor: "from-pink-500 to-rose-600",
@@ -62,7 +63,7 @@ const conjuntos = [
         titulo: "Obras Públicas",
         descricao: "Obras, reformas e construções com progresso e valores",
         endpoint: "/api/admin/obras",
-        formatos: ["JSON"],
+        formatos: ["JSON", "XLSX"],
         atualizacao: "Semanal",
         lei: "PNTP",
         cor: "from-orange-600 to-red-600",
@@ -71,7 +72,7 @@ const conjuntos = [
         titulo: "Diárias",
         descricao: "Diárias concedidas a servidores por viagens a serviço",
         endpoint: "/api/diarias",
-        formatos: ["JSON", "CSV"],
+        formatos: ["JSON", "CSV", "XLSX"],
         atualizacao: "Contínua",
         lei: "LAI",
         cor: "from-sky-500 to-cyan-600",
@@ -84,28 +85,12 @@ export default function DadosAbertosPage() {
             const res = await fetch(endpoint);
             const data = await res.json();
             const items = Array.isArray(data) ? data : (data.items || []);
+            const filename = `dados-${titulo.toLowerCase().replace(/\s+/g, "-")}`;
 
-            if (formato === "JSON") {
-                const blob = new Blob([JSON.stringify(items, null, 2)], { type: "application/json" });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = `${titulo.toLowerCase().replace(/\s+/g, "-")}.json`;
-                a.click();
-                URL.revokeObjectURL(url);
-            } else if (formato === "CSV" && items.length > 0) {
-                const headers = Object.keys(items[0]).join(",");
-                const rows = items.map((item: Record<string, unknown>) =>
-                    Object.values(item).map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")
-                ).join("\n");
-                const blob = new Blob([headers + "\n" + rows], { type: "text/csv;charset=utf-8;" });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = `${titulo.toLowerCase().replace(/\s+/g, "-")}.csv`;
-                a.click();
-                URL.revokeObjectURL(url);
-            }
+            if (formato === "JSON") exportToJSON(items, filename);
+            if (formato === "CSV") exportToCSV(items, filename);
+            if (formato === "XLSX") exportToXLSX(items, filename);
+            
         } catch {
             alert("Erro ao baixar dados. Tente novamente.");
         }

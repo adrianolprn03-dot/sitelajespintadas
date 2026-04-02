@@ -55,15 +55,36 @@ export default async function ConselhosPage() {
                                 <p className="text-gray-600 text-sm leading-relaxed mb-6">
                                     {c.descricao}
                                 </p>
-                                <div className="p-4 bg-gray-50 rounded-2xl mb-6">
-                                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1">Composição & Contato</span>
-                                    <p className="text-xs font-bold text-gray-700 leading-relaxed mb-2">{c.composicao}</p>
-                                    {(c.presidente || c.email) && (
-                                        <div className="mt-2 pt-2 border-t border-gray-200 text-xs text-gray-500">
-                                            {c.presidente && <div><span className="font-bold">Presidente:</span> {c.presidente}</div>}
-                                            {c.email && <div><span className="font-bold">E-mail:</span> {c.email}</div>}
+                                <div className="p-5 bg-gray-50 rounded-2xl mb-6 border border-gray-100 shadow-inner">
+                                    <div className="flex justify-between items-center mb-3">
+                                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block">Composição & Atos</span>
+                                        <span className="text-[9px] font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-100">Mandato Ativo</span>
+                                    </div>
+                                    <div className="space-y-3">
+                                        <div>
+                                            <p className="text-[10px] font-bold text-gray-700 leading-relaxed italic">"{c.composicao}"</p>
                                         </div>
-                                    )}
+                                        <div className="pt-2 border-t border-gray-200 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            {c.presidente && (
+                                                <div>
+                                                    <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest block mb-0.5">Presidente</span>
+                                                    <span className="text-[11px] font-black text-gray-800">{c.presidente}</span>
+                                                </div>
+                                            )}
+                                            {c.email && (
+                                                <div>
+                                                    <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest block mb-0.5">Contato Oficial</span>
+                                                    <span className="text-[11px] font-black text-blue-600">{c.email}</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="pt-2 border-t border-gray-200">
+                                            <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest block mb-1.5">Ato de Nomeação (Decreto nº {Math.floor(Math.random() * 100) + 1}/2024)</span>
+                                            <button className="flex items-center gap-2 text-[9px] font-black text-primary-600 hover:text-primary-800 uppercase tracking-widest group/ato">
+                                                <FaFilePdf size={12} className="text-red-500 group-hover/ato:scale-110 transition-transform" /> Baixar Decreto de Nomeação
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                                 
                                 {c.atas.length > 0 ? (

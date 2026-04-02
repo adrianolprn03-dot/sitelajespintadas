@@ -232,9 +232,25 @@ export default function ObrasPublicasPage() {
                                             </div>
                                         </div>
 
-                                        <div className="flex justify-end pt-2">
-                                            <button className="text-blue-600 font-black uppercase text-[9px] tracking-widest flex items-center gap-2 hover:gap-3 transition-all">
-                                                Detalhamento <FaArrowRight size={10} />
+                                        <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-gray-50 mt-auto">
+                                            <div className="flex items-center gap-3">
+                                                <a 
+                                                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(o.local + ", Lajes Pintadas - RN")}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-blue-100 transition-all border border-blue-100 shadow-sm"
+                                                >
+                                                    <FaMapMarkerAlt size={10} /> Ver no Mapa
+                                                </a>
+                                                {o.imagem && (
+                                                    <button className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-emerald-100 transition-all border border-emerald-100 shadow-sm">
+                                                        <FaImage size={10} /> Galeria de Fotos
+                                                    </button>
+                                                )}
+                                            </div>
+                                            
+                                            <button className="text-gray-400 hover:text-blue-600 font-black uppercase text-[9px] tracking-widest flex items-center gap-2 hover:gap-3 transition-all">
+                                                Detalhamento Completo <FaArrowRight size={10} />
                                             </button>
                                         </div>
                                     </div>

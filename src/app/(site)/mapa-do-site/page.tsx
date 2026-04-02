@@ -1,71 +1,72 @@
-import type { Metadata } from "next";
+"use client";
 import Link from "next/link";
+import { FaSitemap, FaChevronRight, FaGlobe, FaLandmark, FaUsers, FaNewspaper, FaConciergeBell } from "react-icons/fa";
 import PageHeader from "@/components/PageHeader";
 
-export const metadata: Metadata = {
-    title: "Mapa do Site | Prefeitura de Lajes Pintadas – RN",
-    description: "Mapa completo de todas as seções e páginas do portal da Prefeitura Municipal de Lajes Pintadas – RN.",
-};
-
-const secoes = [
+const sitemapData = [
     {
-        titulo: "🏛️ Institucional",
-        cor: "border-blue-200",
+        secao: "Institucional",
+        icon: FaLandmark,
         links: [
             { label: "A Prefeitura", href: "/a-prefeitura" },
-            { label: "História da Cidade", href: "/a-prefeitura/historia" },
-            { label: "Prefeito e Vice-Prefeito", href: "/a-prefeitura/prefeito" },
-            { label: "Estrutura Administrativa", href: "/a-prefeitura/estrutura" },
-            { label: "Secretarias Municipais", href: "/secretarias" },
-            { label: "Galeria de Fotos", href: "/galeria" },
-            { label: "Notícias", href: "/noticias" },
+            { label: "Secretarias", href: "/secretarias" },
+            { label: "História do Município", href: "/a-prefeitura/historia" },
+            { label: "Símbolos Oficiais", href: "/municipio/simbolos" },
+            { label: "Gabinete do Prefeito", href: "/gestores" },
         ]
     },
     {
-        titulo: "📊 Transparência",
-        cor: "border-emerald-200",
+        secao: "Transparência",
+        icon: FaGlobe,
         links: [
-            { label: "Portal da Transparência", href: "/transparencia" },
-            { label: "Receitas Públicas", href: "/transparencia/receitas" },
-            { label: "Despesas Públicas", href: "/transparencia/despesas" },
+            { label: "Início Transparência", href: "/transparencia" },
+            { label: "Receitas", href: "/transparencia/receitas" },
+            { label: "Despesas", href: "/transparencia/despesas" },
             { label: "Licitações", href: "/transparencia/licitacoes" },
             { label: "Contratos", href: "/transparencia/contratos" },
-            { label: "Convênios", href: "/transparencia/convenios" },
-            { label: "Diárias", href: "/transparencia/diarias" },
-            { label: "Servidores / Folha", href: "/transparencia/servidores" },
             { label: "Obras Públicas", href: "/transparencia/obras" },
-            { label: "Relatórios Fiscais (RREO/RGF)", href: "/transparencia/relatorios" },
-            { label: "LOA / LDO / PPA", href: "/transparencia/orcamento" },
-            { label: "Dados Abertos", href: "/transparencia/dados-abertos" },
+            { label: "Diárias e Passagens", href: "/transparencia/diarias" },
+            { label: "Quadro de Pessoal", href: "/transparencia/servidores" },
             { label: "Legislação Municipal", href: "/transparencia/legislacao" },
-            { label: "Perguntas Frequentes (FAQ)", href: "/transparencia/faq" },
-            { label: "Glossário de Termos", href: "/transparencia/glossario" },
+            { label: "Dados Abertos", href: "/transparencia/dados-abertos" },
+            { label: "LRF (RREO e RGF)", href: "/transparencia/lrf" },
+            { label: "Ordem Cronológica", href: "/transparencia/ordem-cronologica" },
         ]
     },
     {
-        titulo: "🤝 Serviços ao Cidadão",
-        cor: "border-orange-200",
+        secao: "Cidadão & e-SIC",
+        icon: FaConciergeBell,
         links: [
-            { label: "e-SIC – Acesso à Informação", href: "/servicos/esic" },
+            { label: "e-SIC (Pedido de Informação)", href: "/servicos/esic" },
             { label: "Ouvidoria Municipal", href: "/servicos/ouvidoria" },
+            { label: "Acompanhar Pedido", href: "/servicos/esic/acompanhar" },
+            { label: "Relatórios Estatísticos SIC", href: "/transparencia/passiva/relatorios" },
+            { label: "FAQ (Dúvidas)", href: "/transparencia/faq" },
+            { label: "Glossário", href: "/transparencia/glossario" },
         ]
     },
     {
-        titulo: "⚖️ Legal e Privacidade",
-        cor: "border-purple-200",
+        secao: "Serviços & Notícias",
+        icon: FaNewspaper,
         links: [
-            { label: "Política de Privacidade (LGPD)", href: "/privacidade" },
-            { label: "Mapa do Site", href: "/mapa-do-site" },
+            { label: "Notícias", href: "/noticias" },
+            { label: "Agenda de Eventos", href: "/agenda" },
+            { label: "Galeria de Fotos", href: "/galeria" },
+            { label: "Saúde", href: "/servicos/saude" },
+            { label: "Educação", href: "/servicos/educacao" },
+            { label: "Telefones Úteis", href: "/contato" },
         ]
-    },
+    }
 ];
 
-export default function MapaSitePage() {
+export default function MapaDoSitePage() {
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-[#f8fafc]">
             <PageHeader
                 title="Mapa do Site"
-                subtitle="Encontre rapidamente qualquer seção do portal da Prefeitura Municipal de Lajes Pintadas"
+                subtitle="Navegue de forma rápida por todas as seções do portal de Lajes Pintadas."
+                variant="premium"
+                icon={<FaSitemap />}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
                     { label: "Mapa do Site" }
@@ -74,26 +75,44 @@ export default function MapaSitePage() {
 
             <div className="max-w-[1200px] mx-auto px-6 py-16">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {secoes.map((secao) => (
-                        <div key={secao.titulo} className={`bg-white rounded-[2rem] shadow-sm border-l-4 ${secao.cor} border border-gray-100 p-8`}>
-                            <h2 className="font-black text-[#0088b9] text-base uppercase tracking-tighter mb-6 pb-4 border-b border-gray-100">
-                                {secao.titulo}
-                            </h2>
+                    {sitemapData.map((secao) => (
+                        <div key={secao.secao} className="bg-white rounded-[2.5rem] border border-gray-100 shadow-xl shadow-gray-200/40 p-8">
+                            <div className="flex items-center gap-4 mb-8">
+                                <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center shadow-inner">
+                                    <secao.icon size={24} />
+                                </div>
+                                <h2 className="text-xl font-black text-gray-800 uppercase tracking-tighter">{secao.secao}</h2>
+                            </div>
+
                             <ul className="space-y-3">
                                 {secao.links.map((link) => (
                                     <li key={link.href}>
-                                        <Link
+                                        <Link 
                                             href={link.href}
-                                            className="flex items-center gap-3 text-gray-600 hover:text-[#01b0ef] text-sm font-medium transition-colors group"
+                                            className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-transparent hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 transition-all group"
                                         >
-                                            <span className="w-1.5 h-1.5 rounded-full bg-gray-200 group-hover:bg-[#01b0ef] transition-colors shrink-0" />
-                                            {link.label}
+                                            <span className="text-[11px] font-black uppercase tracking-widest">{link.label}</span>
+                                            <FaChevronRight size={12} className="text-gray-400 group-hover:translate-x-1 transition-transform" />
                                         </Link>
                                     </li>
                                 ))}
                             </ul>
                         </div>
                     ))}
+                </div>
+
+                <div className="mt-12 bg-gray-900 rounded-[2.5rem] p-10 text-center text-white shadow-2xl shadow-blue-900/10">
+                    <h3 className="text-xl font-black uppercase tracking-widest mb-4">Acessibilidade</h3>
+                    <p className="text-gray-400 text-sm font-medium leading-relaxed max-w-2xl mx-auto mb-8">
+                        Se você encontrar dificuldades para navegar no portal, utilize nossa barra de ferramentas no topo 
+                        para ajustar o contraste e o tamanho da fonte, ou entre em contato com a Ouvidoria.
+                    </p>
+                    <Link 
+                        href="/transparencia/acessibilidade" 
+                        className="inline-flex items-center gap-3 bg-blue-600 text-white px-10 py-5 rounded-full font-black uppercase text-xs tracking-widest hover:bg-blue-700 transition-all"
+                    >
+                        Página de Acessibilidade
+                    </Link>
                 </div>
             </div>
         </div>
