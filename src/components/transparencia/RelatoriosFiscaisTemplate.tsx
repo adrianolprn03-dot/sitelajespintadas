@@ -162,8 +162,8 @@ export default function RelatoriosFiscaisTemplate({ title, subtitle, tipo, icon,
                         return (
                             <div key={ano} className="relative">
                                 <div className="flex items-center gap-4 mb-6">
-                                    <div className="w-10 h-1 bg-blue-600 rounded-full"></div>
-                                    <h3 className="text-2xl font-black text-gray-800 tracking-tighter italic">Exercício {ano}</h3>
+                                    <div className="w-10 h-1 bg-primary-600 rounded-full"></div>
+                                    <h3 className="text-2xl font-black text-primary-900 tracking-tighter italic">Exercício {ano}</h3>
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -176,26 +176,26 @@ export default function RelatoriosFiscaisTemplate({ title, subtitle, tipo, icon,
                                             initial={{ opacity: 0, y: 10 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: idx * 0.05 }}
-                                            className="group bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 h-full flex flex-col border-b-2 border-b-transparent hover:border-b-blue-600"
+                                            className="group bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 h-full flex flex-col border-b-2 border-b-transparent hover:border-b-primary-600"
                                         >
                                             <div className="flex justify-between items-start mb-4">
                                                 <div className="w-10 h-10 bg-red-50 text-red-500 rounded-xl flex items-center justify-center group-hover:bg-red-500 group-hover:text-white transition-all shadow-inner">
                                                     <FaFilePdf size={18} />
                                                 </div>
-                                                <span className="text-[8px] font-black text-blue-500 bg-blue-50 px-2 py-1 rounded-md border border-blue-100 uppercase tracking-widest">{r.tipo}</span>
+                                                <span className="text-[8px] font-black text-primary-500 bg-primary-50 px-2 py-1 rounded-md border border-primary-100 uppercase tracking-widest">{r.tipo}</span>
                                             </div>
 
                                             <div className="flex-1">
-                                                <h4 className="font-black text-gray-800 text-[11px] leading-tight uppercase tracking-tight group-hover:text-blue-600 transition-colors mb-2 line-clamp-3">
+                                                <h4 className="font-black text-primary-900 text-[11px] leading-tight uppercase tracking-tight group-hover:text-primary-500 transition-colors mb-2 line-clamp-3">
                                                     {r.titulo}
                                                 </h4>
                                                 <div className="flex items-center gap-1.5 text-[9px] font-bold text-gray-400 uppercase tracking-widest">
-                                                    <FaCalendarAlt className="text-amber-500" />
+                                                    <FaCalendarAlt className="text-secondary-500" />
                                                     {r.periodo}
                                                 </div>
                                             </div>
 
-                                            <div className="mt-6 pt-4 border-t border-gray-50 flex items-center justify-between text-[9px] font-black text-gray-400 uppercase tracking-widest group-hover:text-blue-600 transition-colors">
+                                            <div className="mt-6 pt-4 border-t border-gray-50 flex items-center justify-between text-[9px] font-black text-gray-400 uppercase tracking-widest group-hover:text-primary-600 transition-colors">
                                                 <span>Visualizar</span>
                                                 <FaDownload size={10} className="group-hover:translate-y-0.5 transition-transform" />
                                             </div>

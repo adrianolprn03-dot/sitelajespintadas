@@ -102,13 +102,35 @@ async function main() {
             ano: 2023,
             arquivo: "https://pmlajespintadasrn.transparencia.topsolutionsrn.com.br/arquivos/relatorio-de-gestao",
         },
-        // Relatório de Gestão
+        // Relatório de Gestão 2023
         {
             titulo: "Relatório de Gestão Municipal - Exercício 2023",
             tipo: "RELATORIO_GESTAO",
             periodo: "Anual",
             ano: 2023,
             arquivo: "https://pmlajespintadasrn.transparencia.topsolutionsrn.com.br/arquivos/relatorio-de-gestao",
+        },
+        // --- DADOS 2022 EXTRAÍDOS ---
+        {
+            titulo: "Balanço Geral - Exercício 2022",
+            tipo: "BALANCO",
+            periodo: "Anual",
+            ano: 2022,
+            arquivo: "https://pmlajespintadasrn.apitransparencia.topsolutionsrn.com.br/arquivo/downloadarquivoporidasync?idArquivo=2190",
+        },
+        {
+            titulo: "Julgamento das Contas do Chefe do Executivo - Exercício 2022",
+            tipo: "JULGAMENTO_CAMARA",
+            periodo: "Anual",
+            ano: 2022,
+            arquivo: "https://cmlajespintadasrn.apitransparencia.topsolutionsrn.com.br/arquivo/downloadarquivoporidasync?idArquivo=2562",
+        },
+        {
+            titulo: "Relatório de Gestão da Unidade - Exercício 2022",
+            tipo: "RELATORIO_GESTAO",
+            periodo: "Anual",
+            ano: 2022,
+            arquivo: "https://cmlajespintadasrn.apitransparencia.topsolutionsrn.com.br/arquivo/downloadarquivoporidasync?idArquivo=2559",
         },
     ];
 
