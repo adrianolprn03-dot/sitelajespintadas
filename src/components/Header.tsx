@@ -109,10 +109,9 @@ export default function Header() {
         <header className="w-full z-50 fixed top-0 left-0 right-0 transition-all duration-500">
             <AccessibilityToolbar />
 
-            {/* MAIN NAVBAR - ULTRA SLIM FLOATING CAPSULE */}
-            <div className="w-full px-4 md:px-8 mt-2 md:mt-3">
-                <div className={`max-w-[1240px] mx-auto transition-all duration-500 flex items-center justify-between gap-8 px-8 shadow-xl ${scrolled ? 'h-10 bg-white/40 backdrop-blur-2xl rounded-full border-white/20' : 'h-12 md:h-16 bg-white/60 backdrop-blur-xl rounded-full border-white/40 shadow-primary-900/5'} border relative`}>
-                    {/* Logo */}
+            {/* MAIN NAVBAR - FULL WIDTH STRIP */}
+            <div className={`w-full transition-all duration-500 flex items-center justify-between gap-8 px-4 md:px-10 lg:px-16 shadow-xl ${scrolled ? 'h-12 bg-white/80 backdrop-blur-2xl border-b border-primary-100 shadow-primary-900/5' : 'h-16 md:h-20 bg-white/60 backdrop-blur-xl border-b border-white shadow-none'} relative`}>
+                {/* Logo */}
                 <div className="flex-shrink-0">
                     <Link href="/" className="flex items-center">
                         <img
@@ -163,7 +162,6 @@ export default function Header() {
                     >
                         {mobileOpen ? <HiOutlineXMark size={24} /> : <HiOutlineBars3 size={24} />}
                     </button>
-                </div>
                 </div>
             </div>
 
