@@ -18,23 +18,23 @@ interface PageHeaderProps {
 export default function PageHeader({ title, subtitle, breadcrumbs, variant = 'default', icon }: PageHeaderProps) {
     if (variant === 'premium') {
         return (
-            <div className="bg-[#f8fafc] relative overflow-hidden pt-32 pb-24 px-6 border-b border-slate-200">
+            <div className="bg-[#f8fafc] relative overflow-hidden pt-36 pb-24 px-6 md:px-12 lg:px-20 border-b border-primary-50">
                 {/* Decorativos suaves */}
-                <div className="absolute top-0 right-0 w-1/2 h-full bg-indigo-500/5 -skew-x-12 translate-x-1/4" />
-                <div className="absolute bottom-0 left-0 w-1/3 h-2/3 bg-blue-500/5 skew-x-12 -translate-x-1/4" />
+                <div className="absolute top-0 right-0 w-1/2 h-full bg-primary-500/5 -skew-x-12 translate-x-1/4" />
+                <div className="absolute bottom-0 left-0 w-1/3 h-2/3 bg-primary-900/5 skew-x-12 -translate-x-1/4" />
                 
-                <div className="max-w-7xl mx-auto relative z-10">
+                <div className="w-full relative z-10">
                     {/* Breadcrumbs Soft Premium */}
-                    <nav className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-8 flex items-center gap-3">
+                    <nav className="text-[10px] font-black uppercase tracking-[0.2em] text-primary-900/30 mb-8 flex items-center gap-3">
                         {breadcrumbs.map((item, index) => {
                             const isLast = index === breadcrumbs.length - 1;
                             return (
                                 <React.Fragment key={index}>
-                                    {index > 0 && <FaChevronRight className="text-[8px] opacity-30" />}
+                                    {index > 0 && <span className="opacity-20">/</span>}
                                     {isLast || !item.href ? (
-                                        <span className="text-slate-900 font-bold">{item.label}</span>
+                                        <span className="text-primary-900 font-black">{item.label}</span>
                                     ) : (
-                                        <Link href={item.href} className="hover:text-indigo-600 transition-colors">
+                                        <Link href={item.href} className="hover:text-primary-500 transition-colors">
                                             {item.label}
                                         </Link>
                                     )}
@@ -43,9 +43,9 @@ export default function PageHeader({ title, subtitle, breadcrumbs, variant = 'de
                         })}
                     </nav>
                     
-                    <div className="flex flex-col md:flex-row md:items-center gap-10">
+                    <div className="flex flex-col md:flex-row md:items-center gap-12">
                         {icon && (
-                            <div className="w-24 h-24 bg-indigo-600 rounded-[2.5rem] flex items-center justify-center shadow-2xl shadow-indigo-200 relative group overflow-hidden">
+                            <div className="w-24 h-24 bg-primary-600 rounded-[2.5rem] flex items-center justify-center shadow-2xl shadow-primary-900/20 relative group overflow-hidden">
                                 <div className="text-white text-4xl group-hover:scale-110 transition-transform duration-500 z-10">
                                     {icon}
                                 </div>
@@ -54,12 +54,12 @@ export default function PageHeader({ title, subtitle, breadcrumbs, variant = 'de
                             </div>
                         )}
                         
-                        <div>
-                            <h1 className="text-4xl md:text-6xl font-black text-slate-900 mb-5 tracking-tighter uppercase leading-tight drop-shadow-sm">
+                        <div className="flex-1">
+                            <h1 className="text-4xl md:text-6xl font-black text-primary-900 mb-5 tracking-tighter uppercase leading-tight drop-shadow-sm">
                                 {title}
                             </h1>
                             {subtitle && (
-                                <p className="text-slate-500 max-w-3xl text-lg font-medium leading-relaxed">
+                                <p className="text-primary-900/60 max-w-4xl text-lg font-bold leading-relaxed uppercase tracking-wide opacity-80">
                                     {subtitle}
                                 </p>
                             )}

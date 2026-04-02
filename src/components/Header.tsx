@@ -106,12 +106,13 @@ export default function Header() {
     }).replace(/^\w/, (c) => c.toUpperCase());
 
     return (
-        <header className={`w-full z-50 fixed top-0 left-0 right-0 transition-all duration-500 px-4 md:px-8 pt-1 group`}>
+        <header className="w-full z-50 fixed top-0 left-0 right-0 transition-all duration-500">
             <AccessibilityToolbar />
 
             {/* MAIN NAVBAR - ULTRA SLIM FLOATING CAPSULE */}
-            <div className={`max-w-[1050px] mx-auto transition-all duration-500 flex items-center justify-between gap-8 px-8 shadow-xl ${scrolled ? 'h-10 bg-white/30 backdrop-blur-2xl rounded-full border-white/20' : 'h-12 md:h-14 bg-white/50 backdrop-blur-xl rounded-full mt-1 border-white/40'} border relative`}>
-                {/* Logo */}
+            <div className="w-full px-4 md:px-8 mt-2 md:mt-3">
+                <div className={`max-w-[1240px] mx-auto transition-all duration-500 flex items-center justify-between gap-8 px-8 shadow-xl ${scrolled ? 'h-10 bg-white/40 backdrop-blur-2xl rounded-full border-white/20' : 'h-12 md:h-16 bg-white/60 backdrop-blur-xl rounded-full border-white/40 shadow-primary-900/5'} border relative`}>
+                    {/* Logo */}
                 <div className="flex-shrink-0">
                     <Link href="/" className="flex items-center">
                         <img
@@ -140,7 +141,7 @@ export default function Header() {
                                 className={`h-10 px-4 flex items-center text-[11px] font-black uppercase tracking-[0.2em] rounded-full transition-all duration-300 ${
                                     isActive 
                                     ? "text-primary-600 bg-primary-50" 
-                                    : "text-gray-700 hover:text-primary-600 hover:bg-gray-50"
+                                    : "text-primary-900 hover:text-primary-500 hover:bg-gray-50"
                                 }`}
                             >
                                 {item.label}
@@ -162,6 +163,7 @@ export default function Header() {
                     >
                         {mobileOpen ? <HiOutlineXMark size={24} /> : <HiOutlineBars3 size={24} />}
                     </button>
+                </div>
                 </div>
             </div>
 

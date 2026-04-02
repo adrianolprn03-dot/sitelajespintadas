@@ -4,7 +4,13 @@ import { revalidatePath } from "next/cache";
 
 export async function GET(req: NextRequest) {
     try {
+        const { searchParams } = new URL(req.url);
+        const tipo = searchParams.get("tipo");
+
+        const where = tipo ? { tipo } : {};
+
         const relatorios = await prisma.relatorioFiscal.findMany({
+            where,
             orderBy: [{ ano: "desc" }, { periodo: "asc" }],
         });
         return NextResponse.json(relatorios);
