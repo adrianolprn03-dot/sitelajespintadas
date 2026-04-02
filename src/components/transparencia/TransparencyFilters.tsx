@@ -22,7 +22,7 @@ export default function TransparencyFilters({
     onMonthChange,
     onClear,
     onExport,
-    availableYears = ["2024", "2023", "2022", "2021"],
+    availableYears = ["2026", "2025", "2024", "2023", "2022", "2021"],
     currentYear,
     currentMonth,
     searchValue,

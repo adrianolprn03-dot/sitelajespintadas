@@ -147,7 +147,7 @@ export default function OrdemCronologicaClient() {
                     onMonthChange={setMes}
                     onClear={handleClearFilters}
                     onExport={handleExport}
-                    availableYears={["2026", "2025", "2024"]}
+                    availableYears={["2026", "2025", "2024", "2023", "2022"]}
                     placeholder="Buscar por fornecedor, CNPJ ou descrição..."
                 >
                     <select
