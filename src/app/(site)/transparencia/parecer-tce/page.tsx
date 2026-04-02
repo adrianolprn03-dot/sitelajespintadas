@@ -1,15 +1,8 @@
-"use client";
-import RelatoriosFiscaisTemplate from "@/components/transparencia/RelatoriosFiscaisTemplate";
-import { FaBalanceScale } from "react-icons/fa";
+import type { Metadata } from "next";
 
-export default function ParecerTCEPage() {
-    return (
-        <RelatoriosFiscaisTemplate
-            title="Pareceres Prévios do TCE"
-            subtitle="Acompanhe a apreciação das contas anuais pelo Tribunal de Contas do Estado (TCE-RN)."
-            icon={<FaBalanceScale />}
-            tipo="PARECER_TCE"
-            breadcrumbLabel="Parecer TCE"
-        />
-    );
-}
+export const metadata: Metadata = {
+    title: "Pareceres Prévios do TCE | Portal da Transparência",
+    description: "Pareceres prévios emissionados pelo Tribunal de Contas do Estado (TCE-RN) sobre as contas anuais da Prefeitura de Lajes Pintadas.",
+};
+
+export { default } from "./_ParecerTCEClient";

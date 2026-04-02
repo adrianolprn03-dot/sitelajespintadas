@@ -40,6 +40,7 @@ const footerLinks = [
             { label: "FAQ / Perguntas", href: "/transparencia/faq" },
             { label: "Glossário de Termos", href: "/transparencia/glossario" },
             { label: "Política de Privacidade", href: "/privacidade" },
+            { label: "Acessibilidade Digital", href: "/transparencia/acessibilidade" },
             { label: "Mapa do Site", href: "/mapa-do-site" },
         ],
     },

@@ -1,15 +1,8 @@
-"use client";
-import RelatoriosFiscaisTemplate from "@/components/transparencia/RelatoriosFiscaisTemplate";
-import { FaGavel } from "react-icons/fa";
+import type { Metadata } from "next";
 
-export default function JulgamentoContasPage() {
-    return (
-        <RelatoriosFiscaisTemplate
-            title="Julgamento de Contas (Câmara)"
-            subtitle="Resultados do julgamento das contas do Poder Executivo realizado pela Câmara Municipal de Lajes Pintadas."
-            icon={<FaGavel />}
-            tipo="JULGAMENTO_CAMARA"
-            breadcrumbLabel="Julgamento de Contas"
-        />
-    );
-}
+export const metadata: Metadata = {
+    title: "Julgamento de Contas | Portal da Transparência – Prefeitura de Lajes Pintadas",
+    description: "Resultados do julgamento das contas do Poder Executivo pela Câmara Municipal de Lajes Pintadas – RN.",
+};
+
+export { default } from "./_JulgamentoContasClient";

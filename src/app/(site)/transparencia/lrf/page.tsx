@@ -1,16 +1,8 @@
-"use client";
-import RelatoriosFiscaisTemplate from "@/components/transparencia/RelatoriosFiscaisTemplate";
-import { FaChartLine } from "react-icons/fa";
+import type { Metadata } from "next";
 
-export default function LRFPage() {
-    return (
-        <RelatoriosFiscaisTemplate
-            title="Transparência Fiscal (LRF)"
-            subtitle="Acesse os Relatórios Resumidos da Execução Orçamentária (RREO) e os Relatórios de Gestão Fiscal (RGF)."
-            icon={<FaChartLine />}
-            tipo="LRF"
-            breadcrumbLabel="LRF"
-            showTabs={["RREO", "RGF"]}
-        />
-    );
-}
+export const metadata: Metadata = {
+    title: "Transparência Fiscal (LRF) | Portal da Transparência – Prefeitura de Lajes Pintadas",
+    description: "Consulta aos Relatórios Resumidos da Execução Orçamentária (RREO) e Relatórios de Gestão Fiscal (RGF) do Município de Lajes Pintadas.",
+};
+
+export { default } from "./_LRFClient";
