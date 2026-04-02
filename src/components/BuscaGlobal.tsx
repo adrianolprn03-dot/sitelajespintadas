@@ -30,6 +30,8 @@ const paginasEstaticas: SearchResult[] = [
     { titulo: "Ouvidoria Municipal", href: "/servicos/ouvidoria", secao: "Serviços", tipo: "pagina" },
     { titulo: "A Prefeitura", href: "/a-prefeitura", secao: "Institucional", tipo: "pagina" },
     { titulo: "Secretarias Municipais", href: "/secretarias", secao: "Institucional", tipo: "pagina" },
+    { titulo: "Programa de Integridade", href: "/transparencia/integridade", secao: "Transparência", tipo: "pagina" },
+    { titulo: "Acessibilidade Digital", href: "/transparencia/acessibilidade", secao: "Atendimento", tipo: "pagina" },
     { titulo: "Política de Privacidade", href: "/privacidade", secao: "Legal", tipo: "pagina" },
     { titulo: "Mapa do Site", href: "/mapa-do-site", secao: "Legal", tipo: "pagina" },
 ];
@@ -75,6 +77,7 @@ export default function BuscaGlobal({ onClose }: { onClose?: () => void }) {
                 <FaSearch className="absolute left-6 top-1/2 -translate-y-1/2 text-primary-500 transition-transform group-focus-within/search:scale-110" />
                 <input
                     ref={inputRef}
+                    id="busca"
                     type="search"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}

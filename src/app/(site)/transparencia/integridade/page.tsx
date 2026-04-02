@@ -183,25 +183,29 @@ export default function IntegridadePage() {
                     </div>
                 </section>
 
-                {/* Links relacionados */}
+                {/* Documentos Oficiais */}
                 <section>
                     <div className="flex items-center gap-4 mb-8">
-                        <div className="w-10 h-1 bg-primary-600 rounded-full" />
-                        <h2 className="text-2xl font-black text-primary-900 uppercase tracking-tighter">Canais Relacionados</h2>
+                        <div className="w-10 h-1 bg-blue-600 rounded-full" />
+                        <h2 className="text-2xl font-black text-primary-900 uppercase tracking-tighter">Documentos e Downloads</h2>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         {[
-                            { titulo: "Ouvidoria Municipal", desc: "Canal de denúncias anônimas e reclamações.", href: "/servicos/ouvidoria", cor: "from-blue-600 to-indigo-700" },
-                            { titulo: "e-SIC", desc: "Solicite informações públicas gratuitamente.", href: "/servicos/esic", cor: "from-emerald-500 to-teal-600" },
-                            { titulo: "Radar da Transparência", desc: "Avaliação PNTP/ATRICON do município.", href: "/transparencia/radar", cor: "from-purple-600 to-violet-700" },
-                        ].map((item, i) => (
-                            <Link key={i} href={item.href} className={`group bg-gradient-to-br ${item.cor} text-white p-8 rounded-[2rem] hover:scale-105 transition-all shadow-xl flex flex-col justify-between`}>
-                                <h3 className="font-black text-base uppercase tracking-tighter mb-2">{item.titulo}</h3>
-                                <p className="text-white/70 text-xs font-medium mb-6">{item.desc}</p>
-                                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest">
-                                    Acessar <FaExternalLinkAlt size={10} />
+                            { titulo: "Código de Ética e Conduta", tamanho: "850 KB", data: "15/01/2024" },
+                            { titulo: "Plano de Integridade 2024-2025", tamanho: "1.2 MB", data: "10/02/2024" },
+                            { titulo: "Política de Gestão de Riscos", tamanho: "640 KB", data: "05/03/2024" },
+                            { titulo: "Regulamento da Ouvidoria", tamanho: "420 KB", data: "20/03/2024" },
+                        ].map((doc, i) => (
+                            <div key={i} className="group bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col items-center text-center">
+                                <div className="w-12 h-12 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-red-500 group-hover:text-white transition-all shadow-inner">
+                                    <FaFileAlt size={20} />
                                 </div>
-                            </Link>
+                                <h4 className="text-[11px] font-black text-primary-900 uppercase tracking-tight mb-2 line-clamp-2">{doc.titulo}</h4>
+                                <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-6">{doc.tamanho} • {doc.data}</p>
+                                <button className="mt-auto w-full py-2.5 bg-gray-50 text-gray-400 text-[9px] font-black uppercase tracking-widest rounded-xl border border-gray-100 group-hover:bg-primary-900 group-hover:text-white group-hover:border-primary-900 transition-all flex items-center justify-center gap-2">
+                                    Baixar PDF <FaExternalLinkAlt size={8} />
+                                </button>
+                            </div>
                         ))}
                     </div>
                 </section>
