@@ -461,11 +461,60 @@ export default function ESICPage() {
                             </div>
                         </div>
 
+                        {/* Bloco de Prazo Legal — obrigatório PNTP/LAI */}
+                        <div className="bg-white rounded-[2rem] shadow-sm border-2 border-blue-100 p-7 relative overflow-hidden">
+                            <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-emerald-500 to-teal-500" />
+                            <h3 className="text-sm font-black text-gray-800 uppercase tracking-tighter mb-6 flex items-center gap-2 pt-2">
+                                <FaBalanceScale className="text-emerald-500" /> Seus Direitos — LAI
+                            </h3>
+                            <div className="space-y-4">
+                                <div className="flex items-start gap-3 p-3 bg-emerald-50 rounded-xl border border-emerald-100">
+                                    <FaClock className="text-emerald-500 mt-0.5 shrink-0" size={14} />
+                                    <div>
+                                        <p className="text-[10px] font-black text-emerald-800 uppercase tracking-widest">Prazo de Resposta</p>
+                                        <p className="text-[11px] font-bold text-emerald-700 mt-0.5">
+                                            <strong>20 dias úteis</strong>, prorrogável por mais <strong>10 dias</strong> mediante justificativa.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-xl border border-blue-100">
+                                    <FaGavel className="text-blue-500 mt-0.5 shrink-0" size={14} />
+                                    <div>
+                                        <p className="text-[10px] font-black text-blue-800 uppercase tracking-widest">Direito a Recurso</p>
+                                        <p className="text-[11px] font-bold text-blue-700 mt-0.5">
+                                            Em caso de negativa, você pode recorrer em até <strong>10 dias</strong> à autoridade hierarquicamente superior.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3 p-3 bg-amber-50 rounded-xl border border-amber-100">
+                                    <FaCheckCircle className="text-amber-500 mt-0.5 shrink-0" size={14} />
+                                    <div>
+                                        <p className="text-[10px] font-black text-amber-800 uppercase tracking-widest">Gratuidade</p>
+                                        <p className="text-[11px] font-bold text-amber-700 mt-0.5">
+                                            O acesso à informação é <strong>gratuito</strong>. Apenas reproduções físicas poderão ter custo de reprodução cobrado.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3 p-3 bg-purple-50 rounded-xl border border-purple-100">
+                                    <FaUserShield className="text-purple-500 mt-0.5 shrink-0" size={14} />
+                                    <div>
+                                        <p className="text-[10px] font-black text-purple-800 uppercase tracking-widest">Anonimato</p>
+                                        <p className="text-[11px] font-bold text-purple-700 mt-0.5">
+                                            Não é necessário justificar o pedido. Seus dados são protegidos pela <strong>LGPD (Lei 13.709/2018)</strong>.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         {/* Links Laterais */}
                         <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-7">
                             <h3 className="text-sm font-black text-gray-800 uppercase tracking-tighter mb-5">Mais Informações</h3>
                             <div className="space-y-1.5">
-                                {linksLaterais.map((link, idx) => (
+                                {[
+                                    { label: "Relatório Anual do SIC", href: "/servicos/esic/relatorio-anual", icon: FaChartBar },
+                                    ...linksLaterais
+                                ].map((link, idx) => (
                                     <Link key={idx} href={link.href} className="flex items-center gap-3 text-sm font-semibold text-gray-600 hover:text-[#01b0ef] hover:bg-blue-50/50 px-4 py-3 rounded-xl transition-all group">
                                         <link.icon className="text-gray-400 group-hover:text-[#01b0ef] transition-colors shrink-0" />
                                         <span className="flex-1">{link.label}</span>
@@ -474,6 +523,7 @@ export default function ESICPage() {
                                 ))}
                             </div>
                         </div>
+
                     </div>
 
                 </div>

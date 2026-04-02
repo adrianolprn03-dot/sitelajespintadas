@@ -123,9 +123,12 @@ const categoriasDeModulos = [
             { icon: FileSignature, titulo: "Dívida Ativa", desc: "Relação de devedores do município.", href: "/transparencia/divida-ativa", cor: "from-rose-500 to-red-700", badge: "Dívida" },
             { icon: BookOpen, titulo: "Plano de Educação", desc: "Plano Municipal de Educação.", href: "/transparencia/plano-educacao", cor: "from-amber-500 to-orange-600", badge: "Educação" },
             { icon: Users, titulo: "Incentivos Culturais e Esportivos", desc: "Editais e fomento à cultura e esporte.", href: "/transparencia/incentivos-culturais", cor: "from-cyan-500 to-blue-600", badge: "Cultura" },
+            { icon: ShieldCheck, titulo: "Programa de Integridade", desc: "Prevenção à corrupção, ética e conduta.", href: "/transparencia/integridade", cor: "from-violet-600 to-purple-800", badge: "Integridade" },
+            { icon: Info, titulo: "Acessibilidade Digital", desc: "Declaração WCAG 2.1 AA, e-MAG e VLibras.", href: "/transparencia/acessibilidade", cor: "from-slate-600 to-slate-800", badge: "e-MAG" },
         ]
     }
 ];
+
 
 export default function TransparenciaPage() {
     const [linksExternos, setLinksExternos] = useState<any[]>([]);
