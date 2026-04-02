@@ -267,42 +267,6 @@ export default function TransparenciaPage() {
                 ))}
             </div>
 
-            {/* Seção e-SIC com Design Refinado */}
-            <div className="bg-white py-32 border-t border-gray-100">
-                <div className="max-w-[1240px] mx-auto px-6">
-                    <div className="relative rounded-[4rem] bg-gradient-to-br from-blue-600 to-indigo-800 p-1 md:p-1.5 shadow-2xl shadow-blue-900/20 overflow-hidden">
-                        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
-                        
-                        <div className="relative bg-white/5 backdrop-blur-3xl rounded-[3.8rem] p-12 md:p-20 text-center text-white overflow-hidden">
-                             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-32 -mt-32" />
-                             <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-400/20 rounded-full blur-3xl -ml-32 -mb-32" />
-
-                             <motion.div 
-                                initial={{ scale: 0.9, opacity: 0 }}
-                                whileInView={{ scale: 1, opacity: 1 }}
-                                className="inline-flex items-center justify-center w-24 h-24 bg-white rounded-[2rem] shadow-xl mb-10"
-                             >
-                                <HelpCircle size={48} className="text-blue-600" />
-                             </motion.div>
-
-                             <h2 className="text-3xl md:text-4xl font-black mb-4 tracking-tighter uppercase">Acesso à Informação (e-SIC)</h2>
-                             <p className="max-w-2xl mx-auto text-blue-100/80 text-base font-medium leading-relaxed mb-8">
-                                Direito do cidadão, dever do Estado. Use nossos canais oficiais para solicitar informações não disponíveis no portal.
-                             </p>
-
-                             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-                                <Link href="/servicos/esic" className="w-full sm:w-auto bg-white text-blue-700 px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest shadow-xl hover:bg-blue-50 hover:scale-105 transition-all">
-                                    Abrir Solicitação
-                                </Link>
-                                <Link href="/servicos/ouvidoria" className="w-full sm:w-auto bg-transparent border-2 border-white/30 text-white px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest hover:bg-white/10 transition-all flex items-center justify-center gap-3 group">
-                                    Falar com Ouvidoria 
-                                    <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                                </Link>
-                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             {/* Seção Radar */}
             <RadarTransparencia overrideUrl={linksExternos.find((l: any) => l.moduloAlvo === "home-radar")?.url} />
