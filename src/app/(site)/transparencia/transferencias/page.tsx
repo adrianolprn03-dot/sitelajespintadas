@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { FaExchangeAlt, FaExternalLinkAlt, FaInfoCircle, FaHospital, FaSchool, FaMoneyCheckAlt, FaBuilding } from "react-icons/fa";
+import { FaExchangeAlt, FaExternalLinkAlt, FaInfoCircle, FaHospital, FaSchool, FaMoneyCheckAlt, FaBuilding, FaSync } from "react-icons/fa";
 import PageHeader from "@/components/PageHeader";
+import ListaTransferenciasFederal from "@/components/transparencia/integracao/ListaTransferenciasFederal";
+import BannerPNTP from "@/components/transparencia/BannerPNTP";
 
 export const metadata: Metadata = {
     title: "Transferências e Emendas | Prefeitura de Lajes Pintadas – RN",
@@ -23,6 +25,20 @@ export default function TransferenciasPage() {
 
             <div className="max-w-[1200px] mx-auto px-6 py-16">
                 
+                {/* Dashboard de Transferências Federais (CGU) */}
+                <div className="mb-20">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+                        <h2 className="text-sm font-black text-primary-600 uppercase tracking-[0.3em] flex items-center gap-3">
+                            <span className="w-12 h-px bg-primary-600" /> Repasses Federais em Tempo Real (CGU)
+                        </h2>
+                        <div className="flex items-center gap-3 bg-emerald-50 text-emerald-700 px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-emerald-100 shadow-sm">
+                            <FaSync className="animate-spin-slow" /> Sincronizado com API Oficial da União
+                        </div>
+                    </div>
+                    
+                    <ListaTransferenciasFederal />
+                </div>
+
                 {/* Intro */}
                 <div className="bg-white rounded-2xl border border-gray-100 p-8 shadow-sm mb-12 flex flex-col md:flex-row gap-8 items-center">
                     <div className="w-16 h-16 shrink-0 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center border border-blue-100">
@@ -156,6 +172,9 @@ export default function TransferenciasPage() {
                     </div>
                 </div>
 
+                <div className="mt-24 pb-12">
+                    <BannerPNTP />
+                </div>
             </div>
         </div>
     );

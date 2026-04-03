@@ -1,6 +1,8 @@
 import PageHeader from "@/components/PageHeader";
-import { FaFilePdf, FaChartLine, FaDownload, FaInbox, FaCheckCircle, FaLink, FaGlobe, FaExternalLinkAlt } from "react-icons/fa";
+import { FaFilePdf, FaChartLine, FaDownload, FaInbox, FaCheckCircle, FaLink, FaGlobe, FaExternalLinkAlt, FaSync } from "react-icons/fa";
 import { prisma } from "@/lib/prisma";
+import SiconfiDashboard from "@/components/transparencia/integracao/SiconfiDashboard";
+import BannerPNTP from "@/components/transparencia/BannerPNTP";
 
 export default async function RelatoriosPage() {
     // Busca estatísticas reais para PNTP
@@ -144,7 +146,23 @@ export default async function RelatoriosPage() {
                     </div>
                 </div>
 
+                <div className="mb-20">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+                        <h2 className="text-sm font-black text-primary-600 uppercase tracking-[0.3em] flex items-center gap-3">
+                            <span className="w-12 h-px bg-primary-600" /> Execução Orçamentária em Tempo Real (SICONFI)
+                        </h2>
+                        <div className="flex items-center gap-2 bg-primary-50 text-primary-700 px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-primary-100">
+                            <FaSync className="animate-spin-slow" /> Dados Sincronizados com o Tesouro Nacional
+                        </div>
+                    </div>
+                    
+                    <SiconfiDashboard />
+                </div>
+
                 <div className="space-y-12">
+                    <h2 className="text-sm font-black text-gray-400 uppercase tracking-[0.3em] mb-8 flex items-center gap-3">
+                        <span className="w-12 h-px bg-gray-200" /> Demonstrativos Contábeis e Fiscais (PDF)
+                    </h2>
                     {relatorios.map((r, idx) => (
                         <div key={idx} className="bg-white rounded-[2.5rem] p-8 lg:p-12 shadow-sm border border-gray-100">
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
@@ -220,6 +238,10 @@ export default async function RelatoriosPage() {
                         </div>
                     </div>
                 )}
+
+                <div className="mt-24 pb-12">
+                    <BannerPNTP />
+                </div>
             </div>
         </div>
     );

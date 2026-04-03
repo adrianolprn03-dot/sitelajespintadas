@@ -12,8 +12,6 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import PageHeader from "@/components/PageHeader";
-import BannerPNTP from "@/components/transparencia/BannerPNTP";
-import RadarTransparencia from "@/components/home/RadarTransparencia";
 import { useEffect, useState } from "react";
 
 // Como estamos usando client component para as animações, 
@@ -112,19 +110,6 @@ const categoriasDeModulos = [
             { icon: StethoscopeIcon, titulo: "Plano de Saúde", desc: "Plano Municipal de Saúde.", href: "/transparencia/plano-saude", cor: "from-teal-400 to-emerald-500", badge: "Planejamento" },
             { icon: Building2, titulo: "Unidades de Saúde", desc: "Hospitais, UPAs e UBSs.", href: "/transparencia/unidades-saude", cor: "from-blue-500 to-indigo-600", badge: "Locais" },
             { icon: Activity, titulo: "Central de Regulação", desc: "Fila de exames, consultas e cirurgias.", href: "/transparencia/central-regulacao", cor: "from-orange-400 to-red-500", badge: "Regulação" },
-        ]
-    },
-    {
-        tituloCategoria: "ATRICON",
-        modulos: [
-            { icon: CalendarClock, titulo: "Plano Anual de Contratação", desc: "Planejamento de compras para o ano.", href: "/transparencia/plano-contratacao", cor: "from-indigo-500 to-purple-600", badge: "Planejamento" },
-            { icon: TrendingUp, titulo: "Desonerações", desc: "Incentivos e benefícios fiscais.", href: "/transparencia/desoneracoes", cor: "from-teal-500 to-green-600", badge: "Economia" },
-            { icon: Activity, titulo: "Informações sobre o Radar", desc: "Radar Nacional de Transparência Pública.", href: "/transparencia/radar", cor: "from-blue-600 to-indigo-800", badge: "Radar" },
-            { icon: FileSignature, titulo: "Dívida Ativa", desc: "Relação de devedores do município.", href: "/transparencia/divida-ativa", cor: "from-rose-500 to-red-700", badge: "Dívida" },
-            { icon: BookOpen, titulo: "Plano de Educação", desc: "Plano Municipal de Educação.", href: "/transparencia/plano-educacao", cor: "from-amber-500 to-orange-600", badge: "Educação" },
-            { icon: Users, titulo: "Incentivos Culturais e Esportivos", desc: "Editais e fomento à cultura e esporte.", href: "/transparencia/incentivos-culturais", cor: "from-cyan-500 to-blue-600", badge: "Cultura" },
-            { icon: ShieldCheck, titulo: "Programa de Integridade", desc: "Prevenção à corrupção, ética e conduta.", href: "/transparencia/integridade", cor: "from-violet-600 to-purple-800", badge: "Integridade" },
-            { icon: Info, titulo: "Acessibilidade Digital", desc: "Declaração WCAG 2.1 AA, e-MAG e VLibras.", href: "/transparencia/acessibilidade", cor: "from-slate-600 to-slate-800", badge: "e-MAG" },
         ]
     }
 ];
@@ -268,13 +253,6 @@ export default function TransparenciaPage() {
             </div>
 
 
-            {/* Seção Radar */}
-            <RadarTransparencia overrideUrl={linksExternos.find((l: any) => l.moduloAlvo === "home-radar")?.url} />
-
-            {/* Seção PNTP 2025 no Rodapé */}
-            <div className="bg-white pt-10 pb-20 border-t border-gray-100">
-                <BannerPNTP />
-            </div>
 
             {/* Rodapé Interno */}
             <div className="bg-gray-50 py-12 border-t border-gray-100">
