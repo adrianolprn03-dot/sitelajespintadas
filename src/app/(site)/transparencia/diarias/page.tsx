@@ -5,6 +5,7 @@ import PageHeader from "@/components/PageHeader";
 import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
 import { exportToCSV, exportToJSON, exportToPDF, exportToXLSX } from "@/lib/exportUtils";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
+import LegislacaoClient from "../legislacao/_LegislacaoClient";
 
 type Diaria = {
     id: string;
@@ -240,6 +241,23 @@ export default function DiariasPage() {
                             </div>
                         ))
                     )}
+                </div>
+
+                {/* Seção de Atos Oficiais de Concessão (Portarias de Diárias) */}
+                <div className="mt-20 pt-20 border-t border-gray-100/50">
+                    <div className="flex items-center gap-4 mb-10">
+                        <div className="w-14 h-14 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center border border-rose-100 shadow-sm shrink-0">
+                            <span className="text-2xl">✈️</span>
+                        </div>
+                        <div>
+                            <h2 className="text-2xl font-black text-gray-800 uppercase tracking-tighter">Atos Oficiais de Concessão</h2>
+                            <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-1">Consulta às últimas portarias de diárias publicadas</p>
+                        </div>
+                    </div>
+
+                    <div className="-mx-6">
+                        <LegislacaoClient initialTipo="portaria_diaria" hideTipoFilter={true} />
+                    </div>
                 </div>
 
                 <div className="mt-20">

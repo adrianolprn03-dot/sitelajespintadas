@@ -44,29 +44,11 @@ export default function RegulamentacaoDiariasPage() {
                          <li>Servidores sob regimes de contratação que já prevejam viagens na carga horária (como alguns motoristas específicos em rota contínua) obedecem a regramentos próprios em leis complementares.</li>
                      </ul>
 
-                     <div className="p-8 bg-gray-50 border border-gray-100 rounded-[2rem] text-sm text-gray-500 leading-relaxed font-medium mb-12">
+                     <div className="p-8 bg-gray-50 border border-gray-100 rounded-[2rem] text-sm text-gray-500 leading-relaxed font-medium">
                          <strong>Atenção:</strong> A base legal para os pagamentos vigentes pode ser consultada inteiramente em nossa página de Legislação Municipal (seção Leis Ordinárias e Decretos Regulamentadores).
-                     </div>
-
-                     <div className="mt-16 pt-16 border-t border-gray-100">
-                        <div className="flex items-center gap-4 mb-10">
-                            <div className="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center border border-rose-100 shadow-sm shrink-0">
-                                <span className="text-xl">✈️</span>
-                            </div>
-                            <div>
-                                <h2 className="text-2xl font-black text-gray-800 uppercase tracking-tighter">Atos Oficiais de Diárias</h2>
-                                <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mt-1">Consulta às últimas portarias de concessão</p>
-                            </div>
-                        </div>
-
-                        <div className="-mx-6 md:-mx-12">
-                            <LegislacaoClient initialTipo="portaria_diaria" hideTipoFilter={true} />
-                        </div>
                      </div>
                 </div>
             </div>
         </div>
     );
 }
-
-import LegislacaoClient from "../legislacao/_LegislacaoClient";
