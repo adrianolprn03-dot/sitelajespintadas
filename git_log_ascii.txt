@@ -1,0 +1,30 @@
+7514756 Atualizacao do site: integracoes SICONFI, PNCP, CGU
+47413d1 UI: Removida seção de destaque e-SIC do Hub de Transparência
+331cff6 PNTP Ouro: Integridade (Downloads) & Acessibilidade (Busca IDs)
+2c6336a PNTP Ouro: Final Polishing (Metadata SEO, Seeding 2025, Dívida Ativa stats, Footer links)
+fec82b3 PNTP Ouro: Acessibilidade, Sitemap 90 rotas, Relatorio SIC, Prazo LAI no eSIC, Programa Integridade
+24d32af Feature: Filtros por ano nas paginas de Relatorios Fiscais
+71cb544 Correção Filtros: Adição dos anos 2025 e 2026 em todos os módulos de transparência
+77fb3bd Design: Menu Principal em largura total e alinhado perfeitamente com a Barra de Acessibilidade
+6853bae Finalização: Harmonização total de cores (Azul Marinho Oficial) e inclusão de histórico fiscal 2022
+c241559 Design: Harmonização total da Barra de Acessibilidade com o Menu Principal (Estética Light/Glass)
+64a1cda Ajuste de Design: Layout Tela Toda e Harmonização de Cores (Azul Oficial)
+a8d7071 Conformidade PNTP 2025 (Selo Diamante): Acessibilidade, Estatísticas e-SIC, Hub XLSX e Geolocalização de Obras
+86e5cbd Modernização completa dos módulos de transparência: Design System compacto, exportação XLSX e correções de build
+450ee96 feat: Add WordPress migration scripts for news, pages, and legislation, alongside temporary verification tools and a new transparency page.
+4327b11 fix(ui): ajusta altura do botao de exportacao
+6fab850 chore: atualiza portal da transparencia com pntp 2025 e corrige bug e-sic
+6a1a087 Fix e-SIC links and Tailwind typos on transparency page
+272d0f9 Update Header and Footer with Transparência Passiva (e-SIC) links
+bb1d9b5 Update E-sic link in transparency page
+309f068 Implementação do módulo e-SIC (Transparência Passiva) com suporte a relatórios, gráficos e conformidade LAI.
+7f34311 fix: resolve client-side exception caused by async server component inside client component
+5468f92 refactor: tira o radar da home page, transaciona para transparencia e ajusta redirecionamento para o atricon
+684ff3b feat: adiciona upload e reproducao de audio para o hino municipal
+dd957a0 feat: renomeia identidade visual para simbolos oficiais no admin
+352617c feat: atualiza pagina de simbolos na transparencia para ssr dinâmico
+90c94f9 feat: cabeçalho dinâmico e página de símbolos municipais
+40b477e fix: imports, revalidatePath and prisma types for fiscal reports
+40080bc feat: expansão de transparência - publicações, relatórios fiscais, símbolos e redesenho PIX
+a2e203b fix: habilitar redirecionamento de links externos em servidores
+153efe2 feat: implementar emenda pix, atualizar diárias e correções de links

@@ -6,6 +6,7 @@ export async function GET(request: NextRequest) {
     const tipo = searchParams.get("tipo");
     const ano = searchParams.get("ano");
     const busca = searchParams.get("busca");
+    const categoria = searchParams.get("categoria");
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "20");
     const skip = (page - 1) * limit;
@@ -18,6 +19,7 @@ export async function GET(request: NextRequest) {
             where.tipo = tipo;
         }
     }
+    if (categoria) where.categoria = categoria;
     if (ano) where.ano = parseInt(ano);
     if (busca) {
         where.OR = [

@@ -46,7 +46,7 @@ export default function ListaTransferenciasFederal() {
 
     return (
         <div className="space-y-8">
-            <div className="flex flex-col md:flex-row gap-6 items-center justify-between bg-white/80 backdrop-blur-xl p-6 rounded-[2.5rem] border border-white shadow-xl">
+            <div className="flex flex-col md:flex-row gap-6 items-center justify-between bg-white/70 backdrop-blur-2xl p-6 rounded-[2.5rem] border border-white/50 shadow-[0_8px_30px_rgba(0,0,0,0.04)]">
                 <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-emerald-500 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/20">
                         <TrendingUp size={24} />
@@ -61,7 +61,7 @@ export default function ListaTransferenciasFederal() {
                     <select 
                         value={ano} 
                         onChange={(e) => setAno(e.target.value)}
-                        className="bg-gray-50 border border-gray-100 rounded-xl px-4 py-2 text-[11px] font-black uppercase tracking-widest outline-none focus:ring-2 focus:ring-emerald-500"
+                        className="bg-white/50 backdrop-blur-md border border-white/60 rounded-xl px-4 py-2 text-[11px] font-black uppercase tracking-widest outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm transition-all hover:bg-white"
                     >
                         <option value="2025">2025</option>
                         <option value="2024">2024</option>
@@ -81,7 +81,9 @@ export default function ListaTransferenciasFederal() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="md:col-span-1 bg-slate-900 rounded-[2.5rem] p-8 text-white shadow-2xl flex flex-col justify-between">
+                <div className="md:col-span-1 bg-slate-900 rounded-[2.5rem] p-8 text-white shadow-[0_20px_50px_rgba(16,185,129,0.15)] flex flex-col justify-between relative overflow-hidden group">
+                    {/* Efeito Glow Antigravity Escondido */}
+                    <div className="absolute -inset-24 bg-emerald-500/10 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
                     <div>
                         <h4 className="text-[10px] font-black text-white/40 uppercase tracking-widest mb-4">Total no Mês</h4>
                         <div className="text-2xl font-black text-emerald-400 tracking-tighter">
@@ -102,7 +104,7 @@ export default function ListaTransferenciasFederal() {
 
                 <div className="md:col-span-3 space-y-4">
                     {loading ? (
-                        <div className="flex flex-col items-center justify-center py-12 bg-white rounded-[2.5rem] border border-gray-100 animate-pulse">
+                        <div className="flex flex-col items-center justify-center py-12 bg-white/50 backdrop-blur-md rounded-[2.5rem] border border-white/60 shadow-[0_8px_30px_rgba(0,0,0,0.03)] animate-pulse">
                             <Loader2 className="w-8 h-8 text-emerald-500 animate-spin mb-4" />
                             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Sincronizando com a CGU...</p>
                         </div>
@@ -111,11 +113,16 @@ export default function ListaTransferenciasFederal() {
                             {itens.map((item, idx) => (
                                 <motion.div 
                                     layout
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: idx * 0.05 }}
+                                    initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                                    transition={{ 
+                                        delay: idx * 0.05,
+                                        type: "spring",
+                                        stiffness: 100,
+                                        damping: 15
+                                    }}
                                     key={item.id} 
-                                    className="bg-white rounded-3xl border border-gray-100 p-6 flex items-center justify-between group hover:shadow-xl transition-all"
+                                    className="bg-white/80 backdrop-blur-lg rounded-3xl border border-white/60 p-6 flex items-center justify-between group shadow-[0_8px_30px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_40px_rgba(16,185,129,0.08)] hover:-translate-y-1 transition-all duration-300 ease-out z-10 relative"
                                 >
                                     <div className="flex items-center gap-5">
                                         <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition-colors">
@@ -140,7 +147,7 @@ export default function ListaTransferenciasFederal() {
                     )}
 
                     {!loading && itens.length === 0 && (
-                        <div className="bg-white rounded-[2.5rem] p-12 text-center border-2 border-dashed border-gray-100">
+                        <div className="bg-white/40 backdrop-blur-sm rounded-[2.5rem] p-12 text-center border-2 border-dashed border-gray-200">
                             <p className="text-gray-300 font-black uppercase tracking-widest text-[10px]">Nenhuma transferência federal registrada no período.</p>
                         </div>
                     )}

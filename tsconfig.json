@@ -37,6 +37,8 @@
         "node_modules",
         "scripts",
         "prisma",
-        "tmp"
+        "tmp",
+        "old_seed.ts",
+        "tmp_seed.ts"
     ]
 }

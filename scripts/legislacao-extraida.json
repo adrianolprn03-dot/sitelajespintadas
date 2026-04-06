@@ -1,0 +1,82 @@
+[
+  {
+    "tipo": "portaria",
+    "numero": "005",
+    "ano": 2026,
+    "ementa": "Portaria nº 005/2026",
+    "conteudoResumo": "",
+    "arquivo": "https://lajespintadas.rn.gov.br/portarias/portaria-no-005-2026/",
+    "dataPublicacao": "2026-01-19T16:02:18",
+    "wpId": 10598
+  },
+  {
+    "tipo": "portaria",
+    "numero": "004",
+    "ano": 2026,
+    "ementa": "Portaria de Férias nº 004/2026",
+    "conteudoResumo": "",
+    "arquivo": "https://lajespintadas.rn.gov.br/portarias/portaria-de-ferias-no-004-2026/",
+    "dataPublicacao": "2026-01-19T16:00:54",
+    "wpId": 10597
+  },
+  {
+    "tipo": "portaria",
+    "numero": "003",
+    "ano": 2026,
+    "ementa": "Portaria nº 003/2026",
+    "conteudoResumo": "",
+    "arquivo": "https://lajespintadas.rn.gov.br/portarias/portaria-no-003-2026/",
+    "dataPublicacao": "2026-01-19T15:33:32",
+    "wpId": 10568
+  },
+  {
+    "tipo": "portaria",
+    "numero": "002",
+    "ano": 2026,
+    "ementa": "Portaria nº 002/2026",
+    "conteudoResumo": "",
+    "arquivo": "https://lajespintadas.rn.gov.br/portarias/portaria-no-002-2026/",
+    "dataPublicacao": "2026-01-17T14:36:20",
+    "wpId": 10515
+  },
+  {
+    "tipo": "portaria",
+    "numero": "001",
+    "ano": 2026,
+    "ementa": "Portaria nº 001/2026",
+    "conteudoResumo": "",
+    "arquivo": "https://lajespintadas.rn.gov.br/portarias/portaria-no-001-2026/",
+    "dataPublicacao": "2026-01-16T17:08:30",
+    "wpId": 10448
+  },
+  {
+    "tipo": "lei",
+    "numero": "432",
+    "ano": 2025,
+    "ementa": "Lei Municipal 432/2025",
+    "conteudoResumo": "",
+    "arquivo": "https://lajespintadas.rn.gov.br/leis/lei-municipal-432-2025/",
+    "dataPublicacao": "2026-01-15T00:30:01",
+    "wpId": 10352
+  },
+  {
+    "tipo": "lei",
+    "numero": "431",
+    "ano": 2025,
+    "ementa": "Lei nº 431/2025",
+    "conteudoResumo": "teste",
+    "arquivo": "https://lajespintadas.rn.gov.br/leis/lei-no-431-2025/",
+    "dataPublicacao": "2026-01-14T22:04:08",
+    "wpId": 10302
+  },
+  {
+    "tipo": "decreto",
+    "numero": "S/N",
+    "ano": 2022,
+    "ementa": "Horário de funcionamento – COPA 2022",
+    "conteudoResumo": "Decreto Municipal, Nº 17/2022. O PREFEITO MUNICIPAL DE LAJES PINTADAS, no exercício de suas atribuições legais, nos moldes da Lei Orgânica Municipal, CONSIDERANDO, que a Copa do Mundo de 2022, evento organizado pela FIFA, acontecerá entre 20 de novembro e 18 de dezembro de 2022; CONSIDERANDO que o c",
+    "arquivo": "https://lajespintadas.rn.gov.br/horario-de-funcionamento-copa-2022/",
+    "dataPublicacao": "2022-11-24T08:34:16",
+    "wpId": 5178
+  }
+]

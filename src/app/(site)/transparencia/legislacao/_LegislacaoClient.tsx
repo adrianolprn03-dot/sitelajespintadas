@@ -23,6 +23,7 @@ const tipoInfo: Record<string, { label: string; corClass: string; icon: any }> =
     "lei": { label: "Lei Municipal", corClass: "bg-blue-50 text-blue-600 border-blue-100/50", icon: FaFileAlt },
     "decreto": { label: "Decreto", corClass: "bg-amber-50 text-amber-600 border-amber-100/50", icon: FaGavel },
     "portaria": { label: "Portaria", corClass: "bg-emerald-50 text-emerald-600 border-emerald-100/50", icon: FaFileAlt },
+    "portaria_diaria": { label: "Portaria de Diária", corClass: "bg-rose-50 text-rose-600 border-rose-100/50", icon: FaFileAlt },
     "resolucao": { label: "Resolução", corClass: "bg-indigo-50 text-indigo-600 border-indigo-100/50", icon: FaFileAlt },
 };
 
@@ -112,6 +113,7 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                                 <option value="lei">Leis</option>
                                 <option value="decreto">Decretos</option>
                                 <option value="portaria">Portarias</option>
+                                <option value="portaria_diaria">Portarias de Diárias</option>
                                 <option value="resolucao">Resoluções</option>
                                 <option value="lei-organica">Lei Orgânica</option>
                             </select>

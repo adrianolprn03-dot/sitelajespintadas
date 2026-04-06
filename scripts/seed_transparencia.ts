@@ -49,12 +49,28 @@ async function main() {
     console.log("✅ Frota ok.");
 
     const emendas = [
-        { autor: "Deputado Estadual João Silva", valor: 150000, ano: 2024, tipo: "Estadual", objeto: "Aquisição de equipamentos hospitalares para o Centro de Saúde.", status: "Em Execução" },
-        { autor: "Senador Marcos Pontes", valor: 300000, ano: 2023, tipo: "Federal", objeto: "Pavimentação asfáltica de ruas no bairro Centro.", status: "Concluído" },
+        { 
+            autorNome: "Deputado Estadual João Silva", 
+            valorPrevisto: 150000, 
+            anoEmenda: 2024, 
+            tipoEmenda: "Estadual", 
+            objeto: "Aquisição de equipamentos hospitalares para o Centro de Saúde.", 
+            situacaoExecucao: "Em Execução",
+            codigoEmenda: "EMP2024001"
+        },
+        { 
+            autorNome: "Senador Marcos Pontes", 
+            valorPrevisto: 300000, 
+            anoEmenda: 2023, 
+            tipoEmenda: "Federal", 
+            objeto: "Pavimentação asfáltica de ruas no bairro Centro.", 
+            situacaoExecucao: "Concluído",
+            codigoEmenda: "EMP2023001"
+        },
     ];
 
     for (const e of emendas) {
-        const existing = await prisma.emendaParlamentar.findFirst({ where: { autor: e.autor, objeto: e.objeto } });
+        const existing = await prisma.emendaParlamentar.findUnique({ where: { codigoEmenda: e.codigoEmenda } });
         if (!existing) await prisma.emendaParlamentar.create({ data: e });
     }
     console.log("✅ Emendas ok.");
@@ -73,8 +89,8 @@ async function main() {
     console.log("✅ Concursos ok.");
 
     const servicos = [
-        { nome: "Emissão de IPTU", categoria: "Tributação", descricao: "Serviço de emissão da guia do Imposto Predial e Territorial Urbano.", local: "Sede da Prefeitura / Online", prazo: "Imediato", requisitos: "Número da Inscrição Imobiliária", ativo: true },
-        { nome: "Solicitação de Iluminação Pública", categoria: "Obras", descricao: "Pedido de reparo ou instalação de lâmpadas em vias públicas.", local: "Secretaria de Obras / Aplicativo", prazo: "72 horas", requisitos: "Endereço e Referência", ativo: true },
+        { nome: "Emissão de IPTU", categoria: "Tributação", descricao: "Serviço de emissão da guia do Imposto Predial e Territorial Urbano.", local: "Sede da Prefeitura / Online", prazo: "Imediato", documentos: "Número da Inscrição Imobiliária", ativo: true },
+        { nome: "Solicitação de Iluminação Pública", categoria: "Obras", descricao: "Pedido de reparo ou instalação de lâmpadas em vias públicas.", local: "Secretaria de Obras / Aplicativo", prazo: "72 horas", documentos: "Endereço e Referência", ativo: true },
     ];
 
     for (const s of servicos) {

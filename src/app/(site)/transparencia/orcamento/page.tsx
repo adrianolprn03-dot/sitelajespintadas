@@ -23,7 +23,9 @@ export default function OrcamentoPage() {
     const [docs, setDocs] = useState<Documento[]>([]);
     const [loading, setLoading] = useState(true);
     const [tipo, setTipo] = useState("");
-    const [ano, setAno] = useState(""); // Default to all years
+    const [categoria, setCategoria] = useState("");
+    const [ano, setAno] = useState("");
+    const [busca, setBusca] = useState("");
 
     const currentYear = new Date().getFullYear();
     const anos = Array.from({ length: 15 }, (_, i) => (currentYear - i).toString());
@@ -34,6 +36,8 @@ export default function OrcamentoPage() {
             const query = new URLSearchParams();
             if (ano) query.append("ano", ano);
             if (tipo) query.append("tipo", tipo.toUpperCase()); else query.append("tipo", "LOA,LDO,PPA");
+            if (categoria) query.append("categoria", categoria);
+            if (busca) query.append("busca", busca);
             query.append("limit", "100");
 
             const res = await fetch(`/api/legislacao?${query.toString()}`);
@@ -57,8 +61,11 @@ export default function OrcamentoPage() {
     };
 
     useEffect(() => {
-        fetchData();
-    }, [ano, tipo]);
+        const timer = setTimeout(() => {
+            fetchData();
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [ano, tipo, categoria, busca]);
 
     return (
         <div className="min-h-screen bg-[#F8FAFC] font-['Montserrat',sans-serif]">
@@ -106,50 +113,87 @@ export default function OrcamentoPage() {
                 {/* Painel de Filtros e Card Informativo */}
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-stretch">
                     {/* Filtros */}
-                    <div className="w-full lg:col-span-4 bg-white rounded-[3rem] shadow-2xl shadow-slate-200/60 p-8 md:p-10 border border-white flex flex-col md:flex-row items-stretch md:items-end gap-6 text-slate-700">
-                        <div className="flex-1">
-                            <label className="block text-[10px] font-black text-slate-400 uppercase mb-3 tracking-[0.2em] ml-2">Qual instrumento deseja consultar?</label>
-                            <div className="relative group">
-                                <select
-                                    className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-4 text-sm font-black text-slate-700 outline-none focus:border-blue-500 focus:bg-white transition-all appearance-none cursor-pointer"
-                                    value={tipo}
-                                    onChange={(e) => setTipo(e.target.value)}
-                                >
-                                    <option value="">Todos os Instrumentos</option>
-                                    <option value="loa">LOA - Lei Orçamentária Anual</option>
-                                    <option value="ldo">LDO - Lei de Diretrizes Orçamentárias</option>
-                                    <option value="ppa">PPA - Plano Plurianual</option>
-                                </select>
-                                <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-hover:text-blue-500 transition-colors">
-                                    <FaChevronRight className="rotate-90 text-[10px]" />
+                    <div className="w-full lg:col-span-4 bg-white rounded-[3rem] shadow-2xl shadow-slate-200/60 p-8 md:p-10 border border-white flex flex-col gap-8 text-slate-700">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-end">
+                            <div className="lg:col-span-1">
+                                <label className="block text-[10px] font-black text-slate-400 uppercase mb-3 tracking-[0.2em] ml-2">Instrumento</label>
+                                <div className="relative group">
+                                    <select
+                                        className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-4 text-sm font-black text-slate-700 outline-none focus:border-blue-500 focus:bg-white transition-all appearance-none cursor-pointer"
+                                        value={tipo}
+                                        onChange={(e) => setTipo(e.target.value)}
+                                    >
+                                        <option value="">Todos</option>
+                                        <option value="loa">LOA - Lei Orçamentária Anual</option>
+                                        <option value="ldo">LDO - Lei de Diretrizes Orçamentárias</option>
+                                        <option value="ppa">PPA - Plano Plurianual</option>
+                                    </select>
+                                    <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-hover:text-blue-500 transition-colors">
+                                        <FaChevronRight className="rotate-90 text-[10px]" />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <div className="md:w-56">
-                            <label className="block text-[10px] font-black text-slate-400 uppercase mb-3 tracking-[0.2em] ml-2">Exercício</label>
-                            <div className="relative group">
-                                <select
-                                    className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-4 text-sm font-black text-slate-700 outline-none focus:border-blue-500 focus:bg-white transition-all appearance-none cursor-pointer"
-                                    value={ano}
-                                    onChange={(e) => setAno(e.target.value)}
-                                >
-                                    <option value="">Todos os Anos</option>
-                                    {anos.map(a => <option key={a} value={a}>{a}</option>)}
-                                </select>
-                                <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-hover:text-blue-500 transition-colors">
-                                    <FaChevronRight className="rotate-90 text-[10px]" />
+
+                            <div className="lg:col-span-1">
+                                <label className="block text-[10px] font-black text-slate-400 uppercase mb-3 tracking-[0.2em] ml-2">Categoria</label>
+                                <div className="relative group">
+                                    <select
+                                        className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-4 text-sm font-black text-slate-700 outline-none focus:border-blue-500 focus:bg-white transition-all appearance-none cursor-pointer"
+                                        value={categoria}
+                                        onChange={(e) => setCategoria(e.target.value)}
+                                    >
+                                        <option value="">Todas as Categorias</option>
+                                        <option value="Lei">Lei / Texto Integral</option>
+                                        <option value="Quadros de Detalhamento">Quadros de Detalhamento (QDD)</option>
+                                        <option value="Anexo de Metas Fiscais">Anexo de Metas Fiscais</option>
+                                        <option value="Anexo de Riscos Fiscais">Anexo de Riscos Fiscais</option>
+                                        <option value="Anexo de Programas">Anexo de Programas e Metas</option>
+                                    </select>
+                                    <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-hover:text-blue-500 transition-colors">
+                                        <FaChevronRight className="rotate-90 text-[10px]" />
+                                    </div>
                                 </div>
                             </div>
+                            
+                            <div className="md:w-full">
+                                <label className="block text-[10px] font-black text-slate-400 uppercase mb-3 tracking-[0.2em] ml-2">Exercício</label>
+                                <div className="relative group">
+                                    <select
+                                        className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-4 text-sm font-black text-slate-700 outline-none focus:border-blue-500 focus:bg-white transition-all appearance-none cursor-pointer"
+                                        value={ano}
+                                        onChange={(e) => setAno(e.target.value)}
+                                    >
+                                        <option value="">Todos os Anos</option>
+                                        {anos.map(a => <option key={a} value={a}>{a}</option>)}
+                                    </select>
+                                    <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-hover:text-blue-500 transition-colors">
+                                        <FaChevronRight className="rotate-90 text-[10px]" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button 
+                                onClick={fetchData}
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-[1.125rem] rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-200 transition-all active:scale-95 flex items-center justify-center gap-3 group"
+                            >
+                                <FaSearch className="group-hover:scale-110 transition-transform" /> 
+                                <span>Filtrar</span>
+                            </button>
                         </div>
 
-                        <button 
-                            onClick={fetchData}
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-[1.125rem] rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-200 transition-all active:scale-95 flex items-center justify-center gap-3 group"
-                        >
-                            <FaSearch className="group-hover:scale-110 transition-transform" /> 
-                            <span>Filtrar</span>
-                        </button>
+                        <div className="relative">
+                            <label className="block text-[10px] font-black text-slate-400 uppercase mb-3 tracking-[0.2em] ml-2">Busca Textual</label>
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    placeholder="Pesquise por número da lei ou palavra-chave na ementa..."
+                                    className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-14 py-4 text-sm font-medium text-slate-700 outline-none focus:border-blue-500 focus:bg-white transition-all shadow-inner"
+                                    value={busca}
+                                    onChange={(e) => setBusca(e.target.value)}
+                                />
+                                <FaSearch className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-500 transition-colors" />
+                            </div>
+                        </div>
                     </div>
 
                 </div>

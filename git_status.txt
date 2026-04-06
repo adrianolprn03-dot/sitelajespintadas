@@ -1,0 +1,9 @@
+ M prisma/seed.ts
+ M scripts/seed_transparencia.ts
+ M src/components/transparencia/integracao/ListaTransferenciasFederal.tsx
+?? git_log.txt
+?? git_log_ascii.txt
+?? git_log_dates.txt
+?? git_status.txt
+?? scripts/find-sao-tome.ts
+?? scripts/purge-sao-tome.ts

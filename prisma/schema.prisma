@@ -293,6 +293,7 @@ model Glossario {
 model Legislacao {
   id           String   @id @default(cuid())
   tipo         String
+  categoria    String?
   numero       String
   ano          Int
   ementa       String

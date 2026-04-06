@@ -24,18 +24,146 @@ async function main() {
 
     // --- Secretarias ---
     const secretariasDados = [
-        { nome: "Secretaria de Administração", slug: "administracao", descricao: "Responsável pela gestão administrativa, recursos humanos, patrimônio, compras e licitações.", secretario: "José Alves da Silva", email: "administracao@lajespintadas.rn.gov.br", telefone: "(84) 3000-0001", ordem: 1 },
-        { nome: "Secretaria de Saúde", slug: "saude", descricao: "Coordena os serviços de saúde pública, unidades de saúde e programas de prevenção.", secretario: "Dr. Carlos Mendes", email: "saude@lajespintadas.rn.gov.br", telefone: "(84) 3000-0002", ordem: 2 },
-        { nome: "Secretaria de Educação", slug: "educacao", descricao: "Responsável pelas escolas municipais, merenda escolar e programas educacionais.", secretario: "Profa. Ana Beatriz", email: "educacao@lajespintadas.rn.gov.br", telefone: "(84) 3000-0003", ordem: 3 },
-        { nome: "Secretaria de Obras e Infraestrutura", slug: "obras", descricao: "Gerencia obras, pavimentações, drenagem e manutenção da infraestrutura urbana.", secretario: "Eng. Pedro Rodrigues", email: "obras@lajespintadas.rn.gov.br", telefone: "(84) 3000-0004", ordem: 4 },
-        { nome: "Secretaria de Finanças", slug: "financas", descricao: "Controla as finanças e o orçamento municipal, arrecadação de tributos e prestação de contas.", secretario: "Maria das Graças Sousa", email: "financas@lajespintadas.rn.gov.br", telefone: "(84) 3000-0005", ordem: 5 },
-        { nome: "Secretaria de Assistência Social", slug: "assistencia-social", descricao: "Implementa programas sociais e atende famílias em situação de vulnerabilidade.", secretario: "Francisca Lima Santos", email: "social@lajespintadas.rn.gov.br", telefone: "(84) 3000-0006", ordem: 6 },
+        { 
+            nome: "Controladoria Municipal", 
+            slug: "controladoria-municipal", 
+            descricao: "Conferência e acompanhamento das demonstrações contábeis, produção e emissão de notificações às unidades da administração apontando incorreções em processos contábeis, licitatórios, convênios e ajustes, além de fiscalizar o cumprimento de resoluções dos Tribunais de Contas.", 
+            secretario: "Francisco Adriano Bezerra da Silva", 
+            email: "ouvidoria@lajespintadas.rn.gov.br", 
+            telefone: "(84) 98717-7756", 
+            endereco: "Rua São Francisco, 275, Centro, Lajes Pintadas/RN, CEP: 59.235-000",
+            horarioFuncionamento: "Segunda a Sexta-feira, das 7h às 13h",
+            ordem: 1 
+        },
+        { 
+            nome: "Secretaria Municipal de Administração Geral e Planejamento", 
+            slug: "administracao-geral-planejamento", 
+            descricao: "Execução das políticas de Administração de Recursos Humanos e dos bens patrimoniais do Município, coordenação e controle de processos de licitação, assessoria ao Prefeito na supervisão de órgãos municipais e planejamento orçamentário.", 
+            secretario: "Sidcley Gomes da Silva", 
+            email: "ouvidoria@lajespintadas.rn.gov.br", 
+            telefone: "(84) 98717-7756", 
+            endereco: "Rua São Francisco, 275, Centro, Lajes Pintadas/RN, CEP: 59.235-000",
+            horarioFuncionamento: "Segunda a Sexta-feira, das 7h às 13h",
+            ordem: 2 
+        },
+        { 
+            nome: "Secretaria Municipal de Agricultura, Recursos Hídricos e Meio Ambiente", 
+            slug: "agricultura-meio-ambiente", 
+            descricao: "Promoção do desenvolvimento agrícola, apoio técnico e infraestrutura para produção e pesquisa, fiscalização do uso de defensivos agrícolas, controle da produção agropastoril e execução da política ambiental e de recursos hídricos.", 
+            secretario: "Nelio Mendes Lucena", 
+            email: "ouvidoria@lajespintadas.rn.gov.br", 
+            telefone: "(84) 98717-7756", 
+            endereco: "Rua José Ferreira Sobrinho, 100, Lajes Pintadas/RN, CEP: 59.235-000",
+            horarioFuncionamento: "Segunda a Sexta-feira, das 7h às 13h",
+            ordem: 3 
+        },
+        { 
+            nome: "Secretaria Municipal de Assistência Social", 
+            slug: "assistencia-social", 
+            descricao: "Implementação e execução de políticas públicas de inclusão e promoção social, gestão de serviços e programas previstos na lei orgânica da assistência social e coordenação de programas de habitação popular e segurança alimentar.", 
+            secretario: "Francisca Aparecida de França Gomes", 
+            email: "ouvidoria@lajespintadas.rn.gov.br", 
+            telefone: "(84) 98695-7255", 
+            endereco: "Rua José Varela, 001, Lajes Pintadas/RN, CEP: 59.235-000",
+            horarioFuncionamento: "Segunda a Sexta-feira, das 7h às 13h",
+            ordem: 4 
+        },
+        { 
+            nome: "Secretaria Municipal de Educação e Cultura", 
+            slug: "educacao-cultura", 
+            descricao: "Formulação da política educacional do município, organização e controle do processo de ensino nas escolas municipais, gestão de recursos financeiros da educação e promoção de atividades culturais e artísticas.", 
+            secretario: "Ana Dark Pereira da Silva", 
+            email: "ouvidoria@lajespintadas.rn.gov.br", 
+            telefone: "(84) 98604-5406", 
+            endereco: "Rua Geraldo Pegado, 006, Lajes Pintadas/RN, CEP: 59.235-000",
+            horarioFuncionamento: "Segunda a Sexta-feira, das 7h às 13h",
+            ordem: 5 
+        },
+        { 
+            nome: "Secretaria Municipal de Finanças", 
+            slug: "financas", 
+            descricao: "Controle da execução orçamentária de despesas e receitas, escrituração contábil, preparação de balancetes e balanços gerais, além da movimentação de numerário e outros valores vinculados à Fazenda Municipal.", 
+            secretario: "Fernando Luiz de Lima Gomes", 
+            email: "ouvidoria@lajespintadas.rn.gov.br", 
+            telefone: "(84) 98717-7756", 
+            endereco: "Rua São Francisco, 275, Centro, Lajes Pintadas/RN, CEP: 59.235-000",
+            horarioFuncionamento: "Segunda a Sexta-feira, das 7h às 13h",
+            ordem: 6 
+        },
+        { 
+            nome: "Secretaria Municipal de Obras e Serviços Urbanos", 
+            slug: "obras-servicos-urbanos", 
+            descricao: "Manutenção de espaços públicos (limpeza, varrição e coleta de lixo), execução de obras viárias e pavimentação, manutenção de prédios municipais e gestão da iluminação pública e cemitérios.", 
+            secretario: "Julio Carlos Ferreira de Oliveira", 
+            email: "ouvidoria@lajespintadas.rn.gov.br", 
+            telefone: "(84) 98717-7756", 
+            endereco: "Rua São Francisco, 275, Centro, Lajes Pintadas/RN, CEP: 59.235-000",
+            horarioFuncionamento: "Segunda a Sexta-feira, das 7h às 13h",
+            ordem: 7 
+        },
+        { 
+            nome: "Secretaria Municipal de Saúde", 
+            slug: "saude", 
+            descricao: "Execução de vigilância epidemiológica e sanitária, promoção e recuperação do sistema municipal de saúde conforme as diretrizes do SUS, gestão de laboratórios de saúde pública e fiscalização de serviços privados de saúde.", 
+            secretario: "Nivaldo Alves da Silva", 
+            email: "ouvidoria@lajespintadas.rn.gov.br", 
+            telefone: "(84) 98705-7241", 
+            endereco: "Rua José Varela, 001, Lajes Pintadas/RN, CEP: 59.235-000",
+            horarioFuncionamento: "Segunda a Sexta-feira, das 7h às 13h",
+            ordem: 8 
+        },
+        { 
+            nome: "Secretaria Municipal de Transportes", 
+            slug: "transportes", 
+            descricao: "Gestão e manutenção da frota de veículos oficiais do município, controle de abastecimento e acompanhamento das subcoordenadorias de transporte e manutenção rodoviária.", 
+            secretario: "Paulo Francisco da Silva", 
+            email: "ouvidoria@lajespintadas.rn.gov.br", 
+            telefone: "(84) 98717-7756", 
+            endereco: "Rua São Francisco, 275, Centro, Lajes Pintadas/RN, CEP: 59.235-000",
+            horarioFuncionamento: "Segunda a Sexta-feira, das 7h às 13h",
+            ordem: 9 
+        },
+        { 
+            nome: "Secretaria Municipal de Tributação", 
+            slug: "tributacao", 
+            descricao: "Execução da política tributária municipal, fiscalização e arrecadação de impostos e taxas, inscription e cobrança da dívida ativa e orientação tributária aos contribuintes.", 
+            secretario: "Ernesto Luis Gomes de Almeida", 
+            email: "ouvidoria@lajespintadas.rn.gov.br", 
+            telefone: "(84) 98717-7756", 
+            endereco: "Rua São Francisco, 275, Centro, Lajes Pintadas/RN, CEP: 59.235-000",
+            horarioFuncionamento: "Segunda a Sexta-feira, das 7h às 13h",
+            ordem: 10 
+        },
+        { 
+            nome: "Procuradoria Municipal", 
+            slug: "procuradoria-municipal", 
+            descricao: "Representação jurídica do Município em juízo ou extrajudicialmente, consultoria e assessoramento jurídico às unidades administrativas da prefeitura.", 
+            secretario: "Fabiola Cunha Souza de Oliveira", 
+            email: "ouvidoria@lajespintadas.rn.gov.br", 
+            telefone: "(84) 98717-7756", 
+            endereco: "Rua São Francisco, 275, Centro, Lajes Pintadas/RN, CEP: 59.235-000",
+            horarioFuncionamento: "Segunda a Sexta-feira, das 7h às 13h",
+            ordem: 11 
+        },
     ];
 
     for (const s of secretariasDados) {
-        await prisma.secretaria.upsert({ where: { slug: s.slug }, update: {}, create: s });
+        await prisma.secretaria.upsert({ 
+            where: { slug: s.slug }, 
+            update: {
+                nome: s.nome,
+                descricao: s.descricao,
+                secretario: s.secretario,
+                email: s.email,
+                telefone: s.telefone,
+                endereco: s.endereco,
+                horarioFuncionamento: s.horarioFuncionamento,
+                ordem: s.ordem
+            }, 
+            create: s 
+        });
     }
-    console.log("✅ Secretarias criadas");
+    console.log("✅ Secretarias oficiais criadas");
 
     // --- Notícias de exemplo ---
     const noticiasDados = [
@@ -227,6 +355,48 @@ async function main() {
         });
     }
     console.log("✅ Emendas Parlamentares de exemplo criadas");
+
+    // --- Legislação Orçamentária (LOA, LDO, PPA) ---
+    const orcamentoDocs = [
+        { tipo: "LOA", categoria: "Lei", numero: "560/2024", ano: 2024, ementa: "Estima a receita e fixa a despesa do Município de Lajes Pintadas para o exercício financeiro de 2024.", arquivo: "https://lajespintadas.rn.gov.br/transparencia/loa-2024.pdf" },
+        { tipo: "LOA", categoria: "Quadros de Detalhamento", numero: "560/2024-QDD", ano: 2024, ementa: "Quadros de Detalhamento de Despesa (QDD) do exercício de 2024.", arquivo: "https://lajespintadas.rn.gov.br/transparencia/qdd-2024.pdf" },
+        { tipo: "LDO", categoria: "Lei", numero: "555/2023", ano: 2024, ementa: "Dispõe sobre as diretrizes para a elaboração e execução da Lei Orçamentária de 2024.", arquivo: "https://lajespintadas.rn.gov.br/transparencia/ldo-2024.pdf" },
+        { tipo: "LDO", categoria: "Anexo de Metas Fiscais", numero: "555/2023-AMF", ano: 2024, ementa: "Anexo de Metas Fiscais para o exercício de 2024.", arquivo: "https://lajespintadas.rn.gov.br/transparencia/amf-2024.pdf" },
+        { tipo: "PPA", categoria: "Lei", numero: "500/2021", ano: 2024, ementa: "Plano Plurianual do Município de Lajes Pintadas para o período de 2022-2025.", arquivo: "https://lajespintadas.rn.gov.br/transparencia/ppa-2022-2025.pdf" },
+        { tipo: "PPA", categoria: "Anexo de Programas", numero: "500/2021-ANX", ano: 2024, ementa: "Anexo de Programas e Metas do PPA 2022-2025.", arquivo: "https://lajespintadas.rn.gov.br/transparencia/ppa-anexos.pdf" },
+        // Documentos de 2023 para histórico
+        { tipo: "LOA", categoria: "Lei", numero: "540/2022", ano: 2023, ementa: "Estima a receita e fixa a despesa para o exercício de 2023.", arquivo: "https://lajespintadas.rn.gov.br/transparencia/loa-2023.pdf" },
+        { tipo: "LDO", categoria: "Lei", numero: "535/2022", ano: 2023, ementa: "Diretrizes Orçamentárias para 2023.", arquivo: "https://lajespintadas.rn.gov.br/transparencia/ldo-2023.pdf" },
+    ];
+
+    for (const doc of orcamentoDocs) {
+        await prisma.legislacao.create({ data: doc });
+    }
+    console.log("✅ Legislação Orçamentária criada");
+
+    // --- Configurações do Município ---
+    const configuracoesDados = [
+        { chave: "municipio_nome", valor: "Lajes Pintadas", descricao: "Nome oficial do município", grupo: "geral" },
+        { chave: "municipio_uf", valor: "RN", descricao: "Estado", grupo: "geral" },
+        { chave: "municipio_ibge", valor: "2406601", descricao: "Código IBGE", grupo: "geral" },
+        { chave: "municipio_populacao", valor: "4.463", descricao: "População estimada (Censo 2022)", grupo: "geral" },
+        { chave: "municipio_area", valor: "120,4 km²", descricao: "Área territorial", grupo: "geral" },
+        { chave: "municipio_fundacao", valor: "1958", descricao: "Ano de fundação/emancipação", grupo: "geral" },
+        { chave: "municipio_cnpj", valor: "08.159.204/0001-38", descricao: "CNPJ da Prefeitura", grupo: "geral" },
+        { chave: "prefeitura_endereco", valor: "Rua São Francisco, 275 - Centro", descricao: "Endereço da sede", grupo: "geral" },
+        { chave: "prefeitura_telefone", valor: "(84) 98717-7756", descricao: "Telefone de contato", grupo: "geral" },
+        { chave: "prefeitura_email", valor: "ouvidoria@lajespintadas.rn.gov.br", descricao: "E-mail oficial", grupo: "geral" },
+        { chave: "prefeitura_horario", valor: "Segunda a Sexta: 07h00 às 13h00", descricao: "Horário de atendimento", grupo: "geral" },
+    ];
+
+    for (const c of configuracoesDados) {
+        await prisma.configuracao.upsert({
+            where: { chave: c.chave },
+            update: { valor: c.valor },
+            create: c
+        });
+    }
+    console.log("✅ Configurações do Município criadas");
 
     console.log("\n🎉 Seed concluído com sucesso!");
     console.log("\n📋 Credenciais de acesso ao painel:");
