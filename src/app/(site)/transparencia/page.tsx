@@ -1,4 +1,5 @@
 "use client";
+
 import Link from "next/link";
 import { 
     TrendingUp, BarChart3, Gavel, FileSignature, Handshake, 
@@ -8,115 +9,63 @@ import {
     Globe2, IdCard, ExternalLink, Globe, ArrowRight, Check,
     Headset, Mail, FileText, QrCode, ScrollText, AlertTriangle,
     Briefcase, Landmark, Info, FileStack, Activity, ListOrdered,
-    CalendarClock, PhoneCall, Link2, MonitorPlay, ShieldCheck, HeartPulse
+    CalendarClock, PhoneCall, Link2, MonitorPlay, ShieldCheck, HeartPulse,
+    Search, Sparkles, ShieldAlert, FileSearch, Coins, Receipt
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import PageHeader from "@/components/PageHeader";
 import { useEffect, useState } from "react";
 
-// Como estamos usando client component para as animações, 
-// o metadata precisa ser movido para um layout ou exportado separadamente se necessário.
-// No Next.js 14, client components não podem exportar metadata.
-// Vou remover o export do metadata deste arquivo e focar na UI.
-
 const categoriasDeModulos = [
     {
-        tituloCategoria: "Atendimento ao Cidadão",
+        tituloCategoria: "Controle e Participação",
+        desc: "Canais diretos de comunicação e consulta aos serviços públicos municipais.",
         modulos: [
-            { icon: ClipboardList, titulo: "E-sic", desc: "Serviço de Informação ao Cidadão.", href: "/servicos/esic", cor: "from-amber-500 to-orange-600", badge: "LAI" },
-            { icon: Headset, titulo: "Ouvidoria", desc: "Canal de denúncias, reclamações e sugestões.", href: "/servicos/ouvidoria", cor: "from-blue-500 to-cyan-500", badge: "Atendimento" },
-            { icon: Mail, titulo: "Fale Conosco", desc: "Entre em contato com a prefeitura.", href: "/contato", cor: "from-teal-400 to-green-500", badge: "Contato" },
-            { icon: MapPinned, titulo: "Carta de Serviço", desc: "Guia de serviços oferecidos pelo município.", href: "/transparencia/carta-servicos", cor: "from-emerald-500 to-green-600", badge: "Cidadão" },
+            { icon: ClipboardList, titulo: "E-SIC", desc: "Acesso à Informação.", href: "/servicos/esic", cor: "from-amber-600 to-orange-700", badge: "LAI" },
+            { icon: Headset, titulo: "Ouvidoria", desc: "Denúncias e sugestões.", href: "/servicos/ouvidoria", cor: "from-blue-600 to-cyan-600", badge: "FALA.BR" },
+            { icon: ShieldCheck, titulo: "Integridade", desc: "Programa de Ética.", href: "/transparencia/integridade", cor: "from-emerald-600 to-teal-700", badge: "GOVERNANÇA" },
+            { icon: MapPinned, titulo: "Serviços", desc: "Carta de Serviços.", href: "/transparencia/carta-servicos", cor: "from-purple-600 to-indigo-700", badge: "CIDADÃO" },
         ]
     },
     {
-        tituloCategoria: "Execução Orçamentária e Financeira",
+        tituloCategoria: "Finanças e Planejamento",
+        desc: "Acompanhamento detalhado da execução orçamentária e financeira em tempo real.",
         modulos: [
-            { icon: TrendingUp, titulo: "Receitas Públicas", desc: "Arrecadação e transferência de recursos.", href: "/transparencia/receitas", cor: "from-emerald-400 to-teal-500", badge: "LC 131" },
-            { icon: BarChart3, titulo: "Despesas Públicas", desc: "Empenhos, liquidações e pagamentos.", href: "/transparencia/despesas", cor: "from-blue-400 to-indigo-500", badge: "LC 131" },
-            { icon: Globe2, titulo: "Emendas Parlamentares", desc: "Recursos recebidos via emendas.", href: "/transparencia/emendas", cor: "from-amber-400 to-orange-500", badge: "Recursos" },
-            { icon: ListOrdered, titulo: "Ordem Cronológica", desc: "Fila de pagamentos a fornecedores.", href: "/transparencia/ordem-cronologica", cor: "from-slate-500 to-gray-700", badge: "Transparência" },
-            { icon: QrCode, titulo: "Emenda PIX", desc: "Transferências especiais via PIX.", href: "/transparencia/emenda-pix", cor: "from-teal-500 to-emerald-600", badge: "Recursos" },
-            { icon: Landmark, titulo: "Orçamento (LOA / LDO / PPA)", desc: "Planejamento orçamentário municipal.", href: "/transparencia/orcamento", cor: "from-blue-600 to-indigo-700", badge: "Planejamento" },
-            { icon: Database, titulo: "Transferências", desc: "Repasses de recursos federais e estaduais.", href: "/transparencia/transferencias", cor: "from-amber-600 to-orange-700", badge: "Recursos" },
+            { icon: Coins, titulo: "Receitas", desc: "Arrecadação Municipal.", href: "/transparencia/receitas", cor: "from-emerald-500 to-teal-600", badge: "RECEITA" },
+            { icon: Receipt, titulo: "Despesas", desc: "Gastos e Empenhos.", href: "/transparencia/despesas", cor: "from-blue-600 to-indigo-700", badge: "GASTOS" },
+            { icon: Landmark, titulo: "Orçamento", desc: "LOA, LDO e PPA.", href: "/transparencia/orcamento", cor: "from-slate-800 to-slate-950", badge: "PLANEJAMENTO" },
+            { icon: ListOrdered, titulo: "Pagamentos", desc: "Ordem Cronológica.", href: "/transparencia/ordem-cronologica", cor: "from-amber-500 to-orange-600", badge: "TESOURARIA" },
+            { icon: Database, titulo: "Repasses", desc: "Transferências Legais.", href: "/transparencia/transferencias", cor: "from-indigo-600 to-violet-700", badge: "RECURSOS" },
+            { icon: Globe2, titulo: "Emendas", desc: "Recursos Parlamentares.", href: "/transparencia/emendas", cor: "from-teal-600 to-emerald-800", badge: "EXTERNO" },
         ]
     },
     {
-        tituloCategoria: "Gestão Administrativa",
+        tituloCategoria: "Contratações e Pessoal",
+        desc: "Transparência sobre processos licitatórios, contratos firmados e quadro de servidores.",
         modulos: [
-            { icon: FileStack, titulo: "Prestação de Contas", desc: "Demonstrativos de gestão.", href: "/transparencia/prestacao-contas", cor: "from-rose-400 to-red-600", badge: "Contas" },
-            { icon: IdCard, titulo: "Concurso Público", desc: "Editais e resultados de certames.", href: "/transparencia/concursos", cor: "from-cyan-600 to-blue-700", badge: "Pessoal" },
-            { icon: ScrollText, titulo: "Atas de Registro de Preços", desc: "Atas homologadas e vigentes.", href: "/transparencia/atas-registro", cor: "from-indigo-400 to-purple-500", badge: "Compras" },
-            { icon: FileSignature, titulo: "Contratos", desc: "Ajustes firmados pela administração.", href: "/transparencia/contratos", cor: "from-blue-500 to-indigo-600", badge: "Atos" },
-            { icon: Files, titulo: "Leis", desc: "Legislação municipal e leis orgânicas.", href: "/transparencia/leis", cor: "from-indigo-500 to-purple-600", badge: "Leis" },
-            { icon: FileText, titulo: "Decretos", desc: "Decretos do poder executivo.", href: "/transparencia/decretos", cor: "from-slate-600 to-slate-800", badge: "Atos" },
-            { icon: FileSignature, titulo: "Portarias", desc: "Portarias e atos administrativos.", href: "/transparencia/portarias", cor: "from-blue-500 to-indigo-600", badge: "Atos" },
-            { icon: Plane, titulo: "Diárias", desc: "Concessão de diárias e passagens.", href: "/transparencia/diarias", cor: "from-sky-400 to-cyan-500", badge: "LAI" },
-            { icon: Users, titulo: "Quadro Pessoal", desc: "Servidores, folha de pagamento e mais.", href: "/transparencia/servidores", cor: "from-teal-400 to-green-500", badge: "RH" },
-            { icon: Gavel, titulo: "Licitações", desc: "Processos licitatórios do município.", href: "/transparencia/licitacoes", cor: "from-purple-400 to-violet-500", badge: "Licitações" },
-            { icon: Briefcase, titulo: "Processo Seletivo", desc: "Contratações temporárias e seleções.", href: "/transparencia/processo-seletivo", cor: "from-orange-400 to-amber-500", badge: "RH" },
-            { icon: Handshake, titulo: "Convênios e Parcerias", desc: "Termos firmados com terceiros.", href: "/transparencia/convenios", cor: "from-pink-400 to-rose-500", badge: "Convênios" },
-            { icon: Construction, titulo: "Obras Públicas", desc: "Acompanhamento de obras e medições.", href: "/transparencia/obras", cor: "from-orange-500 to-red-500", badge: "Obras" },
-            { icon: Files, titulo: "Publicações", desc: "Atos oficiais, editais e publicações diversas.", href: "/transparencia/publicacoes", cor: "from-slate-400 to-gray-600", badge: "Atos" },
-            { icon: Users2, titulo: "Terceirizados", desc: "Relação de postos terceirizados.", href: "/transparencia/servidores/terceirizados", cor: "from-amber-500 to-orange-600", badge: "RH" },
-            { icon: UserCircle2, titulo: "Estagiários", desc: "Relação de estagiários contratados.", href: "/transparencia/servidores/estagiarios", cor: "from-pink-500 to-rose-600", badge: "RH" },
-            { icon: AlertTriangle, titulo: "Covid-19", desc: "Ações e gastos no combate à pandemia.", href: "/transparencia/covid19", cor: "from-red-500 to-red-700", badge: "Saúde" },
-            { icon: Truck, titulo: "Frota Municipal", desc: "Veículos e máquinas do município.", href: "/transparencia/frota", cor: "from-slate-700 to-slate-900", badge: "Gestão" },
+            { icon: Gavel, titulo: "Licitações", desc: "Certames e Editais.", href: "/transparencia/licitacoes", cor: "from-orange-600 to-red-700", badge: "COMPRAS" },
+            { icon: FileSignature, titulo: "Contratos", desc: "Ajustes e Aditivos.", href: "/transparencia/contratos", cor: "from-blue-700 to-indigo-800", badge: "ATOS" },
+            { icon: Users, titulo: "Servidores", desc: "Folha de Pagamento.", href: "/transparencia/servidores", cor: "from-slate-700 to-slate-900", badge: "PESSOAL" },
+            { icon: Plane, titulo: "Diárias", desc: "Viagens e Passagens.", href: "/transparencia/diarias", cor: "from-sky-500 to-blue-600", badge: "DESPESA" },
+            { icon: Handshake, titulo: "Convênios", desc: "Parcerias e Acordos.", href: "/transparencia/convenios", cor: "from-pink-600 to-rose-700", badge: "EXTERNAL" },
+            { icon: Construction, titulo: "Obras", desc: "Fiscalização de Obras.", href: "/transparencia/obras", cor: "from-amber-700 to-orange-800", badge: "INFRA" },
         ]
     },
     {
-        tituloCategoria: "Transparência Fiscal e Contas Públicas",
+        tituloCategoria: "Legislação e Normas",
+        desc: "Base legal, decretos, portarias e regulamentações municipais.",
         modulos: [
-            { icon: FileBarChart, titulo: "Transparência Fiscal (LRF)", desc: "Relatórios de Gestão Fiscal e RREO.", href: "/transparencia/lrf", cor: "from-rose-400 to-red-600", badge: "LRF" },
-            { icon: Landmark, titulo: "PCG - Prestação de contas de governo", desc: "Contas anuais do chefe do executivo.", href: "/transparencia/pcg", cor: "from-blue-600 to-blue-800", badge: "PCG" },
-            { icon: ClipboardList, titulo: "PCS - Prestação de contas de gestão", desc: "Contas dos ordenadores de despesa.", href: "/transparencia/pcs", cor: "from-emerald-500 to-teal-700", badge: "PCS" },
-        ]
-    },
-    {
-        tituloCategoria: "Informações Institucionais",
-        modulos: [
-            { icon: Building2, titulo: "Dados Institucionais", desc: "História, localização e estrutura.", href: "/transparencia/institucional", cor: "from-slate-700 to-slate-900", badge: "Institucional" },
-            { icon: UserCircle2, titulo: "Prefeito e Vice-prefeito", desc: "Perfil e gabinete dos gestores.", href: "/transparencia/gestores", cor: "from-blue-700 to-indigo-900", badge: "Gabinete" },
-            { icon: Users2, titulo: "Secretarias Municipais", desc: "Estrutura administrativa e secretários.", href: "/secretarias", cor: "from-cyan-600 to-blue-700", badge: "Gestão" },
-            { icon: Globe, titulo: "Brasão, Hino e Bandeira", desc: "Símbolos oficiais do município.", href: "/transparencia/simbolos", cor: "from-emerald-500 to-green-600", badge: "Cultura" },
-            { icon: Users, titulo: "Conselhos e Membros", desc: "Conselhos municipais e composição.", href: "/transparencia/conselhos", cor: "from-indigo-500 to-purple-600", badge: "Participação" },
-            { icon: BookOpen, titulo: "Glossário", desc: "Termos técnicos da administração pública.", href: "/transparencia/glossario", cor: "from-slate-400 to-gray-500", badge: "Info" },
-            { icon: HelpCircle, titulo: "Perguntas e Respostas (FAQ)", desc: "Dúvidas frequentes da população.", href: "/transparencia/faq", cor: "from-blue-500 to-cyan-500", badge: "Acesso" },
-            { icon: MapPinned, titulo: "Mapa do Site", desc: "Índice de todas as páginas do portal.", href: "/mapa-do-site", cor: "from-slate-600 to-gray-700", badge: "Ajuda" },
-            { icon: Database, titulo: "Dados Abertos", desc: "Bases em formato aberto (CSV, JSON).", href: "/transparencia/dados-abertos", cor: "from-lime-400 to-green-500", badge: "Open Data" },
-            { icon: PhoneCall, titulo: "Contatos", desc: "Telefones e e-mails úteis.", href: "/contato", cor: "from-teal-500 to-emerald-600", badge: "Contato" },
-            { icon: Link2, titulo: "Associações", desc: "Entidades apoiadas e conveniadas.", href: "/transparencia/associacoes", cor: "from-orange-400 to-amber-500", badge: "Parceiros" },
-            { icon: TrendingUp, titulo: "Plano Estratégico Institucional", desc: "Metas e objetivos de longo prazo.", href: "/transparencia/plano-estrategico", cor: "from-blue-500 to-indigo-600", badge: "Planejamento" },
-            { icon: ClipboardList, titulo: "Pesquisa de Satisfação", desc: "Avalie os serviços prestados.", href: "/transparencia/pesquisa-satisfacao", cor: "from-pink-500 to-rose-600", badge: "Avaliação" },
-        ]
-    },
-    {
-        tituloCategoria: "Normas e Regulamentações",
-        modulos: [
-            { icon: Files, titulo: "Leis", desc: "Arcabouço legal do município.", href: "/transparencia/legislacao", cor: "from-indigo-500 to-purple-600", badge: "Leis" },
-            { icon: FileText, titulo: "Regulamentação das Diárias", desc: "Leis e normas sobre concessão de viagens.", href: "/transparencia/regulamentacao-diarias", cor: "from-slate-600 to-slate-800", badge: "Normas" },
-            { icon: Scale, titulo: "Parecer do Tribunal de Contas", desc: "Apreciação das contas anuais TCE.", href: "/transparencia/parecer-tce", cor: "from-teal-600 to-emerald-700", badge: "TCE" },
-            { icon: BarChart3, titulo: "Renúncias Fiscais", desc: "Isenções e anistias concedidas.", href: "/transparencia/renuncias-fiscais", cor: "from-orange-500 to-red-600", badge: "Receita" },
-            { icon: FileStack, titulo: "Relatório de Gestão e Atividades", desc: "Balanço das ações do executivo.", href: "/transparencia/relatorio-gestao", cor: "from-blue-500 to-cyan-600", badge: "Gestão" },
-            { icon: MonitorPlay, titulo: "Regulamentação de Governo Digital", desc: "Avanços na prestação de serviços digitais.", href: "/transparencia/governo-digital", cor: "from-purple-500 to-indigo-600", badge: "TI" },
-            { icon: ShieldCheck, titulo: "LGPD", desc: "Lei Geral de Proteção de Dados.", href: "/transparencia/lgpd", cor: "from-emerald-400 to-green-600", badge: "Privacidade" },
-            { icon: FileText, titulo: "Tabelas de Valores de Diárias", desc: "Limites e tetos para indenizações de viagens.", href: "/transparencia/tabela-diarias", cor: "from-slate-500 to-gray-600", badge: "Consulta" },
-        ]
-    },
-    {
-        tituloCategoria: "Saúde Pública",
-        modulos: [
-            { icon: HeartPulse, titulo: "Lista de Medicamentos SUS", desc: "Relação Municipal de Medicamentos Essenciais (REMUME).", href: "/transparencia/medicamentos-sus", cor: "from-rose-500 to-pink-600", badge: "Saúde" },
-            { icon: StethoscopeIcon, titulo: "Plano de Saúde", desc: "Plano Municipal de Saúde.", href: "/transparencia/plano-saude", cor: "from-teal-400 to-emerald-500", badge: "Planejamento" },
-            { icon: Building2, titulo: "Unidades de Saúde", desc: "Hospitais, UPAs e UBSs.", href: "/transparencia/unidades-saude", cor: "from-blue-500 to-indigo-600", badge: "Locais" },
-            { icon: Activity, titulo: "Central de Regulação", desc: "Fila de exames, consultas e cirurgias.", href: "/transparencia/central-regulacao", cor: "from-orange-400 to-red-500", badge: "Regulação" },
+            { icon: Files, titulo: "Leis", desc: "Legislação Municipal.", href: "/transparencia/leis", cor: "from-indigo-600 to-purple-700", badge: "LEGAL" },
+            { icon: FileText, titulo: "Decretos", desc: "Atos do Executivo.", href: "/transparencia/decretos", cor: "from-slate-600 to-slate-800", badge: "ATOS" },
+            { icon: ScrollText, titulo: "Portarias", desc: "Atos Administrativos.", href: "/transparencia/portarias", cor: "from-blue-600 to-blue-800", badge: "ADMIN" },
+            { icon: ShieldCheck, titulo: "LGPD", desc: "Proteção de Dados.", href: "/transparencia/lgpd", cor: "from-emerald-500 to-green-700", badge: "PRIVACIDADE" },
         ]
     }
 ];
 
-
 export default function TransparenciaPage() {
     const [linksExternos, setLinksExternos] = useState<any[]>([]);
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
         async function loadExternalLinks() {
@@ -133,133 +82,270 @@ export default function TransparenciaPage() {
         loadExternalLinks();
     }, []);
 
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+    };
+
+    const itemVariants = {
+        hidden: { y: 30, opacity: 0 },
+        visible: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 100, damping: 20 } }
+    };
+
+    // Filter modules based on search
+    const filteredCategories = categoriasDeModulos.map(cat => ({
+        ...cat,
+        modulos: cat.modulos.filter(m => 
+            m.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            m.desc.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            m.badge.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+    })).filter(cat => cat.modulos.length > 0);
+
     return (
         <div className="bg-[#f8fafc] min-h-screen font-['Montserrat',sans-serif]">
             <PageHeader
                 title="Portal da Transparência"
-                subtitle="Acesso integral aos dados públicos de Lajes Pintadas – RN, promovendo clareza e controle social."
+                subtitle="Acesso integral aos dados públicos, fiscalização social e prestação de contas de Lajes Pintadas/RN."
                 variant="premium"
-                icon={<Landmark />}
+                icon={<Landmark className="text-white" size={32} />}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
                     { label: "Transparência" }
                 ]}
             />
 
-            {/* Banner de Conformidade */}
-            <div className="relative overflow-hidden bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 py-8 px-6 shadow-inner">
-                <div className="absolute inset-0 opacity-10">
-                    <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl -ml-20 -mt-20" />
-                    <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-400 rounded-full blur-3xl -mr-20 -mb-20" />
-                </div>
-                <div className="max-w-[1240px] mx-auto relative z-10 flex flex-wrap items-center justify-center gap-4 text-white text-[10px] font-black uppercase tracking-wider">
-                    {["Lei 12.527/2011 (LAI)", "Lei Complementar 131/2009", "e-MAG", "WCAG 2.1 AA", "LGPD"].map((item) => (
-                        <motion.span 
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            key={item} 
-                            className="flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-md px-5 py-2.5 rounded-2xl"
+            {/* Hub Hero Search & Compliance */}
+            <div className="max-w-7xl mx-auto px-6 -mt-16 relative z-40 pb-20">
+                <motion.div 
+                    initial={{ scale: 0.95, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="bg-white rounded-[3rem] p-1 shadow-2xl shadow-slate-200/50 border border-slate-100 mb-16 overflow-hidden"
+                >
+                    <div className="flex flex-col lg:flex-row items-stretch">
+                        <div className="flex-1 p-8 lg:p-12 flex flex-col justify-center">
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="w-10 h-10 bg-orange-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-orange-600/20">
+                                    <Sparkles size={20} />
+                                </div>
+                                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-orange-600">Busca Inteligente</span>
+                            </div>
+                            <h1 className="text-4xl lg:text-5xl font-black text-slate-900 tracking-tighter leading-none mb-8">
+                                O que você deseja <br/><span className="text-slate-400 italic">consultar hoje?</span>
+                            </h1>
+                            <div className="relative group max-w-2xl">
+                                <div className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-orange-600 transition-colors">
+                                    <Search size={24} />
+                                </div>
+                                <input 
+                                    type="text" 
+                                    placeholder="Ex: Folha de Pagamento, Licitações, Receitas..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-[2rem] pl-16 pr-8 py-7 text-sm font-bold placeholder:text-slate-300 outline-none focus:ring-8 focus:ring-orange-600/5 focus:bg-white transition-all shadow-inner"
+                                />
+                                <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                                    <span className="hidden md:flex bg-slate-200 text-slate-500 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest">TRANSPARÊNCIA MUNICIPAL</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="lg:w-[400px] bg-slate-900 p-12 text-white relative flex flex-col justify-between overflow-hidden">
+                             <div className="absolute top-0 right-0 w-80 h-80 bg-orange-600/10 rounded-full blur-[100px] -mr-40 -mt-40" />
+                             <div className="relative z-10">
+                                 <div className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 mb-10 border-l-2 border-orange-600 pl-4">Conformidade Legal</div>
+                                 <div className="space-y-6">
+                                     {[
+                                         { label: "LAI - LEI 12.527/2011", status: "Auditado" },
+                                         { label: "LC 131/2009 (CAPIBERIBE)", status: "Ativo" },
+                                         { label: "RADAR TRANSPARÊNCIA", status: "GOLD" },
+                                         { label: "PNTP 2025 COMPLIANCE", status: "V2" },
+                                     ].map((item) => (
+                                         <div key={item.label} className="flex items-center justify-between border-b border-white/5 pb-4 group/item cursor-default hover:border-orange-600/30 transition-colors">
+                                             <span className="text-[10px] font-black tracking-widest text-white/50 group-hover/item:text-white transition-colors">{item.label}</span>
+                                             <Check className="text-emerald-400" size={12} />
+                                         </div>
+                                     ))}
+                                 </div>
+                             </div>
+                             <div className="relative z-10 mt-12">
+                                 <div className="flex items-center gap-4 px-6 py-4 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-md">
+                                     <div className="w-10 h-10 bg-orange-600 rounded-full flex items-center justify-center text-white shrink-0">
+                                         <ShieldAlert size={20} />
+                                     </div>
+                                     <p className="text-[9px] font-bold text-white/60 leading-tight uppercase tracking-widest">Dados atualizados conforme periodicidade legal.</p>
+                                 </div>
+                             </div>
+                        </div>
+                    </div>
+                </motion.div>
+
+                {/* Categories & Modules Grid */}
+                <div className="space-y-32">
+                    {filteredCategories.map((categoria, catIdx) => (
+                        <motion.section 
+                            key={categoria.tituloCategoria}
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true, margin: "-100px" }}
+                            variants={containerVariants}
                         >
-                            <Check size={12} className="text-emerald-400" /> {item}
-                        </motion.span>
+                            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16 border-b border-slate-100 pb-12">
+                                <div className="max-w-2xl">
+                                    <motion.div variants={itemVariants} className="flex items-center gap-4 mb-5">
+                                        <span className="px-5 py-2 bg-slate-900 text-white rounded-full text-[10px] font-black uppercase tracking-[0.3em] shadow-xl shadow-slate-900/20">0{catIdx + 1}</span>
+                                        <div className="h-0.5 w-12 bg-orange-600 rounded-full" />
+                                    </motion.div>
+                                    <motion.h2 variants={itemVariants} className="text-5xl font-black text-slate-900 tracking-tighter uppercase mb-4 leading-none italic">
+                                        {categoria.tituloCategoria}
+                                    </motion.h2>
+                                    <motion.p variants={itemVariants} className="text-slate-400 font-bold uppercase tracking-widest text-[11px] max-w-md leading-relaxed opacity-70">
+                                        {categoria.desc}
+                                    </motion.p>
+                                </div>
+                                <motion.div variants={itemVariants}>
+                                    <div className="flex items-center gap-3 px-6 py-3 bg-white rounded-2xl border border-slate-100 shadow-sm text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                                        <FileSearch size={14} className="text-orange-600" /> {categoria.modulos.length} Módulos Integrados
+                                    </div>
+                                </motion.div>
+                            </div>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                                {categoria.modulos.map((m, idx) => {
+                                    const identifier = m.href.split("/").pop()?.toLowerCase() || "";
+                                    const override = linksExternos.find((l: any) => 
+                                        l.moduloAlvo?.toLowerCase() === identifier
+                                    );
+                                    const finalHref = override ? override.url : m.href;
+                                    const isExternal = !!override;
+
+                                    return (
+                                        <motion.div
+                                            key={m.href}
+                                            variants={itemVariants}
+                                            whileHover={{ y: -10, transition: { duration: 0.4 } }}
+                                        >
+                                            <Link 
+                                                href={finalHref} 
+                                                target={isExternal ? "_blank" : undefined}
+                                                rel={isExternal ? "noopener noreferrer" : undefined}
+                                                className="group relative flex flex-col h-full bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] hover:shadow-[0_30px_60px_-15px_rgba(51,65,85,0.15)] hover:border-orange-600/20 transition-all duration-700 overflow-hidden"
+                                            >
+                                                {/* Header Visuality */}
+                                                <div className={`h-24 bg-gradient-to-br ${m.cor} relative p-6 flex items-start justify-end`}>
+                                                    <div className="absolute inset-0 bg-slate-900/10 backdrop-blur-[2px]" />
+                                                    <div className="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-10 group-hover:scale-150 transition-all duration-1000">
+                                                        <m.icon size={120} strokeWidth={1} />
+                                                    </div>
+                                                    <span className="relative z-10 px-4 py-1.5 bg-white/20 backdrop-blur-md rounded-xl text-[9px] font-black uppercase tracking-widest text-white border border-white/20 shadow-sm">
+                                                        {m.badge}
+                                                    </span>
+                                                </div>
+
+                                                {/* Floating Icon */}
+                                                <div className="absolute top-12 left-8 transition-transform duration-700 group-hover:-translate-y-2 group-hover:scale-110">
+                                                    <div className="w-16 h-16 bg-white rounded-2xl shadow-xl shadow-slate-200/50 flex items-center justify-center border border-slate-50 group-hover:shadow-orange-600/20 transition-all">
+                                                        <m.icon className="text-slate-900 group-hover:text-orange-600 transition-colors" size={28} />
+                                                    </div>
+                                                </div>
+
+                                                <div className="px-8 pt-10 pb-8 flex flex-col flex-1">
+                                                    <h3 className="text-xl font-black text-slate-900 group-hover:text-orange-600 transition-colors tracking-tighter leading-none mb-4 uppercase">
+                                                        {m.titulo}
+                                                    </h3>
+                                                    <p className="text-slate-400 text-[11px] font-bold uppercase tracking-widest leading-relaxed mb-10 opacity-80 grow line-clamp-3">
+                                                        {m.desc}
+                                                    </p>
+
+                                                    <div className="pt-6 border-t border-slate-50 mt-auto flex items-center justify-between">
+                                                        <span className="text-[9px] font-black uppercase tracking-[0.3em] text-orange-600 opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0 transition-all duration-500">
+                                                            ACESSAR BASE
+                                                        </span>
+                                                        <div className="w-10 h-10 rounded-2xl bg-slate-50 flex items-center justify-center group-hover:bg-slate-900 transition-all duration-500 group-hover:rotate-[360deg] shadow-inner group-hover:shadow-xl group-hover:shadow-slate-900/30">
+                                                            <ArrowRight size={18} className="text-slate-400 group-hover:text-white transition-colors" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                {isExternal && (
+                                                    <div className="absolute bottom-4 left-8">
+                                                        <span className="flex items-center gap-1.5 text-[8px] font-black text-blue-600 uppercase tracking-widest bg-blue-50 px-3 py-1 rounded-lg border border-blue-100">
+                                                            <ExternalLink size={8} /> PORTAL TERCEIRIZADO
+                                                        </span>
+                                                    </div>
+                                                )}
+                                            </Link>
+                                        </motion.div>
+                                    );
+                                })}
+                            </div>
+                        </motion.section>
                     ))}
                 </div>
             </div>
 
-            {/* Secões Categorizadas de Módulos */}
-            <div className="max-w-[1300px] mx-auto px-6 py-16 space-y-16">
-                {categoriasDeModulos.map((categoria, catIdx) => (
-                    <div key={categoria.tituloCategoria} className="relative">
-                        <div className="flex items-center gap-4 mb-8">
-                            <div className="w-8 h-1 bg-blue-600 rounded-full"></div>
-                            <h2 className="text-2xl font-black text-gray-800 uppercase tracking-tighter">
-                                {categoria.tituloCategoria}
-                            </h2>
+            {/* Hub Footer - Ultra Premium */}
+            <div className="relative py-32 overflow-hidden bg-slate-950 border-t border-slate-900">
+                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+                <div className="absolute inset-0 opacity-10 pointer-events-none">
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-orange-600/10 rounded-full blur-[150px]" />
+                </div>
+                
+                <div className="max-w-7xl mx-auto px-6 relative z-10">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+                        <div>
+                             <div className="flex items-center gap-4 mb-10">
+                                <Landmark className="text-white" size={48} />
+                                <div className="h-10 w-px bg-white/10" />
+                                <div className="text-left">
+                                    <div className="text-white font-black text-lg uppercase tracking-[0.3em] leading-none mb-1">Portal da Transparência</div>
+                                    <div className="text-white/30 text-[10px] uppercase font-bold tracking-[0.2em]">Lajes Pintadas - RN</div>
+                                </div>
+                            </div>
+                            <h4 className="text-3xl font-black text-white tracking-tighter uppercase mb-6 italic">
+                                Compromisso com o <br/> <span className="text-orange-600">Controle Social Ativo.</span>
+                            </h4>
+                            <p className="text-white/40 text-[11px] font-bold uppercase tracking-[0.2em] leading-loose max-w-lg mb-12 italic border-l border-white/10 pl-8">
+                                Em conformidade integral com as exigências do <span className="text-white/60">Programa Nacional de Transparência Pública (PNTP)</span>, asseguramos o livre acesso às informações institucionais e financeiras para todo cidadão.
+                            </p>
+                            <div className="flex gap-4">
+                                <Link href="/contato" className="px-8 py-4 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-white hover:bg-white hover:text-slate-950 transition-all active:scale-95 shadow-2xl">Suporte à Decisão</Link>
+                            </div>
                         </div>
-                        
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                            {categoria.modulos.map((m, idx) => {
-                                const identifier = m.href.split("/").pop()?.toLowerCase() || "";
-                                const override = linksExternos.find((l: any) => 
-                                    l.moduloAlvo?.toLowerCase() === identifier
-                                );
-                                const finalHref = override ? override.url : m.href;
-                                const isExternal = !!override;
 
-                                return (
-                                    <motion.div
-                                        key={m.href}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: idx * 0.05 }}
-                                    >
-                                        <Link 
-                                            href={finalHref} 
-                                            target={isExternal ? "_blank" : undefined}
-                                            rel={isExternal ? "noopener noreferrer" : undefined}
-                                            className="group block h-full"
-                                        >
-                                            <div className="relative h-full bg-white rounded-2xl border border-gray-100 shadow-xl shadow-gray-200/40 hover:shadow-2xl hover:shadow-blue-900/10 transition-all duration-500 group-hover:-translate-y-2 overflow-hidden">
-                                                {/* Efeito de Glossmorphism no Topo */}
-                                                <div className={`h-20 bg-gradient-to-br ${m.cor} relative overflow-hidden`}>
-                                                    <div className="absolute inset-0 bg-white/10 backdrop-blur-[2px]" />
-                                                    <div className="absolute -right-4 -top-4 w-20 h-20 bg-white/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
-                                                </div>
-
-                                                {/* Ícone sobreposto */}
-                                                <div className="absolute top-10 left-6">
-                                                    <div className="w-12 h-12 bg-white rounded-2xl shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-500 border border-gray-50">
-                                                        <m.icon className="text-gray-800 lg:group-hover:text-blue-600 transition-colors" size={24} strokeWidth={1.5} />
-                                                    </div>
-                                                </div>
-
-                                                <div className="pt-10 p-6 h-full flex flex-col">
-                                                    <div className="flex justify-between items-start mb-3">
-                                                        <h2 className="font-black text-gray-800 text-sm uppercase tracking-tight group-hover:text-blue-600 transition-colors">
-                                                            {m.titulo}
-                                                        </h2>
-                                                        <div className="flex flex-col items-end gap-1">
-                                                            <span className="text-[8px] font-black uppercase tracking-widest text-gray-400 bg-gray-50 px-2 py-0.5 rounded-lg border border-gray-100">
-                                                                {m.badge}
-                                                            </span>
-                                                            {isExternal && (
-                                                                <span className="bg-primary-500 text-white text-[7px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-md shadow-sm flex items-center gap-1 animate-pulse">
-                                                                    <ExternalLink size={7} /> Externo
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                    
-                                                    <p className="text-gray-500 text-[11px] leading-relaxed font-medium mb-6 grow">
-                                                        {m.desc}
-                                                    </p>
-
-                                                    <div className="flex items-center justify-between pt-3 border-t border-gray-50 mt-auto">
-                                                        <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-blue-500 group-hover:text-blue-700 transition-colors">
-                                                            {isExternal ? "Acessar Portal Externo" : "Ver Detalhes"}
-                                                            <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
-                                                        </div>
-                                                        {isExternal && <ExternalLink size={10} className="text-gray-300" />}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </Link>
-                                    </motion.div>
-                                );
-                            })}
+                        <div className="bg-white/5 rounded-[3rem] p-12 border border-white/5 backdrop-blur-md relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 p-10 opacity-10 group-hover:rotate-12 transition-transform duration-700">
+                                <ShieldCheck size={160} className="text-white" />
+                            </div>
+                            <h5 className="text-[12px] font-black text-white uppercase tracking-[0.3em] mb-10 flex items-center gap-3">
+                                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" /> Certificações de Acesso
+                            </h5>
+                            <div className="grid grid-cols-2 gap-8">
+                                {[
+                                    { label: "ACERVO DIGITAL", val: "LajesPintadas.gov" },
+                                    { label: "RADAR PNTP", status: "ATUALIZADO" },
+                                    { label: "FISCALIZAÇÃO", val: "TCE/RN" },
+                                    { label: "SINCRONIA", val: "REAL-TIME" },
+                                ].map((stat) => (
+                                    <div key={stat.label} className="border-l border-white/10 pl-6 group/stat cursor-default">
+                                        <p className="text-[9px] font-black text-white/20 uppercase tracking-widest mb-1 group-hover/stat:text-orange-600 transition-colors">{stat.label}</p>
+                                        <p className="text-[13px] font-black text-white/50 group-hover/stat:text-white transition-colors uppercase tracking-widest">{stat.val || stat.status}</p>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
-                ))}
-            </div>
-
-
-
-            {/* Rodapé Interno */}
-            <div className="bg-gray-50 py-12 border-t border-gray-100">
-                <div className="max-w-[1240px] mx-auto px-6 text-center">
-                    <p className="text-gray-400 text-[10px] font-black uppercase tracking-[0.4em]">
-                        Portal da Transparência © {new Date().getFullYear()} – Prefeitura de Lajes Pintadas / RN
-                    </p>
+                    
+                    <div className="mt-32 pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8">
+                        <p className="text-white/20 text-[10px] font-bold uppercase tracking-[0.3em]">
+                            © {new Date().getFullYear()} PREFEITURA DE LAJES PINTADAS/RN • CNPJ: 08.106.505/0001-24
+                        </p>
+                        <div className="flex gap-10">
+                            {["Privacidade", "Termos", "Ouvidoria"].map(l => (
+                                <Link key={l} href="#" className="text-white/20 hover:text-white transition-colors text-[9px] font-black uppercase tracking-widest">{l}</Link>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

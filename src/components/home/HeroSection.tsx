@@ -2,6 +2,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { HiMagnifyingGlass } from "react-icons/hi2";
+import Link from "next/link";
+
+const acessosRapidos = [
+    { label: "Licitações", href: "/transparencia/licitacoes" },
+    { label: "Concursos", href: "/transparencia/concursos" },
+    { label: "Diárias", href: "/transparencia/diarias" },
+    { label: "Notícias", href: "/noticias" },
+];
 
 export default function HeroSection() {
     const [searchTerm, setSearchTerm] = useState("");
@@ -9,8 +17,9 @@ export default function HeroSection() {
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
-        if (searchTerm.trim().length > 2) {
-            router.push(`/noticias`);
+        const trimmed = searchTerm.trim();
+        if (trimmed.length > 1) {
+            router.push(`/noticias?busca=${encodeURIComponent(trimmed)}`);
         }
     };
 
@@ -68,8 +77,22 @@ export default function HeroSection() {
                     </form>
                 </div>
 
+                {/* Quick access links */}
+                <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
+                    <span className="text-white/40 text-[10px] font-bold uppercase tracking-widest">Acesso rápido:</span>
+                    {acessosRapidos.map((item) => (
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            className="text-white/80 hover:text-white text-[10px] font-black uppercase tracking-widest border border-white/20 hover:border-white/50 bg-white/5 hover:bg-white/10 backdrop-blur-sm px-4 py-1.5 rounded-full transition-all"
+                        >
+                            {item.label}
+                        </Link>
+                    ))}
+                </div>
+
                 {/* Stats row */}
-                <div className="flex items-center gap-8 mt-12 text-white/60">
+                <div className="flex items-center gap-8 mt-8 text-white/40">
                     <div className="flex items-center gap-2">
                         <div className="w-1.5 h-1.5 rounded-full bg-secondary-400" />
                         <span className="text-[10px] font-black uppercase tracking-[0.25em]">Lajes Pintadas · RN</span>

@@ -114,7 +114,7 @@ model Diaria {
   dataFim        DateTime
   valor          Float
   valorUnitario  Float    @default(0)
-  quantidadeDias Int      @default(1)
+  quantidadeDias Float    @default(1)
   secretaria     String
   mes            Int
   ano            Int
@@ -465,4 +465,20 @@ model RelatorioFiscal {
   dataPublicacao  DateTime @default(now())
   criadoEm        DateTime @default(now())
   atualizadoEm    DateTime @updatedAt
+}
+
+model Pagamento {
+  id             String    @id @default(cuid())
+  ordem          Int
+  fornecedor     String
+  cnpj           String
+  descricao      String
+  valor          Float
+  dataEmpenho    DateTime
+  dataLiquidacao DateTime
+  dataPagamento  DateTime?
+  secretaria     String
+  status         String    @default("pendente")
+  criadoEm       DateTime  @default(now())
+  atualizadoEm   DateTime  @updatedAt
 }

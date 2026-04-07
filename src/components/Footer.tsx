@@ -57,6 +57,21 @@ export default async function Footer() {
     const email = await getConfig("contato_email", "contato@lajespintadas.rn.gov.br");
     const telefone = await getConfig("contato_telefone", "(84) 3000-0000");
     const razaoSocial = await getConfig("municipio_nome", "Prefeitura Municipal de Lajes Pintadas");
+    const whatsapp = await getConfig("contato_whatsapp", "");
+    const facebook = await getConfig("redes_facebook", "#");
+    const instagram = await getConfig("redes_instagram", "#");
+    const youtube = await getConfig("redes_youtube", "#");
+
+    const whatsappHref = whatsapp
+        ? `https://wa.me/55${whatsapp.replace(/\D/g, "")}`
+        : "#";
+
+    const socialLinks = [
+        { Icon: FaFacebook, href: facebook, color: "hover:bg-blue-600", label: "Facebook" },
+        { Icon: FaInstagram, href: instagram, color: "hover:bg-pink-600", label: "Instagram" },
+        { Icon: FaYoutube, href: youtube, color: "hover:bg-red-600", label: "YouTube" },
+        { Icon: FaWhatsapp, href: whatsappHref, color: "hover:bg-green-600", label: "WhatsApp" },
+    ];
 
     return (
         <footer className="bg-[#0088b9] text-blue-50/70" role="contentinfo">
@@ -164,16 +179,15 @@ export default async function Footer() {
                     <div className="flex items-center gap-6">
                         <span className="text-[10px] font-black uppercase tracking-widest text-blue-100/30">Mídias Sociais</span>
                         <div className="flex gap-4">
-                            {[
-                                { Icon: FaFacebook, href: "#", color: "hover:bg-blue-600" },
-                                { Icon: FaInstagram, href: "#", color: "hover:bg-pink-600" },
-                                { Icon: FaYoutube, href: "#", color: "hover:bg-red-600" },
-                                { Icon: FaWhatsapp, href: "#", color: "hover:bg-green-600" }
-                            ].map((social, i) => (
+                            {socialLinks.map((social) => (
                                 <a
-                                    key={i}
+                                    key={social.label}
                                     href={social.href}
-                                    className={`w-10 h-10 bg-white/5 rounded-2xl flex items-center justify-center transition-all duration-300 text-white/50 hover:text-white hover:scale-110 shadow-lg ${social.color}`}
+                                    target={social.href !== "#" ? "_blank" : undefined}
+                                    rel={social.href !== "#" ? "noopener noreferrer" : undefined}
+                                    aria-label={social.label}
+                                    title={social.label}
+                                    className={`w-10 h-10 bg-white/5 rounded-2xl flex items-center justify-center transition-all duration-300 text-white/50 hover:text-white hover:scale-110 shadow-lg ${social.color} ${social.href === "#" ? "opacity-30 cursor-default pointer-events-none" : ""}`}
                                 >
                                     <social.Icon size={18} />
                                 </a>

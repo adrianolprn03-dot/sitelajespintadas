@@ -60,13 +60,28 @@ export default function OrdemCronologicaClient() {
     const [statusFiltro, setStatusFiltro] = useState("");
 
     useEffect(() => {
-        setLoading(true);
-        // Em produção, isso seria um fetch para a API
-        setTimeout(() => {
-            setPagamentos(MOCK_DATA);
-            setLoading(false);
-        }, 600);
-    }, [ano, mes, statusFiltro]);
+        async function load() {
+            setLoading(true);
+            try {
+                const params = new URLSearchParams({
+                    ano,
+                    mes,
+                    status: statusFiltro,
+                    query: busca,
+                });
+                const res = await fetch(`/api/transparencia/ordem-cronologica?${params}`);
+                const data = await res.json();
+                if (data.items) {
+                    setPagamentos(data.items);
+                }
+            } catch (err) {
+                console.error("Erro ao carregar pagamentos:", err);
+            } finally {
+                setLoading(false);
+            }
+        }
+        load();
+    }, [ano, mes, statusFiltro, busca]);
 
     const filtrados = pagamentos.filter(p => {
         const b = busca.toLowerCase();

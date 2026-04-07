@@ -71,6 +71,7 @@ import AccessibilityToolbar from "./AccessibilityToolbar";
 export default function Header() {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const [openDropdown, setOpenDropdown] = useState<number | null>(null);
     const pathname = usePathname();
     const [logo, setLogo] = useState("/logo_oficial.png");
 
@@ -98,94 +99,119 @@ export default function Header() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    const dataAtual = new Date().toLocaleDateString('pt-BR', { 
-        weekday: 'long', 
-        day: '2-digit', 
-        month: 'long', 
-        year: 'numeric' 
-    }).replace(/^\w/, (c) => c.toUpperCase());
-
     return (
         <header className="w-full z-50 fixed top-0 left-0 right-0 transition-all duration-500">
             <AccessibilityToolbar />
 
-            {/* MAIN NAVBAR - FULL WIDTH STRIP */}
-            <div className={`w-full transition-all duration-500 flex items-center justify-between gap-8 px-4 md:px-10 lg:px-16 shadow-xl ${scrolled ? 'h-12 bg-white/80 backdrop-blur-2xl border-b border-primary-100 shadow-primary-900/5' : 'h-16 md:h-20 bg-white/60 backdrop-blur-xl border-b border-white shadow-none'} relative`}>
+            {/* MAIN NAVBAR */}
+            <div className={`w-full transition-all duration-500 flex items-center justify-between gap-8 px-4 md:px-10 lg:px-16 shadow-xl ${scrolled ? 'h-14 bg-white/90 backdrop-blur-2xl border-b border-primary-100 shadow-primary-900/5' : 'h-20 md:h-24 bg-white/80 backdrop-blur-xl border-b border-white/50 shadow-none'} relative`}>
                 {/* Logo */}
                 <div className="flex-shrink-0">
-                    <Link href="/" className="flex items-center">
+                    <Link href="/" className="flex items-center group">
                         <img
                             src={logo}
                             alt="Prefeitura de Lajes Pintadas"
-                            className="object-contain h-9 w-auto md:h-11"
+                            className="object-contain h-10 w-auto md:h-12 group-hover:scale-105 transition-transform duration-500"
                         />
                     </Link>
                 </div>
 
-                {/* Desktop Menu - Centered & Refined */}
-                <nav id="menu" className="hidden lg:flex items-center gap-1 justify-center">
-                    {[
-                        { label: "Serviços", href: "/servicos/saude" },
-                        { label: "Notícias", href: "/noticias" },
-                        { label: "Transparência", href: "/transparencia" },
-                        { label: "Símbolos", href: "/municipio/simbolos" },
-                        { label: "Ouvidoria", href: "/servicos/ouvidoria" },
-                        { label: "Contato", href: "/contato" }
-                    ].map((item, index) => {
+                {/* Desktop Menu */}
+                <nav className="hidden lg:flex items-center gap-1">
+                    {navItems.map((item, index) => {
                         const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
+                        const isDropdownOpen = openDropdown === index;
+
                         return (
-                            <Link
-                                key={index}
-                                href={item.href}
-                                className={`h-10 px-4 flex items-center text-[11px] font-black uppercase tracking-[0.2em] rounded-full transition-all duration-300 ${
-                                    isActive 
-                                    ? "text-primary-600 bg-primary-50" 
-                                    : "text-primary-900 hover:text-primary-500 hover:bg-gray-50"
-                                }`}
+                            <div 
+                                key={index} 
+                                className="relative py-4"
+                                onMouseEnter={() => setOpenDropdown(index)}
+                                onMouseLeave={() => setOpenDropdown(null)}
                             >
-                                {item.label}
-                            </Link>
+                                <Link
+                                    href={item.href}
+                                    className={`h-10 px-5 flex items-center text-[10.5px] font-black uppercase tracking-[0.15em] rounded-full transition-all duration-300 ${
+                                        isActive 
+                                        ? "text-primary-600 bg-primary-50" 
+                                        : "text-primary-900 hover:text-primary-500 hover:bg-gray-50"
+                                    }`}
+                                >
+                                    {item.label}
+                                    {item.children && <ChevronDown />}
+                                </Link>
+
+                                {/* Dropdown Menu */}
+                                {item.children && isDropdownOpen && (
+                                    <div className="absolute top-full left-0 pt-2 w-64 animate-dropdown-fade">
+                                        <div className="bg-white/95 backdrop-blur-xl rounded-[2rem] p-4 shadow-2xl shadow-primary-900/10 border border-primary-50 overflow-hidden">
+                                            {item.children.map((sub, sIndex) => (
+                                                <Link
+                                                    key={sIndex}
+                                                    href={sub.href}
+                                                    className="flex items-center gap-3 px-4 py-3 rounded-2xl text-[10px] font-bold text-gray-600 hover:text-primary-600 hover:bg-primary-50 transition-all group/sub"
+                                                >
+                                                    <div className="w-1.5 h-1.5 rounded-full bg-primary-200 group-hover/sub:bg-primary-500 transition-colors" />
+                                                    <span className="uppercase tracking-widest">{sub.label}</span>
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         );
                     })}
+                    <Link
+                        href="/contato"
+                        className="h-10 px-5 flex items-center text-[10.5px] font-black uppercase tracking-[0.2em] text-primary-900 hover:text-primary-500 hover:bg-gray-50 rounded-full transition-all"
+                    >
+                        Contato
+                    </Link>
                 </nav>
 
-                {/* Profile/User Icon (Mockup style) */}
-                <div className="flex items-center justify-end shrink-0 gap-4">
+                <div className="flex items-center gap-4">
                     <Link href="/admin" className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-50 text-gray-400 hover:bg-primary-500 hover:text-white transition-all shadow-inner border border-gray-100">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                     </Link>
                     
                     <button 
                         onClick={() => setMobileOpen(!mobileOpen)} 
                         className="lg:hidden w-10 h-10 flex items-center justify-center rounded-full bg-primary-500 text-white hover:bg-primary-600 transition-all shadow-lg"
-                        aria-label="Toggle Menu"
                     >
                         {mobileOpen ? <HiOutlineXMark size={24} /> : <HiOutlineBars3 size={24} />}
                     </button>
                 </div>
             </div>
 
-            {/* Mobile Dropdown Menu - Simplified */}
+            {/* Mobile Menu */}
             {mobileOpen && (
-                <div className="lg:hidden mt-4 glass-light rounded-[2.5rem] shadow-2xl max-h-[70vh] overflow-y-auto w-full p-6 border border-white/50 animate-fade-in-up">
-                    <div className="grid grid-cols-1 gap-3">
-                        {[
-                            { label: "Serviços", href: "/servicos/saude" },
-                            { label: "Notícias", href: "/noticias" },
-                            { label: "Transparência", href: "/transparencia" },
-                            { label: "Ouvidoria", href: "/servicos/ouvidoria" },
-                            { label: "Contato", href: "/contato" }
-                        ].map((item, index) => (
-                            <Link
-                                key={index}
-                                href={item.href}
-                                onClick={() => setMobileOpen(false)}
-                                className="flex items-center justify-between p-5 text-gray-800 font-black uppercase tracking-[0.25em] text-[11px] bg-white border border-gray-100 rounded-3xl shadow-sm hover:border-primary-400 transition-all"
-                            >
-                                {item.label}
-                                <span className="text-primary-500">→</span>
-                            </Link>
+                <div className="lg:hidden fixed inset-0 top-[110px] bg-white/95 backdrop-blur-xl z-40 overflow-y-auto animate-fade-in px-6 py-10">
+                    <div className="flex flex-col gap-8">
+                        {navItems.map((item, index) => (
+                            <div key={index} className="flex flex-col gap-4">
+                                <div className="text-[9px] font-black uppercase tracking-[0.3em] text-primary-300 px-2">{item.label}</div>
+                                <div className="grid grid-cols-1 gap-2">
+                                    {(item.children || [{ label: item.label, href: item.href }]).map((sub, sIdx) => (
+                                        <Link
+                                            key={sIdx}
+                                            href={sub.href}
+                                            onClick={() => setMobileOpen(false)}
+                                            className="flex items-center justify-between p-5 text-primary-900 font-black uppercase tracking-[0.25em] text-[10px] bg-white border border-primary-50 rounded-3xl shadow-sm hover:border-primary-400 transition-all underline-offset-4"
+                                        >
+                                            {sub.label}
+                                            <span className="text-primary-500">→</span>
+                                        </Link>
+                                    ))}
+                                </div>
+                            </div>
                         ))}
+                        <Link
+                            href="/contato"
+                            onClick={() => setMobileOpen(false)}
+                            className="bg-primary-600 text-white text-center p-6 rounded-[2.5rem] font-black uppercase tracking-widest text-xs shadow-xl shadow-primary-500/20"
+                        >
+                            Falar com a Prefeitura
+                        </Link>
                     </div>
                 </div>
             )}

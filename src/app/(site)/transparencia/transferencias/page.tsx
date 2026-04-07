@@ -1,21 +1,37 @@
+"use client";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { FaExchangeAlt, FaExternalLinkAlt, FaInfoCircle, FaHospital, FaSchool, FaMoneyCheckAlt, FaBuilding, FaSync } from "react-icons/fa";
+import { 
+    FaExchangeAlt, FaExternalLinkAlt, FaInfoCircle, FaHospital, 
+    FaSchool, FaMoneyCheckAlt, FaBuilding, FaSync, FaGlobeAmericas,
+    FaArrowRight, FaShieldHalved
+} from "react-icons/fa6";
+import { motion, AnimatePresence } from "framer-motion";
 import PageHeader from "@/components/PageHeader";
 import ListaTransferenciasFederal from "@/components/transparencia/integracao/ListaTransferenciasFederal";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
 
-export const metadata: Metadata = {
-    title: "Transferências e Emendas | Prefeitura de Lajes Pintadas – RN",
-    description: "Consulta às transferências constitucionais, convênios estaduais, federais e repasses de emendas parlamentares ao município.",
-};
-
 export default function TransferenciasPage() {
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: { staggerChildren: 0.1 }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, scale: 0.95 },
+        visible: { opacity: 1, scale: 1 }
+    };
+
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-[#fcfdfe] font-['Montserrat',sans-serif]">
             <PageHeader
-                title="Transferências Constitucionais"
-                subtitle="Acompanhe os recursos estaduais e federais repassados para Lajes Pintadas, bem como as emendas parlamentares."
+                title="Transferências e Repasses"
+                subtitle="Acompanhe os recursos fiscais, constitucionais e legais repassados pela União e pelo Estado ao nosso município."
+                variant="premium"
+                icon={<FaExchangeAlt />}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
                     { label: "Transparência", href: "/transparencia" },
@@ -23,159 +39,195 @@ export default function TransferenciasPage() {
                 ]}
             />
 
-            <div className="max-w-[1200px] mx-auto px-6 py-16">
+            <motion.div 
+                initial="hidden"
+                animate="visible"
+                variants={containerVariants}
+                className="max-w-[1280px] mx-auto px-6 py-12 -mt-12 relative z-30"
+            >
+                {/* Intro Bento Box - Premium Context */}
+                <motion.div variants={itemVariants} className="mb-16">
+                    <div className="bg-white rounded-[2.5rem] border border-slate-100 p-10 lg:p-12 shadow-2xl shadow-slate-200/50 flex flex-col lg:flex-row gap-12 items-center relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-12 opacity-[0.02] group-hover:scale-110 transition-transform duration-1000">
+                            <FaGlobeAmericas size={240} />
+                        </div>
+                        
+                        <div className="w-24 h-24 shrink-0 bg-blue-600 text-white rounded-[2rem] flex items-center justify-center shadow-2xl shadow-blue-500/30 relative z-10">
+                            <FaExchangeAlt size={40} />
+                        </div>
+                        <div className="relative z-10 flex-1">
+                            <div className="flex items-center gap-3 mb-4">
+                                <span className="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] bg-blue-50 px-4 py-1.5 rounded-full border border-blue-100">Transparência Ativa</span>
+                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Lei Complementar 131/2009</span>
+                            </div>
+                            <h2 className="text-3xl font-black text-slate-800 uppercase tracking-tighter mb-4 leading-none">Recursos Externos Aplicados</h2>
+                            <p className="text-slate-500 leading-relaxed font-bold italic text-sm max-w-4xl">
+                                Disponibilizamos canais diretos e integração em tempo real para consulta das transferências constitucionais e legais. Acesse os painéis oficiais da União e do Estado para total fidedignidade da aplicação do orçamento público.
+                            </p>
+                        </div>
+                    </div>
+                </motion.div>
                 
-                {/* Dashboard de Transferências Federais (CGU) */}
-                <div className="mb-20">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
-                        <h2 className="text-sm font-black text-primary-600 uppercase tracking-[0.3em] flex items-center gap-3">
-                            <span className="w-12 h-px bg-primary-600" /> Repasses Federais em Tempo Real (CGU)
-                        </h2>
-                        <div className="flex items-center gap-3 bg-emerald-50 text-emerald-700 px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-emerald-100 shadow-sm">
-                            <FaSync className="animate-spin-slow" /> Sincronizado com API Oficial da União
+                {/* Dashboard de Transferências Federais (CGU) - Integração Premium */}
+                <motion.div variants={itemVariants} className="mb-24">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12">
+                        <div>
+                            <h2 className="text-sm font-black text-slate-800 uppercase tracking-[0.3em] flex items-center gap-4">
+                                <span className="w-12 h-1 bg-blue-600 rounded-full" /> Sincronização CGU (União)
+                            </h2>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2 ml-16 italic">Repasses federais consolidados em tempo real</p>
+                        </div>
+                        <div className="flex items-center gap-4 bg-emerald-50 text-emerald-700 px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-emerald-100 shadow-xl shadow-emerald-700/5 transition-all hover:scale-105 duration-500">
+                            <FaSync className="animate-spin-slow" /> Repasses da União Sincronizados
                         </div>
                     </div>
                     
-                    <ListaTransferenciasFederal />
-                </div>
-
-                {/* Intro */}
-                <div className="bg-white rounded-2xl border border-gray-100 p-8 shadow-sm mb-12 flex flex-col md:flex-row gap-8 items-center">
-                    <div className="w-16 h-16 shrink-0 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center border border-blue-100">
-                        <FaExchangeAlt size={32} />
+                    <div className="bg-white/40 backdrop-blur-xl rounded-[3rem] p-1 border border-slate-100/50 shadow-inner">
+                        <ListaTransferenciasFederal />
                     </div>
-                    <div>
-                        <h2 className="text-xl font-bold text-gray-800 mb-3">Recursos Externos Aplicados no Município</h2>
-                        <p className="text-gray-600 leading-relaxed text-sm">
-                            Em conformidade com a <strong>Lei Complementar nº 131/2009 (Lei da Transparência)</strong>, disponibilizamos os canais diretos para consulta das transferências de recursos da União e do Estado. Você também pode consultar as verbas provenientes de Emendas Parlamentares destinadas à Prefeitura de Lajes Pintadas.
-                        </p>
-                    </div>
-                </div>
+                </motion.div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {/* Transferências Federais */}
-                    <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-green-50 rounded-bl-full -z-0 opacity-50 group-hover:scale-110 transition-transform"></div>
+                {/* Hub de Portais Externos - Bento Grid Premium */}
+                <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-24">
+                    {/* Governo Federal */}
+                    <div className="lg:col-span-2 bg-white rounded-[2.5rem] border border-slate-100 p-10 shadow-xl shadow-slate-200/50 hover:shadow-emerald-500/10 transition-all duration-700 hover:border-emerald-100 group flex flex-col relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-50 rounded-bl-[10rem] -z-0 opacity-50 group-hover:scale-110 transition-transform duration-1000"></div>
                         
                         <div className="relative z-10 flex flex-col h-full">
-                            <div className="flex items-center gap-3 mb-6">
-                                <div className="p-3 bg-green-100 text-green-700 rounded-xl">
+                            <div className="flex items-center gap-4 mb-8">
+                                <div className="p-4 bg-emerald-500 text-white rounded-2xl shadow-xl shadow-emerald-500/20">
                                     <FaBuilding size={24} />
                                 </div>
-                                <h3 className="font-bold text-lg text-gray-800">Governo Federal</h3>
+                                <div>
+                                    <h3 className="font-black text-lg text-slate-800 uppercase tracking-tighter">Portal da União</h3>
+                                    <p className="text-[9px] font-bold text-emerald-600 uppercase tracking-widest leading-none mt-1">Dados Consolidados CGU</p>
+                                </div>
                             </div>
                             
-                            <p className="text-sm text-gray-600 mb-6 flex-1">
-                                Consulte os repasses constitucionais e legais do Governo Federal, incluindo FPM, Fundeb, ITR e Royalties. A consulta é em tempo real pelo Portal da Transparência da CGU.
+                            <p className="text-sm text-slate-500 mb-10 flex-1 font-bold italic leading-relaxed">
+                                Repasses constitucionais: FPM, Fundeb, ITR e Royalties. Acesso direto ao histórico completo do Governo Federal.
                             </p>
                             
                             <a 
                                 href="https://portaldatransparencia.gov.br/transferencias" 
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center justify-between bg-gray-50 hover:bg-green-50 text-gray-700 hover:text-green-700 font-bold px-6 py-4 rounded-xl transition-colors border border-gray-200 hover:border-green-200"
+                                className="h-16 flex items-center justify-between bg-slate-900 hover:bg-emerald-600 text-white font-black px-8 rounded-2xl transition-all duration-500 shadow-xl shadow-slate-200 text-[10px] uppercase tracking-widest group/btn"
                             >
-                                Acessar Portal CGU <FaExternalLinkAlt />
+                                Acessar Portal CGU <FaExternalLinkAlt className="group-hover/btn:rotate-12 transition-transform" />
                             </a>
                         </div>
                     </div>
 
                     {/* FNS / Saúde */}
-                    <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full -z-0 opacity-50 group-hover:scale-110 transition-transform"></div>
+                    <div className="bg-white rounded-[2.5rem] border border-slate-100 p-10 shadow-xl shadow-slate-200/50 hover:shadow-blue-500/10 transition-all duration-700 hover:border-blue-100 group flex flex-col relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-[5rem] -z-0 opacity-50 group-hover:scale-110 transition-transform duration-1000"></div>
                         
                         <div className="relative z-10 flex flex-col h-full">
-                            <div className="flex items-center gap-3 mb-6">
-                                <div className="p-3 bg-blue-100 text-blue-700 rounded-xl">
+                            <div className="flex items-center gap-4 mb-8">
+                                <div className="p-4 bg-blue-500 text-white rounded-2xl shadow-xl shadow-blue-500/20">
                                     <FaHospital size={24} />
                                 </div>
-                                <h3 className="font-bold text-lg text-gray-800">Fundo Nacional de Saúde (FNS)</h3>
+                                <h3 className="font-black text-lg text-slate-800 uppercase tracking-tighter">Fundo Saúde</h3>
                             </div>
                             
-                            <p className="text-sm text-gray-600 mb-6 flex-1">
-                                Confira todos os repasses do Fundo Nacional de Saúde efetuados diretamente para o Fundo Municipal de Saúde de Lajes Pintadas (Blocos de Custeio e Investimento).
+                            <p className="text-xs text-slate-500 mb-10 flex-1 font-bold italic leading-relaxed">
+                                Blocos de custeio e investimento do Fundo Nacional de Saúde (FNS).
                             </p>
                             
                             <a 
                                 href="https://portalfns.saude.gov.br/" 
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center justify-between bg-gray-50 hover:bg-blue-50 text-gray-700 hover:text-blue-700 font-bold px-6 py-4 rounded-xl transition-colors border border-gray-200 hover:border-blue-200"
+                                className="h-14 flex items-center justify-between bg-white hover:bg-blue-50 text-slate-700 hover:text-blue-700 font-black px-6 rounded-2xl transition-all border border-slate-100 hover:border-blue-200 text-[9px] uppercase tracking-widest"
                             >
-                                Acessar Portal FNS <FaExternalLinkAlt />
+                                Acessar FNS <FaExternalLinkAlt />
                             </a>
                         </div>
                     </div>
 
                     {/* FNDE / Educação */}
-                    <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-amber-50 rounded-bl-full -z-0 opacity-50 group-hover:scale-110 transition-transform"></div>
+                    <div className="bg-white rounded-[2.5rem] border border-slate-100 p-10 shadow-xl shadow-slate-200/50 hover:shadow-amber-500/10 transition-all duration-700 hover:border-amber-100 group flex flex-col relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-amber-50 rounded-bl-[5rem] -z-0 opacity-50 group-hover:scale-110 transition-transform duration-1000"></div>
                         
                         <div className="relative z-10 flex flex-col h-full">
-                            <div className="flex items-center gap-3 mb-6">
-                                <div className="p-3 bg-amber-100 text-amber-700 rounded-xl">
+                            <div className="flex items-center gap-4 mb-8">
+                                <div className="p-4 bg-amber-500 text-white rounded-2xl shadow-xl shadow-amber-500/20">
                                     <FaSchool size={24} />
                                 </div>
-                                <h3 className="font-bold text-lg text-gray-800">Fundo de Desenvolvimento (FNDE)</h3>
+                                <h3 className="font-black text-lg text-slate-800 uppercase tracking-tighter">FNDE Educ.</h3>
                             </div>
                             
-                            <p className="text-sm text-gray-600 mb-6 flex-1">
-                                Liberação de recursos federais destinados a programas da educação, como Merenda Escolar (PNAE), Transporte Escolar (PNATE), PDDE e Caminho da Escola.
+                            <p className="text-xs text-slate-500 mb-10 flex-1 font-bold italic leading-relaxed">
+                                Merenda, Transporte Escolar, PDDE e recursos do Caminho da Escola.
                             </p>
                             
                             <a 
                                 href="https://www.fnde.gov.br/liberacaoderecursos/" 
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center justify-between bg-gray-50 hover:bg-amber-50 text-gray-700 hover:text-amber-700 font-bold px-6 py-4 rounded-xl transition-colors border border-gray-200 hover:border-amber-200"
+                                className="h-14 flex items-center justify-between bg-white hover:bg-amber-50 text-slate-700 hover:text-amber-700 font-black px-6 rounded-2xl transition-all border border-slate-100 hover:border-amber-200 text-[9px] uppercase tracking-widest"
                             >
                                 Acessar FNDE <FaExternalLinkAlt />
                             </a>
                         </div>
                     </div>
+                </motion.div>
 
-                    {/* Emendas Parlamentares */}
-                    <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-purple-50 rounded-bl-full -z-0 opacity-50 group-hover:scale-110 transition-transform"></div>
-                        
-                        <div className="relative z-10 flex flex-col h-full">
-                            <div className="flex items-center gap-3 mb-6">
-                                <div className="p-3 bg-purple-100 text-purple-700 rounded-xl">
-                                    <FaMoneyCheckAlt size={24} />
-                                </div>
-                                <h3 className="font-bold text-lg text-gray-800">Emendas Parlamentares</h3>
+                {/* Emendas e Alerta Legal */}
+                <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Emendas Parlamentares - Destaque */}
+                    <div className="lg:col-span-2 bg-gradient-to-br from-indigo-900 to-slate-900 rounded-[2.5rem] p-10 lg:p-12 text-white shadow-2xl shadow-indigo-900/10 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-12 opacity-10 group-hover:scale-110 transition-transform">
+                            <FaMoneyCheckAlt size={160} />
+                        </div>
+                        <div className="relative z-10">
+                            <div className="flex items-center gap-2 mb-6">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                <span className="text-[10px] font-black text-indigo-200 uppercase tracking-[0.3em]">Painel de Investimentos Externos</span>
                             </div>
-                            
-                            <p className="text-sm text-gray-600 mb-6 flex-1">
-                                Painel Nacional que detalha a destinação, tipo e valor de recursos indicados por Deputados (Estaduais e Federais) e Senadores para aplicação direta no município.
+                            <h3 className="text-3xl font-black uppercase tracking-tighter mb-4">Emendas Parlamentares</h3>
+                            <p className="text-indigo-100/60 leading-relaxed font-bold italic text-sm mb-10 max-w-2xl">
+                                Detalhamento dos recursos indicados por Deputados e Senadores para aplicação direta no município de Lajes Pintadas.
                             </p>
-                            
-                            <a 
-                                href="https://portaldatransparencia.gov.br/emendas" 
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center justify-between bg-gray-50 hover:bg-purple-50 text-gray-700 hover:text-purple-700 font-bold px-6 py-4 rounded-xl transition-colors border border-gray-200 hover:border-purple-200"
-                            >
-                                Painel de Emendas <FaExternalLinkAlt />
-                            </a>
+                            <div className="flex flex-wrap gap-4">
+                                <a 
+                                    href="https://portaldatransparencia.gov.br/emendas" 
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="h-16 inline-flex items-center gap-4 bg-white text-slate-900 px-10 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-indigo-50 transition-all shadow-xl group/btn"
+                                >
+                                    Ver Painel Completo <FaArrowRight className="group-hover/btn:translate-x-1 transition-transform" />
+                                </a>
+                                <Link 
+                                    href="/transparencia/emendas" 
+                                    className="h-16 inline-flex items-center gap-4 bg-indigo-500/20 backdrop-blur-md text-white px-10 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-indigo-500/40 transition-all border border-indigo-400/20"
+                                >
+                                    Filtro Local Municipal
+                                </Link>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div className="mt-8 bg-blue-50 border border-blue-100 rounded-xl p-6 flex items-start gap-4">
-                    <FaInfoCircle className="text-blue-500 text-xl mt-0.5 shrink-0" />
-                    <div>
-                        <h4 className="font-bold text-gray-800 mb-1">Nota sobre os dados</h4>
-                        <p className="text-sm text-gray-600">
-                            A Prefeitura Municipal direciona o cidadão aos painéis originais e atualizados da União e do Estado para garantir total fidedignidade, em tempo real, da aplicação do dinheiro público (art. 48, LC 101/00). Convênios municipais específicos firmados pela prefeitura podem ser consultados na aba <Link href="/transparencia/convenios" className="text-blue-600 font-bold hover:underline">Convênios</Link>.
+                    {/* Nota de Segurança/Legalidade */}
+                    <div className="bg-slate-50 border border-slate-100 rounded-[2.5rem] p-10 flex flex-col items-center justify-center text-center group">
+                        <div className="w-20 h-20 bg-white rounded-[2rem] flex items-center justify-center mb-8 shadow-xl shadow-slate-200 group-hover:scale-110 transition-transform">
+                            <FaShieldHalved className="text-blue-600" size={32} />
+                        </div>
+                        <h4 className="font-black text-slate-800 uppercase tracking-tighter text-lg mb-4">Conformidade Legal</h4>
+                        <p className="text-[11px] text-slate-500 font-bold italic leading-relaxed">
+                            Direcionamos o cidadão aos painéis originais da União/Estado conforme o Art. 48 da LC 101/00, garantindo fidedignidade absoluta.
                         </p>
+                        <div className="mt-8 flex items-center gap-2 text-[9px] font-black text-blue-600 uppercase tracking-widest">
+                            <FaInfoCircle /> Base de Dados Atualizada
+                        </div>
                     </div>
-                </div>
+                </motion.div>
 
-                <div className="mt-24 pb-12">
+                <motion.div variants={itemVariants} className="mt-24">
                     <BannerPNTP />
-                </div>
-            </div>
+                </motion.div>
+            </motion.div>
         </div>
     );
 }
