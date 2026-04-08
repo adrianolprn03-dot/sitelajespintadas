@@ -8,6 +8,7 @@ import { HiOutlineCloud, HiOutlineBars3, HiOutlineXMark } from "react-icons/hi2"
 import BuscaGlobal from "./BuscaGlobal";
 
 const navItems = [
+    { label: "Início", href: "/", hasDropdown: false },
     {
         label: "O Município", href: "/a-prefeitura", hasDropdown: true,
         children: [

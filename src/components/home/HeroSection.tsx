@@ -13,6 +13,7 @@ const acessosRapidos = [
 
 export default function HeroSection() {
     const [searchTerm, setSearchTerm] = useState("");
+    const [videoError, setVideoError] = useState(false);
     const router = useRouter();
 
     const handleSearch = (e: React.FormEvent) => {
@@ -25,13 +26,25 @@ export default function HeroSection() {
 
     return (
         <section className="relative w-full min-h-[88vh] flex items-center justify-center overflow-hidden">
-            {/* Background Image */}
+            {/* Background Video/Image */}
             <div className="absolute inset-0 z-0 overflow-hidden">
-                <img
-                    src="/images/hero-bg.jpg"
-                    alt="Vista aérea de Lajes Pintadas"
-                    className="w-full h-full object-cover scale-105"
-                />
+                {!videoError ? (
+                    <video
+                        src="https://webnets.com.br/arquitetura/Videos/clientes/cocal.mov"
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        onError={() => setVideoError(true)}
+                        className="w-full h-full object-cover scale-110"
+                    />
+                ) : (
+                    <img
+                        src="/images/hero-bg.jpg"
+                        alt="Vista aérea de Lajes Pintadas"
+                        className="w-full h-full object-cover scale-105"
+                    />
+                )}
                 <div className="absolute inset-0 hero-gradient" />
             </div>
 
