@@ -30,7 +30,7 @@ export default function HeroSection() {
             <div className="absolute inset-0 z-0 overflow-hidden">
                 {!videoError ? (
                     <video
-                        src="/vídeo_lajes_pintadas.mp4"
+                        src="/video_lajes_pintadas.mp4"
                         autoPlay
                         muted
                         loop
