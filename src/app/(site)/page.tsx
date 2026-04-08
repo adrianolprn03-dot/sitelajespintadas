@@ -18,6 +18,7 @@ export default function Home() {
         <main>
             <HeroSection />
             <ServicosRapidos />
+            <VideoHero />
             <UltimasNoticias />
             <AcessoRapido />
             <UnidadesAtendimento />
