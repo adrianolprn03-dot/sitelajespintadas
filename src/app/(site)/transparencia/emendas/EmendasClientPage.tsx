@@ -3,8 +3,9 @@ import { useState, useMemo } from "react";
 import { 
     FaSearch, FaFilter, FaTimes, FaDownload, 
     FaExternalLinkAlt, FaChevronRight, FaFileInvoiceDollar, 
-    FaCalendarAlt, FaUserTie, FaBuildingColumns, FaTags
-} from "react-icons/fa6";
+    FaCalendarAlt, FaUserTie, FaTags
+} from "react-icons/fa";
+import { FaBuildingColumns } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
 
 type Emenda = {

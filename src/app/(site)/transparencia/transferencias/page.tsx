@@ -4,8 +4,9 @@ import Link from "next/link";
 import { 
     FaExchangeAlt, FaExternalLinkAlt, FaInfoCircle, FaHospital, 
     FaSchool, FaMoneyCheckAlt, FaBuilding, FaSync, FaGlobeAmericas,
-    FaArrowRight, FaShieldHalved
-} from "react-icons/fa6";
+    FaArrowRight
+} from "react-icons/fa";
+import { FaShieldHalved } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
 import PageHeader from "@/components/PageHeader";
 import ListaTransferenciasFederal from "@/components/transparencia/integracao/ListaTransferenciasFederal";

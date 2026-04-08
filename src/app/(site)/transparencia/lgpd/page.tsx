@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
-import { FaShieldAlt, FaUserShield, FaServer, FaBalanceScale, FaCheckCircle, FaLock, FaUserCheck, FaScaleBalanced } from "react-icons/fa6";
+import { FaShieldAlt, FaUserShield, FaServer, FaBalanceScale, FaCheckCircle, FaLock, FaUserCheck } from "react-icons/fa";
+import { FaScaleBalanced } from "react-icons/fa6";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
 
 export const metadata: Metadata = {

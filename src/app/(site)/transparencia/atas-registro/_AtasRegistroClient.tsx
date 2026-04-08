@@ -1,10 +1,12 @@
 "use client";
 import { useState, useEffect } from "react";
 import { 
-    FaFileSignature, FaSpinner, FaCalendarAlt, FaBuilding, 
+    FaSpinner, FaCalendarAlt, FaBuilding, 
     FaDownload, FaSearch, FaCheckCircle, FaTimesCircle,
-    FaArrowRight, FaMagnifyingGlass, FaBriefcase, FaWallet,
-    FaFileLines
+    FaArrowRight, FaBriefcase, FaWallet
+} from "react-icons/fa";
+import {
+    FaFileSignature, FaMagnifyingGlass, FaFileLines
 } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
 import PageHeader from "@/components/PageHeader";

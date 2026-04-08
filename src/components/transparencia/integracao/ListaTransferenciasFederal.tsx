@@ -4,7 +4,8 @@ import {
     TrendingUp, Calendar, Landmark, ExternalLink, 
     Loader2, AlertCircle, Search, ChevronLeft, ChevronRight 
 } from "lucide-react";
-import { FaLandmark, FaCalendarAlt, FaChartLine, FaRegClock } from "react-icons/fa6";
+import { FaLandmark, FaChartLine, FaRegClock } from "react-icons/fa6";
+import { FaCalendarAlt } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Transferencia {

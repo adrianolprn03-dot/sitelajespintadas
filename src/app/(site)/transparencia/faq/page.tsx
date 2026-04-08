@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import PageHeader from "@/components/PageHeader";
-import { FaQuestionCircle, FaChevronDown, FaLightbulb, FaHeadset, FaFileLines, FaMagnifyingGlass } from "react-icons/fa6";
+import { FaChevronDown, FaLightbulb, FaHeadset, FaFileLines, FaMagnifyingGlass } from "react-icons/fa6";
+import { FaQuestionCircle } from "react-icons/fa";
 import ExportButtons from "@/components/transparencia/ExportButtons";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
 import type { Metadata } from "next";

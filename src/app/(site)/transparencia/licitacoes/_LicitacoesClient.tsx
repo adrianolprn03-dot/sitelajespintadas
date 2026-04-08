@@ -391,7 +391,7 @@ export default function LicitacoesClient() {
                                                                     <div className="text-center">
                                                                         <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em] mb-3">Data de Abertura</p>
                                                                         <div className="text-3xl font-black text-slate-900 tracking-tighter tabular-nums">
-                                                                            {l.dataAbertura ? new Date(l.dataAbertura).toLocaleDateString("pt-BR") : "—"—"}
+                                                                            {l.dataAbertura ? new Date(l.dataAbertura).toLocaleDateString("pt-BR") : "—"}
                                                                         </div>
                                                                         <div className="mt-4 flex items-center justify-center gap-3">
                                                                             <span className="flex items-center gap-1.5 px-3 py-1 bg-slate-900 text-white rounded-lg text-[10px] font-black">{l.ano}</span>

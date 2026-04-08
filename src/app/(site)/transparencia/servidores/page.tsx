@@ -4,8 +4,11 @@ import Link from "next/link";
 import { 
     FaUsers, FaMoneyBillWave, FaFileInvoiceDollar, 
     FaUserTie, FaTable, FaChevronRight, FaInfoCircle,
-    FaArrowRight, FaShieldHalved, FaClockRotateLeft,
-    FaCircleCheck, FaUserGroup, FaBriefcase, FaBuildingUser
+    FaArrowRight, FaBriefcase
+} from "react-icons/fa";
+import {
+    FaShieldHalved, FaClockRotateLeft,
+    FaCircleCheck, FaUserGroup, FaBuildingUser
 } from "react-icons/fa6";
 import { motion } from "framer-motion";
 import PageHeader from "@/components/PageHeader";
