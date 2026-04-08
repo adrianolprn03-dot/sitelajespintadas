@@ -26,17 +26,17 @@ export default function HeroSection() {
 
     return (
         <section className="relative w-full min-h-[88vh] flex items-center justify-center overflow-hidden">
-            {/* Background Video/Image */}
+            {/* Background Video com fallback para imagem */}
             <div className="absolute inset-0 z-0 overflow-hidden">
                 {!videoError ? (
                     <video
-                        src="https://webnets.com.br/arquitetura/Videos/clientes/cocal.mov"
+                        src="/vídeo_lajes_pintadas.mp4"
                         autoPlay
                         muted
                         loop
                         playsInline
                         onError={() => setVideoError(true)}
-                        className="w-full h-full object-cover scale-110"
+                        className="w-full h-full object-cover"
                     />
                 ) : (
                     <img
