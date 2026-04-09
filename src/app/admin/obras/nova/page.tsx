@@ -1,9 +1,10 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { FaSave, FaArrowLeft, FaSpinner, FaFileUpload } from "react-icons/fa";
+import { FaSave, FaArrowLeft, FaSpinner } from "react-icons/fa";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import ImageUpload from "@/components/admin/ImageUpload";
 
 export default function NovaObraPage() {
     const router = useRouter();
@@ -164,46 +165,11 @@ export default function NovaObraPage() {
                     </div>
 
                     <div className="md:col-span-2">
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Imagem de Destaque / Projeto</label>
-                        <div className="flex items-center gap-5">
-                            {form.imagem && (
-                                <div className="w-20 h-20 rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
-                                    <img src={form.imagem} alt="Preview" className="w-full h-full object-cover" />
-                                </div>
-                            )}
-                            <label className="flex-1 flex items-center justify-center gap-3 px-6 py-8 border-2 border-dashed border-gray-200 rounded-3xl hover:border-blue-500 hover:text-blue-500 cursor-pointer transition-all bg-gray-50 bg-opacity-50">
-                                <FaFileUpload size={20} />
-                                <div className="text-left">
-                                    <p className="text-xs font-black uppercase tracking-widest">Selecionar Foto da Obra</p>
-                                    <p className="text-[10px] text-gray-400 mt-1 uppercase">PNG, JPG ou WEBP até 5MB</p>
-                                </div>
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    className="hidden"
-                                    onChange={async (e) => {
-                                        const file = e.target.files?.[0];
-                                        if (file) {
-                                            const formData = new FormData();
-                                            formData.append("file", file);
-                                            try {
-                                                toast.loading("Enviando imagem...");
-                                                const res = await fetch("/api/upload", { method: "POST", body: formData });
-                                                const data = await res.json();
-                                                toast.dismiss();
-                                                if (data.url) {
-                                                    setForm({ ...form, imagem: data.url });
-                                                    toast.success("Imagem pronta!");
-                                                }
-                                            } catch {
-                                                toast.dismiss();
-                                                toast.error("Falha no upload");
-                                            }
-                                        }
-                                    }}
-                                />
-                            </label>
-                        </div>
+                        <ImageUpload
+                            value={form.imagem}
+                            onChange={(url) => setForm({ ...form, imagem: url })}
+                            label="Imagem de Destaque / Projeto"
+                        />
                     </div>
                 </div>
 

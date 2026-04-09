@@ -1,9 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { FaSave, FaArrowLeft, FaSpinner, FaFileUpload } from "react-icons/fa";
+import { FaSave, FaArrowLeft, FaSpinner } from "react-icons/fa";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import ImageUpload from "@/components/admin/ImageUpload";
 
 type Secretaria = { id: string; nome: string };
 
@@ -97,45 +98,11 @@ export default function NovaNoticiaPage() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-1">Imagem de Capa</label>
-                        <div className="flex items-center gap-3">
-                            {form.imagem && (
-                                <div className="w-16 h-16 rounded-lg overflow-hidden border border-gray-200">
-                                    <img src={form.imagem} alt="Preview" className="w-full h-full object-cover" />
-                                </div>
-                            )}
-                            <label className="flex-1 flex items-center justify-center gap-2 px-4 py-2 border-2 border-dashed border-gray-300 rounded-xl hover:border-primary-500 hover:text-primary-500 cursor-pointer transition-all">
-                                <FaFileUpload />
-                                <span className="text-sm font-medium">
-                                    {form.imagem ? "Alterar Imagem" : "Selecionar Imagem"}
-                                </span>
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    className="hidden"
-                                    onChange={async (e) => {
-                                        const file = e.target.files?.[0];
-                                        if (file) {
-                                            const formData = new FormData();
-                                            formData.append("file", file);
-                                            try {
-                                                const res = await fetch("/api/upload", {
-                                                    method: "POST",
-                                                    body: formData,
-                                                });
-                                                const data = await res.json();
-                                                if (data.url) {
-                                                    setForm({ ...form, imagem: data.url });
-                                                    toast.success("Imagem carregada!");
-                                                }
-                                            } catch {
-                                                toast.error("Erro no upload");
-                                            }
-                                        }
-                                    }}
-                                />
-                            </label>
-                        </div>
+                        <ImageUpload
+                            value={form.imagem}
+                            onChange={(url) => setForm({ ...form, imagem: url })}
+                            label="Imagem de Capa"
+                        />
                     </div>
 
                     <div className="md:col-span-2">

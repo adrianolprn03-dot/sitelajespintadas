@@ -4,6 +4,7 @@ import { useRouter, useParams } from "next/navigation";
 import { FaSave, FaArrowLeft, FaSpinner } from "react-icons/fa";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import ImageUpload from "@/components/admin/ImageUpload";
 
 type Secretaria = { id: string; nome: string };
 
@@ -132,12 +133,10 @@ export default function EditarNoticiaPage() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-1">URL da Imagem</label>
-                        <input
-                            type="text"
-                            className="input-field"
+                        <ImageUpload
                             value={form.imagem}
-                            onChange={e => setForm({ ...form, imagem: e.target.value })}
+                            onChange={(url) => setForm({ ...form, imagem: url })}
+                            label="Imagem de Capa"
                         />
                     </div>
 
