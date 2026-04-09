@@ -2,10 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { 
-    FaScaleBalanced, FaDownload, FaMagnifyingGlass, FaSpinner, 
-    FaCalendarDays, FaFileContract, FaCircleInfo, FaCircleCheck, 
-    FaChevronRight, FaArrowRight, FaFilter, FaFileLines, FaChartPie
+    FaScaleBalanced, FaMagnifyingGlass, 
+    FaCalendarDays, FaCircleInfo, FaCircleCheck, 
+    FaFileLines
 } from "react-icons/fa6";
+import { 
+    FaDownload, FaSpinner, FaFileContract, 
+    FaChevronRight, FaArrowRight, FaFilter, FaChartPie 
+} from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import PageHeader from "@/components/PageHeader";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";

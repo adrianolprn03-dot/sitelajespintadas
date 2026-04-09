@@ -5,9 +5,10 @@ import PageHeader from "@/components/PageHeader";
 import { 
     FaCarSide, FaMagnifyingGlass, FaClockRotateLeft, 
     FaScrewdriverWrench, FaSquareCheck, FaTruckMonster,
-    FaArrowRight, FaGasPump, FaCalendarDays, FaIdCardClip,
-    FaFilter, FaFileExport, FaVanShuttle, FaTractor
+    FaGasPump, FaCalendarDays, FaIdCardClip,
+    FaVanShuttle, FaTractor
 } from "react-icons/fa6";
+import { FaArrowRight, FaFilter, FaFileExport } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
 import TransparencyFilters from "@/components/transparencia/TransparencyFilters";

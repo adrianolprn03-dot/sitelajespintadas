@@ -4,9 +4,12 @@ import { useState, useEffect } from "react";
 import { 
     FaPlaneDeparture, FaSpinner, FaUserTie, FaMapMarkerAlt, 
     FaCalendarAlt, FaMoneyBillWave, FaBuilding, FaArrowRight, 
-    FaInfoCircle, FaMagnifyingGlass, FaSuitcaseRolling,
-    FaCircleCheck, FaFilter, FaDownload, FaBuildingColumns,
+    FaInfoCircle, FaDownload, 
     FaFileSignature
+} from "react-icons/fa";
+import { 
+    FaMagnifyingGlass, FaSuitcaseRolling,
+    FaCircleCheck, FaFilter, FaBuildingColumns 
 } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
 import PageHeader from "@/components/PageHeader";

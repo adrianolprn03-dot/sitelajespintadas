@@ -4,8 +4,11 @@ import { useState, useEffect } from "react";
 import { 
     FaMoneyBillWave, FaSpinner, FaBuilding, FaTag, 
     FaFileInvoiceDollar, FaCalendarDay, FaArrowRight,
+    FaFilter, FaDownload
+} from "react-icons/fa";
+import { 
     FaArrowTrendUp, FaArrowTrendDown, FaMagnifyingGlass,
-    FaCircleCheck, FaCircleInfo, FaFilter
+    FaCircleCheck, FaCircleInfo
 } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
 import PageHeader from "@/components/PageHeader";

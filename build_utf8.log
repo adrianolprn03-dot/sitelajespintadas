@@ -1,0 +1,47 @@
+﻿
+> portal-lajes-pintadas@1.0.0 build
+> next build
+
+  Ôû▓ Next.js 14.2.3
+  - Environments: .env.local, .env
+
+   Creating an optimized production build ...
+ Ô£ô Compiled successfully
+   Linting and checking validity of types ...
+node.exe : Failed to compile.
+No C:\Program Files\nodejs\npm.ps1:29 caractere:3
++   & $NODE_EXE $NPM_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Failed to 
+    compile.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+./src/app/(site)/transparencia/frota/_FrotaClient.tsx:1
+75:25
+Type error: Type '{ children: Element; searchValue: 
+string; onSearch: Dispatch<SetStateAction<string>>; 
+currentYear: string; onYearChange: () => void; 
+currentMonth: string; ... 5 more ...; hideMonthFilter: 
+true; }' is not assignable to type 
+'IntrinsicAttributes & TransparencyFiltersProps'.
+  Property 'hideYearFilter' does not exist on type 
+'IntrinsicAttributes & TransparencyFiltersProps'.
+
+[0m [90m 173 |[39m                         
+onExport[33m=[39m{handleExport}[0m
+[0m [90m 174 |[39m                         
+placeholder[33m=[39m[32m"Pesquisar por placa, 
+modelo ou secretaria..."[39m[0m
+[0m[31m[1m>[22m[39m[90m 175 |[39m               
+          hideYearFilter[0m
+[0m [90m     |[39m                         
+[31m[1m^[22m[39m[0m
+[0m [90m 176 |[39m                         
+hideMonthFilter[0m
+[0m [90m 177 |[39m                     
+[33m>[39m[0m
+[0m [90m 178 |[39m                         
+[33m<[39m[33mdiv[39m 
+className[33m=[39m[32m"flex flex-wrap 
+gap-3"[39m[33m>[39m[0m

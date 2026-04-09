@@ -3,10 +3,14 @@
 import { useState, useEffect } from "react";
 import { 
     FaChartBar, FaSpinner, FaExternalLinkAlt, FaBuilding, 
-    FaGavel, FaMagnifyingGlass, FaRegCalendarAlt, FaBriefcase,
-    FaArrowRight, FaRotateH, FaCheckCircle, FaClock, FaBan,
-    FaCircleExclamation, FaFileContract, FaBuildingColumns,
-    FaShieldHalved, FaArrowTrendUp, FaBolt, FaFileLines
+    FaGavel, FaRegCalendarAlt, FaBriefcase,
+    FaArrowRight, FaCheckCircle, FaClock, FaBan,
+    FaFileContract, FaBolt, FaInfoCircle
+} from "react-icons/fa";
+import { 
+    FaMagnifyingGlass, FaRotate,
+    FaCircleExclamation, FaBuildingColumns,
+    FaShieldHalved, FaArrowTrendUp, FaFileLines
 } from "react-icons/fa6";
 import { exportToCSV, exportToJSON, exportToPDF, exportToXLSX } from "@/lib/exportUtils";
 import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
@@ -147,7 +151,7 @@ export default function LicitacoesClient() {
                                 <motion.div layoutId="activeTabLicit" className="absolute inset-0 bg-blue-600 rounded-[1.25rem] shadow-xl shadow-blue-600/30" />
                             )}
                             <span className="relative z-10 flex items-center gap-3">
-                                <FaRotateH className={tab === "federal" ? "animate-spin-slow" : ""} /> PNCP Federal
+                                <FaRotate className={tab === "federal" ? "animate-spin-slow" : ""} /> PNCP Federal
                             </span>
                         </button>
                         <button 
@@ -341,7 +345,14 @@ export default function LicitacoesClient() {
                                                                     <div className="flex flex-wrap items-center gap-4 mb-3">
                                                                         <h3 className="text-3xl font-black text-slate-900 uppercase tracking-tighter group-hover:text-blue-700 transition-colors leading-none">{l.numero}</h3>
                                                                         <div className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 border shadow-sm ${statusConfig[l.status]?.cor || "bg-slate-50 text-slate-400"}`}>
-                                                                            {statusConfig[l.status] && <statusConfig.l.status.icon size={12} className={l.status === 'aberta' ? 'animate-pulse' : ''} />}
+                                                                            {statusConfig[l.status]?.icon && (
+                                                                                <div className={l.status === 'aberta' ? 'animate-pulse' : ''}>
+                                                                                    {(() => {
+                                                                                        const StatusIcon = statusConfig[l.status].icon;
+                                                                                        return <StatusIcon size={12} />;
+                                                                                    })()}
+                                                                                </div>
+                                                                            )}
                                                                             {statusConfig[l.status]?.label || l.status}
                                                                         </div>
                                                                     </div>
@@ -433,7 +444,7 @@ export default function LicitacoesClient() {
                                 <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-blue-600/30 to-transparent rounded-full -mr-60 -mt-60 blur-3xl pointer-events-none group-hover:scale-110 transition-transform duration-1000" />
                                 <div className="relative z-10 flex flex-col md:flex-row items-center gap-12 text-white">
                                     <div className="w-28 h-28 bg-blue-600/20 backdrop-blur-3xl rounded-[2.5rem] flex items-center justify-center border border-white/10 shadow-2xl group-hover:rotate-12 transition-transform duration-700 shrink-0">
-                                        <FaRotateH size={48} className="text-blue-500 animate-spin-slow" />
+                                        <FaRotate size={48} className="text-blue-500 animate-spin-slow" />
                                     </div>
                                     <div className="text-center md:text-left flex-1">
                                         <div className="inline-flex items-center gap-3 px-5 py-2 bg-blue-600 text-white rounded-full text-[10px] font-black uppercase tracking-[0.3em] mb-8 shadow-xl shadow-blue-500/40">

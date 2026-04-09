@@ -3,8 +3,9 @@ import { useState, useEffect } from "react";
 import { 
     FaHammer, FaMapMarkerAlt, FaCalendarAlt, FaBuilding, 
     FaChartLine, FaSpinner, FaArrowRight, FaImage,
-    FaCheckCircle, FaExclamationTriangle, FaHardHat, FaMagnifyingGlass
-} from "react-icons/fa6";
+    FaCheckCircle, FaExclamationTriangle, FaHardHat, FaInfoCircle
+} from "react-icons/fa";
+import { FaMagnifyingGlass } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
 import PageHeader from "@/components/PageHeader";
 import TransparencyFilters from "@/components/transparencia/TransparencyFilters";

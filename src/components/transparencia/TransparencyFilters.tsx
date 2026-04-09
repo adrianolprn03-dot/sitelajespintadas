@@ -13,6 +13,8 @@ interface TransparencyFiltersProps {
     currentMonth: string;
     searchValue: string;
     placeholder?: string;
+    hideYearFilter?: boolean;
+    hideMonthFilter?: boolean;
     children?: React.ReactNode;
 }
 
@@ -27,6 +29,8 @@ export default function TransparencyFilters({
     currentMonth,
     searchValue,
     placeholder = "Pesquisar nos resultados...",
+    hideYearFilter = false,
+    hideMonthFilter = false,
     children
 }: TransparencyFiltersProps) {
     const meses = [
@@ -56,29 +60,31 @@ export default function TransparencyFilters({
                 </div>
 
                 <div className="flex flex-wrap items-end gap-3 w-full lg:w-auto">
-                    {/* Filtro de Ano */}
-                    <div className="w-full sm:w-28">
-                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Exercício</label>
-                        <select
-                            value={currentYear}
-                            onChange={(e) => onYearChange(e.target.value)}
-                            className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-xs focus:ring-2 focus:ring-blue-500/10 focus:bg-white focus:border-blue-300 transition-all font-black text-slate-700 outline-none cursor-pointer"
-                        >
-                            {availableYears.map(y => <option key={y} value={y}>{y}</option>)}
-                        </select>
-                    </div>
+                    {!hideYearFilter && (
+                        <div className="w-full sm:w-28">
+                            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Exercício</label>
+                            <select
+                                value={currentYear}
+                                onChange={(e) => onYearChange(e.target.value)}
+                                className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-xs focus:ring-2 focus:ring-blue-500/10 focus:bg-white focus:border-blue-300 transition-all font-black text-slate-700 outline-none cursor-pointer"
+                            >
+                                {availableYears.map(y => <option key={y} value={y}>{y}</option>)}
+                            </select>
+                        </div>
+                    )}
 
-                    {/* Filtro de Mês */}
-                    <div className="w-full sm:w-40">
-                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Período</label>
-                        <select
-                            value={currentMonth}
-                            onChange={(e) => onMonthChange(e.target.value)}
-                            className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-xs focus:ring-2 focus:ring-blue-500/10 focus:bg-white focus:border-blue-300 transition-all font-black text-slate-700 outline-none cursor-pointer"
-                        >
-                            {meses.map(m => <option key={m.v} value={m.v}>{m.l}</option>)}
-                        </select>
-                    </div>
+                    {!hideMonthFilter && (
+                        <div className="w-full sm:w-40">
+                            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Período</label>
+                            <select
+                                value={currentMonth}
+                                onChange={(e) => onMonthChange(e.target.value)}
+                                className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-xs focus:ring-2 focus:ring-blue-500/10 focus:bg-white focus:border-blue-300 transition-all font-black text-slate-700 outline-none cursor-pointer"
+                            >
+                                {meses.map(m => <option key={m.v} value={m.v}>{m.l}</option>)}
+                            </select>
+                        </div>
+                    )}
 
                     {/* Ações e Exportação */}
                     <div className="flex flex-wrap items-center gap-2 lg:ml-2">

@@ -1,10 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import PageHeader from "@/components/PageHeader";
 import { 
-    FaHeartPulse, FaCircleInfo, FaCheck, 
-    FaTriangleExclamation, FaBoxOpen, FaPrescriptionBottleMedical,
-    FaArrowRight, FaSyringe, FaPills, FaFlaskVial
+    FaHeartPulse, FaCircleInfo, 
+    FaTriangleExclamation, FaPrescriptionBottleMedical,
+    FaSyringe, FaPills, FaFlaskVial
 } from "react-icons/fa6";
+import { FaCheck, FaBoxOpen, FaArrowRight } from "react-icons/fa";
 import ExportButtons from "@/components/transparencia/ExportButtons";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
 import { motion } from "framer-motion";

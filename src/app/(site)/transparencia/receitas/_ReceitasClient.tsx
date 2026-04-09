@@ -4,9 +4,12 @@ import { useState, useEffect } from "react";
 import { 
     FaChartBar, FaSpinner, FaCoins, FaHistory, 
     FaTable, FaChartLine, FaWallet, FaSearch, 
-    FaArrowRight, FaArrowTrendUp, FaBuildingColumns,
+    FaArrowRight, FaDownload, FaFilter
+} from "react-icons/fa";
+import { 
+    FaArrowTrendUp, FaBuildingColumns,
     FaArrowTrendDown, FaMagnifyingGlass, FaCircleCheck,
-    FaCircleInfo, FaDownload, FaFilter
+    FaCircleInfo
 } from "react-icons/fa6";
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell
@@ -404,7 +407,7 @@ export default function ReceitasPage() {
                                                     dataKey="name" 
                                                     axisLine={false} 
                                                     tickLine={false} 
-                                                    tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 900, textTransform: 'uppercase' }} 
+                                                    tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 900 }} 
                                                     dy={20}
                                                 />
                                                 <YAxis 
@@ -426,7 +429,7 @@ export default function ReceitasPage() {
                                                     }}
                                                     formatter={(v: number) => [fmt(v), "ARRECADAÇÃO BRUTA"]}
                                                     labelStyle={{ fontSize: '12px', fontWeight: 900, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '8px', letterSpacing: '0.1em' }}
-                                                    itemStyle={{ fontSize: '16px', fontWeight: 950, color: '#111827', tracking: '-0.05em' }}
+                                                    itemStyle={{ fontSize: '16px', fontWeight: 950, color: '#111827' }}
                                                 />
                                                 <Bar dataKey="valor" radius={[16, 16, 6, 6]} barSize={50} animationDuration={1500} animationBegin={300}>
                                                     {dadosGrafico.map((entry, index) => (

@@ -3,11 +3,13 @@
 import PageHeader from "@/components/PageHeader";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
 import { 
-    FaShieldAlt, FaCheckCircle, FaUsers, FaFileAlt, FaSearch, 
-    FaGlobeAmericas, FaGavel, FaExternalLinkAlt, FaShieldHalved,
-    FaCircleCheck, FaArrowRight, FaClockRotateLeft, FaFileSignature,
-    FaArrowTrendUp, FaBolt, FaFeatherPointed
+    FaShieldHalved, FaCircleCheck, FaClockRotateLeft, 
+    FaFileSignature, FaArrowTrendUp, FaFeatherPointed
 } from "react-icons/fa6";
+import { 
+    FaShieldAlt, FaCheckCircle, FaUsers, FaFileAlt, FaSearch, 
+    FaGlobeAmericas, FaGavel, FaExternalLinkAlt, FaArrowRight, FaBolt
+} from "react-icons/fa";
 import { motion } from "framer-motion";
 
 const pilares = [

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
 import { prisma } from "@/lib/prisma";
 import EmendasClientPage from "./EmendasClientPage";
-import { FaCoins, FaUserTie, FaHandshake, FaChartPie, FaCalendarCheck } from "react-icons/fa6";
+import { FaCoins, FaUserTie, FaHandshake, FaChartPie, FaCalendarCheck } from "react-icons/fa";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
 
 export const metadata: Metadata = {

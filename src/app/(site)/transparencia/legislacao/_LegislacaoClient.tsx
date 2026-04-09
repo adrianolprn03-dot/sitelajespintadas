@@ -5,7 +5,9 @@ import Link from "next/link";
 import { 
     FaFileAlt, FaScroll, FaGavel, FaDownload, 
     FaCalendarAlt, FaSearch, FaHistory, FaInfoCircle, 
-    FaCheckCircle, FaSpinner, FaArrowRight, FaFilter,
+    FaCheckCircle, FaSpinner, FaArrowRight, FaFilter
+} from "react-icons/fa";
+import { 
     FaRegFileLines, FaScaleBalanced, FaFileSignature,
     FaArrowDownWideShort, FaMagnifyingGlass
 } from "react-icons/fa6";

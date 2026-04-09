@@ -4,8 +4,11 @@ import { useState, useEffect } from "react";
 import { 
     FaFileContract, FaSpinner, FaHistory, FaCheckCircle, 
     FaExclamationTriangle, FaTimesCircle, FaBuilding, 
-    FaWallet, FaArrowRight, FaMagnifyingGlass, FaRegCalendarAlt,
-    FaBriefcase, FaBuildingColumns, FaShieldHalved,
+    FaWallet, FaArrowRight, FaRegCalendarAlt,
+    FaBriefcase
+} from "react-icons/fa";
+import { 
+    FaBuildingColumns, FaShieldHalved, FaMagnifyingGlass,
     FaArrowTrendUp, FaBolt, FaFileLines
 } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";

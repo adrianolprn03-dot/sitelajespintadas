@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
-import { FaDownload, FaDatabase, FaFileCode, FaTable, FaCheckCircle, FaLock, FaCircleInfo, FaBolt } from "react-icons/fa6";
+import { FaDownload, FaDatabase, FaTable, FaCheckCircle, FaLock, FaBolt } from "react-icons/fa";
+import { FaFileCode, FaCircleInfo } from "react-icons/fa6";
 import { motion } from "framer-motion";
 import PageHeader from "@/components/PageHeader";
 import { exportToCSV, exportToJSON, exportToXLSX } from "@/lib/exportUtils";

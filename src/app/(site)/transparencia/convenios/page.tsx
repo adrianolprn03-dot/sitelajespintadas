@@ -4,7 +4,9 @@ import { useState, useEffect } from "react";
 import { 
     FaHandshake, FaSpinner, FaBuilding, FaCalendarAlt, 
     FaMoneyBillWave, FaArrowRight, FaHistory, FaCheckCircle, 
-    FaTimesCircle, FaInfoCircle, FaFileSignature, FaLayerGroup,
+    FaTimesCircle, FaInfoCircle, FaFileSignature, FaLayerGroup
+} from "react-icons/fa";
+import { 
     FaMagnifyingGlass, FaBuildingColumns, FaShieldHalved,
     FaArrowTrendUp, FaFileLines
 } from "react-icons/fa6";

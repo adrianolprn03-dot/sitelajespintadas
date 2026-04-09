@@ -1,9 +1,10 @@
 "use client";
 import { 
-    FaChartLine, FaFileAlt, FaInfoCircle, FaDownload, 
-    FaExternalLinkAlt, FaCoins, FaHandHoldingDollar,
-    FaArrowRight, FaShieldHalved, FaClockRotateLeft 
-} from "react-icons/fa6";
+    FaChartLine, FaInfoCircle, FaDownload, 
+    FaCoins, FaArrowRight
+} from "react-icons/fa";
+import { FaShieldHalved, FaClockRotateLeft, FaHandHoldingDollar } from "react-icons/fa6";
+import { FaExternalLinkAlt, FaFileAlt } from "react-icons/fa";
 import { BarChart3 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import PageHeader from "@/components/PageHeader";
