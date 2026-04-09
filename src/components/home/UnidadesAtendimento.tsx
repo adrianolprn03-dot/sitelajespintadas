@@ -21,7 +21,7 @@ const unidades = [
     {
         label: "Unidades de Saúde",
         icon: HiOutlineHeart,
-        href: "/servicos/saude",
+        href: "/unidades-de-saude",
         color: "text-rose-600",
         bg: "bg-rose-50",
         hoverBg: "group-hover:bg-rose-500",
@@ -30,7 +30,7 @@ const unidades = [
     {
         label: "Socioassistencial",
         icon: HiOutlineUsers,
-        href: "/servicos/social",
+        href: "/socioassistencial",
         color: "text-violet-600",
         bg: "bg-violet-50",
         hoverBg: "group-hover:bg-violet-500",
@@ -39,7 +39,7 @@ const unidades = [
     {
         label: "Unidades Escolares",
         icon: HiOutlineAcademicCap,
-        href: "/servicos/educacao",
+        href: "/unidades-escolares",
         color: "text-amber-600",
         bg: "bg-amber-50",
         hoverBg: "group-hover:bg-amber-500",
