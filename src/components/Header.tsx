@@ -4,8 +4,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { useAccessibility } from "./AccessibilityProvider";
 import { usePathname } from "next/navigation";
-import { HiOutlineCloud, HiOutlineBars3, HiOutlineXMark } from "react-icons/hi2";
+import { HiOutlineCloud, HiOutlineBars3, HiOutlineXMark, HiMagnifyingGlass } from "react-icons/hi2";
 import BuscaGlobal from "./BuscaGlobal";
+
 
 const navItems = [
     { label: "Início", href: "/", hasDropdown: false },
@@ -75,6 +76,8 @@ export default function Header() {
     const [openDropdown, setOpenDropdown] = useState<number | null>(null);
     const pathname = usePathname();
     const [logo, setLogo] = useState("/logo_oficial.png");
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
+
 
     useEffect(() => {
         const fetchLogo = async () => {
@@ -171,9 +174,18 @@ export default function Header() {
                 </nav>
 
                 <div className="flex items-center gap-4">
+                    <button 
+                        onClick={() => setIsSearchOpen(true)}
+                        className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-50 text-gray-400 hover:bg-primary-500 hover:text-white transition-all shadow-inner border border-gray-100"
+                        title="Buscar no portal"
+                    >
+                        <HiMagnifyingGlass size={20} />
+                    </button>
+
                     <Link href="/admin" className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-50 text-gray-400 hover:bg-primary-500 hover:text-white transition-all shadow-inner border border-gray-100">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                     </Link>
+
                     
                     <button 
                         onClick={() => setMobileOpen(!mobileOpen)} 
@@ -216,6 +228,27 @@ export default function Header() {
                     </div>
                 </div>
             )}
+            {/* Search Overlay */}
+            {isSearchOpen && (
+                <div className="fixed inset-0 z-[100] flex items-start justify-center pt-20 px-4 md:pt-32">
+                    <div 
+                        className="absolute inset-0 bg-primary-950/40 backdrop-blur-md animate-fade-in" 
+                        onClick={() => setIsSearchOpen(false)}
+                    />
+                    <div className="relative w-full max-w-2xl animate-fade-in-up">
+                        <div className="flex justify-end mb-4">
+                            <button 
+                                onClick={() => setIsSearchOpen(false)}
+                                className="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-all border border-white/20"
+                            >
+                                <HiOutlineXMark size={24} />
+                            </button>
+                        </div>
+                        <BuscaGlobal onClose={() => setIsSearchOpen(false)} />
+                    </div>
+                </div>
+            )}
         </header>
     );
 }
+

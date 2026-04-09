@@ -1,7 +1,5 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { HiMagnifyingGlass } from "react-icons/hi2";
 import Link from "next/link";
 
 const acessosRapidos = [
@@ -12,17 +10,7 @@ const acessosRapidos = [
 ];
 
 export default function HeroSection() {
-    const [searchTerm, setSearchTerm] = useState("");
     const [videoError, setVideoError] = useState(false);
-    const router = useRouter();
-
-    const handleSearch = (e: React.FormEvent) => {
-        e.preventDefault();
-        const trimmed = searchTerm.trim();
-        if (trimmed.length > 1) {
-            router.push(`/noticias?busca=${encodeURIComponent(trimmed)}`);
-        }
-    };
 
     return (
         <section className="relative w-full min-h-[88vh] flex items-center justify-center overflow-hidden">
@@ -70,25 +58,6 @@ export default function HeroSection() {
                 <p className="text-sm md:text-lg text-white/90 max-w-xl mb-12 font-semibold drop-shadow-md leading-relaxed">
                     Cuidando da nossa gente e Construindo o nosso futuro.
                 </p>
-
-                {/* Search Bar */}
-                <div className="w-full max-w-2xl">
-                    <form onSubmit={handleSearch} className="relative group/search">
-                        <input
-                            type="text"
-                            placeholder="O que você procura hoje?"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full bg-white/95 backdrop-blur-xl rounded-full py-4 md:py-5 px-8 md:px-10 text-gray-800 text-sm md:text-base focus:outline-none focus:ring-4 focus:ring-primary-500/30 placeholder:text-gray-400 placeholder:italic font-semibold shadow-[0_24px_60px_rgba(0,0,0,0.35)] transition-all"
-                        />
-                        <button
-                            type="submit"
-                            className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-primary-500 hover:bg-primary-600 text-white rounded-full transition-all shadow-lg hover:scale-105 active:scale-95"
-                        >
-                            <HiMagnifyingGlass size={22} />
-                        </button>
-                    </form>
-                </div>
 
                 {/* Quick access links */}
                 <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
