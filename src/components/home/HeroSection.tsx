@@ -1,13 +1,5 @@
 "use client";
 import { useState } from "react";
-import Link from "next/link";
-
-const acessosRapidos = [
-    { label: "Licitações", href: "/transparencia/licitacoes" },
-    { label: "Concursos", href: "/transparencia/concursos" },
-    { label: "Diárias", href: "/transparencia/diarias" },
-    { label: "Notícias", href: "/noticias" },
-];
 
 export default function HeroSection() {
     const [videoError, setVideoError] = useState(false);
@@ -44,12 +36,6 @@ export default function HeroSection() {
             {/* Content */}
             <div className="relative z-10 w-full max-w-[1240px] mx-auto px-6 flex flex-col items-center text-center animate-fade-in-up mt-28 md:mt-32 pb-36 md:pb-52">
 
-                {/* Badge */}
-                <div className="flex items-center gap-3 py-2 px-5 rounded-full glass-dark text-white border border-white/20 text-[10px] md:text-[11px] font-black uppercase tracking-[0.3em] mb-8 shadow-xl">
-                    <span className="w-2 h-2 rounded-full bg-secondary-400 animate-pulse" />
-                    Portal Oficial da Cidade
-                </div>
-
                 {/* Heading */}
                 <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-black text-secondary-400 leading-[1.05] mb-5 tracking-tighter drop-shadow-2xl max-w-3xl">
                     Lajes Pintadas
@@ -59,32 +45,7 @@ export default function HeroSection() {
                     Cuidando da nossa gente e Construindo o nosso futuro.
                 </p>
 
-                {/* Quick access links */}
-                <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
-                    <span className="text-white/40 text-[10px] font-bold uppercase tracking-widest">Acesso rápido:</span>
-                    {acessosRapidos.map((item) => (
-                        <Link
-                            key={item.href}
-                            href={item.href}
-                            className="text-white/80 hover:text-white text-[10px] font-black uppercase tracking-widest border border-white/20 hover:border-white/50 bg-white/5 hover:bg-white/10 backdrop-blur-sm px-4 py-1.5 rounded-full transition-all"
-                        >
-                            {item.label}
-                        </Link>
-                    ))}
-                </div>
 
-                {/* Stats row */}
-                <div className="flex items-center gap-8 mt-8 text-white/40">
-                    <div className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full bg-secondary-400" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.25em]">Lajes Pintadas · RN</span>
-                    </div>
-                    <div className="w-px h-3 bg-white/20" />
-                    <div className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.25em]">Portal Ativo</span>
-                    </div>
-                </div>
             </div>
 
             {/* Bottom fade */}

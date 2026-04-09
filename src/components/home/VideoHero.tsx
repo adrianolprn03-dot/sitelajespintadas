@@ -22,7 +22,7 @@ export default function VideoHero() {
                         loop
                         playsInline
                         onError={() => setVideoError(true)}
-                        className="w-full h-full object-cover opacity-50 scale-105 group-hover:scale-100 transition-transform duration-[2s]"
+                        className="w-full h-full object-cover opacity-90 scale-105 group-hover:scale-100 transition-transform duration-[2s]"
                         aria-hidden="true"
                     />
                 ) : (
@@ -33,8 +33,8 @@ export default function VideoHero() {
                     />
                 )}
                 {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-b from-gray-900 via-transparent to-gray-900 opacity-80" />
-                <div className="absolute inset-0 bg-primary-900/20" />
+                <div className="absolute inset-0 bg-gradient-to-b from-gray-900 via-transparent to-gray-900 opacity-50" />
+                <div className="absolute inset-0 bg-primary-900/10" />
             </div>
 
             <div className="relative z-10 max-w-7xl mx-auto px-6 flex flex-col items-center text-center">

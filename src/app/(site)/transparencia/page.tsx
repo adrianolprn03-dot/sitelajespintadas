@@ -10,7 +10,13 @@ import {
     Headset, Mail, FileText, QrCode, ScrollText, AlertTriangle,
     Briefcase, Landmark, Info, FileStack, Activity, ListOrdered,
     CalendarClock, PhoneCall, Link2, MonitorPlay, ShieldCheck, HeartPulse,
-    Search, Sparkles, ShieldAlert, FileSearch, Coins, Receipt
+    Search, Sparkles, ShieldAlert, FileSearch, Coins, Receipt,
+    Stethoscope, Building, Heart,
+    Calendar, Phone, LayoutGrid, ClipboardCheck,
+    BarChart, HardHat, GraduationCap,
+    Map, Pill, Shield, Lock, FileClock,
+    UserPlus, UserCheck, FileJson, BadgeCheck,
+    FilePieChart, Presentation
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import PageHeader from "@/components/PageHeader";
@@ -25,6 +31,8 @@ const categoriasDeModulos = [
             { icon: Headset, titulo: "Ouvidoria", desc: "Denúncias e sugestões.", href: "/servicos/ouvidoria", cor: "from-blue-600 to-cyan-600", badge: "FALA.BR" },
             { icon: ShieldCheck, titulo: "Integridade", desc: "Programa de Ética.", href: "/transparencia/integridade", cor: "from-emerald-600 to-teal-700", badge: "GOVERNANÇA" },
             { icon: MapPinned, titulo: "Serviços", desc: "Carta de Serviços.", href: "/transparencia/carta-servicos", cor: "from-purple-600 to-indigo-700", badge: "CIDADÃO" },
+            { icon: HelpCircle, titulo: "FAQ", desc: "Dúvidas Frequentes.", href: "/transparencia/faq", cor: "from-slate-600 to-slate-800", badge: "AJUDA" },
+            { icon: BookOpen, titulo: "Glossário", desc: "Termos da Gestão.", href: "/transparencia/glossario", cor: "from-indigo-500 to-blue-600", badge: "TERMOS" },
         ]
     },
     {
@@ -36,7 +44,8 @@ const categoriasDeModulos = [
             { icon: Landmark, titulo: "Orçamento", desc: "LOA, LDO e PPA.", href: "/transparencia/orcamento", cor: "from-slate-800 to-slate-950", badge: "PLANEJAMENTO" },
             { icon: ListOrdered, titulo: "Pagamentos", desc: "Ordem Cronológica.", href: "/transparencia/ordem-cronologica", cor: "from-amber-500 to-orange-600", badge: "TESOURARIA" },
             { icon: Database, titulo: "Repasses", desc: "Transferências Legais.", href: "/transparencia/transferencias", cor: "from-indigo-600 to-violet-700", badge: "RECURSOS" },
-            { icon: Globe2, titulo: "Emendas", desc: "Recursos Parlamentares.", href: "/transparencia/emendas", cor: "from-teal-600 to-emerald-800", badge: "EXTERNO" },
+            { icon: Globe2, titulo: "Emendas Parlamentares", desc: "Recursos Externos.", href: "/transparencia/emendas", cor: "from-teal-600 to-emerald-800", badge: "EXTERNO" },
+            { icon: Coins, titulo: "Emendas PIX", desc: "Transferências Diretas.", href: "/transparencia/emenda-pix", cor: "from-pink-600 to-rose-700", badge: "PIX" },
         ]
     },
     {
@@ -45,10 +54,36 @@ const categoriasDeModulos = [
         modulos: [
             { icon: Gavel, titulo: "Licitações", desc: "Certames e Editais.", href: "/transparencia/licitacoes", cor: "from-orange-600 to-red-700", badge: "COMPRAS" },
             { icon: FileSignature, titulo: "Contratos", desc: "Ajustes e Aditivos.", href: "/transparencia/contratos", cor: "from-blue-700 to-indigo-800", badge: "ATOS" },
+            { icon: FileStack, titulo: "Atas de Registro", desc: "Preços Registrados.", href: "/transparencia/atas-registro", cor: "from-purple-600 to-violet-800", badge: "SRP" },
             { icon: Users, titulo: "Servidores", desc: "Folha de Pagamento.", href: "/transparencia/servidores", cor: "from-slate-700 to-slate-900", badge: "PESSOAL" },
             { icon: Plane, titulo: "Diárias", desc: "Viagens e Passagens.", href: "/transparencia/diarias", cor: "from-sky-500 to-blue-600", badge: "DESPESA" },
-            { icon: Handshake, titulo: "Convênios", desc: "Parcerias e Acordos.", href: "/transparencia/convenios", cor: "from-pink-600 to-rose-700", badge: "EXTERNAL" },
-            { icon: Construction, titulo: "Obras", desc: "Fiscalização de Obras.", href: "/transparencia/obras", cor: "from-amber-700 to-orange-800", badge: "INFRA" },
+            { icon: GraduationCap, titulo: "Concursos", desc: "Editais e Provas.", href: "/transparencia/concursos", cor: "from-indigo-600 to-blue-700", badge: "SELEÇÃO" },
+            { icon: UserCheck, titulo: "Processo Seletivo", desc: "Vagas Temporárias.", href: "/transparencia/processo-seletivo", cor: "from-teal-600 to-emerald-700", badge: "PSS" },
+        ]
+    },
+    {
+        tituloCategoria: "Saúde e Bem-Estar",
+        desc: "Gestão da saúde pública, investimentos e infraestrutura de atendimento.",
+        modulos: [
+            { icon: Stethoscope, titulo: "Saúde", desc: "Portal da Saúde.", href: "/transparencia/saude", cor: "from-rose-500 to-red-600", badge: "MUNICIPAL" },
+            { icon: Building2, titulo: "Unidades de Saúde", desc: "Relação de UBS/Hospitais.", href: "/transparencia/unidades-saude", cor: "from-blue-500 to-cyan-600", badge: "LOCAIS" },
+            { icon: Pill, titulo: "Medicamentos SUS", desc: "Lista e Estoque.", href: "/transparencia/medicamentos-sus", cor: "from-emerald-500 to-teal-600", badge: "FARMÁCIA" },
+            { icon: Activity, titulo: "Central Regulação", desc: "Filas e Agendamentos.", href: "/transparencia/central-regulacao", cor: "from-orange-500 to-amber-600", badge: "FILAS" },
+            { icon: HeartPulse, titulo: "Plano de Saúde", desc: "Diretrizes Municipais.", href: "/transparencia/plano-saude", cor: "from-pink-500 to-rose-600", badge: "PLANO" },
+            { icon: GraduationCap, titulo: "Plano Educação", desc: "Diretrizes do Ensino.", href: "/transparencia/plano-educacao", cor: "from-amber-600 to-orange-700", badge: "POLÍTICAS" },
+        ]
+    },
+    {
+        tituloCategoria: "Responsabilidade e Gestão",
+        desc: "Relatórios de gestão, fiscalização, obras e patrimônio público.",
+        modulos: [
+            { icon: BarChart3, titulo: "LRF", desc: "Responsabilidade Fiscal.", href: "/transparencia/lrf", cor: "from-slate-700 to-slate-900", badge: "LEGAL" },
+            { icon: FilePieChart, titulo: "PCG / PCS", desc: "Pareceres de Gestão.", href: "/transparencia/pcg", cor: "from-indigo-600 to-purple-700", badge: "TCE/RN" },
+            { icon: Scale, titulo: "Julgamento Contas", desc: "Pareceres das Contas.", href: "/transparencia/julgamento-contas", cor: "from-amber-700 to-orange-800", badge: "CAMARA" },
+            { icon: Construction, titulo: "Obras", desc: "Fiscalização de Obras.", href: "/transparencia/obras", cor: "from-amber-600 to-orange-800", badge: "INFRA" },
+            { icon: Truck, titulo: "Frota", desc: "Veículos Municipais.", href: "/transparencia/frota", cor: "from-blue-600 to-indigo-700", badge: "TRANSPORTE" },
+            { icon: Landmark, titulo: "Dívida Ativa", desc: "Créditos Municipais.", href: "/transparencia/divida-ativa", cor: "from-red-600 to-slate-900", badge: "FINANÇAS" },
+            { icon: FileSearch, titulo: "PCP", desc: "Prestação de Contas.", href: "/transparencia/pcs", cor: "from-emerald-600 to-green-800", badge: "GESTÃO" },
         ]
     },
     {
@@ -59,6 +94,8 @@ const categoriasDeModulos = [
             { icon: FileText, titulo: "Decretos", desc: "Atos do Executivo.", href: "/transparencia/decretos", cor: "from-slate-600 to-slate-800", badge: "ATOS" },
             { icon: ScrollText, titulo: "Portarias", desc: "Atos Administrativos.", href: "/transparencia/portarias", cor: "from-blue-600 to-blue-800", badge: "ADMIN" },
             { icon: ShieldCheck, titulo: "LGPD", desc: "Proteção de Dados.", href: "/transparencia/lgpd", cor: "from-emerald-500 to-green-700", badge: "PRIVACIDADE" },
+            { icon: Presentation, titulo: "Dados Abertos", desc: "Exportação de Dados.", href: "/transparencia/dados-abertos", cor: "from-orange-500 to-amber-600", badge: "OPEN-DATA" },
+            { icon: Search, titulo: "Radar", desc: "Índice Transparência.", href: "/transparencia/radar", cor: "from-blue-800 to-slate-900", badge: "PNTP" },
         ]
     }
 ];

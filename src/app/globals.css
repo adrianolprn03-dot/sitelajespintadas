@@ -193,10 +193,10 @@ html.font-xlarge {
 .hero-gradient {
   background: linear-gradient(
     135deg,
-    rgba(0, 34, 65, 0.92) 0%,
-    rgba(1, 136, 185, 0.78) 35%,
-    rgba(1, 176, 239, 0.55) 65%,
-    rgba(253, 185, 19, 0.45) 100%
+    rgba(0, 34, 65, 0.6) 0%,
+    rgba(1, 136, 185, 0.3) 35%,
+    rgba(1, 176, 239, 0.15) 65%,
+    rgba(253, 185, 19, 0.05) 100%
   );
 }
 

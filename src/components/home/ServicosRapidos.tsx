@@ -54,9 +54,7 @@ export default async function ServicosRapidos() {
     return (
         <section className="pb-24 bg-transparent relative z-20 -mt-36 md:-mt-52" id="servicos" aria-labelledby="servicos-titulo">
             <div className="max-w-[1240px] mx-auto px-6">
-                <div className="flex flex-col items-center mb-12 text-center">
-                    <span className="text-secondary-400 font-black text-[10px] uppercase tracking-[0.4em] mb-2">Serviços Oficiais</span>
-                </div>
+
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
                     {servicos.map((s, idx) => {
