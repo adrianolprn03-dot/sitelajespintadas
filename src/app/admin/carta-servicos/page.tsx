@@ -38,6 +38,7 @@ export default function AdminCartaServicosPage() {
         prioridades: "Atendimento preferencial por lei",
         previsaoEspera: "15-30 minutos",
         statusServico: "Consulta presencial ou via telefone",
+        linkAcesso: "",
         linkAvaliacao: "/transparencia/carta-servicos/avaliar",
         ativo: true
     });
@@ -111,6 +112,7 @@ export default function AdminCartaServicosPage() {
                 prioridades: "Prioridade legal (idosos, gestantes, PCD)",
                 previsaoEspera: "15 minutos",
                 statusServico: "Protocolo físico",
+                linkAcesso: "",
                 linkAvaliacao: "/transparencia/carta-servicos/avaliar",
                 ativo: true 
             });
