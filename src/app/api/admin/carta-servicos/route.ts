@@ -17,9 +17,16 @@ export async function POST(req: Request) {
     if (!session) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     try {
         const body = await req.json();
-        const item = await prisma.servicoCarta.create({ data: body });
+        const item = await prisma.servicoCarta.create({ 
+            data: {
+                ...body,
+                ativo: body.ativo ?? true,
+                ordem: body.ordem ?? 0
+            } 
+        });
         return NextResponse.json(item);
-    } catch {
-        return NextResponse.json({ error: "Erro" }, { status: 500 });
+    } catch (error) {
+        console.error("Erro ao criar serviço:", error);
+        return NextResponse.json({ error: "Erro ao criar serviço" }, { status: 500 });
     }
 }

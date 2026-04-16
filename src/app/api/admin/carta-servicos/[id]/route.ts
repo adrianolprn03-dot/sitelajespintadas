@@ -8,9 +8,15 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     if (!session) return NextResponse.json({ error: "Privado" }, { status: 401 });
     try {
         const body = await req.json();
-        const item = await prisma.servicoCarta.update({ where: { id: params.id }, data: body });
+        const item = await prisma.servicoCarta.update({ 
+            where: { id: params.id }, 
+            data: body 
+        });
         return NextResponse.json(item);
-    } catch { return NextResponse.json({ error: "Erro" }, { status: 500 }); }
+    } catch (error) { 
+        console.error("Erro ao atualizar serviço:", error);
+        return NextResponse.json({ error: "Erro ao atualizar" }, { status: 500 }); 
+    }
 }
 
 export async function DELETE(req: Request, { params }: { params: { id: string } }) {

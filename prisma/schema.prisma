@@ -443,16 +443,34 @@ model Concurso {
 }
 
 model ServicoCarta {
-  id         String   @id @default(cuid())
-  nome       String
-  categoria  String
-  descricao  String
-  local      String
-  prazo      String
-  documentos String?
-  ativo      Boolean  @default(true)
-  ordem      Int      @default(0)
-  criadoEm   DateTime @default(now())
+  id              String   @id @default(cuid())
+  nome            String
+  categoria       String
+  descricao       String
+  local           String
+  prazo           String
+  requisitos      String?
+  documentos      String?
+  etapas          String?
+  formasAcesso    String?
+  prioridades     String?
+  previsaoEspera  String?
+  statusServico   String?
+  linkAcesso      String?
+  linkAvaliacao   String?   @default("/transparencia/carta-servicos/avaliar")
+  ativo           Boolean  @default(true)
+  ordem           Int      @default(0)
+  criadoEm        DateTime @default(now())
+  avaliacoes      AvaliacaoServico[]
+}
+
+model AvaliacaoServico {
+  id           String       @id @default(cuid())
+  servicoId    String
+  servico      ServicoCarta @relation(fields: [servicoId], references: [id], onDelete: Cascade)
+  nota         Int
+  comentario   String?
+  respondidoEm DateTime     @default(now())
 }
 
 model RelatorioFiscal {
