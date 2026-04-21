@@ -52,7 +52,7 @@ const sitemapData = [
             { label: "Notícias", href: "/noticias" },
             { label: "Agenda de Eventos", href: "/agenda" },
             { label: "Galeria de Fotos", href: "/galeria" },
-            { label: "Saúde", href: "/servicos/saude" },
+            { label: "Saúde", href: "/unidades-de-saude" },
             { label: "Educação", href: "/servicos/educacao" },
             { label: "Telefones Úteis", href: "/contato" },
         ]

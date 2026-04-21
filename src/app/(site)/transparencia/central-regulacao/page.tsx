@@ -119,7 +119,7 @@ export default function CentralRegulacaoPage() {
                             </a>
                         </div>
                         <Link
-                            href="/transparencia/unidades-saude"
+                            href="/unidades-de-saude"
                             className="mt-8 flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-black uppercase text-[9px] tracking-widest py-4 rounded-2xl transition-all"
                         >
                             Ver Unidades de Saúde <FaExternalLinkAlt size={9} />

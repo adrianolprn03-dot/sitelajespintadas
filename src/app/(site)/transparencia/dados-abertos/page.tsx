@@ -88,6 +88,36 @@ const conjuntos = [
         gradient: "from-sky-500 to-cyan-600",
         shadow: "shadow-sky-500/20"
     },
+    {
+        titulo: "Emendas Parlamentares (PIX)",
+        descricao: "Transferências especiais recebidas de emendas individuais.",
+        endpoint: "/api/transparencia/emendas-parlamentares",
+        formatos: ["JSON", "CSV"],
+        atualizacao: "Contínua",
+        lei: "PNTP",
+        gradient: "from-teal-400 to-emerald-500",
+        shadow: "shadow-teal-500/20"
+    },
+    {
+        titulo: "Renúncias e Desonerações",
+        descricao: "Demonstrativo de incentivos, isenções e anistias fiscais.",
+        endpoint: "/api/transparencia/renuncias-fiscais",
+        formatos: ["JSON", "CSV"],
+        atualizacao: "Anual",
+        lei: "Art. 14 LRF",
+        gradient: "from-orange-400 to-red-500",
+        shadow: "shadow-orange-500/20"
+    },
+    {
+        titulo: "Glossário Técnico",
+        descricao: "Dicionário de termos da administração pública.",
+        endpoint: "/api/transparencia/glossario",
+        formatos: ["JSON", "CSV"],
+        atualizacao: "Ocasional",
+        lei: "PNTP",
+        gradient: "from-blue-400 to-indigo-500",
+        shadow: "shadow-blue-500/20"
+    },
 ];
 
 export default function DadosAbertosPage() {

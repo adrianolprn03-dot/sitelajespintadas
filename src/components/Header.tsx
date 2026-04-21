@@ -42,9 +42,9 @@ const navItems = [
         ]
     },
     {
-        label: "Serviços", href: "/servicos/saude", hasDropdown: true,
+        label: "Serviços", href: "/unidades-de-saude", hasDropdown: true,
         children: [
-            { label: "Saúde", href: "/servicos/saude" },
+            { label: "Saúde", href: "/unidades-de-saude" },
             { label: "Assistência Social", href: "/servicos/social" },
             { label: "Educação", href: "/servicos/educacao" },
             { label: "Cultura e Esporte", href: "/servicos/cultura" },

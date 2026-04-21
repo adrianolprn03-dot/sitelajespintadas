@@ -1,98 +1,121 @@
-"use client";
+import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
-import { FaPalette, FaMapMarkerAlt, FaPhoneAlt, FaClock } from "react-icons/fa";
+import { prisma } from "@/lib/prisma";
+import { 
+    HiOutlineMapPin, 
+    HiOutlineClock, 
+    HiOutlinePhone,
+    HiOutlinePaintBrush
+} from "react-icons/hi2";
 
-import { useState, useEffect } from "react";
-
-type Unidade = {
-    id: string;
-    nome: string;
-    descricao: string;
-    endereco: string;
-    telefone: string | null;
-    horario: string;
-    mapa: string | null;
+export const metadata: Metadata = {
+    title: "Cultura, Esporte e Lazer | Prefeitura de Lajes Pintadas – RN",
+    description: "Equipamentos culturais e esportivos disponíveis à população de Lajes Pintadas",
 };
 
-export default function CulturaPage() {
-    const [unidades, setUnidades] = useState<Unidade[]>([]);
-    const [loading, setLoading] = useState(true);
+export default async function CulturaPage() {
+    const unidades = await (prisma as any).unidadeAtendimento.findMany({
+        where: { tipo: "Cultura", ativa: true },
+        orderBy: { nome: 'asc' }
+    });
 
-    useEffect(() => {
-        const fetchUnidades = async () => {
-            try {
-                const res = await fetch("/api/unidades?tipo=cultura");
-                if (res.ok) {
-                    const data = await res.json();
-                    setUnidades(data);
-                }
-            } catch (error) {
-                console.error("Erro ao buscar unidades:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchUnidades();
-    }, []);
     return (
-        <div>
+        <div className="min-h-screen bg-[#f8fafc]">
             <PageHeader
                 title="Cultura, Esporte e Lazer"
-                subtitle="Equipamentos culturais e esportivos disponíveis à população"
+                subtitle="Equipamentos culturais e esportivos disponíveis à população."
+                variant="premium"
+                icon={<HiOutlinePaintBrush className="w-8 h-8" />}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
-                    { label: "Serviços", href: "#" },
+                    { label: "Serviços", href: "/servicos" },
                     { label: "Cultura e Esporte" }
                 ]}
             />
+            
+            <div className="max-w-7xl mx-auto px-6 py-16 mb-20 relative z-10 w-full">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    {unidades.length === 0 ? (
+                        <div className="lg:col-span-2 text-center py-20 bg-white rounded-[2rem] border border-dashed border-gray-200">
+                            <p className="text-gray-400 font-medium">Nenhuma unidade cultural ou esportiva cadastrada no momento.</p>
+                        </div>
+                    ) : unidades.map((unidade: any) => (
+                        <div key={unidade.id} className="group bg-white rounded-[2.5rem] overflow-hidden shadow-2xl shadow-gray-200/50 hover:shadow-primary-900/10 transition-all duration-500 border border-transparent hover:border-primary-100 flex flex-col h-full">
+                            {/* Header do Card com Gradiente */}
+                            <div className="bg-gradient-to-br from-[#4f6efe] to-[#3a4dff] p-8 md:p-10 text-white relative">
+                                <div className="absolute top-0 right-0 p-10 opacity-10 group-hover:scale-110 transition-transform duration-500">
+                                    <HiOutlinePaintBrush size={120} />
+                                </div>
+                                
+                                <div className="flex items-start gap-6 relative z-10">
+                                    <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center shrink-0 shadow-inner">
+                                        <HiOutlinePaintBrush size={32} className="text-white" />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <h3 className="text-xl md:text-2xl font-black uppercase tracking-tight leading-tight mb-2">
+                                            {unidade.nome}
+                                        </h3>
+                                        <p className="text-white/80 text-sm font-medium italic">
+                                            {unidade.descricao}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
 
-            <div className="py-16 bg-gray-50 min-h-[400px]">
-                <div className="max-w-[1240px] mx-auto px-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {loading ? (
-                            <div className="md:col-span-2 flex justify-center py-10">
-                                <div className="w-8 h-8 border-4 border-[#01b0ef] border-t-transparent rounded-full animate-spin" />
-                            </div>
-                        ) : unidades.length === 0 ? (
-                            <div className="md:col-span-2 text-center py-10 text-gray-500">
-                                Nenhuma unidade cultural/esportiva cadastrada no momento.
-                            </div>
-                        ) : unidades.map((unidade) => (
-                            <div key={unidade.id} className="bg-white rounded-[2rem] shadow-xl shadow-gray-200/50 overflow-hidden border border-gray-100 flex flex-col">
-                                <div className="p-8 pb-6 flex items-start gap-4 border-b border-gray-100">
-                                    <div className="w-14 h-14 rounded-2xl bg-purple-50 text-purple-500 flex items-center justify-center shrink-0">
-                                        <FaPalette className="text-2xl" />
+                            {/* Corpo do Card com Informações */}
+                            <div className="p-8 md:p-10 space-y-8 flex-grow bg-white">
+                                {/* Endereço */}
+                                <div className="flex items-start gap-5">
+                                    <div className="w-12 h-12 rounded-2xl bg-gray-50 text-gray-400 flex items-center justify-center shrink-0 border border-gray-100 group-hover:bg-primary-50 group-hover:text-primary-500 transition-colors duration-400">
+                                        <HiOutlineMapPin size={22} />
                                     </div>
-                                    <div>
-                                        <h2 className="text-xl font-black text-gray-800 uppercase tracking-tight">{unidade.nome}</h2>
-                                        <p className="text-gray-500 text-sm mt-1">{unidade.descricao}</p>
+                                    <div className="flex flex-col">
+                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">
+                                            Endereço
+                                        </span>
+                                        <span className="text-[#002241] font-bold text-sm leading-relaxed">
+                                            {unidade.endereco}
+                                        </span>
                                     </div>
                                 </div>
-                                <div className="p-8 space-y-4 flex-1">
-                                    <div className="flex items-start gap-3">
-                                        <FaMapMarkerAlt className="text-[#01b0ef] text-lg mt-0.5 shrink-0" />
-                                        <div>
-                                            <p className="text-xs font-bold uppercase text-gray-400 mb-0.5 tracking-widest">Endereço</p>
-                                            <p className="text-sm font-medium text-gray-700">{unidade.endereco}</p>
-                                        </div>
+
+                                {/* Horário */}
+                                <div className="flex items-start gap-5">
+                                    <div className="w-12 h-12 rounded-2xl bg-gray-50 text-gray-400 flex items-center justify-center shrink-0 border border-gray-100 group-hover:bg-primary-50 group-hover:text-primary-500 transition-colors duration-400">
+                                        <HiOutlineClock size={22} />
                                     </div>
-                                    <div className="flex items-start gap-3">
-                                        <FaPhoneAlt className="text-[#01b0ef] text-lg mt-0.5 shrink-0" />
-                                        <div>
-                                            <p className="text-xs font-bold uppercase text-gray-400 mb-0.5 tracking-widest">Telefone Público</p>
-                                            <p className="text-sm font-medium text-gray-700">{unidade.telefone}</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-start gap-3">
-                                        <FaClock className="text-[#01b0ef] text-lg mt-0.5 shrink-0" />
-                                        <div>
-                                            <p className="text-xs font-bold uppercase text-gray-400 mb-0.5 tracking-widest">Horário de Atendimento</p>
-                                            <p className="text-sm font-medium text-gray-700">{unidade.horario}</p>
-                                        </div>
+                                    <div className="flex flex-col">
+                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">
+                                            Horário de Funcionamento
+                                        </span>
+                                        <span className="text-[#002241] font-bold text-sm leading-relaxed">
+                                            {unidade.horario}
+                                        </span>
                                     </div>
                                 </div>
-                                {unidade.mapa ? (
-                                    <div className="h-[250px] w-full bg-gray-200 border-t border-gray-100">
+
+                                {/* Telefone */}
+                                {unidade.telefone && (
+                                    <div className="flex items-start gap-5">
+                                        <div className="w-12 h-12 rounded-2xl bg-gray-50 text-gray-400 flex items-center justify-center shrink-0 border border-gray-100 group-hover:bg-primary-50 group-hover:text-primary-500 transition-colors duration-400">
+                                            <HiOutlinePhone size={22} />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">
+                                                Contato Info
+                                            </span>
+                                            <span className="text-[#002241] font-bold text-sm leading-relaxed">
+                                                {unidade.telefone}
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Mapa Incorporado ou Link */}
+                            {unidade.mapa && (
+                                <div className="px-10 pb-10">
+                                    <div className="rounded-[1.5rem] overflow-hidden border border-gray-100 h-48 mb-4">
                                         <iframe
                                             src={unidade.mapa}
                                             width="100%"
@@ -104,14 +127,18 @@ export default function CulturaPage() {
                                             title={`Mapa de Localização - ${unidade.nome}`}
                                         ></iframe>
                                     </div>
-                                ) : (
-                                    <div className="h-[100px] w-full bg-gray-50 border-t border-gray-100 flex items-center justify-center">
-                                        <span className="text-xs text-gray-400">Mapa não disponível</span>
-                                    </div>
-                                )}
-                            </div>
-                        ))}
-                    </div>
+                                    <a 
+                                        href={unidade.mapa} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="w-full flex items-center justify-center gap-2 py-3 bg-gray-50 hover:bg-primary-600 hover:text-white text-primary-900 border border-gray-100 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300"
+                                    >
+                                        Abrir no Google Maps Integrado
+                                    </a>
+                                </div>
+                            )}
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>

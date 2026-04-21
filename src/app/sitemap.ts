@@ -23,7 +23,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         { url: `${base}/servicos/esic/relatorio-anual`, lastModified: now, priority: 0.8 },
         { url: `${base}/servicos/ouvidoria`, lastModified: now, priority: 0.8 },
         { url: `${base}/servicos/consulta-protocolo`, lastModified: now, priority: 0.7 },
-        { url: `${base}/servicos/saude`, lastModified: now, priority: 0.7 },
+        { url: `${base}/unidades-de-saude`, lastModified: now, priority: 0.7 },
         { url: `${base}/servicos/educacao`, lastModified: now, priority: 0.7 },
         { url: `${base}/servicos/social`, lastModified: now, priority: 0.7 },
         { url: `${base}/servicos/cultura`, lastModified: now, priority: 0.6 },
@@ -85,7 +85,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
         { url: `${base}/transparencia/saude`, lastModified: now, priority: 0.8 },
         { url: `${base}/transparencia/medicamentos-sus`, lastModified: now, priority: 0.8 },
         { url: `${base}/transparencia/plano-saude`, lastModified: now, priority: 0.7 },
-        { url: `${base}/transparencia/unidades-saude`, lastModified: now, priority: 0.7 },
         { url: `${base}/transparencia/central-regulacao`, lastModified: now, priority: 0.7 },
 
         // === PLANEJAMENTO ===

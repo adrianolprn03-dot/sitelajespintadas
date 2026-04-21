@@ -438,6 +438,7 @@ model Concurso {
   vagas          String?
   dataPublicacao DateTime @default(now())
   linkEdital     String?
+  descricao      String?
   ativo          Boolean  @default(true)
   criadoEm       DateTime @default(now())
 }
@@ -499,4 +500,18 @@ model Pagamento {
   status         String    @default("pendente")
   criadoEm       DateTime  @default(now())
   atualizadoEm   DateTime  @updatedAt
+}
+
+model RenunciaFiscal {
+  id              String   @id @default(cuid())
+  descricao       String
+  categoria       String   // Isenção, Redução, Anistia, etc.
+  baseLegal       String
+  valorEstimado   Float
+  beneficiarios   String?
+  vigencia        String?
+  ano             Int
+  ativo           Boolean  @default(true)
+  criadoEm        DateTime @default(now())
+  atualizadoEm    DateTime @updatedAt
 }

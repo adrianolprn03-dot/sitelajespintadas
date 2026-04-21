@@ -66,7 +66,7 @@ const categoriasDeModulos = [
         desc: "Gestão da saúde pública, investimentos e infraestrutura de atendimento.",
         modulos: [
             { icon: Stethoscope, titulo: "Saúde", desc: "Portal da Saúde.", href: "/transparencia/saude", cor: "from-rose-500 to-red-600", badge: "MUNICIPAL" },
-            { icon: Building2, titulo: "Unidades de Saúde", desc: "Relação de UBS/Hospitais.", href: "/transparencia/unidades-saude", cor: "from-blue-500 to-cyan-600", badge: "LOCAIS" },
+            { icon: Building2, titulo: "Unidades de Saúde", desc: "Relação de UBS/Hospitais.", href: "/unidades-de-saude", cor: "from-blue-500 to-cyan-600", badge: "LOCAIS" },
             { icon: Pill, titulo: "Medicamentos SUS", desc: "Lista e Estoque.", href: "/transparencia/medicamentos-sus", cor: "from-emerald-500 to-teal-600", badge: "FARMÁCIA" },
             { icon: Activity, titulo: "Central Regulação", desc: "Filas e Agendamentos.", href: "/transparencia/central-regulacao", cor: "from-orange-500 to-amber-600", badge: "FILAS" },
             { icon: HeartPulse, titulo: "Plano de Saúde", desc: "Diretrizes Municipais.", href: "/transparencia/plano-saude", cor: "from-pink-500 to-rose-600", badge: "PLANO" },
