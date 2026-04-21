@@ -36,12 +36,39 @@ export default function RelatoriosFiscaisTemplate({ title, subtitle, tipo, icon,
     useEffect(() => {
         const fetchRelatorios = async () => {
             try {
-                const url = showTabs ? "/api/admin/relatorios-fiscais" : `/api/admin/relatorios-fiscais?tipo=${tipo}`;
-                const res = await fetch(url);
-                if (res.ok) {
-                    const data = await res.json();
-                    setRelatorios(data);
+                setLoading(true);
+                const urls = [
+                    showTabs ? "/api/admin/relatorios-fiscais" : `/api/admin/relatorios-fiscais?tipo=${tipo}`
+                ];
+
+                const hasBudget = showTabs?.some(t => ["LOA", "LDO", "PPA"].includes(t));
+                if (hasBudget) {
+                    urls.push("/api/legislacao?tipo=LOA,LDO,PPA&limit=200");
                 }
+
+                const responses = await Promise.all(urls.map(url => fetch(url)));
+                const dataSets = await Promise.all(responses.map(res => res.ok ? res.json() : []));
+
+                let combinedRecords: RelatorioFiscal[] = [];
+
+                if (dataSets[0]) {
+                    combinedRecords = [...(Array.isArray(dataSets[0]) ? dataSets[0] : [])];
+                }
+
+                if (hasBudget && dataSets[1] && dataSets[1].items) {
+                    const mappedBudget: RelatorioFiscal[] = dataSets[1].items.map((item: any) => ({
+                        id: item.id,
+                        titulo: item.ementa,
+                        tipo: item.tipo,
+                        periodo: "Instrumento de Planejamento",
+                        ano: item.ano,
+                        arquivo: item.arquivo || "",
+                        dataPublicacao: item.criadoEm
+                    }));
+                    combinedRecords = [...combinedRecords, ...mappedBudget];
+                }
+
+                setRelatorios(combinedRecords);
             } catch (error) {
                 console.error("Erro ao buscar relatórios:", error);
             } finally {

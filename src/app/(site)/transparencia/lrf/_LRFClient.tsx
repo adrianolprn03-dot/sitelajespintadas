@@ -10,7 +10,7 @@ export default function LRFPage() {
             icon={<FaChartLine />}
             tipo="LRF"
             breadcrumbLabel="LRF"
-            showTabs={["RREO", "RGF"]}
+            showTabs={["RREO", "RGF", "LOA", "LDO", "PPA"]}
         />
     );
 }
