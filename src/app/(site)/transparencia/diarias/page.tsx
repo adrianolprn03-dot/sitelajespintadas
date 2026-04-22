@@ -32,6 +32,7 @@ type Diaria = {
     secretaria: string;
     mes: number;
     ano: number;
+    portariaUrl?: string;
 };
 
 const mesesLabels = [
@@ -428,7 +429,6 @@ export default function DiariasPage() {
                                     )}
                                 </div>
                             </motion.div>
-                        )}
                         )}
                     </AnimatePresence>
                 </div>
