@@ -60,27 +60,49 @@ const itemVariants = {
     visible: { opacity: 1, y: 0 }
 };
 
+const SECRETARIAS = [
+    "Assistência Social",
+    "Educação",
+    "Gabinete do Prefeito",
+    "Turismo, Esporte e Cultura",
+    "Saúde",
+    "Finanças e Controle",
+    "Agricultura e Meio Ambiente",
+    "Obras e Infraestrutura",
+    "Comunicação e Imprensa",
+    "Administração",
+    "Procuradoria Jurídica",
+];
+
+const PER_PAGE = 20;
+
 export default function DiariasPage() {
     const [diarias, setDiarias] = useState<Diaria[]>([]);
+    const [total, setTotal] = useState(0);
+    const [totalValorAPI, setTotalValorAPI] = useState(0);
     const [loading, setLoading] = useState(true);
     const [busca, setBusca] = useState("");
     const [ano, setAno] = useState(new Date().getFullYear().toString());
-    const [mes, setMes] = useState((new Date().getMonth() + 1).toString());
+    const [mes, setMes] = useState(""); // vazio = todos os meses
     const [secretaria, setSecretaria] = useState("");
+    const [pagina, setPagina] = useState(1);
+
+    useEffect(() => {
+        setPagina(1); // resetar paginação ao mudar filtros
+    }, [ano, mes, secretaria, busca]);
 
     useEffect(() => {
         const fetchDiarias = async () => {
             setLoading(true);
             try {
-                const query = new URLSearchParams({
-                    ano,
-                    mes,
-                    secretaria,
-                    query: busca
-                });
-                const res = await fetch(`/api/diarias?${query.toString()}`);
+                const params: Record<string, string> = { ano, query: busca };
+                if (mes) params.mes = mes;
+                if (secretaria) params.secretaria = secretaria;
+                const res = await fetch(`/api/diarias?${new URLSearchParams(params)}`);
                 const data = await res.json();
                 setDiarias(data.items || []);
+                setTotal(data.total || 0);
+                setTotalValorAPI(data.totalValor || 0);
             } catch (error) {
                 console.error("Erro ao buscar diárias:", error);
             } finally {
@@ -94,9 +116,14 @@ export default function DiariasPage() {
     const handleClearFilters = () => {
         setBusca("");
         setAno(new Date().getFullYear().toString());
-        setMes((new Date().getMonth() + 1).toString());
+        setMes("");
         setSecretaria("");
+        setPagina(1);
     };
+
+    // Paginação client-side
+    const totalPaginas = Math.ceil(diarias.length / PER_PAGE);
+    const diariasPaginadas = diarias.slice((pagina - 1) * PER_PAGE, pagina * PER_PAGE);
 
     const handleExport = (format: "pdf" | "csv" | "json" | "xlsx") => {
         const payload = diarias.map(d => ({
@@ -174,7 +201,7 @@ export default function DiariasPage() {
                             <div className="mt-16 flex flex-wrap gap-12 items-center border-t border-white/5 pt-10">
                                 <div className="flex flex-col">
                                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/20 mb-2">Ano base</span>
-                                    <span className="text-2xl font-black tracking-tight">{mesesAbrev[Number(mes)-1]} / {ano}</span>
+                                    <span className="text-2xl font-black tracking-tight">{mes ? `${mesesAbrev[Number(mes)-1]} / ` : ''}{ano}</span>
                                 </div>
                                 <div className="w-px h-12 bg-white/5 hidden md:block" />
                                 <div className="flex flex-col">
@@ -235,12 +262,9 @@ export default function DiariasPage() {
                                     className="pl-12 pr-10 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-700 outline-none focus:ring-4 focus:ring-blue-600/5 focus:bg-white transition-all appearance-none cursor-pointer hover:border-blue-400 min-w-[240px] shadow-inner"
                                 >
                                     <option value="">TODAS AS SECRETARIAS</option>
-                                    <option value="saude">SAÚDE</option>
-                                    <option value="educacao">EDUCAÇÃO</option>
-                                    <option value="assistencia social">ASSISTÊNCIA SOCIAL</option>
-                                    <option value="obras">OBRAS E SERVIÇOS PÚBLICOS</option>
-                                    <option value="administracao">ADMINISTRAÇÃO</option>
-                                    <option value="gabinete">GABINETE DO PREFEITO</option>
+                                    {SECRETARIAS.map(s => (
+                                        <option key={s} value={s}>{s.toUpperCase()}</option>
+                                    ))}
                                 </select>
                             </div>
                         </div>
@@ -278,102 +302,133 @@ export default function DiariasPage() {
                                 <button onClick={handleClearFilters} className="px-12 py-5 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-blue-600 transition-all shadow-xl active:scale-95">Resetar Filtros</button>
                             </motion.div>
                         ) : (
-                            <motion.div variants={containerVariants} className="grid grid-cols-1 gap-10">
-                                {diarias.map((d, idx) => (
-                                    <motion.div 
-                                        key={d.id} 
-                                        variants={itemVariants}
-                                        className="bg-white rounded-[3rem] border border-slate-100 shadow-2xl shadow-slate-200/40 overflow-hidden group hover:shadow-blue-500/10 transition-all duration-700 hover:border-blue-200 relative p-1 lg:p-1.5"
-                                    >
-                                        <div className="absolute top-10 right-10 opacity-[0.02] pointer-events-none group-hover:opacity-[0.05] transition-opacity duration-700">
-                                            <FaPlaneDeparture size={200} />
-                                        </div>
-
-                                        <div className="p-10 lg:p-14">
-                                            <div className="flex flex-col lg:flex-row justify-between gap-12 mb-12">
-                                                {/* Servidor Info */}
-                                                <div className="flex items-center gap-8">
-                                                    <div className="w-24 h-24 bg-slate-50 text-slate-300 rounded-[2.25rem] flex items-center justify-center shrink-0 border border-slate-100 group-hover:bg-blue-600 group-hover:text-white group-hover:rotate-6 group-hover:scale-110 transition-all duration-700 shadow-inner">
-                                                        <FaUserTie size={36} />
-                                                    </div>
-                                                    <div>
-                                                        <div className="flex items-center gap-4 mb-3">
-                                                            <h3 className="text-3xl font-black text-slate-900 uppercase tracking-tighter group-hover:text-blue-700 transition-colors leading-none">{d.servidor}</h3>
-                                                        </div>
-                                                        <div className="flex flex-wrap items-center gap-4">
-                                                            <span className="flex items-center gap-2.5 text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-4 py-2 rounded-xl border border-slate-100">
-                                                                <FaBuildingColumns size={12} className="text-blue-300" /> {d.secretaria}
-                                                            </span>
-                                                            <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest bg-blue-50 px-5 py-2.5 rounded-xl border border-blue-100 flex items-center gap-2.5 shadow-sm">
-                                                                <FaInfoCircle size={14} /> {d.cargo}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                {/* Valor Highlight */}
-                                                <div className="lg:text-right flex flex-col justify-center">
-                                                    <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-2 block">Custo da Missão</span>
-                                                    <div className="text-5xl font-black text-emerald-600 tracking-tighter bg-emerald-50 px-10 py-4 rounded-[2rem] border border-emerald-100 inline-block lg:self-end shadow-sm group-hover:scale-105 transition-transform duration-500">
-                                                        {fmt(d.valor)}
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            {/* Mission Details Bento */}
-                                            <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 bg-slate-50/50 rounded-[3rem] p-10 border border-slate-100 group-hover:bg-white transition-colors duration-700">
-                                                <div className="lg:col-span-3 flex flex-col justify-center">
-                                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                                                        <span className="w-1.5 h-4 bg-rose-500 rounded-full" /> Itinerário e Motivação
-                                                    </p>
-                                                    <div className="flex items-start gap-6">
-                                                        <div className="w-14 h-14 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center shrink-0 shadow-sm border border-rose-100">
-                                                            <FaMapMarkerAlt size={22} />
-                                                        </div>
-                                                        <div>
-                                                            <p className="text-xl font-black text-slate-900 uppercase tracking-tight mb-3 decoration-rose-100 decoration-8 underline underline-offset-8 decoration-skip-ink-none">{d.destino}</p>
-                                                            <p className="text-sm text-slate-500 font-bold italic leading-relaxed opacity-80 group-hover:opacity-100 transition-opacity">"{d.motivo}"</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div className="lg:col-span-2 flex flex-col justify-center">
-                                                    <div className="bg-white px-8 py-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/40 flex flex-col md:flex-row items-center justify-between gap-8 group-hover:border-blue-200 hover:scale-[1.02] transition-all duration-500">
-                                                        <div className="text-center">
-                                                            <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-3">Partida</p>
-                                                            <p className="text-lg font-black text-slate-800 tracking-tighter">{new Date(d.dataInicio).toLocaleDateString("pt-BR")}</p>
-                                                        </div>
-                                                        <div className="w-12 h-px bg-slate-100 relative hidden md:block">
-                                                            <FaArrowRight className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-slate-300 animate-pulse" size={14} />
-                                                        </div>
-                                                        <div className="text-center">
-                                                            <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-3">Retorno</p>
-                                                            <p className="text-lg font-black text-slate-800 tracking-tighter">{new Date(d.dataFim).toLocaleDateString("pt-BR")}</p>
-                                                        </div>
-                                                        <div className="w-px h-10 bg-slate-100 hidden md:block" />
-                                                        <div className="text-center">
-                                                            <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-3">Diárias</p>
-                                                            <div className="flex items-baseline gap-1">
-                                                                <span className="text-3xl font-black text-blue-600 tabular-nums">{d.quantidadeDias}</span>
-                                                                <span className="text-[10px] font-black text-blue-300 uppercase">Uni</span>
+                            <motion.div 
+                                variants={containerVariants} 
+                                className="bg-white rounded-[3rem] border border-slate-100 shadow-2xl shadow-slate-200/40 overflow-hidden"
+                            >
+                                {/* Cabeçalho da Tabela */}
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-left border-collapse">
+                                        <thead>
+                                            <tr className="bg-slate-50 border-b border-slate-100">
+                                                <th className="px-8 py-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Servidor / Cargo / Unidade</th>
+                                                <th className="px-8 py-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Destino / Motivo</th>
+                                                <th className="px-8 py-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Período</th>
+                                                <th className="px-8 py-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">Qtd</th>
+                                                <th className="px-8 py-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-right">Vlr. Unitário</th>
+                                                <th className="px-8 py-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-right">Total</th>
+                                                <th className="px-8 py-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-center whitespace-nowrap">Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {diariasPaginadas.map((d, idx) => (
+                                                <motion.tr 
+                                                    key={d.id}
+                                                    variants={itemVariants}
+                                                    className="group hover:bg-blue-50/30 transition-all duration-300 border-b border-slate-50 last:border-0"
+                                                >
+                                                    <td className="px-8 py-8">
+                                                        <div className="flex items-center gap-4">
+                                                            <div className="w-12 h-12 bg-slate-100 text-slate-400 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-all duration-500 shadow-sm">
+                                                                <FaUserTie size={18} />
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-sm font-black text-slate-900 uppercase tracking-tight leading-tight mb-1">{d.servidor}</p>
+                                                                <div className="flex flex-col gap-1">
+                                                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{d.cargo}</span>
+                                                                    <span className="inline-flex w-fit px-2 py-0.5 bg-blue-50 text-blue-600 text-[8px] font-black uppercase tracking-widest rounded-md border border-blue-100">
+                                                                        {d.secretaria}
+                                                                    </span>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                                    </td>
+                                                    <td className="px-8 py-8 max-w-[250px]">
+                                                        <p className="text-[11px] font-black text-slate-800 uppercase tracking-tight mb-1 truncate">{d.destino}</p>
+                                                        <p className="text-[10px] text-slate-400 font-bold italic line-clamp-2 leading-relaxed">"{d.motivo}"</p>
+                                                    </td>
+                                                    <td className="px-8 py-8">
+                                                        <div className="flex flex-col">
+                                                            <span className="text-[10px] font-black text-slate-900 tracking-tight">{new Date(d.dataInicio).toLocaleDateString("pt-BR")}</span>
+                                                            <span className="text-[9px] font-bold text-slate-300 uppercase tracking-widest mt-0.5">até {new Date(d.dataFim).toLocaleDateString("pt-BR")}</span>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-8 py-8 text-center">
+                                                        <span className="inline-flex items-center justify-center px-3 py-1 bg-slate-100 text-slate-600 text-[10px] font-black rounded-lg">
+                                                            {d.quantidadeDias}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-8 py-8 text-right">
+                                                        <span className="text-[11px] font-bold text-slate-400 tracking-tight">
+                                                            {fmt(d.valorUnitario || 0)}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-8 py-8 text-right">
+                                                        <span className="text-sm font-black text-emerald-600 tracking-tight">
+                                                            {fmt(d.valor)}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-8 py-8">
+                                                        <div className="flex items-center justify-center">
+                                                            <a 
+                                                                href={d.portariaUrl || `/transparencia/diarias/portaria-${d.id}.pdf`}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="flex items-center justify-center w-10 h-10 bg-slate-900 text-white rounded-xl hover:bg-blue-600 transition-all shadow-lg active:scale-95 group/btn"
+                                                                title="Ver Portaria (PDF)"
+                                                            >
+                                                                <FaFileSignature className="text-sm group-hover/btn:rotate-12 transition-transform" />
+                                                            </a>
+                                                        </div>
+                                                    </td>
+                                                </motion.tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
 
-                                            {/* Action Bar */}
-                                            <div className="mt-10 flex justify-end gap-5">
-                                                <button className="h-14 flex items-center gap-4 px-10 bg-slate-950 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-blue-600 transition-all shadow-2xl shadow-slate-900/20 group/btn active:scale-95">
-                                                    <FaFileSignature size={14} className="opacity-50 group-hover:opacity-100 group-hover:rotate-12 transition-all" />
-                                                    Portaria de Concessão 
-                                                    <FaArrowRight size={10} className="group-hover/btn:translate-x-2 transition-transform" />
-                                                </button>
-                                            </div>
+                                {/* Rodapé da Tabela / Paginação */}
+                                <div className="px-8 py-8 bg-slate-50 border-t border-slate-100 flex flex-wrap items-center justify-between gap-6">
+                                    <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">
+                                        Exibindo <span className="text-slate-800">{(pagina - 1) * PER_PAGE + 1}–{Math.min(pagina * PER_PAGE, diarias.length)}</span> de <span className="text-blue-600">{diarias.length}</span> resultados
+                                    </p>
+                                    
+                                    {totalPaginas > 1 && (
+                                        <div className="flex items-center gap-2">
+                                            <button 
+                                                onClick={() => setPagina(p => Math.max(1, p - 1))} 
+                                                disabled={pagina === 1} 
+                                                className="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 rounded-xl text-slate-400 hover:bg-blue-600 hover:text-white hover:border-blue-600 disabled:opacity-30 transition-all shadow-sm"
+                                            >
+                                                &larr;
+                                            </button>
+                                            
+                                            {/* Paginação Inteligente (Simplificada para o exemplo) */}
+                                            {Array.from({ length: Math.min(5, totalPaginas) }, (_, i) => {
+                                                const p = i + 1;
+                                                return (
+                                                    <button 
+                                                        key={p} 
+                                                        onClick={() => setPagina(p)} 
+                                                        className={`w-10 h-10 rounded-xl text-[10px] font-black transition-all border ${ p === pagina ? 'bg-blue-600 text-white border-blue-600 shadow-blue-500/20 shadow-lg' : 'bg-white border-slate-200 text-slate-500 hover:border-blue-400' }`}
+                                                    >
+                                                        {p}
+                                                    </button>
+                                                );
+                                            })}
+
+                                            <button 
+                                                onClick={() => setPagina(p => Math.min(totalPaginas, p + 1))} 
+                                                disabled={pagina === totalPaginas} 
+                                                className="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 rounded-xl text-slate-400 hover:bg-blue-600 hover:text-white hover:border-blue-600 disabled:opacity-30 transition-all shadow-sm"
+                                            >
+                                                &rarr;
+                                            </button>
                                         </div>
-                                    </motion.div>
-                                ))}
+                                    )}
+                                </div>
                             </motion.div>
+                        )}
                         )}
                     </AnimatePresence>
                 </div>

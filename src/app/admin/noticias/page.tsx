@@ -110,7 +110,7 @@ export default function AdminNoticiasPage() {
                                     <td className="px-6 py-4 font-medium text-gray-800">{n.titulo}</td>
                                     <td className="px-6 py-4 text-gray-500">{n.secretaria?.nome || "Geral"}</td>
                                     <td className="px-6 py-4 text-gray-500">
-                                        {new Date(n.publicadoEm).toLocaleDateString("pt-BR")}
+                                        {n.publicadoEm ? new Date(n.publicadoEm).toLocaleDateString("pt-BR") : "—"}
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase ${n.publicada ? "bg-green-100 text-green-700" : "bg-orange-100 text-orange-700"

@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import PageHeader from "@/components/PageHeader";
-import { FaUserEdit, FaBriefcase, FaCalendarCheck, FaCheckCircle, FaLock, FaArrowRight } from "react-icons/fa";
+import { FaUserEdit, FaBriefcase, FaCalendarCheck, FaCheckCircle, FaLock, FaArrowRight, FaInfoCircle } from "react-icons/fa";
 import ExportButtons from "@/components/transparencia/ExportButtons";
 import type { Metadata } from "next";
 
@@ -39,7 +39,19 @@ export default async function ProcessoSeletivoPage() {
                 </div>
             </div>
 
-            <div className="max-w-[1240px] mx-auto px-6 pt-16">
+            <div className="max-w-[1240px] mx-auto px-6 pt-12">
+                <div className="bg-red-50 border-l-8 border-red-500 rounded-r-3xl p-8 flex flex-col md:flex-row items-center justify-center md:justify-start gap-6 shadow-xl shadow-red-500/10 transition-all hover:bg-red-100">
+                    <FaInfoCircle className="text-red-500 text-5xl shrink-0 drop-shadow-md" />
+                    <div className="text-center md:text-left">
+                        <h3 className="text-red-900 font-black text-xl uppercase tracking-tight mb-2">Comunicação Oficial</h3>
+                        <p className="text-red-700 font-bold text-lg md:text-xl">
+                            A Prefeitura Municipal de Lajes Pintadas informa que <span className="bg-red-200 text-red-900 px-2 py-0.5 rounded-md mx-1">não realizou processo seletivo</span> para o período de 01/01/2021 à 21/04/2026.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div className="max-w-[1240px] mx-auto px-6 pt-8">
                 <ExportButtons data={processos} filename="processos_seletivos_lajes_pintadas" />
             </div>
 

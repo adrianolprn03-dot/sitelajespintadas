@@ -14,7 +14,7 @@ export default function NovaNoticiaPage() {
         titulo: "",
         resumo: "",
         conteudo: "",
-        publicada: false,
+        publicada: true,
         imagem: "",
         secretariaId: "",
     });

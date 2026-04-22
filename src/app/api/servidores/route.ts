@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
     if (mes) where.mes = parseInt(mes);
     if (secretaria) where.secretaria = { contains: secretaria, mode: 'insensitive' };
     if (vinculo) where.vinculo = { contains: vinculo, mode: 'insensitive' };
-    if (ativo !== null) where.ativo = ativo === "true";
+    if (ativo === "true" || ativo === "false") where.ativo = ativo === "true";
     
     if (query) {
         where.OR = [

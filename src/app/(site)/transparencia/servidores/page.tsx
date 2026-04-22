@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { 
     FaUsers, FaMoneyBillWave, FaFileInvoiceDollar, 
     FaUserTie, FaTable, FaChevronRight, FaInfoCircle,
-    FaArrowRight, FaBriefcase
+    FaArrowRight, FaBriefcase, FaExternalLinkAlt
 } from "react-icons/fa";
 import {
     FaShieldHalved, FaClockRotateLeft,
@@ -48,10 +49,10 @@ const servidoresLinks = [
         color: "blue"
     },
     {
-        title: "Tabela de Vencimentos",
+        title: "Padrão Remuneratório",
         description: "Estrutura remuneratória e níveis salariais conforme legislação municipal vigente.",
         icon: <FaTable size={24} />,
-        href: "/transparencia/servidores/tabela-vencimentos",
+        href: "/transparencia/servidores/cargos-e-salarios",
         category: "Legislação",
         color: "indigo"
     },
@@ -74,6 +75,23 @@ const servidoresLinks = [
 ];
 
 export default function ServidoresHub() {
+    const [linksExternos, setLinksExternos] = useState<any[]>([]);
+
+    useEffect(() => {
+        async function loadExternalLinks() {
+            try {
+                const res = await fetch("/api/links-externos");
+                if (res.ok) {
+                    const data = await res.json();
+                    setLinksExternos(data.filter((l: any) => l.categoria === "servidores" || l.categoria === "geral" || l.categoria === "transparencia"));
+                }
+            } catch (error) {
+                console.error("Erro ao carregar links:", error);
+            }
+        }
+        loadExternalLinks();
+    }, []);
+
     return (
         <div className="min-h-screen bg-[#f8fafc] font-['Montserrat',sans-serif]">
             <PageHeader
@@ -164,14 +182,26 @@ export default function ServidoresHub() {
 
                 {/* Navigation Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {servidoresLinks.map((link, idx) => (
+                    {servidoresLinks.map((link, idx) => {
+                        const identifier = link.href.split("/").pop()?.toLowerCase() || "";
+                        const override = linksExternos.find((l: any) => 
+                            l.moduloAlvo?.toLowerCase() === identifier
+                        );
+                        const finalHref = override ? override.url : link.href;
+                        const isExternal = !!override;
+
+                        return (
                         <motion.div
                             key={link.title}
                             variants={itemVariants}
                             whileHover={{ y: -10 }}
                             className={`group relative h-full ${link.featured ? 'lg:col-span-1' : ''}`}
                         >
-                            <Link href={link.href} className="flex flex-col h-full bg-white rounded-[2.5rem] p-10 shadow-xl shadow-slate-200/40 border border-slate-100/50 hover:border-blue-400 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 overflow-hidden group">
+                            <Link 
+                                href={finalHref} 
+                                target={isExternal ? "_blank" : undefined}
+                                rel={isExternal ? "noopener noreferrer" : undefined}
+                                className="flex flex-col h-full bg-white rounded-[2.5rem] p-10 shadow-xl shadow-slate-200/40 border border-slate-100/50 hover:border-blue-400 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 overflow-hidden group">
                                 <div className="flex justify-between items-start mb-12">
                                     <div className={`w-16 h-16 rounded-[1.5rem] flex items-center justify-center transition-all duration-500 shadow-lg group-hover:rotate-6 group-hover:scale-110 ${
                                         link.color === 'emerald' ? 'bg-emerald-500 text-white shadow-emerald-500/20' :
@@ -202,14 +232,23 @@ export default function ServidoresHub() {
                                     </p>
                                     
                                     <div className="flex items-center text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 group-hover:gap-5 transition-all">
-                                        Ver Dados <FaChevronRight className="ml-2 group-hover:translate-x-1" />
+                                        {isExternal ? "ACESSAR MÓDULO EXTERNO" : "Ver Dados"} 
+                                        {isExternal ? <FaExternalLinkAlt className="ml-2" /> : <FaChevronRight className="ml-2 group-hover:translate-x-1" />}
                                     </div>
                                 </div>
 
                                 <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-slate-50 rounded-full opacity-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 -z-0" />
+                                
+                                {isExternal && (
+                                    <div className="absolute top-8 right-8">
+                                        <span className="flex items-center gap-1.5 text-[8px] font-black text-blue-600 uppercase tracking-widest bg-blue-50 px-3 py-1 rounded-lg border border-blue-100 shadow-sm">
+                                            <FaExternalLinkAlt size={8} /> PORTAL TERCEIRIZADO
+                                        </span>
+                                    </div>
+                                )}
                             </Link>
                         </motion.div>
-                    ))}
+                    )})}
                 </div>
 
                 <motion.div variants={itemVariants} className="mt-24">

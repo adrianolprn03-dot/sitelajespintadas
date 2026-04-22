@@ -32,8 +32,11 @@ export default function UltimasNoticias() {
         fetchNoticias();
     }, []);
 
-    const formatarData = (data: string) => {
-        return new Date(data).toLocaleDateString("pt-BR", {
+    const formatarData = (data: string | null) => {
+        if (!data) return "";
+        const d = new Date(data);
+        if (isNaN(d.getTime())) return "";
+        return d.toLocaleDateString("pt-BR", {
             day: "2-digit",
             month: "short",
             year: "numeric",

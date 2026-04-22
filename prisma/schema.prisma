@@ -118,6 +118,7 @@ model Diaria {
   secretaria     String
   mes            Int
   ano            Int
+  portariaUrl    String?
   criadoEm       DateTime @default(now())
 }
 
@@ -215,37 +216,37 @@ model Ouvidoria {
 }
 
 model Esic {
-  id                  String    @id @default(cuid())
-  protocolo           String    @unique @default(cuid())
+  id                  String       @id @default(cuid())
+  protocolo           String       @unique @default(cuid())
   orgao               String
   pedido              String
   nome                String?
   email               String?
-  formaRetorno        String    @default("sistema")
-  status              String    @default("aberto")
-  grauSigilo          String    @default("Sem Sigilo")
+  formaRetorno        String       @default("sistema")
+  status              String       @default("aberto")
+  grauSigilo          String       @default("Sem Sigilo")
   resposta            String?
   respondidoEm        DateTime?
   prazo               DateTime?
-  prorrogado          Boolean   @default(false)
+  prorrogado          Boolean      @default(false)
   anexoResposta       String?
   recurso             String?
   dataRecurso         DateTime?
   respostaRecurso     String?
   dataRespostaRecurso DateTime?
-  criadoEm            DateTime  @default(now())
+  criadoEm            DateTime     @default(now())
   cidadaoId           String?
   cidadao             CidadaoEsic? @relation(fields: [cidadaoId], references: [id])
 }
 
 model CidadaoEsic {
-  id           String   @id @default(cuid())
-  nome         String
-  cpf          String?  @unique
-  email        String   @unique
-  senha        String
-  criadoEm     DateTime @default(now())
-  pedidos      Esic[]
+  id       String   @id @default(cuid())
+  nome     String
+  cpf      String?  @unique
+  email    String   @unique
+  senha    String
+  criadoEm DateTime @default(now())
+  pedidos  Esic[]
 }
 
 model GaleriaFoto {
@@ -438,52 +439,52 @@ model Concurso {
   vagas          String?
   dataPublicacao DateTime @default(now())
   linkEdital     String?
-  descricao      String?
   ativo          Boolean  @default(true)
   criadoEm       DateTime @default(now())
+  descricao      String?
 }
 
 model ServicoCarta {
-  id              String   @id @default(cuid())
-  nome            String
-  categoria       String
-  descricao       String
-  local           String
-  prazo           String
-  requisitos      String?
-  documentos      String?
-  etapas          String?
-  formasAcesso    String?
-  prioridades     String?
-  previsaoEspera  String?
-  statusServico   String?
-  linkAcesso      String?
-  linkAvaliacao   String?   @default("/transparencia/carta-servicos/avaliar")
-  ativo           Boolean  @default(true)
-  ordem           Int      @default(0)
-  criadoEm        DateTime @default(now())
-  avaliacoes      AvaliacaoServico[]
+  id             String             @id @default(cuid())
+  nome           String
+  categoria      String
+  descricao      String
+  local          String
+  prazo          String
+  documentos     String?
+  ativo          Boolean            @default(true)
+  ordem          Int                @default(0)
+  criadoEm       DateTime           @default(now())
+  etapas         String?
+  formasAcesso   String?
+  linkAvaliacao  String?            @default("/transparencia/carta-servicos/avaliar")
+  previsaoEspera String?
+  prioridades    String?
+  requisitos     String?
+  statusServico  String?
+  linkAcesso     String?
+  avaliacoes     AvaliacaoServico[]
 }
 
 model AvaliacaoServico {
   id           String       @id @default(cuid())
   servicoId    String
-  servico      ServicoCarta @relation(fields: [servicoId], references: [id], onDelete: Cascade)
   nota         Int
   comentario   String?
   respondidoEm DateTime     @default(now())
+  servico      ServicoCarta @relation(fields: [servicoId], references: [id], onDelete: Cascade)
 }
 
 model RelatorioFiscal {
-  id              String   @id @default(cuid())
-  titulo          String
-  tipo            String   // RREO, RGF, etc.
-  periodo         String   // 1º Bimestre, 2º Quadrimestre, etc.
-  ano             Int
-  arquivo         String   // URL ou base64 do arquivo
-  dataPublicacao  DateTime @default(now())
-  criadoEm        DateTime @default(now())
-  atualizadoEm    DateTime @updatedAt
+  id             String   @id @default(cuid())
+  titulo         String
+  tipo           String
+  periodo        String
+  ano            Int
+  arquivo        String
+  dataPublicacao DateTime @default(now())
+  criadoEm       DateTime @default(now())
+  atualizadoEm   DateTime @updatedAt
 }
 
 model Pagamento {
@@ -503,15 +504,28 @@ model Pagamento {
 }
 
 model RenunciaFiscal {
-  id              String   @id @default(cuid())
-  descricao       String
-  categoria       String   // Isenção, Redução, Anistia, etc.
-  baseLegal       String
-  valorEstimado   Float
-  beneficiarios   String?
-  vigencia        String?
-  ano             Int
-  ativo           Boolean  @default(true)
-  criadoEm        DateTime @default(now())
-  atualizadoEm    DateTime @updatedAt
+  id            String   @id @default(cuid())
+  descricao     String
+  categoria     String
+  baseLegal     String
+  valorEstimado Float
+  beneficiarios String?
+  vigencia      String?
+  ano           Int
+  ativo         Boolean  @default(true)
+  criadoEm      DateTime @default(now())
+  atualizadoEm  DateTime @updatedAt
+}
+
+model QuadroServidor {
+  id           String   @id @default(cuid())
+  cargo        String
+  vinculo      String   @default("efetivo")
+  leiCriacao   String?
+  vagasLei     Int
+  vagasOcupadas Int
+  vagasLivres  Int      @default(0)
+  ativo        Boolean  @default(true)
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
 }

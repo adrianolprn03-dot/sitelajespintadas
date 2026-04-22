@@ -7,7 +7,13 @@ export async function GET(req: NextRequest) {
     const ano = searchParams.get("ano");
 
     const where: any = {};
-    if (tipo) where.tipo = tipo;
+    if (tipo) {
+        if (tipo.includes(",")) {
+            where.tipo = { in: tipo.split(",").map(t => t.trim()) };
+        } else {
+            where.tipo = tipo;
+        }
+    }
     if (ano) where.ano = parseInt(ano);
 
     try {

@@ -78,6 +78,7 @@ const modulosAlvo = [
     { value: "processo-seletivo", label: "Card: Processo Seletivo" },
     { value: "gestores", label: "Card: Prefeito e Vice-prefeito" },
     { value: "servidores", label: "Card: Quadro Pessoal" },
+    { value: "quadro", label: "Card: Quadro de Servidores" },
     { value: "receitas", label: "Card: Receitas Públicas" },
     { value: "regulamentacao-diarias", label: "Card: Regulamentação das Diárias" },
     { value: "governo-digital", label: "Card: Regulamentação de Governo Digital" },

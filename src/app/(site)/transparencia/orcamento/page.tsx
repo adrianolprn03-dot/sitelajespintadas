@@ -48,24 +48,59 @@ export default function OrcamentoPage() {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const query = new URLSearchParams();
-            if (ano) query.append("ano", ano);
-            if (tipo) query.append("tipo", tipo.toUpperCase()); else query.append("tipo", "LOA,LDO,PPA");
-            if (categoria) query.append("categoria", categoria);
-            if (busca) query.append("busca", busca);
-            query.append("limit", "100");
+            const legQuery = new URLSearchParams();
+            if (ano) legQuery.append("ano", ano);
+            if (tipo) legQuery.append("tipo", tipo.toUpperCase()); else legQuery.append("tipo", "LOA,LDO,PPA");
+            if (categoria) legQuery.append("categoria", categoria);
+            if (busca) legQuery.append("busca", busca);
+            legQuery.append("limit", "100");
 
-            const res = await fetch(`/api/legislacao?${query.toString()}`);
-            const data = await res.json();
+            const docQuery = new URLSearchParams();
+            if (ano) docQuery.append("ano", ano);
+            if (tipo) docQuery.append("tipo", tipo.toLowerCase()); else docQuery.append("tipo", "loa,ldo,ppa");
+
+            const [legRes, docRes] = await Promise.all([
+                fetch(`/api/legislacao?${legQuery.toString()}`),
+                fetch(`/api/documentos?${docQuery.toString()}`)
+            ]);
             
-            const mappedDocs = (data.items || []).map((item: any) => ({
-                id: item.id,
-                titulo: item.ementa,
-                tipo: item.tipo,
-                arquivo: item.arquivo,
-                ano: item.ano,
-                tamanho: 0
-            }));
+            const legData = legRes.ok ? await legRes.json() : { items: [] };
+            const docData = docRes.ok ? await docRes.json() : [];
+
+            let mappedDocs: Documento[] = [];
+
+            if (legData && legData.items) {
+                const mapped = legData.items.map((item: any) => ({
+                    id: item.id,
+                    titulo: item.ementa,
+                    tipo: item.tipo.toUpperCase(),
+                    arquivo: item.arquivo,
+                    ano: item.ano,
+                    tamanho: 0
+                }));
+                mappedDocs = [...mappedDocs, ...mapped];
+            }
+
+            if (Array.isArray(docData)) {
+                const filteredDocs = busca
+                    ? docData.filter((item: any) => 
+                        item.titulo?.toLowerCase().includes(busca.toLowerCase()) || 
+                        item.tipo?.toLowerCase().includes(busca.toLowerCase()))
+                    : docData;
+
+                const mappedDoc = filteredDocs.map((item: any) => ({
+                    id: item.id,
+                    titulo: item.titulo,
+                    tipo: item.tipo.toUpperCase(),
+                    arquivo: item.arquivo,
+                    ano: item.ano || new Date(item.criadoEm).getFullYear(),
+                    tamanho: item.tamanho || 0
+                }));
+                mappedDocs = [...mappedDocs, ...mappedDoc];
+            }
+            
+            // Sort combined results by ano desc
+            mappedDocs.sort((a, b) => b.ano - a.ano);
             
             setDocs(mappedDocs);
         } catch (error) {

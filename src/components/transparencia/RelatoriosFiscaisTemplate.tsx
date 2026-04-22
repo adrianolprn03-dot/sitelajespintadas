@@ -45,6 +45,9 @@ export default function RelatoriosFiscaisTemplate({ title, subtitle, tipo, icon,
                 if (hasBudget) {
                     urls.push("/api/legislacao?tipo=LOA,LDO,PPA&limit=200");
                 }
+                
+                const docTypes = showTabs ? showTabs.map(t => t.toLowerCase()).join(",") : tipo.toLowerCase();
+                urls.push(`/api/documentos?tipo=${docTypes}`);
 
                 const responses = await Promise.all(urls.map(url => fetch(url)));
                 const dataSets = await Promise.all(responses.map(res => res.ok ? res.json() : []));
@@ -68,6 +71,21 @@ export default function RelatoriosFiscaisTemplate({ title, subtitle, tipo, icon,
                     combinedRecords = [...combinedRecords, ...mappedBudget];
                 }
 
+                const docIndex = hasBudget ? 2 : 1;
+                if (dataSets[docIndex]) {
+                    const mappedDocs: RelatorioFiscal[] = (Array.isArray(dataSets[docIndex]) ? dataSets[docIndex] : []).map((item: any) => ({
+                        id: item.id,
+                        titulo: item.titulo,
+                        tipo: item.tipo.toUpperCase(),
+                        periodo: "Documento",
+                        ano: item.ano || new Date(item.criadoEm).getFullYear(),
+                        arquivo: item.arquivo || "",
+                        dataPublicacao: item.criadoEm
+                    }));
+                    combinedRecords = [...combinedRecords, ...mappedDocs];
+                }
+
+                // Remove duplicates if any (based on ID or exact title if needed), but for now we just append
                 setRelatorios(combinedRecords);
             } catch (error) {
                 console.error("Erro ao buscar relatórios:", error);

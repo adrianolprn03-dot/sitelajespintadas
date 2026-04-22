@@ -3,45 +3,30 @@ import { HiOutlineDocumentMagnifyingGlass, HiOutlineArrowLongRight, HiOutlineEye
 import { prisma } from "@/lib/prisma";
 import { FaExternalLinkAlt } from "react-icons/fa";
 
-const licitacoesDestaque = [
-    {
-        ano_edital: "08/2026",
-        modalidade: "Edital de Chamamento",
-        status: "Concluído",
-        statusClass: "text-green-700 bg-green-50 border-green-100",
-        objeto: "Chamado para recadastramento para permissionários e ocupantes de espaços publicos",
-        href: "/licitacoes/08-2026",
-    },
-    {
-        ano_edital: "03/2026",
-        modalidade: "Edital de Chamamento",
-        status: "Aberto",
-        statusClass: "text-blue-700 bg-blue-50 border-blue-100",
-        objeto: "Chamada pública para seleção de auxiliares de serviços educacionais",
-        href: "/licitacoes/03-2026",
-    },
-    {
-        ano_edital: "02/2026",
-        modalidade: "Pregão Eletrônico",
-        status: "Em Andamento",
-        statusClass: "text-amber-700 bg-amber-50 border-amber-100",
-        objeto: "Contratação de empresa para fornecimento de merenda escolar",
-        href: "/licitacoes/02-2026",
-    },
-    {
-        ano_edital: "01/2026",
-        modalidade: "Edital de Chamamento",
-        status: "Concluído",
-        statusClass: "text-green-700 bg-green-50 border-green-100",
-        objeto: "Processo seletivo simplificado – edital 01/2026. convocação n° 01",
-        href: "/licitacoes/01-2026",
-    },
-];
+// Mapeamento de status do banco → exibição
+function getStatusDisplay(status: string): { label: string; className: string } {
+    const map: Record<string, { label: string; className: string }> = {
+        aberta:       { label: "Aberta",       className: "text-blue-700 bg-blue-50 border-blue-100" },
+        "em-andamento": { label: "Em Andamento", className: "text-amber-700 bg-amber-50 border-amber-100" },
+        concluida:    { label: "Concluída",    className: "text-green-700 bg-green-50 border-green-100" },
+        cancelada:    { label: "Cancelada",    className: "text-red-700 bg-red-50 border-red-100" },
+        suspensa:     { label: "Suspensa",     className: "text-purple-700 bg-purple-50 border-purple-100" },
+        deserta:      { label: "Deserta",      className: "text-gray-700 bg-gray-50 border-gray-200" },
+    };
+    return map[status?.toLowerCase()] ?? { label: status, className: "text-gray-700 bg-gray-50 border-gray-200" };
+}
 
 export default async function TransparenciaHub() {
-    const override = await (prisma as any).linkExterno.findFirst({
-        where: { ativo: true, moduloAlvo: "home-transparencia" }
-    });
+    const [override, licitacoes] = await Promise.all([
+        (prisma as any).linkExterno.findFirst({
+            where: { ativo: true, moduloAlvo: "home-transparencia" }
+        }),
+        prisma.licitacao.findMany({
+            orderBy: { criadoEm: "desc" },
+            take: 4,
+            select: { id: true, numero: true, ano: true, modalidade: true, objeto: true, status: true },
+        }),
+    ]);
 
     const finalHref = override ? override.url : "/transparencia";
     const isExternal = !!override;
@@ -85,41 +70,51 @@ export default async function TransparenciaHub() {
                     </div>
 
                     <div className="divide-y divide-gray-100">
-                        {licitacoesDestaque.map((licitacao, index) => (
-                            <div key={index} className="grid grid-cols-1 lg:grid-cols-12 gap-y-6 lg:gap-6 px-8 lg:px-10 py-9 items-center hover:bg-gray-50/50 transition-all group">
-
-                                <div className="col-span-2 font-black text-[#0088b9] text-sm lg:text-lg">
-                                    <span className="lg:hidden block text-[10px] uppercase tracking-widest text-gray-400 mb-2">Edital</span>
-                                    {licitacao.ano_edital}
-                                </div>
-
-                                <div className="col-span-2 text-gray-500 font-bold text-xs uppercase tracking-tight">
-                                    <span className="lg:hidden block text-[10px] uppercase tracking-widest text-gray-400 mb-2">Modalidade</span>
-                                    {licitacao.modalidade}
-                                </div>
-
-                                <div className="col-span-2">
-                                    <span className={`inline-flex items-center px-4 py-1.5 rounded-full border text-[9px] font-black uppercase tracking-widest ${licitacao.statusClass}`}>
-                                        <span className="w-1.5 h-1.5 rounded-full bg-current mr-2.5 animate-pulse" />
-                                        {licitacao.status}
-                                    </span>
-                                </div>
-
-                                <div className="col-span-5 text-[#0088b9] font-bold text-[13px] leading-relaxed pr-6">
-                                    {licitacao.objeto}
-                                </div>
-
-                                <div className="col-span-1 flex justify-end lg:justify-center">
-                                    <Link 
-                                        href={licitacao.href} 
-                                        className="w-12 h-12 bg-white border-2 border-gray-100 rounded-2xl flex items-center justify-center text-gray-400 hover:text-[#01b0ef] hover:border-[#01b0ef] hover:shadow-xl hover:-translate-y-1 transition-all"
-                                        title="Visualizar Licitação"
-                                    >
-                                        <HiOutlineEye size={22} />
-                                    </Link>
-                                </div>
+                        {licitacoes.length === 0 ? (
+                            <div className="py-16 text-center">
+                                <p className="text-gray-400 font-bold text-[11px] uppercase tracking-widest">
+                                    Nenhuma licitação cadastrada no momento.
+                                </p>
                             </div>
-                        ))}
+                        ) : licitacoes.map((licitacao) => {
+                            const statusDisplay = getStatusDisplay(licitacao.status);
+                            const editalLabel = `Nº ${licitacao.numero}/${licitacao.ano}`;
+                            return (
+                                <div key={licitacao.id} className="grid grid-cols-1 lg:grid-cols-12 gap-y-6 lg:gap-6 px-8 lg:px-10 py-9 items-center hover:bg-gray-50/50 transition-all group">
+
+                                    <div className="col-span-2 font-black text-[#0088b9] text-sm lg:text-lg">
+                                        <span className="lg:hidden block text-[10px] uppercase tracking-widest text-gray-400 mb-2">Edital</span>
+                                        {editalLabel}
+                                    </div>
+
+                                    <div className="col-span-2 text-gray-500 font-bold text-xs uppercase tracking-tight">
+                                        <span className="lg:hidden block text-[10px] uppercase tracking-widest text-gray-400 mb-2">Modalidade</span>
+                                        {licitacao.modalidade}
+                                    </div>
+
+                                    <div className="col-span-2">
+                                        <span className={`inline-flex items-center px-4 py-1.5 rounded-full border text-[9px] font-black uppercase tracking-widest ${statusDisplay.className}`}>
+                                            <span className="w-1.5 h-1.5 rounded-full bg-current mr-2.5 animate-pulse" />
+                                            {statusDisplay.label}
+                                        </span>
+                                    </div>
+
+                                    <div className="col-span-5 text-[#0088b9] font-bold text-[13px] leading-relaxed pr-6">
+                                        {licitacao.objeto}
+                                    </div>
+
+                                    <div className="col-span-1 flex justify-end lg:justify-center">
+                                        <Link 
+                                            href={`/transparencia/licitacoes`}
+                                            className="w-12 h-12 bg-white border-2 border-gray-100 rounded-2xl flex items-center justify-center text-gray-400 hover:text-[#01b0ef] hover:border-[#01b0ef] hover:shadow-xl hover:-translate-y-1 transition-all"
+                                            title="Ver Licitações"
+                                        >
+                                            <HiOutlineEye size={22} />
+                                        </Link>
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
                 
