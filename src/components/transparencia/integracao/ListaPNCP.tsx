@@ -5,6 +5,7 @@ import {
     Search, ChevronLeft, ChevronRight, Loader2, AlertCircle, RefreshCw
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import PNCPDocumentosModal from "./PNCPDocumentosModal";
 
 interface PNCPItem {
     numeroControlePNCP: string;
@@ -249,6 +250,12 @@ export default function ListaPNCP() {
 
                                     {/* Ações */}
                                     <div className="flex flex-wrap gap-3 pt-1">
+                                        <PNCPDocumentosModal
+                                            anoCompra={item.anoCompra}
+                                            sequencialCompra={item.sequencialCompra}
+                                            numeroCompra={item.numeroCompra}
+                                            objetoCompra={item.objetoCompra}
+                                        />
                                         <a 
                                             href={`https://pncp.gov.br/app/editais/${item.numeroControlePNCP}`}
                                             target="_blank" 
