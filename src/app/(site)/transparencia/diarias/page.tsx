@@ -4,12 +4,12 @@ import { useState, useEffect } from "react";
 import { 
     FaPlaneDeparture, FaSpinner, FaUserTie, FaMapMarkerAlt, 
     FaCalendarAlt, FaMoneyBillWave, FaBuilding, FaArrowRight, 
-    FaInfoCircle, FaDownload, 
-    FaFileSignature
+    FaInfoCircle, FaDownload
 } from "react-icons/fa";
 import { 
     FaMagnifyingGlass, FaSuitcaseRolling,
-    FaCircleCheck, FaFilter, FaBuildingColumns 
+    FaCircleCheck, FaFilter, FaBuildingColumns,
+    FaFileSignature
 } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
 import PageHeader from "@/components/PageHeader";
@@ -237,6 +237,59 @@ export default function DiariasPage() {
                              </div>
                          </div>
                     </div>
+                </motion.div>
+                
+                {/* PNTP Requirements Section - Regulation & Values Table */}
+                <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                    {/* Regulation Card */}
+                    <a 
+                        href="/uploads/diarias/regulamentacao.pdf" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="group relative bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-xl shadow-slate-200/40 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 overflow-hidden"
+                    >
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-[5rem] -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700 opacity-50" />
+                        <div className="relative z-10 flex items-center gap-6">
+                            <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-600/30 group-hover:rotate-6 transition-transform">
+                                <FaFileSignature className="text-white text-2xl" />
+                            </div>
+                            <div>
+                                <h4 className="text-xl font-black text-slate-900 uppercase tracking-tighter italic">Regulamentação <span className="text-blue-600 not-italic">Municipal</span></h4>
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Normativa e Decretos de Concessão</p>
+                            </div>
+                        </div>
+                        <div className="mt-8 flex items-center justify-between">
+                            <span className="text-[9px] font-black text-blue-600 uppercase tracking-[0.3em]">Acessar Documento</span>
+                            <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                <FaArrowRight size={10} />
+                            </div>
+                        </div>
+                    </a>
+
+                    {/* Values Table Card */}
+                    <a 
+                        href="/uploads/diarias/tabela-valores.pdf" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="group relative bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-xl shadow-slate-200/40 hover:shadow-2xl hover:shadow-emerald-500/10 transition-all duration-500 overflow-hidden"
+                    >
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-bl-[5rem] -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700 opacity-50" />
+                        <div className="relative z-10 flex items-center gap-6">
+                            <div className="w-16 h-16 bg-emerald-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/30 group-hover:-rotate-6 transition-transform">
+                                <FaMoneyBillWave className="text-white text-2xl" />
+                            </div>
+                            <div>
+                                <h4 className="text-xl font-black text-slate-900 uppercase tracking-tighter italic">Tabela de <span className="text-emerald-600 not-italic">Valores</span></h4>
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Valores por Cargo e Destino</p>
+                            </div>
+                        </div>
+                        <div className="mt-8 flex items-center justify-between">
+                            <span className="text-[9px] font-black text-emerald-600 uppercase tracking-[0.3em]">Acessar Tabela</span>
+                            <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+                                <FaArrowRight size={10} />
+                            </div>
+                        </div>
+                    </a>
                 </motion.div>
 
                 {/* Filters Section */}

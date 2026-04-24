@@ -11,9 +11,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         return <>{children}</>;
     }
 
+    const userRole = (session.user as any)?.role || "admin";
+
     return (
         <div className="flex min-h-screen bg-slate-50/80 font-sans text-gray-800">
-            <AdminSidebar />
+            <AdminSidebar userRole={userRole} />
             
             <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
                 {/* Elementos decorativos sutis ao fundo do conteúdo */}

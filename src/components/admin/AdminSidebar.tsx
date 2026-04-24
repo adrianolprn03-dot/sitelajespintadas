@@ -7,46 +7,47 @@ import {
     FaMoneyBillWave, FaChartBar, FaBuilding, FaBullhorn,
     FaSignOutAlt, FaTimes, FaBars, FaCalendarAlt, FaImages, FaEnvelope,
     FaHandshake, FaPlane, FaHammer, FaQuestionCircle, FaBook,
-    FaUserFriends, FaUpload, FaFileAlt, FaExternalLinkAlt
+    FaUserFriends, FaUpload, FaFileAlt, FaExternalLinkAlt, FaUserShield
 } from "react-icons/fa";
 import { useState } from "react";
 
 const menuItems = [
-    { label: "Dashboard", href: "/admin", icon: FaHome, exact: true },
-    { label: "Notícias", href: "/admin/noticias", icon: FaNewspaper },
-    { label: "Agenda", href: "/admin/agenda", icon: FaCalendarAlt },
-    { label: "Galeria", href: "/admin/galeria", icon: FaImages },
-    { label: "Obras", href: "/admin/obras", icon: FaHammer },
-    { label: "FAQ", href: "/admin/faq", icon: FaQuestionCircle },
-    { label: "Glossário", href: "/admin/glossario", icon: FaBook },
-    { label: "Licitações", href: "/admin/licitacoes", icon: FaGavel },
-    { label: "Contratos", href: "/admin/contratos", icon: FaFileContract },
-    { label: "Convênios", href: "/admin/convenios", icon: FaHandshake },
-    { label: "Diárias", href: "/admin/diarias", icon: FaPlane },
-    { label: "Servidores", href: "/admin/servidores", icon: FaUsers },
-    { label: "Receitas", href: "/admin/receitas", icon: FaMoneyBillWave },
-    { label: "Despesas", href: "/admin/despesas", icon: FaChartBar },
-    { label: "Conselhos", href: "/admin/conselhos", icon: FaUserFriends },
-    { label: "Legislação", href: "/admin/legislacao", icon: FaGavel },
-    { label: "Documentos", href: "/admin/documentos", icon: FaFileContract },
-    { label: "Secretarias", href: "/admin/secretarias", icon: FaBuilding },
-    { label: "Unidades At.", href: "/admin/unidades", icon: FaBuilding },
-    { label: "Ouvidoria", href: "/admin/ouvidoria", icon: FaBullhorn },
-    { label: "e-SIC", href: "/admin/esic", icon: FaFileAlt },
-    { label: "Fale Conosco", href: "/admin/contatos", icon: FaEnvelope },
-    { label: "Links Externos", href: "/admin/links-externos", icon: FaExternalLinkAlt },
-    { label: "Configurações", href: "/admin/configuracoes", icon: FaBuilding },
-    { label: "Saúde / REMUME", href: "/admin/saude", icon: FaBook },
-    { label: "Frota Municipal", href: "/admin/frota", icon: FaHome },
-    { label: "Emendas Parl.", href: "/admin/emendas", icon: FaMoneyBillWave },
-    { label: "Relatórios Fiscais", href: "/admin/relatorios-fiscais", icon: FaChartBar },
-    { label: "Concursos", href: "/admin/concursos", icon: FaUsers },
-    { label: "Carta de Serviços", href: "/admin/carta-servicos", icon: FaFileAlt },
-    { label: "Símbolos Oficiais", href: "/admin/configuracoes/simbolos", icon: FaImages },
-    { label: "Importar CSV", href: "/admin/importacao", icon: FaUpload },
+    { label: "Dashboard", href: "/admin", icon: FaHome, exact: true, roles: ["admin", "editor", "comunicacao"] },
+    { label: "Notícias", href: "/admin/noticias", icon: FaNewspaper, roles: ["admin", "editor", "comunicacao"] },
+    { label: "Agenda", href: "/admin/agenda", icon: FaCalendarAlt, roles: ["admin", "editor", "comunicacao"] },
+    { label: "Galeria", href: "/admin/galeria", icon: FaImages, roles: ["admin", "editor", "comunicacao"] },
+    { label: "Obras", href: "/admin/obras", icon: FaHammer, roles: ["admin", "editor"] },
+    { label: "FAQ", href: "/admin/faq", icon: FaQuestionCircle, roles: ["admin", "editor"] },
+    { label: "Glossário", href: "/admin/glossario", icon: FaBook, roles: ["admin", "editor"] },
+    { label: "Licitações", href: "/admin/licitacoes", icon: FaGavel, roles: ["admin", "editor"] },
+    { label: "Contratos", href: "/admin/contratos", icon: FaFileContract, roles: ["admin", "editor"] },
+    { label: "Convênios", href: "/admin/convenios", icon: FaHandshake, roles: ["admin", "editor"] },
+    { label: "Diárias", href: "/admin/diarias", icon: FaPlane, roles: ["admin", "editor"] },
+    { label: "Servidores", href: "/admin/servidores", icon: FaUsers, roles: ["admin", "editor"] },
+    { label: "Receitas", href: "/admin/receitas", icon: FaMoneyBillWave, roles: ["admin", "editor"] },
+    { label: "Despesas", href: "/admin/despesas", icon: FaChartBar, roles: ["admin", "editor"] },
+    { label: "Conselhos", href: "/admin/conselhos", icon: FaUserFriends, roles: ["admin", "editor"] },
+    { label: "Legislação", href: "/admin/legislacao", icon: FaGavel, roles: ["admin", "editor"] },
+    { label: "Documentos", href: "/admin/documentos", icon: FaFileContract, roles: ["admin", "editor"] },
+    { label: "Secretarias", href: "/admin/secretarias", icon: FaBuilding, roles: ["admin", "editor"] },
+    { label: "Unidades At.", href: "/admin/unidades", icon: FaBuilding, roles: ["admin", "editor"] },
+    { label: "Ouvidoria", href: "/admin/ouvidoria", icon: FaBullhorn, roles: ["admin", "editor"] },
+    { label: "e-SIC", href: "/admin/esic", icon: FaFileAlt, roles: ["admin", "editor"] },
+    { label: "Fale Conosco", href: "/admin/contatos", icon: FaEnvelope, roles: ["admin", "editor"] },
+    { label: "Links Externos", href: "/admin/links-externos", icon: FaExternalLinkAlt, roles: ["admin", "editor"] },
+    { label: "Configurações", href: "/admin/configuracoes", icon: FaBuilding, roles: ["admin"] },
+    { label: "Usuários", href: "/admin/usuarios", icon: FaUserShield, roles: ["admin"] },
+    { label: "Saúde / REMUME", href: "/admin/saude", icon: FaBook, roles: ["admin", "editor"] },
+    { label: "Frota Municipal", href: "/admin/frota", icon: FaHome, roles: ["admin", "editor"] },
+    { label: "Emendas Parl.", href: "/admin/emendas", icon: FaMoneyBillWave, roles: ["admin", "editor"] },
+    { label: "Relatórios Fiscais", href: "/admin/relatorios-fiscais", icon: FaChartBar, roles: ["admin", "editor"] },
+    { label: "Concursos", href: "/admin/concursos", icon: FaUsers, roles: ["admin", "editor"] },
+    { label: "Carta de Serviços", href: "/admin/carta-servicos", icon: FaFileAlt, roles: ["admin", "editor"] },
+    { label: "Símbolos Oficiais", href: "/admin/configuracoes/simbolos", icon: FaImages, roles: ["admin"] },
+    { label: "Importar CSV", href: "/admin/importacao", icon: FaUpload, roles: ["admin"] },
 ];
 
-export default function AdminSidebar() {
+export default function AdminSidebar({ userRole = "admin" }: { userRole?: string }) {
     const pathname = usePathname();
     const [collapsed, setCollapsed] = useState(false);
 
@@ -83,7 +84,7 @@ export default function AdminSidebar() {
             {/* Menu List */}
             <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 pb-4 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
                 <nav className="space-y-1.5" aria-label="Navegação Principal">
-                    {menuItems.map((item) => {
+                    {menuItems.filter(item => item.roles.includes(userRole)).map((item) => {
                         const active = isActive(item.href, item.exact);
                         return (
                             <Link

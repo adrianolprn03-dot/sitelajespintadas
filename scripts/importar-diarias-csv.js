@@ -119,8 +119,8 @@ async function main() {
         process.exit(1);
     }
 
-    // Lê com encoding latin1 (Windows-1252) para preservar acentos
-    const content = fs.readFileSync(CSV_PATH, 'latin1');
+    // Lê com encoding utf8 para preservar acentos corretamente
+    const content = fs.readFileSync(CSV_PATH, 'utf8');
     const lines = content.split('\n').filter(l => l.trim());
 
     console.log(`📊 Total de linhas no CSV: ${lines.length} (incluindo cabeçalho)`);

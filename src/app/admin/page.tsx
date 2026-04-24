@@ -11,6 +11,7 @@ import {
 
 export default async function AdminDashboard() {
     const session = await getServerSession(authOptions);
+    const role = (session?.user as any)?.role || "admin";
 
     // Contadores do banco
     let counts = { noticia: 0, licitacao: 0, contrato: 0, convenio: 0, diaria: 0, servidor: 0, ouvidoria: 0, contato: 0, obra: 0, faq: 0, glossario: 0, legislacao: 0, unidades: 0 };
@@ -34,13 +35,13 @@ export default async function AdminDashboard() {
     } catch { }
 
     const cards = [
-        { icon: FaNewspaper, cor: "from-blue-500 to-indigo-600", bgLight: "bg-blue-50", text: "text-blue-600", href: "/admin/noticias", label: "Notícias", value: counts.noticia },
-        { icon: FaHammer, cor: "from-orange-500 to-red-600", bgLight: "bg-orange-50", text: "text-orange-600", href: "/admin/obras", label: "Obras", value: counts.obra },
-        { icon: FaBuilding, cor: "from-emerald-400 to-teal-600", bgLight: "bg-teal-50", text: "text-teal-600", href: "/admin/unidades", label: "Unidades", value: counts.unidades },
-        { icon: FaGavel, cor: "from-amber-400 to-amber-600", bgLight: "bg-amber-50", text: "text-amber-600", href: "/admin/licitacoes", label: "Licitações", value: counts.licitacao },
-        { icon: FaFileContract, cor: "from-rose-400 to-pink-600", bgLight: "bg-pink-50", text: "text-pink-600", href: "/admin/contratos", label: "Contratos", value: counts.contrato },
-        { icon: FaUsers, cor: "from-cyan-400 to-blue-500", bgLight: "bg-cyan-50", text: "text-cyan-600", href: "/admin/servidores", label: "Servidores", value: counts.servidor },
-    ];
+        { icon: FaNewspaper, cor: "from-blue-500 to-indigo-600", bgLight: "bg-blue-50", text: "text-blue-600", href: "/admin/noticias", label: "Notícias", value: counts.noticia, roles: ["admin", "editor", "comunicacao"] },
+        { icon: FaHammer, cor: "from-orange-500 to-red-600", bgLight: "bg-orange-50", text: "text-orange-600", href: "/admin/obras", label: "Obras", value: counts.obra, roles: ["admin", "editor"] },
+        { icon: FaBuilding, cor: "from-emerald-400 to-teal-600", bgLight: "bg-teal-50", text: "text-teal-600", href: "/admin/unidades", label: "Unidades", value: counts.unidades, roles: ["admin", "editor"] },
+        { icon: FaGavel, cor: "from-amber-400 to-amber-600", bgLight: "bg-amber-50", text: "text-amber-600", href: "/admin/licitacoes", label: "Licitações", value: counts.licitacao, roles: ["admin", "editor"] },
+        { icon: FaFileContract, cor: "from-rose-400 to-pink-600", bgLight: "bg-pink-50", text: "text-pink-600", href: "/admin/contratos", label: "Contratos", value: counts.contrato, roles: ["admin", "editor"] },
+        { icon: FaUsers, cor: "from-cyan-400 to-blue-500", bgLight: "bg-cyan-50", text: "text-cyan-600", href: "/admin/servidores", label: "Servidores", value: counts.servidor, roles: ["admin", "editor"] },
+    ].filter(c => c.roles.includes(role));
 
     const [ultimasNoticias, ultimasObras, ultimasFAQs] = await Promise.all([
         prisma.noticia.findMany({
@@ -161,29 +162,31 @@ export default async function AdminDashboard() {
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-6 sm:p-8">
-                         <div className="flex items-center justify-between mb-6">
-                            <h3 className="text-lg font-black text-gray-800 tracking-tight">Últimas Obras Registradas</h3>
-                             <Link href="/admin/obras" className="text-sm font-bold text-primary-600 hover:hover:underline">Gerenciar Trabalhos</Link>
+                    {["admin", "editor"].includes(role) && (
+                        <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-6 sm:p-8">
+                             <div className="flex items-center justify-between mb-6">
+                                <h3 className="text-lg font-black text-gray-800 tracking-tight">Últimas Obras Registradas</h3>
+                                 <Link href="/admin/obras" className="text-sm font-bold text-primary-600 hover:hover:underline">Gerenciar Trabalhos</Link>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                 {ultimasObras.map((o) => (
+                                    <Link key={o.id} href={`/admin/obras/editar/${o.id}`} className="flex items-start gap-4 p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 hover:-translate-y-0.5 transition-all">
+                                         <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-sm ${
+                                            o.status === "concluida" ? "bg-green-500 text-white" : 
+                                            o.status === "paralisada" ? "bg-red-500 text-white" : 
+                                            "bg-orange-500 text-white"
+                                         }`}>
+                                            <FaHammer size={18} />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="font-bold text-gray-800 text-sm line-clamp-2">{o.titulo}</p>
+                                            <p className="text-xs text-gray-500 mt-1 uppercase font-semibold tracking-wider">{o.status}</p>
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                             {ultimasObras.map((o) => (
-                                <Link key={o.id} href={`/admin/obras/editar/${o.id}`} className="flex items-start gap-4 p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 hover:-translate-y-0.5 transition-all">
-                                     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-sm ${
-                                        o.status === "concluida" ? "bg-green-500 text-white" : 
-                                        o.status === "paralisada" ? "bg-red-500 text-white" : 
-                                        "bg-orange-500 text-white"
-                                     }`}>
-                                        <FaHammer size={18} />
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <p className="font-bold text-gray-800 text-sm line-clamp-2">{o.titulo}</p>
-                                        <p className="text-xs text-gray-500 mt-1 uppercase font-semibold tracking-wider">{o.status}</p>
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
-                    </div>
+                    )}
 
                 </div>
 
@@ -197,11 +200,11 @@ export default async function AdminDashboard() {
                         
                         <div className="grid grid-cols-2 gap-3 relative z-10">
                              {[
-                                { label: "Nova Obra", href: "/admin/obras/nova", icon: "🏗️" },
-                                { label: "FAQ / Ajuda", href: "/admin/faq/novo", icon: "💡" },
-                                { label: "Glossário", href: "/admin/glossario/novo", icon: "📖" },
-                                { label: "Mensagens", href: "/admin/contatos", icon: "📨" },
-                            ].map((a) => (
+                                { label: "Nova Obra", href: "/admin/obras/nova", icon: "🏗️", roles: ["admin", "editor"] },
+                                { label: "FAQ / Ajuda", href: "/admin/faq/novo", icon: "💡", roles: ["admin", "editor"] },
+                                { label: "Glossário", href: "/admin/glossario/novo", icon: "📖", roles: ["admin", "editor"] },
+                                { label: "Mensagens", href: "/admin/contatos", icon: "📨", roles: ["admin", "editor"] },
+                            ].filter(a => a.roles.includes(role)).map((a) => (
                                 <Link key={a.href} href={a.href} className="bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-2xl p-4 flex flex-col items-center justify-center text-center gap-2 border border-white/5 transition-all hover:scale-105">
                                     <span className="text-2xl">{a.icon}</span>
                                     <span className="text-[10px] font-bold uppercase tracking-wider text-gray-300">{a.label}</span>
@@ -211,16 +214,18 @@ export default async function AdminDashboard() {
                     </div>
 
                     {/* FAQ Mini */}
-                    <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-6">
-                        <h3 className="text-lg font-black text-gray-800 tracking-tight mb-4">Perguntas (FAQ)</h3>
-                        <div className="space-y-3">
-                            {ultimasFAQs.map(f => (
-                                <Link key={f.id} href={`/admin/faq/editar/${f.id}`} className="block p-4 rounded-2xl bg-gray-50 hover:bg-blue-50 hover:text-blue-700 transition-colors">
-                                    <p className="text-sm font-semibold line-clamp-2">{f.pergunta}</p>
-                                </Link>
-                            ))}
+                    {["admin", "editor"].includes(role) && (
+                        <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-6">
+                            <h3 className="text-lg font-black text-gray-800 tracking-tight mb-4">Perguntas (FAQ)</h3>
+                            <div className="space-y-3">
+                                {ultimasFAQs.map(f => (
+                                    <Link key={f.id} href={`/admin/faq/editar/${f.id}`} className="block p-4 rounded-2xl bg-gray-50 hover:bg-blue-50 hover:text-blue-700 transition-colors">
+                                        <p className="text-sm font-semibold line-clamp-2">{f.pergunta}</p>
+                                    </Link>
+                                ))}
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
 
             </div>
