@@ -16,6 +16,7 @@ type Publicacao = {
     ano: number;
     secretaria: string;
     arquivo: string | null;
+    documentUrl: string | null;
 };
 
 const TIPOS = [
@@ -27,7 +28,9 @@ const TIPOS = [
     "Extrato de Convênio",
     "Nota de Esclarecimento",
     "Portaria",
+    "Decreto Municipal",
     "Resolução",
+    "Lei Municipal",
 ];
 
 const TIPO_COR: Record<string, string> = {
@@ -39,16 +42,18 @@ const TIPO_COR: Record<string, string> = {
     "Extrato de Convênio": "bg-cyan-100 text-cyan-700 border-cyan-200",
     "Nota de Esclarecimento": "bg-gray-100 text-gray-700 border-gray-200",
     "Portaria": "bg-slate-100 text-slate-700 border-slate-200",
+    "Decreto Municipal": "bg-amber-50 text-amber-600 border-amber-100",
     "Resolução": "bg-rose-100 text-rose-700 border-rose-200",
+    "Lei Municipal": "bg-blue-50 text-blue-600 border-blue-100",
 };
 
 const MOCK: Publicacao[] = [
-    { id: "1", titulo: "Diário Oficial nº 001 – Janeiro/2026", tipo: "Diário Oficial", descricao: "Publicação oficial dos atos administrativos do mês de Janeiro de 2026.", dataPublicacao: "2026-01-31", ano: 2026, secretaria: "Administração", arquivo: null },
-    { id: "2", titulo: "Aviso de Licitação – Pregão Eletrônico nº 006/2026", tipo: "Aviso", descricao: "Aviso de abertura de processo licitatório para aquisição de material de construção.", dataPublicacao: "2026-02-10", ano: 2026, secretaria: "Compras", arquivo: null },
-    { id: "3", titulo: "Resultado – Concorrência nº 001/2026", tipo: "Resultado", descricao: "Resultado de julgamento da Concorrência nº 001/2026 – obra de ampliação da escola municipal.", dataPublicacao: "2026-02-20", ano: 2026, secretaria: "Obras", arquivo: null },
-    { id: "4", titulo: "Extrato – Contrato nº 015/2026", tipo: "Extrato de Contrato", descricao: "Extrato do contrato firmado com a empresa XYZ para prestação de serviços de limpeza.", dataPublicacao: "2026-03-05", ano: 2026, secretaria: "Administração", arquivo: null },
-    { id: "5", titulo: "Portaria nº 024/2026 – Designação de Fiscal", tipo: "Portaria", descricao: "Designa servidor para atuar como fiscal do Contrato nº 015/2026.", dataPublicacao: "2026-03-07", ano: 2026, secretaria: "Administração", arquivo: null },
-    { id: "6", titulo: "Diário Oficial nº 002 – Fevereiro/2026", tipo: "Diário Oficial", descricao: "Publicação oficial dos atos administrativos do mês de Fevereiro de 2026.", dataPublicacao: "2026-02-28", ano: 2026, secretaria: "Administração", arquivo: null },
+    { id: "1", titulo: "Diário Oficial nº 001 – Janeiro/2026", tipo: "Diário Oficial", descricao: "Publicação oficial dos atos administrativos do mês de Janeiro de 2026.", dataPublicacao: "2026-01-31", ano: 2026, secretaria: "Administração", arquivo: null, documentUrl: null },
+    { id: "2", titulo: "Aviso de Licitação – Pregão Eletrônico nº 006/2026", tipo: "Aviso", descricao: "Aviso de abertura de processo licitatório para aquisição de material de construção.", dataPublicacao: "2026-02-10", ano: 2026, secretaria: "Compras", arquivo: null, documentUrl: null },
+    { id: "3", titulo: "Resultado – Concorrência nº 001/2026", tipo: "Resultado", descricao: "Resultado de julgamento da Concorrência nº 001/2026 – obra de ampliação da escola municipal.", dataPublicacao: "2026-02-20", ano: 2026, secretaria: "Obras", arquivo: null, documentUrl: null },
+    { id: "4", titulo: "Extrato – Contrato nº 015/2026", tipo: "Extrato de Contrato", descricao: "Extrato do contrato firmado com a empresa XYZ para prestação de serviços de limpeza.", dataPublicacao: "2026-03-05", ano: 2026, secretaria: "Administração", arquivo: null, documentUrl: null },
+    { id: "5", titulo: "Portaria nº 024/2026 – Designação de Fiscal", tipo: "Portaria", descricao: "Designa servidor para atuar como fiscal do Contrato nº 015/2026.", dataPublicacao: "2026-03-07", ano: 2026, secretaria: "Administração", arquivo: null, documentUrl: null },
+    { id: "6", titulo: "Diário Oficial nº 002 – Fevereiro/2026", tipo: "Diário Oficial", descricao: "Publicação oficial dos atos administrativos do mês de Fevereiro de 2026.", dataPublicacao: "2026-02-28", ano: 2026, secretaria: "Administração", arquivo: null, documentUrl: null },
 ];
 
 export default function PublicacoesPage() {
@@ -59,19 +64,51 @@ export default function PublicacoesPage() {
     const [mes, setMes] = useState("");
     const [tipoFiltro, setTipoFiltro] = useState("");
 
-    useEffect(() => {
+    const fetchData = async () => {
         setLoading(true);
-        setTimeout(() => {
-            setPublicacoes(MOCK);
+        try {
+            const query = new URLSearchParams();
+            if (ano) query.append("ano", ano);
+            // If no specific type filter, we fetch common publication types
+            if (tipoFiltro) {
+                query.append("tipo", tipoFiltro);
+            } else {
+                // Fetch all relevant transparency types for this page
+                query.append("tipo", "Diário Oficial,Edital,Aviso,Resultado,Extrato de Contrato,Extrato de Convênio,Nota de Esclarecimento,Portaria,Decreto Municipal,Resolução,Lei Municipal,Outros");
+            }
+            
+            const res = await fetch(`/api/documentos?${query.toString()}`);
+            if (res.ok) {
+                const data = await res.json();
+                // Map API data to the component's expected structure
+                const formatted = data.map((d: any) => ({
+                    id: d.id,
+                    titulo: d.titulo,
+                    tipo: d.tipo,
+                    descricao: d.titulo, // API doesn't have description yet, use title
+                    dataPublicacao: d.criadoEm,
+                    ano: d.ano || new Date(d.criadoEm).getFullYear(),
+                    secretaria: "Prefeitura Municipal", // Placeholder
+                    arquivo: d.arquivo,
+                    documentUrl: d.documentUrl
+                }));
+                setPublicacoes(formatted);
+            }
+        } catch (error) {
+            console.error("Erro ao carregar publicações:", error);
+        } finally {
             setLoading(false);
-        }, 500);
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
     }, [ano, mes, tipoFiltro]);
 
     const filtradas = publicacoes.filter(p => {
         const b = busca.toLowerCase();
-        const matchTipo = !tipoFiltro || p.tipo === tipoFiltro;
-        const matchBusca = !busca || p.titulo.toLowerCase().includes(b) || p.descricao.toLowerCase().includes(b);
-        return matchTipo && matchBusca;
+        const matchBusca = !busca || p.titulo.toLowerCase().includes(b);
+        return matchBusca;
     });
 
     const handleClear = () => {
@@ -183,10 +220,15 @@ export default function PublicacoesPage() {
                                     <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest bg-gray-50 px-2 py-1 rounded-lg border border-gray-100">
                                         {pub.secretaria}
                                     </span>
-                                    <button className="inline-flex items-center gap-1.5 bg-white border border-gray-200 text-gray-500 hover:text-slate-700 hover:border-slate-300 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all shadow-sm">
+                                    <a 
+                                        href={pub.arquivo || pub.documentUrl || "#"} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-1.5 bg-white border border-gray-200 text-gray-500 hover:text-slate-700 hover:border-slate-300 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all shadow-sm"
+                                    >
                                         <FaDownload size={8} />
                                         {pub.arquivo ? "Baixar" : "Ver"}
-                                    </button>
+                                    </a>
                                 </div>
                             </div>
                         </div>

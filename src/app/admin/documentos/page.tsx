@@ -9,7 +9,8 @@ type Documento = {
     titulo: string;
     tipo: string;
     ano: number | null;
-    arquivo: string;
+    arquivo: string | null;
+    documentUrl: string | null;
 };
 
 export default function AdminDocumentosPage() {
@@ -110,10 +111,13 @@ export default function AdminDocumentosPage() {
                                         <td className="px-6 py-4 text-xs font-bold text-primary-600 uppercase">{i.tipo}</td>
                                         <td className="px-6 py-4 text-sm text-gray-500">{i.ano || "-"}</td>
                                         <td className="px-6 py-4 text-right">
-                                            <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <a href={i.arquivo} target="_blank" className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg" title="Ver Arquivo">
+                                            <div className="flex justify-end gap-2 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                                                <a href={i.arquivo || i.documentUrl || "#"} target="_blank" className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg" title={i.arquivo ? "Ver Arquivo" : "Ver Link"}>
                                                     <FaFileAlt />
                                                 </a>
+                                                <Link href={`/admin/documentos/editar/${i.id}`} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg" title="Editar">
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                                </Link>
                                                 <button onClick={() => handleDelete(i.id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg" title="Excluir">
                                                     <FaTrash />
                                                 </button>

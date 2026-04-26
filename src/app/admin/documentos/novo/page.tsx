@@ -12,11 +12,18 @@ export default function NovoDocumentoPage() {
         titulo: "",
         tipo: "loa",
         arquivo: "",
+        documentUrl: "",
         ano: new Date().getFullYear().toString(),
     });
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        if (!form.arquivo && !form.documentUrl) {
+            toast.error("Por favor, envie um arquivo ou insira uma URL");
+            return;
+        }
+
         setLoading(true);
         try {
             const res = await fetch("/api/documentos", {
@@ -57,18 +64,34 @@ export default function NovoDocumentoPage() {
                     <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-1">Tipo de Documento *</label>
                         <select required className="input-field" value={form.tipo} onChange={e => setForm({ ...form, tipo: e.target.value })}>
-                            <option value="loa">LOA - Lei Orçamentária Anual</option>
-                            <option value="ldo">LDO - Lei de Diretrizes Orçamentárias</option>
-                            <option value="ppa">PPA - Plano Plurianual</option>
-                            <option value="rreo">RREO - Relat. Resumido Execução Orçamentária</option>
-                            <option value="rgf">RGF - Relatório de Gestão Fiscal</option>
-                            <option value="prestacao_contas">Prestação de Contas Anual</option>
-                            <option value="parecer_tce">Parecer Prévio do TCE</option>
-                            <option value="decreto">Decreto Municipal</option>
-                            <option value="portaria">Portaria</option>
-                            <option value="lei">Lei Municipal</option>
-                            <option value="edital">Edital / Chamada Pública</option>
-                            <option value="outros">Outros Documentos</option>
+                            <option value="">Selecione o tipo...</option>
+                            <optgroup label="Instrumentos de Planejamento">
+                                <option value="loa">LOA - Lei Orçamentária Anual</option>
+                                <option value="ldo">LDO - Lei de Diretrizes Orçamentárias</option>
+                                <option value="ppa">PPA - Plano Plurianual</option>
+                                <option value="pms">Plano Municipal de Saúde (PMS)</option>
+                                <option value="pme">Plano Municipal de Educação (PME)</option>
+                            </optgroup>
+                            <optgroup label="Relatórios Fiscais">
+                                <option value="rreo">RREO - Relat. Resumido Execução Orçamentária</option>
+                                <option value="rgf">RGF - Relatório de Gestão Fiscal</option>
+                                <option value="prestacao_contas">Prestação de Contas Anual</option>
+                                <option value="parecer_tce">Parecer Prévio do TCE</option>
+                            </optgroup>
+                            <optgroup label="Atos e Publicações">
+                                <option value="Diário Oficial">Diário Oficial</option>
+                                <option value="Edital">Edital / Chamada Pública</option>
+                                <option value="Aviso">Aviso</option>
+                                <option value="Resultado">Resultado</option>
+                                <option value="Extrato de Contrato">Extrato de Contrato</option>
+                                <option value="Extrato de Convênio">Extrato de Convênio</option>
+                                <option value="Nota de Esclarecimento">Nota de Esclarecimento</option>
+                                <option value="Portaria">Portaria</option>
+                                <option value="Decreto">Decreto Municipal</option>
+                                <option value="Resolução">Resolução</option>
+                                <option value="Lei Municipal">Lei Municipal</option>
+                            </optgroup>
+                            <option value="Outros">Outros Documentos</option>
                         </select>
                     </div>
 
@@ -78,7 +101,7 @@ export default function NovoDocumentoPage() {
                     </div>
 
                     <div className="md:col-span-2">
-                        <label className="block text-sm font-semibold text-gray-700 mb-1">Arquivo (PDF ou Imagem) *</label>
+                        <label className="block text-sm font-semibold text-gray-700 mb-1 text-primary-600">Opção 1: Enviar Arquivo</label>
                         <div className="flex flex-col gap-3">
                             <label className="flex items-center justify-center gap-2 px-4 py-8 border-2 border-dashed border-gray-300 rounded-xl hover:border-primary-500 hover:text-primary-500 cursor-pointer transition-all bg-gray-50/50">
                                 <FaFileUpload className="text-xl" />
@@ -90,7 +113,6 @@ export default function NovoDocumentoPage() {
                                     type="file"
                                     accept=".pdf, image/*"
                                     className="hidden"
-                                    required={!form.arquivo}
                                     onChange={async (e) => {
                                         const file = e.target.files?.[0];
                                         if (file) {
@@ -123,6 +145,26 @@ export default function NovoDocumentoPage() {
                                 </div>
                             )}
                         </div>
+                    </div>
+
+                    <div className="md:col-span-2">
+                        <div className="flex items-center gap-4 my-2">
+                            <div className="h-[1px] flex-1 bg-gray-200"></div>
+                            <span className="text-xs font-bold text-gray-400 uppercase">OU</span>
+                            <div className="h-[1px] flex-1 bg-gray-200"></div>
+                        </div>
+                    </div>
+
+                    <div className="md:col-span-2">
+                        <label className="block text-sm font-semibold text-gray-700 mb-1 text-primary-600">Opção 2: URL Externa</label>
+                        <input 
+                            type="url" 
+                            className="input-field" 
+                            value={form.documentUrl} 
+                            onChange={e => setForm({ ...form, documentUrl: e.target.value })} 
+                            placeholder="https://exemplo.com/documento.pdf" 
+                        />
+                        <p className="text-xs text-gray-400 mt-1">Use esta opção se o documento já estiver hospedado em outro site ou for um link externo.</p>
                     </div>
                 </div>
 

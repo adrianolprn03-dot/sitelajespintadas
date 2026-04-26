@@ -10,7 +10,8 @@ type Documento = {
     id: string;
     titulo: string;
     tipo: string;
-    arquivo: string;
+    arquivo: string | null;
+    documentUrl?: string | null;
     ano: number | null;
     tamanho: number | null;
     criadoEm: string;
@@ -174,12 +175,12 @@ export default function ListaDocumentosClient({
                                     </div>
 
                                     <a 
-                                        href={doc.arquivo} 
+                                        href={doc.arquivo || doc.documentUrl || "#"} 
                                         target="_blank" 
                                         rel="noopener noreferrer"
                                         className="w-full md:w-auto shrink-0 flex items-center justify-center gap-3 bg-[#1E293B] text-white hover:bg-blue-600 px-8 py-5 rounded-2xl transition-all text-[10px] font-black uppercase tracking-widest shadow-xl shadow-blue-900/10 active:scale-95"
                                     >
-                                        <FaDownload className="text-xs" /> Visualizar Arquivo
+                                        <FaDownload className="text-xs" /> {doc.arquivo ? "Visualizar Arquivo" : "Acessar Link"}
                                     </a>
                                 </motion.div>
                             ))}

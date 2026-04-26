@@ -162,13 +162,16 @@ model Despesa {
 }
 
 model Documento {
-  id       String   @id @default(cuid())
-  titulo   String
-  tipo     String
-  arquivo  String
-  tamanho  Int?
-  ano      Int?
-  criadoEm DateTime @default(now())
+  id          String   @id @default(cuid())
+  titulo      String
+  tipo        String
+  arquivo     String?
+  documentUrl String?
+  tamanho     Int?
+  ano         Int?
+  ativo       Boolean  @default(true)
+  criadoEm    DateTime @default(now())
+  atualizadoEm DateTime @default(now()) @updatedAt
 }
 
 model Evento {
@@ -299,9 +302,10 @@ model Legislacao {
   ano          Int
   ementa       String
   arquivo      String?
+  documentUrl  String?
   ativo        Boolean  @default(true)
   criadoEm     DateTime @default(now())
-  atualizadoEm DateTime @updatedAt
+  atualizadoEm DateTime @default(now()) @updatedAt
 }
 
 model UnidadeAtendimento {
@@ -364,7 +368,7 @@ model LinkExterno {
   ordem        Int      @default(0)
   moduloAlvo   String?
   criadoEm     DateTime @default(now())
-  atualizadoEm DateTime @updatedAt
+  atualizadoEm DateTime @default(now()) @updatedAt
 }
 
 model Configuracao {
@@ -373,7 +377,7 @@ model Configuracao {
   valor        String
   descricao    String?
   grupo        String   @default("geral")
-  atualizadoEm DateTime @updatedAt
+  atualizadoEm DateTime @default(now()) @updatedAt
 }
 
 model Medicamento {
@@ -384,7 +388,7 @@ model Medicamento {
   observacao   String?
   ativo        Boolean  @default(true)
   criadoEm     DateTime @default(now())
-  atualizadoEm DateTime @updatedAt
+  atualizadoEm DateTime @default(now()) @updatedAt
 }
 
 model Veiculo {
@@ -397,7 +401,7 @@ model Veiculo {
   status       String   @default("em-uso")
   ativo        Boolean  @default(true)
   criadoEm     DateTime @default(now())
-  atualizadoEm DateTime @updatedAt
+  atualizadoEm DateTime @default(now()) @updatedAt
 }
 
 model EmendaParlamentar {
@@ -527,5 +531,29 @@ model QuadroServidor {
   vagasLivres  Int      @default(0)
   ativo        Boolean  @default(true)
   criadoEm     DateTime @default(now())
-  atualizadoEm DateTime @updatedAt
+  atualizadoEm DateTime @default(now()) @updatedAt
+}
+
+model EmendaPix {
+  id                    String    @id @default(cuid())
+  ano                   Int
+  origem                String    // Federal ou Estadual
+  tipoEmenda            String?   // Individual, Bancada, etc
+  formaRepasse          String?   @default("Transferência Especial - PIX")
+  numeroEmenda          String?
+  autor                 String
+  beneficiario          String
+  cnpjBeneficiario      String?
+  valorPrevisto         Float     @default(0)
+  valorRecebido         Float     @default(0)
+  valorExecutado        Float     @default(0)
+  objeto                String?
+  funcaoGoverno         String?
+  secretariaResponsavel String?
+  situacao              String    @default("Recebido")
+  dataRecebimento       DateTime?
+  arquivo               String?
+  documentUrl           String?
+  criadoEm              DateTime  @default(now())
+  atualizadoEm          DateTime  @default(now()) @updatedAt
 }

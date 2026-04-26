@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
 import { FaHeartbeat, FaMapMarkerAlt, FaPhoneAlt, FaClock } from "react-icons/fa";
 
@@ -111,6 +112,29 @@ export default function SaudePage() {
                                 )}
                             </div>
                         ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* Documentos e Planejamento */}
+            <div className="pb-24 bg-gray-50">
+                <div className="max-w-[1240px] mx-auto px-6">
+                    <div className="bg-[#0088b9] rounded-[2.5rem] p-10 md:p-16 text-white relative overflow-hidden shadow-2xl shadow-blue-900/20">
+                        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+                        <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-10">
+                            <div className="max-w-2xl text-center lg:text-left">
+                                <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tighter mb-4">Planejamento e Gestão</h3>
+                                <p className="text-blue-100 font-medium text-sm md:text-base leading-relaxed opacity-80">
+                                    Acesse o Plano Municipal de Saúde (PMS) e outros documentos norteadores que definem as metas e diretrizes da saúde pública em nosso município para os próximos anos.
+                                </p>
+                            </div>
+                            <Link 
+                                href="/transparencia/plano-saude"
+                                className="px-10 py-5 bg-white text-[#0088b9] font-black rounded-2xl hover:bg-[#FDB913] hover:text-white transition-all text-[11px] uppercase tracking-[0.2em] shadow-xl active:scale-95 shrink-0"
+                            >
+                                Ver Plano Municipal de Saúde
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </div>

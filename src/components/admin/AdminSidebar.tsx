@@ -40,6 +40,7 @@ const menuItems = [
     { label: "Saúde / REMUME", href: "/admin/saude", icon: FaBook, roles: ["admin", "editor"] },
     { label: "Frota Municipal", href: "/admin/frota", icon: FaHome, roles: ["admin", "editor"] },
     { label: "Emendas Parl.", href: "/admin/emendas", icon: FaMoneyBillWave, roles: ["admin", "editor"] },
+    { label: "Emendas PIX", href: "/admin/emendas-pix", icon: FaMoneyBillWave, roles: ["admin", "editor"] },
     { label: "Relatórios Fiscais", href: "/admin/relatorios-fiscais", icon: FaChartBar, roles: ["admin", "editor"] },
     { label: "Concursos", href: "/admin/concursos", icon: FaUsers, roles: ["admin", "editor"] },
     { label: "Carta de Serviços", href: "/admin/carta-servicos", icon: FaFileAlt, roles: ["admin", "editor"] },

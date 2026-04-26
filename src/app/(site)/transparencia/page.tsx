@@ -46,7 +46,7 @@ const categoriasDeModulos = [
             { icon: ListOrdered, titulo: "Pagamentos", desc: "Ordem Cronológica.", href: "/transparencia/ordem-cronologica", cor: "from-amber-500 to-orange-600", badge: "TESOURARIA" },
             { icon: Database, titulo: "Repasses", desc: "Transferências Legais.", href: "/transparencia/transferencias", cor: "from-indigo-600 to-violet-700", badge: "RECURSOS" },
             { icon: Globe2, titulo: "Emendas Parlamentares", desc: "Recursos Externos.", href: "/transparencia/emendas", cor: "from-teal-600 to-emerald-800", badge: "EXTERNO" },
-            { icon: Coins, titulo: "Emendas PIX", desc: "Transferências Diretas.", href: "/transparencia/emenda-pix", cor: "from-pink-600 to-rose-700", badge: "PIX" },
+            { icon: Coins, titulo: "Emendas PIX", desc: "Transferências Diretas.", href: "/transparencia/emendas-pix", cor: "from-pink-600 to-rose-700", badge: "PIX" },
         ]
     },
     {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { 
     FaScaleBalanced, FaMagnifyingGlass, 
     FaCalendarDays, FaCircleInfo, FaCircleCheck, 
@@ -20,7 +21,8 @@ type Documento = {
     id: string;
     titulo: string;
     tipo: string;
-    arquivo: string;
+    arquivo: string | null;
+    documentUrl?: string | null;
     ano: number;
     tamanho: number;
 };
@@ -93,6 +95,7 @@ export default function OrcamentoPage() {
                     titulo: item.titulo,
                     tipo: item.tipo.toUpperCase(),
                     arquivo: item.arquivo,
+                    documentUrl: item.documentUrl,
                     ano: item.ano || new Date(item.criadoEm).getFullYear(),
                     tamanho: item.tamanho || 0
                 }));
@@ -310,12 +313,12 @@ export default function OrcamentoPage() {
                                             {/* Actions Area */}
                                             <div className="flex flex-col gap-3 min-w-[200px] w-full md:w-auto">
                                                 <a 
-                                                    href={d.arquivo} 
+                                                    href={d.arquivo || d.documentUrl || "#"} 
                                                     target="_blank" 
                                                     rel="noopener noreferrer"
                                                     className="flex items-center justify-center gap-3 bg-slate-900 text-white hover:bg-blue-600 px-8 py-4 rounded-2xl transition-all text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-slate-900/10 hover:shadow-blue-600/30 active:scale-95"
                                                 >
-                                                    <FaDownload size={14} /> Arquivo Integral
+                                                    <FaDownload size={14} /> {d.arquivo ? "Arquivo Integral" : "Acessar Link"}
                                                 </a>
                                                 <button className="flex items-center justify-center gap-2 text-blue-600 text-[10px] font-black uppercase tracking-widest hover:translate-x-2 transition-all p-2 group/btn">
                                                     Ver Detalhes <FaArrowRight className="group-hover/btn:translate-x-1" size={10} />
@@ -375,5 +378,3 @@ export default function OrcamentoPage() {
         </div>
     );
 }
-
-import Link from "next/link";

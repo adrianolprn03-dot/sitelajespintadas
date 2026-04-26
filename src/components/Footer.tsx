@@ -21,6 +21,8 @@ const footerLinks = [
             { label: "Receitas Públicas", href: "/transparencia/receitas" },
             { label: "Despesas Públicas", href: "/transparencia/despesas" },
             { label: "Licitações e Contratos", href: "/transparencia/licitacoes" },
+            { label: "Plano Municipal de Saúde", href: "/transparencia/plano-saude" },
+            { label: "Plano Municipal de Educação", href: "/transparencia/plano-educacao" },
             { label: "Legislação Municipal", href: "/transparencia/legislacao" },
             { label: "Dados Abertos", href: "/transparencia/dados-abertos" },
             { label: "Transferências e Emendas", href: "/transparencia/transferencias" },
