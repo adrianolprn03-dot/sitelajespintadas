@@ -9,8 +9,17 @@ export async function GET(req: NextRequest) {
     }
 
     // Validar que a URL é de domínios permitidos (segurança)
-    const allowedDomains = ["topsolutionsrn.com.br", "lajespintadas.rn.gov.br"];
-    const allowed = allowedDomains.some(domain => url.includes(domain));
+    const allowedDomains = [
+        "topsolutionsrn.com.br", 
+        "lajespintadas.rn.gov.br", 
+        "transparencia.lajespintadas.rn.gov.br",
+        "storage.googleapis.com",
+        "firebasestorage.googleapis.com"
+    ];
+    
+    const isGovBr = url.toLowerCase().includes(".gov.br");
+    const allowed = isGovBr || allowedDomains.some(domain => url.toLowerCase().includes(domain.toLowerCase()));
+    
     if (!allowed) {
         return NextResponse.json({ error: "Domínio não permitido" }, { status: 403 });
     }
