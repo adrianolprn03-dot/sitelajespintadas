@@ -22,6 +22,7 @@ export async function POST(req: NextRequest) {
             valorRecebido: parseFloat(body.valorRecebido || 0),
             valorExecutado: parseFloat(body.valorExecutado || 0),
             dataRecebimento: body.dataRecebimento ? new Date(body.dataRecebimento) : null,
+            prazoExecucao: body.prazoExecucao ? new Date(body.prazoExecucao) : null,
         };
 
         const item = await prisma.emendaPix.create({ data });

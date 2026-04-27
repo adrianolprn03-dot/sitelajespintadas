@@ -21,6 +21,9 @@ type EmendaPix = {
     secretariaResponsavel: string | null;
     situacao: string;
     dataRecebimento: string | null;
+    prazoExecucao: string | null;
+    contaBancaria: string | null;
+    naturezaDespesa: string | null;
     documentos: string;
     arquivo: string | null;
     documentUrl: string | null;
@@ -69,8 +72,13 @@ export default function PublicEmendasPixPage() {
             {/* Header */}
             <div className="bg-gradient-to-br from-emerald-600 to-emerald-800 rounded-[2.5rem] p-12 text-white shadow-2xl relative overflow-hidden">
                 <div className="relative z-10 space-y-4 max-w-3xl">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full text-emerald-100 text-xs font-black uppercase tracking-widest border border-white/10">
-                        <FaHandHoldingDollar className="animate-pulse" /> Transparência Pública
+                    <div className="flex flex-wrap gap-2">
+                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full text-emerald-100 text-xs font-black uppercase tracking-widest border border-white/10">
+                            <FaHandHoldingDollar className="animate-pulse" /> Transparência Pública
+                        </div>
+                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-500/20 backdrop-blur-md rounded-full text-amber-200 text-xs font-black uppercase tracking-widest border border-amber-500/30">
+                            ★ Conformidade PNTP
+                        </div>
                     </div>
                     <h1 className="text-5xl md:text-6xl font-black tracking-tight">Emendas PIX</h1>
                     <p className="text-emerald-100 text-lg md:text-xl font-medium leading-relaxed opacity-90">
@@ -191,11 +199,34 @@ export default function PublicEmendasPixPage() {
                                             <p className="text-gray-600 text-sm font-medium leading-relaxed line-clamp-3">
                                                 {item.objeto}
                                             </p>
-                                            {item.secretariaResponsavel && (
-                                                <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 rounded-lg text-[9px] font-black text-gray-500 uppercase tracking-widest">
-                                                    <FaCircleInfo className="text-[11px]" /> {item.secretariaResponsavel}
-                                                </div>
-                                            )}
+                                            
+                                            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                {item.contaBancaria && (
+                                                    <div className="bg-amber-50 p-3 rounded-xl border border-amber-100/50">
+                                                        <div className="text-[9px] font-black text-amber-600/70 uppercase tracking-widest mb-1">Conta Bancária (PNTP)</div>
+                                                        <div className="text-xs font-bold text-amber-900">{item.contaBancaria}</div>
+                                                    </div>
+                                                )}
+                                                {item.naturezaDespesa && (
+                                                    <div className="bg-amber-50 p-3 rounded-xl border border-amber-100/50">
+                                                        <div className="text-[9px] font-black text-amber-600/70 uppercase tracking-widest mb-1">Natureza Despesa (PNTP)</div>
+                                                        <div className="text-xs font-bold text-amber-900">{item.naturezaDespesa}</div>
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            <div className="mt-3 flex flex-wrap gap-2">
+                                                {item.secretariaResponsavel && (
+                                                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 rounded-lg text-[9px] font-black text-gray-500 uppercase tracking-widest">
+                                                        <FaCircleInfo className="text-[11px]" /> {item.secretariaResponsavel}
+                                                    </div>
+                                                )}
+                                                {item.prazoExecucao && (
+                                                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 rounded-lg text-[9px] font-black text-blue-600 uppercase tracking-widest">
+                                                        <FaCalendarDays className="text-[11px]" /> Prazo: {new Date(item.prazoExecucao).toLocaleDateString('pt-BR')}
+                                                    </div>
+                                                )}
+                                            </div>
                                         </td>
                                         <td className="px-8 py-8 text-right space-y-2">
                                             <div className="space-y-0.5">

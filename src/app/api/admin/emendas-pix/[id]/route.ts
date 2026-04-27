@@ -11,6 +11,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
             valorRecebido: parseFloat(body.valorRecebido || 0),
             valorExecutado: parseFloat(body.valorExecutado || 0),
             dataRecebimento: body.dataRecebimento ? new Date(body.dataRecebimento) : null,
+            prazoExecucao: body.prazoExecucao ? new Date(body.prazoExecucao) : null,
         };
 
         delete data.id;

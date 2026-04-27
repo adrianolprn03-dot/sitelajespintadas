@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { FaFilePdf, FaSearch, FaCalendarAlt, FaChartLine, FaDownload, FaFilter, FaFileExcel, FaFileCsv, FaFileCode, FaTimes } from "react-icons/fa";
+import { useState, useEffect, useCallback } from "react";
+import { FaFilePdf, FaMagnifyingGlass, FaCalendarDays, FaChartLine, FaDownload, FaFileExcel, FaFileCsv, FaXmark, FaEye } from "react-icons/fa6";
 import PageHeader from "@/components/PageHeader";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
 import { motion, AnimatePresence } from "framer-motion";
 import { exportToCSV, exportToJSON, exportToPDF, exportToXLSX } from "@/lib/exportUtils";
+import PDFViewer from "@/components/transparencia/PDFViewer";
 
 type RelatorioFiscal = {
     id: string;
@@ -32,6 +33,7 @@ export default function RelatoriosFiscaisTemplate({ title, subtitle, tipo, icon,
     const [search, setSearch] = useState("");
     const [tabAtiva, setTabAtiva] = useState(showTabs ? "TODOS" : tipo);
     const [anoFiltro, setAnoFiltro] = useState<number | null>(null);
+    const [pdfViewer, setPdfViewer] = useState<{ url: string; titulo: string } | null>(null);
 
     useEffect(() => {
         const fetchRelatorios = async () => {
@@ -85,7 +87,6 @@ export default function RelatoriosFiscaisTemplate({ title, subtitle, tipo, icon,
                     combinedRecords = [...combinedRecords, ...mappedDocs];
                 }
 
-                // Remove duplicates if any (based on ID or exact title if needed), but for now we just append
                 setRelatorios(combinedRecords);
             } catch (error) {
                 console.error("Erro ao buscar relatórios:", error);
@@ -136,6 +137,10 @@ export default function RelatoriosFiscaisTemplate({ title, subtitle, tipo, icon,
         else exportToPDF(payload, filename, exportTitle);
     };
 
+    const closePdfViewer = useCallback(() => setPdfViewer(null), []);
+
+    const hasActiveFilters = search || anoFiltro || (showTabs && tabAtiva !== "TODOS");
+
     return (
         <div className="min-h-screen bg-slate-50/50 font-['Montserrat',sans-serif]">
             <PageHeader
@@ -152,141 +157,148 @@ export default function RelatoriosFiscaisTemplate({ title, subtitle, tipo, icon,
 
             <div className="w-full px-4 md:px-10 lg:px-20 py-10">
                 
-                {/* Dashboard Header - Mobile Responsive Wrapper */}
-                <div className="flex flex-col lg:flex-row gap-6 mb-10 items-stretch">
+                {/* ═══════ FILTROS ═══════ */}
+                <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm mb-8">
                     
-                    {/* Primary Filter Box */}
-                    <div className="flex-1 bg-white/70 backdrop-blur-3xl rounded-[2.5rem] p-8 shadow-xl shadow-primary-900/5 border border-white/50 relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-primary-50 rounded-full blur-3xl opacity-30 -mr-10 -mt-10 group-hover:scale-125 transition-transform duration-700" />
-                        
-                        <div className="relative flex flex-col gap-6">
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2.5">
-                                    <div className="w-8 h-8 bg-primary-100/50 rounded-xl flex items-center justify-center">
-                                        <FaFilter className="text-primary-600" size={12} />
-                                    </div>
-                                    <h2 className="text-sm font-black text-primary-900 uppercase tracking-widest">Controles de Busca</h2>
-                                </div>
-                                <div className="flex items-center gap-1.5 p-1 bg-gray-50 rounded-xl border border-gray-100">
-                                    {[
-                                        { id: 'pdf', icon: <FaFilePdf />, color: 'text-red-500', hover: 'hover:bg-red-500' },
-                                        { id: 'xlsx', icon: <FaFileExcel />, color: 'text-emerald-500', hover: 'hover:bg-emerald-500' },
-                                        { id: 'csv', icon: <FaFileCsv />, color: 'text-blue-500', hover: 'hover:bg-blue-500' }
-                                    ].map(tool => (
-                                        <button 
-                                            key={tool.id}
-                                            onClick={() => handleExport(tool.id as any)}
-                                            className={`p-2.5 ${tool.color} rounded-lg transition-all border border-transparent hover:border-current hover:text-white ${tool.hover} shadow-sm active:scale-95`}
-                                        >
-                                            {tool.icon}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col md:flex-row gap-4">
-                                <div className="relative flex-1 group">
-                                    <FaSearch className="absolute left-5 top-1/2 -translate-y-1/2 text-primary-300 group-focus-within:text-primary-600 transition-colors" />
-                                    <input
-                                        type="text"
-                                        placeholder="Filtrar por título ou período..."
-                                        className="w-full pl-12 pr-6 py-4.5 bg-slate-50/50 border border-transparent rounded-[1.5rem] text-[12px] font-bold text-slate-700 placeholder:text-slate-300 focus:bg-white focus:ring-4 focus:ring-primary-600/5 focus:border-primary-200 transition-all outline-none"
-                                        value={search}
-                                        onChange={(e) => setSearch(e.target.value)}
-                                    />
-                                </div>
-
-                                <div className="relative w-full md:w-48">
-                                    <FaCalendarAlt className="absolute left-4 top-1/2 -translate-y-1/2 text-primary-300 pointer-events-none" />
-                                    <select
-                                        value={anoFiltro ?? ""}
-                                        onChange={(e) => setAnoFiltro(e.target.value ? Number(e.target.value) : null)}
-                                        className="w-full pl-10 pr-10 py-4.5 bg-slate-50/50 border border-transparent rounded-[1.5rem] text-[11px] font-black text-slate-600 focus:bg-white focus:ring-4 focus:ring-primary-600/5 transition-all outline-none cursor-pointer appearance-none"
+                    {/* Categoria / Abas (se houver) */}
+                    {showTabs && (
+                        <div className="px-5 pt-5 pb-0">
+                            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2.5 block">Tipo de Relatório</label>
+                            <div className="flex flex-wrap gap-2">
+                                {["TODOS", ...showTabs].map(tab => (
+                                    <button
+                                        key={tab}
+                                        onClick={() => setTabAtiva(tab)}
+                                        className={`px-5 py-2.5 rounded-lg text-xs font-bold transition-all ${
+                                            tabAtiva === tab
+                                            ? "bg-primary-600 text-white shadow-md shadow-primary-600/20"
+                                            : "bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-700"
+                                        }`}
                                     >
-                                        <option value="">Exibir Tudo</option>
-                                        {todosOsAnos.map(ano => (
-                                            <option key={ano} value={ano}>Exercício {ano}</option>
-                                        ))}
-                                    </select>
-                                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-primary-300">
-                                        <ChevronDown />
-                                    </div>
-                                </div>
+                                        {tab === "TODOS" ? "Todos" : tab}
+                                    </button>
+                                ))}
                             </div>
                         </div>
-                    </div>
+                    )}
 
-                    {/* Secondary Filter: Quick Stats / Active Filter Info */}
-                    <div className="lg:w-80 bg-primary-900 rounded-[2.5rem] p-8 shadow-2xl shadow-primary-900/20 text-white flex flex-col justify-between relative overflow-hidden">
-                        <div className="absolute bottom-0 right-0 w-40 h-40 bg-white/5 rounded-full blur-3xl -mb-20 -mr-20" />
+                    {/* Barra de busca + Ano + Exportação */}
+                    <div className="p-5 flex flex-col md:flex-row gap-3 items-stretch md:items-center">
                         
-                        <div>
-                            <span className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40">Documentos Base</span>
-                            <div className="text-4xl font-black tracking-tight mt-1 mb-8">{filtered.length}</div>
+                        {/* Busca */}
+                        <div className="relative flex-1">
+                            <FaMagnifyingGlass className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-300" size={13} />
+                            <input
+                                type="text"
+                                placeholder="Pesquisar documento..."
+                                className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 placeholder:text-slate-300 focus:bg-white focus:ring-2 focus:ring-primary-500/20 focus:border-primary-400 transition-all outline-none"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                            />
                         </div>
 
-                        <div className="space-y-4">
-                            <div className="flex items-center gap-3">
-                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                                <span className="text-[9px] font-black uppercase tracking-widest opacity-60">Status: Integrado Siconfi</span>
-                            </div>
-                            <div className="p-3 bg-white/5 rounded-2xl border border-white/10">
-                                <p className="text-[8px] font-bold text-white/40 leading-relaxed uppercase tracking-wider">
-                                    Base de dados atualizada conforme normativas da STN e PNTP 2025.
-                                </p>
-                            </div>
+                        {/* Filtro de Ano */}
+                        <div className="relative w-full md:w-52">
+                            <FaCalendarDays className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none" size={13} />
+                            <select
+                                value={anoFiltro ?? ""}
+                                onChange={(e) => setAnoFiltro(e.target.value ? Number(e.target.value) : null)}
+                                className="w-full pl-10 pr-8 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-600 focus:bg-white focus:ring-2 focus:ring-primary-500/20 focus:border-primary-400 transition-all outline-none cursor-pointer appearance-none"
+                            >
+                                <option value="">Todos os anos</option>
+                                {todosOsAnos.map(ano => (
+                                    <option key={ano} value={ano}>{ano}</option>
+                                ))}
+                            </select>
+                            <ChevronDown />
+                        </div>
+
+                        {/* Separador vertical */}
+                        <div className="hidden md:block w-px h-8 bg-slate-200" />
+
+                        {/* Exportar */}
+                        <div className="flex items-center gap-1.5">
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mr-1 hidden lg:block">Exportar:</span>
+                            {[
+                                { id: 'pdf' as const, icon: <FaFilePdf size={13} />, label: 'PDF', color: 'text-red-500 hover:bg-red-50' },
+                                { id: 'xlsx' as const, icon: <FaFileExcel size={13} />, label: 'Excel', color: 'text-emerald-500 hover:bg-emerald-50' },
+                                { id: 'csv' as const, icon: <FaFileCsv size={13} />, label: 'CSV', color: 'text-blue-500 hover:bg-blue-50' }
+                            ].map(tool => (
+                                <button
+                                    key={tool.id}
+                                    onClick={() => handleExport(tool.id)}
+                                    title={`Exportar como ${tool.label}`}
+                                    className={`p-2.5 rounded-lg transition-all ${tool.color} border border-transparent hover:border-current/10`}
+                                >
+                                    {tool.icon}
+                                </button>
+                            ))}
                         </div>
                     </div>
+
+                    {/* Resumo dos filtros ativos */}
+                    {hasActiveFilters && (
+                        <div className="px-5 pb-4 flex items-center gap-2 flex-wrap">
+                            <span className="text-[10px] font-bold text-slate-400 uppercase">Filtros:</span>
+                            {showTabs && tabAtiva !== "TODOS" && (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-primary-50 text-primary-700 rounded-md text-[11px] font-semibold border border-primary-100">
+                                    {tabAtiva}
+                                    <button onClick={() => setTabAtiva("TODOS")} className="ml-0.5 hover:text-primary-900"><FaXmark size={8} /></button>
+                                </span>
+                            )}
+                            {anoFiltro && (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 text-amber-700 rounded-md text-[11px] font-semibold border border-amber-100">
+                                    Ano: {anoFiltro}
+                                    <button onClick={() => setAnoFiltro(null)} className="ml-0.5 hover:text-amber-900"><FaXmark size={8} /></button>
+                                </span>
+                            )}
+                            {search && (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-sky-50 text-sky-700 rounded-md text-[11px] font-semibold border border-sky-100">
+                                    &quot;{search}&quot;
+                                    <button onClick={() => setSearch("")} className="ml-0.5 hover:text-sky-900"><FaXmark size={8} /></button>
+                                </span>
+                            )}
+                            <button
+                                onClick={() => { setSearch(""); setAnoFiltro(null); if (showTabs) setTabAtiva("TODOS"); }}
+                                className="text-[10px] font-bold text-slate-400 hover:text-red-500 uppercase transition-colors ml-1"
+                            >
+                                Limpar tudo
+                            </button>
+                        </div>
+                    )}
                 </div>
 
-                {/* Categories Tabs */}
-                {showTabs && (
-                    <div className="flex flex-wrap gap-2 mb-10 overflow-x-auto no-scrollbar pb-2">
-                        {["TODOS", ...showTabs].map(tab => (
-                            <button
-                                key={tab}
-                                onClick={() => setTabAtiva(tab)}
-                                className={`px-8 py-3.5 rounded-2xl text-[9.5px] font-black uppercase tracking-widest transition-all border shrink-0 ${
-                                    tabAtiva === tab
-                                    ? "bg-primary-600 text-white border-primary-600 shadow-xl shadow-primary-600/20 active:scale-95"
-                                    : "bg-white text-slate-400 border-slate-100 hover:border-primary-200 hover:text-primary-600 hover:shadow-lg"
-                                }`}
-                            >
-                                {tab}
-                            </button>
-                        ))}
-                    </div>
-                )}
+                {/* ═══════ CONTADOR ═══════ */}
+                <div className="flex items-center justify-between mb-6">
+                    <p className="text-sm text-slate-500">
+                        <span className="font-bold text-slate-800">{filtered.length}</span> documento{filtered.length !== 1 ? "s" : ""} encontrado{filtered.length !== 1 ? "s" : ""}
+                    </p>
+                </div>
 
-                {/* Listagem Grid */}
-                <div className="space-y-16">
+                {/* ═══════ LISTAGEM ═══════ */}
+                <div className="space-y-12">
                     {loading ? (
-                        <div className="flex flex-col items-center justify-center py-20 animate-pulse">
-                            <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
-                                <FaSpinner className="animate-spin text-primary-200" size={24} />
-                            </div>
-                            <div className="text-[9px] font-black text-slate-300 uppercase tracking-[0.4em]">Sincronizando Dados</div>
+                        <div className="flex flex-col items-center justify-center py-20">
+                            <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin mb-4" />
+                            <p className="text-sm text-slate-400 font-medium">Carregando documentos...</p>
                         </div>
                     ) : anosDisponiveis.length === 0 ? (
-                        <div className="text-center py-24 bg-white/50 backdrop-blur-xl rounded-[3rem] border-2 border-dashed border-slate-200 relative overflow-hidden">
-                           <div className="absolute inset-0 bg-gradient-to-br from-primary-50/50 to-transparent pointer-events-none" />
-                           <div className="relative z-10">
-                               <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-8 shadow-xl shadow-primary-900/5">
-                                  <FaChartLine className="text-primary-200" size={40} />
-                               </div>
-                               <h4 className="text-2xl font-black text-slate-900 uppercase tracking-tighter mb-4">Nenhuma Publicação</h4>
-                               <p className="text-[12px] font-bold text-slate-400 uppercase tracking-widest leading-relaxed max-w-sm mx-auto opacity-70">
-                                  Não localizamos documentos para os critérios definidos neste período.
-                               </p>
-                               {(search || anoFiltro) && (
-                                   <button
-                                       onClick={() => { setSearch(""); setAnoFiltro(null); }}
-                                       className="mt-8 px-10 py-4 bg-primary-600 text-white rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest hover:bg-primary-700 transition-all shadow-xl shadow-primary-600/20 active:scale-95"
-                                   >
-                                       Resetar Busca
-                                   </button>
-                               )}
-                           </div>
+                        <div className="text-center py-20 bg-white rounded-2xl border-2 border-dashed border-slate-200">
+                            <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <FaChartLine className="text-slate-300" size={28} />
+                            </div>
+                            <h4 className="text-lg font-bold text-slate-700 mb-2">Nenhum documento encontrado</h4>
+                            <p className="text-sm text-slate-400 mb-6 max-w-md mx-auto">
+                                Não há relatórios para os filtros selecionados. Tente alterar os critérios de busca.
+                            </p>
+                            {hasActiveFilters && (
+                                <button
+                                    onClick={() => { setSearch(""); setAnoFiltro(null); if (showTabs) setTabAtiva("TODOS"); }}
+                                    className="px-6 py-3 bg-primary-600 text-white rounded-xl text-sm font-bold hover:bg-primary-700 transition-colors"
+                                >
+                                    Limpar filtros
+                                </button>
+                            )}
                         </div>
                     ) : (
                         <AnimatePresence mode="popLayout">
@@ -295,70 +307,76 @@ export default function RelatoriosFiscaisTemplate({ title, subtitle, tipo, icon,
                                 return (
                                     <motion.div
                                         key={ano}
-                                        initial={{ opacity: 0, scale: 0.98 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        exit={{ opacity: 0, scale: 0.98 }}
-                                        className="relative"
+                                        initial={{ opacity: 0, y: 12 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -12 }}
                                     >
-                                        <div className="flex items-center gap-6 mb-10">
-                                            <div className="flex flex-col">
-                                                <h3 className="text-4xl font-black text-primary-900 tracking-tighter italic leading-none">{ano}</h3>
-                                                <div className="w-full h-1.5 bg-primary-600 rounded-full mt-2" />
+                                        {/* Cabeçalho do ano */}
+                                        <div className="flex items-center gap-4 mb-6">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 bg-primary-600 text-white rounded-xl flex items-center justify-center font-black text-sm">
+                                                    <FaCalendarDays size={14} />
+                                                </div>
+                                                <h3 className="text-2xl font-black text-slate-800">{ano}</h3>
                                             </div>
-                                            <div className="flex-1 h-px bg-slate-200/50" />
-                                            <div className="text-[9px] font-black text-primary-500 bg-primary-50 px-5 py-2 rounded-full border border-primary-100 uppercase tracking-[0.2em] shadow-sm">
-                                                {relatoriosDoAno.length} Documentos
-                                            </div>
+                                            <div className="flex-1 h-px bg-slate-200" />
+                                            <span className="text-xs font-semibold text-slate-400 bg-slate-100 px-3 py-1.5 rounded-lg">
+                                                {relatoriosDoAno.length} {relatoriosDoAno.length === 1 ? "documento" : "documentos"}
+                                            </span>
                                         </div>
 
-                                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+                                        {/* Grid de cards */}
+                                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-4">
                                             {relatoriosDoAno.map((r, idx) => (
-                                                <motion.a
+                                                <motion.div
                                                     key={r.id}
-                                                    href={r.arquivo}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    initial={{ opacity: 0, y: 20 }}
+                                                    initial={{ opacity: 0, y: 16 }}
                                                     animate={{ opacity: 1, y: 0 }}
-                                                    transition={{ delay: idx * 0.05 }}
-                                                    className="group relative bg-white rounded-[2.5rem] p-7 border border-slate-100 shadow-sm hover:shadow-2xl hover:shadow-primary-600/10 transition-all duration-700 flex flex-col h-full active:scale-[0.98]"
+                                                    transition={{ delay: idx * 0.04 }}
+                                                    className="group bg-white rounded-xl border border-slate-200/80 hover:border-primary-300 shadow-sm hover:shadow-lg hover:shadow-primary-500/5 transition-all duration-300 flex flex-col"
                                                 >
-                                                    {/* Card Glow Effect */}
-                                                    <div className="absolute inset-0 bg-primary-600/0 group-hover:bg-primary-600/[0.02] rounded-[2.5rem] transition-colors duration-700 pointer-events-none" />
-                                                    
-                                                    <div className="flex justify-between items-start mb-6 relative">
-                                                        <div className="w-14 h-14 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center group-hover:bg-red-500 group-hover:text-white transition-all duration-500 shadow-inner group-hover:shadow-lg group-hover:shadow-red-500/20 group-hover:-rotate-6">
-                                                            <FaFilePdf size={24} />
-                                                        </div>
-                                                        <div className="flex flex-col items-end gap-1">
-                                                            <span className="text-[8px] font-black text-primary-500 bg-primary-50 px-2.5 py-1 rounded-lg border border-primary-100 uppercase tracking-widest">{r.tipo}</span>
-                                                            <span className="text-[7px] font-black text-slate-400 uppercase tracking-[0.2em]">Ref. Interna</span>
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="flex-1 relative">
-                                                        <h4 className="font-black text-primary-950 text-[13px] leading-snug uppercase tracking-tight group-hover:text-primary-600 transition-colors mb-4 line-clamp-3">
-                                                            {r.titulo}
-                                                        </h4>
-                                                        
-                                                        <div className="flex items-center gap-3">
-                                                            <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center border border-slate-100 group-hover:bg-primary-50 group-hover:border-primary-100 transition-all">
-                                                                <FaCalendarAlt className="text-secondary-500 opacity-60" size={10} />
+                                                    {/* Card body */}
+                                                    <div className="p-5 flex-1">
+                                                        <div className="flex items-start gap-4">
+                                                            <div className="w-11 h-11 bg-red-50 text-red-500 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-red-500 group-hover:text-white transition-colors duration-300">
+                                                                <FaFilePdf size={18} />
                                                             </div>
-                                                            <div className="flex flex-col">
-                                                                <span className="text-[8px] font-black text-slate-300 uppercase tracking-widest leading-none">Vigência / Período</span>
-                                                                <span className="text-[10px] font-bold text-slate-600 uppercase tracking-tight mt-1">{r.periodo}</span>
+                                                            <div className="min-w-0 flex-1">
+                                                                <h4 className="font-bold text-slate-800 text-sm leading-snug mb-1.5 line-clamp-2 group-hover:text-primary-700 transition-colors">
+                                                                    {r.titulo.replace(/\.pdf$/i, "")}
+                                                                </h4>
+                                                                <div className="flex items-center gap-2 flex-wrap">
+                                                                    <span className="text-[10px] font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded border border-primary-100">
+                                                                        {r.tipo}
+                                                                    </span>
+                                                                    <span className="text-[11px] text-slate-400">
+                                                                        {r.periodo}
+                                                                    </span>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
 
-                                                    <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between text-[10px] font-black text-slate-400 group-hover:text-primary-600 transition-all relative">
-                                                        <span className="uppercase tracking-[0.2em]">Acessar Relatório</span>
-                                                        <div className="w-8 h-8 bg-slate-50 rounded-full flex items-center justify-center group-hover:bg-primary-600 group-hover:text-white transition-all">
-                                                            <FaArrowRight size={10} className="group-hover:translate-x-0.5 transition-transform" />
-                                                        </div>
+                                                    {/* Card footer com ações */}
+                                                    <div className="px-5 py-3 border-t border-slate-100 flex items-center gap-2">
+                                                        <button
+                                                            onClick={() => setPdfViewer({ url: r.arquivo, titulo: r.titulo.replace(/\.pdf$/i, "") })}
+                                                            className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-primary-50 text-primary-700 rounded-lg text-xs font-bold hover:bg-primary-600 hover:text-white transition-all duration-200"
+                                                        >
+                                                            <FaEye size={12} />
+                                                            Visualizar
+                                                        </button>
+                                                        <a
+                                                            href={r.arquivo}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="flex items-center justify-center gap-2 py-2.5 px-4 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold hover:bg-slate-700 hover:text-white transition-all duration-200"
+                                                        >
+                                                            <FaDownload size={11} />
+                                                            Baixar
+                                                        </a>
                                                     </div>
-                                                </motion.a>
+                                                </motion.div>
                                             ))}
                                         </div>
                                     </motion.div>
@@ -368,29 +386,29 @@ export default function RelatoriosFiscaisTemplate({ title, subtitle, tipo, icon,
                     )}
                 </div>
 
-                <div className="mt-20">
+                <div className="mt-16">
                     <BannerPNTP />
                 </div>
             </div>
+
+            {/* ═══════ MODAL PDF VIEWER ═══════ */}
+            <AnimatePresence>
+                {pdfViewer && (
+                    <PDFViewer
+                        url={pdfViewer.url}
+                        titulo={pdfViewer.titulo}
+                        onClose={closePdfViewer}
+                    />
+                )}
+            </AnimatePresence>
         </div>
     );
 }
 
 const ChevronDown = () => (
-    <svg width="10" height="6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="inline ml-1.5 opacity-60">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-    </svg>
+    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+    </div>
 );
-
-const FaArrowRight = ({ size, className }: any) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={className}>
-        <path d="M5 12h14m-7-7 7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-);
-
-const FaSpinner = ({ size, className }: any) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className={className}>
-        <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-);
-

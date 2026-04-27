@@ -26,6 +26,9 @@ export default function NovoEmendaPixPage() {
         secretariaResponsavel: "",
         situacao: "Recebido",
         dataRecebimento: "",
+        prazoExecucao: "",
+        contaBancaria: "",
+        naturezaDespesa: "",
         arquivo: "",
         documentUrl: "",
     });
@@ -143,9 +146,22 @@ export default function NovoEmendaPixPage() {
                         <label className="block text-sm font-semibold text-gray-700 mb-1">Data de Recebimento</label>
                         <input type="date" className="input-field" value={form.dataRecebimento} onChange={e => setForm({...form, dataRecebimento: e.target.value})} />
                     </div>
-                    <div className="md:col-span-2">
+                    <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-1">Prazo de Execução (PNTP)</label>
+                        <input type="date" className="input-field border-amber-200" value={form.prazoExecucao} onChange={e => setForm({...form, prazoExecucao: e.target.value})} />
+                    </div>
+                    <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-1">Forma de Repasse</label>
                         <input type="text" className="input-field bg-gray-50" value={form.formaRepasse} readOnly />
+                    </div>
+
+                    <div className="md:col-span-2">
+                        <label className="block text-sm font-semibold text-gray-700 mb-1">Natureza da Despesa (PNTP) *</label>
+                        <input type="text" className="input-field border-amber-200" required value={form.naturezaDespesa} onChange={e => setForm({...form, naturezaDespesa: e.target.value})} placeholder="Ex: 44.90.51.00 - Obras e Instalações" />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-1">Conta Bancária Específica (PNTP) *</label>
+                        <input type="text" className="input-field border-amber-200" required value={form.contaBancaria} onChange={e => setForm({...form, contaBancaria: e.target.value})} placeholder="Banco / Agência / Conta" />
                     </div>
 
                     {/* Documentos Section */}

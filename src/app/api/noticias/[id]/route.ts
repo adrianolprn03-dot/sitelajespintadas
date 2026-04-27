@@ -17,13 +17,31 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
     try {
         const body = await req.json();
+        
+        // Extrair apenas os campos que existem no schema do Prisma
+        const { titulo, resumo, conteudo, imagem, publicada, secretariaId } = body;
+
+        const updateData: any = {
+            titulo,
+            resumo,
+            conteudo,
+            imagem,
+            publicada,
+            secretariaId: secretariaId === "" ? null : secretariaId,
+        };
+
+        if (publicada === true) {
+            updateData.publicadoEm = new Date();
+        }
+
         const noticia = await prisma.noticia.update({
             where: { id: params.id },
-            data: body,
+            data: updateData,
         });
         return NextResponse.json(noticia);
     } catch (error) {
-        return NextResponse.json({ error: "Erro interno" }, { status: 500 });
+        console.error("Erro ao atualizar notícia:", error);
+        return NextResponse.json({ error: "Erro interno ao atualizar" }, { status: 500 });
     }
 }
 

@@ -18,7 +18,7 @@ interface PageHeaderProps {
 export default function PageHeader({ title, subtitle, breadcrumbs, variant = 'default', icon }: PageHeaderProps) {
     if (variant === 'premium') {
         return (
-            <div className="bg-[#f8fafc] relative overflow-hidden pt-36 pb-24 px-6 md:px-12 lg:px-20 border-b border-primary-50">
+            <div className="bg-[#f8fafc] relative overflow-hidden pt-44 pb-24 px-6 md:px-12 lg:px-20 border-b border-primary-50">
                 {/* Decorativos suaves */}
                 <div className="absolute top-0 right-0 w-1/2 h-full bg-primary-500/5 -skew-x-12 translate-x-1/4" />
                 <div className="absolute bottom-0 left-0 w-1/3 h-2/3 bg-primary-900/5 skew-x-12 -translate-x-1/4" />
@@ -71,7 +71,7 @@ export default function PageHeader({ title, subtitle, breadcrumbs, variant = 'de
     }
 
     return (
-        <div className="bg-gradient-to-b from-blue-50/80 to-transparent border-b border-gray-100 pt-32 pb-16 relative overflow-hidden z-10">
+        <div className="bg-gradient-to-b from-blue-50/80 to-transparent border-b border-gray-100 pt-44 pb-16 relative overflow-hidden z-10">
             {/* Background Accent */}
             <div className="absolute top-0 right-0 w-96 h-96 bg-primary-500/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl shadow-inner" />
             

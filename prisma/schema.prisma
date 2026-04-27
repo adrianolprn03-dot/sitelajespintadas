@@ -243,14 +243,34 @@ model Esic {
 }
 
 model CidadaoEsic {
-  id       String   @id @default(cuid())
-  nome     String
-  cpf      String?  @unique
-  email    String   @unique
-  senha    String
-  criadoEm DateTime @default(now())
-  pedidos  Esic[]
+  id             String   @id @default(cuid())
+  nome           String
+  tipoPessoa     String   @default("Física")
+  cpf            String?  @unique
+  cnpj           String?  @unique
+  razaoSocial    String?
+  email          String   @unique
+  senha          String
+  telefone       String?
+  dataNascimento DateTime?
+  sexo           String?
+  escolaridade   String?
+  cep            String?
+  endereco       String?
+  numero         String?
+  bairro         String?
+  cidade         String?
+  uf             String?
+  dataAbertura   DateTime?
+  rg             String?
+  orgaoEmissor   String?
+  ufEmissor      String?
+  profissao      String?
+  nomeFantasia   String?
+  criadoEm       DateTime @default(now())
+  pedidos        Esic[]
 }
+
 
 model GaleriaFoto {
   id        String   @id @default(cuid())
@@ -552,8 +572,35 @@ model EmendaPix {
   secretariaResponsavel String?
   situacao              String    @default("Recebido")
   dataRecebimento       DateTime?
+  prazoExecucao         DateTime?
+  contaBancaria         String?
+  naturezaDespesa       String?
   arquivo               String?
   documentUrl           String?
   criadoEm              DateTime  @default(now())
   atualizadoEm          DateTime  @default(now()) @updatedAt
+}
+
+model PesquisaSatisfacao {
+  id                         String   @id @default(cuid())
+  cpf                        String
+  avaliacaoGestao            Int
+  avaliacaoOuvidoria         Int
+  satisfacaoTransparencia    Int
+  avaliacaoLixo              Int
+  avaliacaoLimpezaRuas       Int
+  avaliacaoPatrimonio        Int
+  avaliacaoPracas            Int
+  avaliacaoCultura           Int
+  avaliacaoIluminacao        Int
+  avaliacaoSeguranca         Int
+  avaliacaoEsporte           Int
+  avaliacaoSaude             Int
+  avaliacaoEducacao          Int
+  avaliacaoAssistenciaSocial Int
+  mes                        Int
+  ano                        Int
+  criadoEm                   DateTime @default(now())
+
+  @@unique([cpf, mes, ano])
 }

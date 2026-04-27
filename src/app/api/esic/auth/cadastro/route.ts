@@ -5,7 +5,13 @@ import { signESICToken } from "@/lib/esic-auth";
 
 export async function POST(req: NextRequest) {
   try {
-    const { nome, cpf, email, senha } = await req.json();
+    const body = await req.json();
+    const { 
+      nome, email, senha, tipoPessoa, cpf, cnpj, razaoSocial, nomeFantasia,
+      telefone, dataNascimento, sexo, escolaridade, profissao,
+      rg, orgaoEmissor, ufEmissor,
+      cep, endereco, numero, bairro, cidade, uf, dataAbertura
+    } = body;
 
     if (!nome || !email || !senha) {
       return NextResponse.json(
@@ -25,7 +31,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (cpf) {
+    if (cpf && tipoPessoa === "Física") {
       const cpfExiste = await prisma.cidadaoEsic.findUnique({
         where: { cpf },
       });
@@ -37,14 +43,45 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    if (cnpj && tipoPessoa === "Jurídica") {
+      const cnpjExiste = await prisma.cidadaoEsic.findUnique({
+        where: { cnpj },
+      });
+      if (cnpjExiste) {
+        return NextResponse.json(
+          { error: "Este CNPJ já está cadastrado." },
+          { status: 400 }
+        );
+      }
+    }
+
     const hashedPassword = await bcrypt.hash(senha, 10);
 
     const cidadao = await prisma.cidadaoEsic.create({
       data: {
         nome,
         email,
-        cpf,
         senha: hashedPassword,
+        tipoPessoa: tipoPessoa || "Física",
+        cpf: tipoPessoa === "Física" ? cpf : null,
+        cnpj: tipoPessoa === "Jurídica" ? cnpj : null,
+        razaoSocial: tipoPessoa === "Jurídica" ? razaoSocial : null,
+        nomeFantasia: tipoPessoa === "Jurídica" ? nomeFantasia : null,
+        telefone,
+        dataNascimento: dataNascimento ? new Date(dataNascimento) : null,
+        sexo,
+        escolaridade,
+        profissao,
+        rg,
+        orgaoEmissor,
+        ufEmissor,
+        cep,
+        endereco,
+        numero,
+        bairro,
+        cidade,
+        uf,
+        dataAbertura: dataAbertura ? new Date(dataAbertura) : null,
       },
     });
 
@@ -66,3 +103,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
   }
 }
+

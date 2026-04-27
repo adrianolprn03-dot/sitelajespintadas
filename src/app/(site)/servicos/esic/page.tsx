@@ -7,18 +7,10 @@ import {
     FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaClock, 
     FaFileAlt, FaExternalLinkAlt, FaInfoCircle, FaBullhorn, 
     FaGavel, FaLock, FaBalanceScale, FaBook, FaSignOutAlt, 
-    FaHistory, FaCheckCircle, FaChevronDown, FaChevronUp 
+    FaHistory, FaCheckCircle, FaChevronDown, FaChevronUp,
+    FaUser, FaBuilding, FaIdCard, FaBriefcase, FaArrowLeft, FaHome
 } from "react-icons/fa";
 import Link from "next/link";
-
-const linksLaterais = [
-    { label: "Institucional do SIC", href: "/transparencia/institucional", icon: FaInfoCircle },
-    { label: "Perguntas Frequentes (FAQ-LAI)", href: "/transparencia/faq", icon: FaQuestionCircle },
-    { label: "Relatório de Solicitações do SIC", href: "/transparencia/relatorios", icon: FaChartBar },
-    { label: "Gráficos e Estatísticas do SIC", href: "/transparencia/relatorios", icon: FaChartBar },
-    { label: "Regulamentação da LAI", href: "/transparencia/legislacao", icon: FaGavel },
-    { label: "Acesso à Informação", href: "/transparencia", icon: FaBook },
-];
 
 type User = {
     id: string;
@@ -33,19 +25,53 @@ type Pedido = {
     pedido: string;
     status: string;
     criadoEm: string;
+    resposta?: string;
+    respondidoEm?: string;
 };
 
 export default function ESICPage() {
-    const [view, setView] = useState<"login" | "register" | "form" | "history">("login");
+    // view: auth | dashboard | history | info
+    const [view, setView] = useState<"auth" | "dashboard" | "history" | "info">("auth");
+    const [authTab, setAuthTab] = useState<"login" | "register">("login");
+    const [infoTab, setInfoTab] = useState("sic");
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [protocolo, setProtocolo] = useState<string | null>(null);
     const [pedidos, setPedidos] = useState<Pedido[]>([]);
+    
+    // PF vs PJ
+    const [tipoPessoa, setTipoPessoa] = useState<"Física" | "Jurídica">("Física");
 
     // Form states
     const [loginForm, setLoginForm] = useState({ email: "", senha: "" });
-    const [registerForm, setRegisterForm] = useState({ nome: "", email: "", confirmEmail: "", cpf: "", senha: "", confirmSenha: "", concordo: false });
+    const [registerForm, setRegisterForm] = useState({ 
+        nome: "", 
+        email: "", 
+        confirmEmail: "", 
+        senha: "", 
+        confirmSenha: "", 
+        cpf: "",
+        cnpj: "",
+        razaoSocial: "",
+        nomeFantasia: "",
+        telefone: "",
+        dataNascimento: "",
+        sexo: "",
+        escolaridade: "",
+        profissao: "",
+        rg: "",
+        orgaoEmissor: "",
+        ufEmissor: "",
+        cep: "",
+        endereco: "",
+        numero: "",
+        bairro: "",
+        cidade: "Lajes Pintadas",
+        uf: "RN",
+        dataAbertura: "",
+        concordo: false 
+    });
     const [esicForm, setEsicForm] = useState({ orgao: "", pedido: "", formaRetorno: "sistema" });
 
     useEffect(() => {
@@ -62,7 +88,7 @@ export default function ESICPage() {
                 if (res.ok) {
                     const data = await res.json();
                     setUser(data);
-                    setView("form");
+                    setView("dashboard");
                 } else {
                     localStorage.removeItem("esic-token");
                 }
@@ -87,7 +113,7 @@ export default function ESICPage() {
                 localStorage.setItem("esic-token", data.token);
                 setUser(data.cidadao);
                 toast.success(`Bem-vindo, ${data.cidadao.nome}!`);
-                setView("form");
+                setView("dashboard");
             } else {
                 toast.error(data.error || "Erro ao entrar.");
             }
@@ -110,10 +136,8 @@ export default function ESICPage() {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    nome: registerForm.nome,
-                    email: registerForm.email,
-                    cpf: registerForm.cpf,
-                    senha: registerForm.senha
+                    ...registerForm,
+                    tipoPessoa
                 }),
             });
             const data = await res.json();
@@ -121,7 +145,7 @@ export default function ESICPage() {
                 localStorage.setItem("esic-token", data.token);
                 setUser(data.cidadao);
                 toast.success("Conta criada com sucesso!");
-                setView("form");
+                setView("dashboard");
             } else {
                 toast.error(data.error || "Erro ao cadastrar.");
             }
@@ -182,16 +206,26 @@ export default function ESICPage() {
     const logout = () => {
         localStorage.removeItem("esic-token");
         setUser(null);
-        setView("login");
+        setView("auth");
         toast.success("Sessão encerrada.");
     };
 
     if (loading && !user) {
-        return <div className="min-h-screen bg-gray-50 flex items-center justify-center font-black uppercase tracking-widest text-[#0088b9]">Carregando sistema...</div>;
+        return <div className="min-h-screen bg-gray-50 flex items-center justify-center font-black uppercase tracking-widest text-primary">Carregando sistema...</div>;
     }
 
+    const sidebarItems = [
+        { id: "sic", label: "Informações do SIC", icon: FaInfoCircle, internal: true },
+        { id: "faq", label: "e-SIC Perguntas e Respostas", icon: FaQuestionCircle, href: "/transparencia/passiva/perguntas" },
+        { id: "relatorios", label: "Relatório estatístico SIC", icon: FaChartBar, href: "/transparencia/passiva/relatorios/estatisticas" },
+        { id: "sigilo", label: "Solicitação Grau de Sigilo", icon: FaLock, href: "/transparencia/passiva/relatorios/com-sigilo" },
+        { id: "nao-sigiloso", label: "Solicitação não sigilosa", icon: FaBook, href: "/transparencia/passiva/relatorios/sem-sigilo" },
+        { id: "prazos", label: "Prazos de Respostas SIC", icon: FaClock, internal: true },
+        { id: "regulamentacao", label: "Regulamentação da LAI", icon: FaGavel, href: "/transparencia/passiva/regulamentacao" },
+    ];
+
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-50 font-['Montserrat',sans-serif]">
             <PageHeader
                 title="e-SIC – Serviço de Informação ao Cidadão"
                 subtitle="Solicite informações públicas conforme a Lei 12.527/2011"
@@ -199,230 +233,351 @@ export default function ESICPage() {
             />
 
             <div className="max-w-[1240px] mx-auto px-6 py-12">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                     
-                    {/* ====== COLUNA PRINCIPAL ====== */}
-                    <div className="lg:col-span-2 space-y-8">
-                        
-                        {/* Header de Usuário logado */}
-                        {user && (
-                            <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex items-center justify-between">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center font-black">
-                                        {user.nome.charAt(0)}
-                                    </div>
-                                    <div>
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Logado como</p>
-                                        <p className="text-sm font-bold text-gray-800">{user.nome}</p>
-                                    </div>
-                                </div>
-                                <div className="flex gap-2">
+                    {/* ====== SIDEBAR (ESQUERDA) ====== */}
+                    <div className="lg:col-span-1 space-y-4">
+                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                            {/* Botão Home / Acesso ao Sistema */}
+                            <button 
+                                onClick={() => { setView(user ? "dashboard" : "auth"); setInfoTab("none"); }}
+                                className={`w-full text-left px-6 py-4 flex items-center gap-3 text-xs font-black uppercase tracking-widest transition-all ${view !== "info" ? "bg-primary text-white" : "text-gray-500 hover:bg-gray-50"}`}
+                            >
+                                <FaHome /> Acesso ao Sistema
+                            </button>
+
+                            {sidebarItems.map(item => (
+                                item.internal ? (
                                     <button 
-                                        onClick={() => view === "history" ? setView("form") : fetchHistory()}
-                                        className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest bg-gray-50 text-gray-600 hover:bg-gray-100 transition-all border border-gray-100"
+                                        key={item.id}
+                                        onClick={() => { setView("info"); setInfoTab(item.id); }}
+                                        className={`w-full text-left px-6 py-4 flex items-center gap-3 text-xs font-black uppercase tracking-widest transition-all ${infoTab === item.id && view === "info" ? "bg-primary text-white" : "text-gray-500 hover:bg-gray-50"}`}
                                     >
-                                        {view === "history" ? <FaFileAlt /> : <FaHistory />}
-                                        {view === "history" ? "Fazer Pedido" : "Meus Pedidos"}
+                                        <item.icon /> {item.label}
                                     </button>
-                                    <button onClick={logout} className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest bg-red-50 text-red-600 hover:bg-red-100 transition-all border border-red-100">
-                                        <FaSignOutAlt /> Sair
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* ESTADO: LOGIN */}
-                        {view === "login" && !user && (
-                            <div className="bg-white rounded-[3.5rem] p-12 shadow-xl shadow-gray-200/40 border-2 border-white lg:max-w-xl mx-auto text-center border-white">
-                                <div className="w-20 h-20 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center text-3xl mx-auto mb-8">
-                                    <FaLock />
-                                </div>
-                                <h2 className="text-2xl font-black text-gray-800 uppercase tracking-tighter mb-2">Acesse o sistema</h2>
-                                <p className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-8">Caso já tenha conta, informe seu e-mail</p>
-                                
-                                <form onSubmit={handleLogin} className="space-y-4 text-left">
-                                    <div className="space-y-1">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Seu E-mail</label>
-                                        <input 
-                                            type="email" required
-                                            className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm focus:ring-4 focus:ring-blue-500/10 outline-none transition-all font-bold"
-                                            value={loginForm.email} onChange={e => setLoginForm({...loginForm, email: e.target.value})}
-                                        />
-                                    </div>
-                                    <div className="space-y-1">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Sua Senha</label>
-                                        <input 
-                                            type="password" required
-                                            className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm focus:ring-4 focus:ring-blue-500/10 outline-none transition-all font-bold"
-                                            value={loginForm.senha} onChange={e => setLoginForm({...loginForm, senha: e.target.value})}
-                                        />
-                                    </div>
-                                    <div className="flex justify-between items-center py-2">
-                                        <button type="button" onClick={() => setView("register")} className="text-[10px] font-black text-blue-600 uppercase tracking-widest hover:underline">Não tenho conta</button>
-                                        <button type="button" className="text-[10px] font-black text-gray-400 uppercase tracking-widest hover:underline">Esqueci minha senha</button>
-                                    </div>
-                                    <button 
-                                        type="submit" disabled={submitting}
-                                        className="w-full bg-[#01b0ef] hover:bg-blue-600 text-white font-black py-5 rounded-[1.5rem] shadow-xl shadow-blue-500/20 transition-all uppercase tracking-widest text-xs flex items-center justify-center gap-3 disabled:opacity-50"
-                                    >
-                                        {submitting && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />}
-                                        Clique aqui para entrar
-                                    </button>
-                                </form>
-                            </div>
-                        )}
-
-                        {/* ESTADO: CADASTRO */}
-                        {view === "register" && (
-                            <div className="bg-white rounded-[3.5rem] p-12 shadow-xl shadow-gray-200/40 border-2 border-white lg:max-w-2xl mx-auto">
-                                <h2 className="text-2xl font-black text-gray-800 uppercase tracking-tighter mb-2">Criar sua conta</h2>
-                                <p className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-8 border-b border-gray-50 pb-6">Preencha os campos para acesso ao e-SIC</p>
-
-                                <form onSubmit={handleRegister} className="space-y-6">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div className="space-y-1">
-                                            <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1 block">Nome Completo *</label>
-                                            <input type="text" required value={registerForm.nome} onChange={e => setRegisterForm({...registerForm, nome: e.target.value})} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1 block">CPF</label>
-                                            <input type="text" value={registerForm.cpf} onChange={e => setRegisterForm({...registerForm, cpf: e.target.value})} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="000.000.000-00" />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1 block">E-mail *</label>
-                                            <input type="email" required value={registerForm.email} onChange={e => setRegisterForm({...registerForm, email: e.target.value})} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1 block">Confirmar E-mail *</label>
-                                            <input type="email" required value={registerForm.confirmEmail} onChange={e => setRegisterForm({...registerForm, confirmEmail: e.target.value})} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1 block">Senha *</label>
-                                            <input type="password" required value={registerForm.senha} onChange={e => setRegisterForm({...registerForm, senha: e.target.value})} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1 block">Confirmar Senha *</label>
-                                            <input type="password" required value={registerForm.confirmSenha} onChange={e => setRegisterForm({...registerForm, confirmSenha: e.target.value})} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
-                                        </div>
-                                    </div>
-
-                                    <div className="p-5 bg-amber-50 rounded-2xl border border-amber-100 italic text-[10px] text-amber-700 leading-relaxed">
-                                        <input type="checkbox" id="lgpd" checked={registerForm.concordo} onChange={e => setRegisterForm({...registerForm, concordo: e.target.checked})} className="mr-3 accent-amber-600" />
-                                        <label htmlFor="lgpd">
-                                            DECLARO, para fins de direito, sob as penas da lei, que as informações prestadas são verdadeiras e autênticas. Estou ciente de que a falsidade desta declaração configura crime previsto no Código Penal Brasileiro. Meus dados serão tratados de acordo com a <strong>LGPD (Lei 13.709/2018)</strong>.
-                                        </label>
-                                    </div>
-
-                                    <button 
-                                        type="submit" disabled={submitting} 
-                                        className="w-full bg-[#0088b9] text-white font-black py-5 rounded-[1.5rem] uppercase tracking-widest text-xs shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
-                                    >
-                                        Clique aqui para concluir o cadastro
-                                    </button>
-
-                                    <button type="button" onClick={() => setView("login")} className="w-full text-center text-[10px] font-black text-gray-400 uppercase tracking-widest hover:text-blue-600 transition-colors">Já tenho uma conta</button>
-                                </form>
-                            </div>
-                        )}
-
-                        {/* ESTADO: FORMULÁRIO */}
-                        {view === "form" && user && (
-                            <>
-                                {protocolo ? (
-                                    <div className="bg-white rounded-[3.5rem] p-12 text-center shadow-xl border-2 border-white animate-fade-in-up">
-                                        <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl">
-                                            <FaCheckCircle />
-                                        </div>
-                                        <h2 className="text-2xl font-black text-[#0088b9] mb-3 uppercase tracking-tighter">Pedido Registrado!</h2>
-                                        <p className="text-gray-500 mb-8 font-medium">Seu pedido foi encaminhado com sucesso. Guarde seu protocolo:</p>
-                                        <div className="bg-blue-50/50 border-2 border-blue-100/50 rounded-3xl p-8 mb-8">
-                                            <p className="text-[10px] text-gray-400 mb-2 font-black uppercase tracking-widest">Número de Protocolo</p>
-                                            <p className="text-3xl font-mono font-black text-[#01b0ef] tracking-wider">{protocolo}</p>
-                                        </div>
-                                        <button onClick={() => setProtocolo(null)} className="bg-[#01b0ef] text-white font-black py-4 px-12 rounded-2xl shadow-lg hover:bg-blue-600 transition-all uppercase tracking-widest text-xs">Fazer um novo pedido</button>
-                                    </div>
                                 ) : (
-                                    <div className="bg-white rounded-[3.5rem] shadow-xl p-10 border-2 border-white">
-                                        <div className="flex items-center gap-4 mb-8">
-                                            <div className="w-12 h-12 bg-[#01b0ef]/10 text-[#01b0ef] rounded-2xl flex items-center justify-center text-xl">
-                                                <FaFileAlt />
+                                    <Link 
+                                        key={item.id}
+                                        href={item.href || "#"}
+                                        className="w-full text-left px-6 py-4 flex items-center gap-3 text-xs font-black uppercase tracking-widest text-gray-500 hover:bg-gray-50 transition-all border-t border-gray-50"
+                                    >
+                                        <item.icon /> {item.label}
+                                    </Link>
+                                )
+                            ))}
+                        </div>
+
+                        {/* Card de Contato Rápido (Baseado na Imagem) */}
+                        <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+                            <h4 className="text-[10px] font-black uppercase tracking-widest text-primary mb-4">Contato Presencial</h4>
+                            <div className="space-y-4">
+                                <div className="flex gap-3">
+                                    <FaMapMarkerAlt className="text-gray-400 mt-1" size={14} />
+                                    <p className="text-[11px] font-bold text-gray-600 leading-snug">Rua São Francisco, nº 275 – Centro<br/>CEP: 59.235-000</p>
+                                </div>
+                                <div className="flex gap-3">
+                                    <FaPhoneAlt className="text-gray-400 mt-1" size={14} />
+                                    <p className="text-[11px] font-bold text-gray-600 leading-snug">(84) 9.8748 – 0287</p>
+                                </div>
+                                <div className="flex gap-3">
+                                    <FaClock className="text-gray-400 mt-1" size={14} />
+                                    <p className="text-[11px] font-bold text-gray-600 leading-snug">Seg a Sex: 07h às 13h</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* ====== ÁREA PRINCIPAL ====== */}
+                    <div className="lg:col-span-3">
+                        
+                        {/* VIEW: INFO (CONTEÚDO DAS ABAS) */}
+                        {view === "info" && (
+                            <div className="bg-white rounded-[2.5rem] p-10 shadow-sm border border-gray-100 min-h-[500px] animate-fade-in">
+                                {infoTab === "sic" && (
+                                    <div className="space-y-8">
+                                        <h3 className="text-2xl font-black text-gray-800 uppercase tracking-tighter border-b pb-6 flex items-center gap-3">
+                                            <FaInfoCircle className="text-primary" /> Informações do SIC
+                                        </h3>
+                                        <p className="text-gray-600 leading-relaxed font-medium text-lg">
+                                            O SIC (Serviço de Informações ao Cidadão) permite que qualquer pessoa encaminhe pedidos de informação aos órgãos e entidades do Poder Executivo Municipal.
+                                        </p>
+                                        
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+                                            <div className="space-y-6">
+                                                <div>
+                                                    <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Autoridade de monitoramento do SIC</p>
+                                                    <p className="font-black text-gray-800 text-lg uppercase">Sidcley Gomes da Silva</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Unidade/setor responsável</p>
+                                                    <p className="font-black text-gray-800 text-lg uppercase">Ouvidoria</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Contatos do Ouvidoria</p>
+                                                    <p className="font-bold text-gray-700">(84) 9.8748 – 0287</p>
+                                                    <p className="font-bold text-gray-700">Whatsapp: (84) 9 8748 – 0287</p>
+                                                    <p className="font-bold text-gray-700 break-all">Email: ouvidoria@lajespintadas.rn.gov.br</p>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <h2 className="text-xl font-black text-[#0088b9] uppercase tracking-tighter">Fazer Pedido de Informação</h2>
-                                                <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mt-0.5">Preencha os campos abaixo</p>
+                                            <div className="space-y-6">
+                                                <div>
+                                                    <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Endereço</p>
+                                                    <p className="font-bold text-gray-700 uppercase">Rua São Francisco, nº 275 – Centro<br/>CEP: 59.235-000</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Horário</p>
+                                                    <p className="font-bold text-gray-700 uppercase">07H ÀS 13H DE SEGUNDA A SEXTA-FEIRA</p>
+                                                </div>
                                             </div>
                                         </div>
-                                        
+                                    </div>
+                                )}
+                                {infoTab === "prazos" && (
+                                    <div className="space-y-6">
+                                        <h3 className="text-2xl font-black text-gray-800 uppercase tracking-tighter border-b pb-6 flex items-center gap-3">
+                                            <FaClock className="text-primary" /> Prazos de Resposta
+                                        </h3>
+                                        <div className="bg-primary-50 p-10 rounded-[2rem] border border-primary-100">
+                                            <p className="text-primary-800 font-bold leading-relaxed text-lg mb-6">
+                                                De acordo com a Lei de Acesso à Informação (Lei 12.527/2011):
+                                            </p>
+                                            <ul className="space-y-4">
+                                                <li className="flex gap-4">
+                                                    <div className="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center shrink-0 font-black">1</div>
+                                                    <p className="text-primary-900 font-medium pt-1">O órgão deve responder imediatamente se a informação estiver disponível.</p>
+                                                </li>
+                                                <li className="flex gap-4">
+                                                    <div className="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center shrink-0 font-black">2</div>
+                                                    <p className="text-primary-900 font-medium pt-1">Caso não seja possível, o prazo é de <strong>20 dias corridos</strong>.</p>
+                                                </li>
+                                                <li className="flex gap-4">
+                                                    <div className="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center shrink-0 font-black">3</div>
+                                                    <p className="text-primary-900 font-medium pt-1">Este prazo pode ser prorrogado por mais <strong>10 dias</strong> mediante justificativa.</p>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                )}
+                                {infoTab === "faq" && (
+                                    <div className="space-y-6">
+                                        <h3 className="text-2xl font-black text-gray-800 uppercase tracking-tighter border-b pb-6 flex items-center gap-3">
+                                            <FaQuestionCircle className="text-primary" /> Perguntas e Respostas
+                                        </h3>
+                                        <div className="space-y-4">
+                                            <Link href="/transparencia/passiva/perguntas" className="block p-6 bg-gray-50 rounded-2xl border border-gray-100 hover:border-primary-500 transition-all group">
+                                                <div className="flex justify-between items-center">
+                                                    <p className="font-bold text-gray-700">Clique aqui para acessar o FAQ completo da LAI</p>
+                                                    <FaExternalLinkAlt className="text-gray-400 group-hover:text-primary" />
+                                                </div>
+                                            </Link>
+                                        </div>
+                                    </div>
+                                )}
+                                {infoTab !== "sic" && infoTab !== "prazos" && infoTab !== "faq" && (
+                                    <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
+                                        <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center text-gray-300 text-4xl">
+                                            <FaFileAlt />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-xl font-black text-gray-400 uppercase tracking-widest">Página em Construção</h3>
+                                            <p className="text-gray-300 font-medium">As informações detalhadas para esta seção estão sendo migradas.</p>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* VIEW: AUTH (LOGIN / REGISTER) - REVERTED TO PREVIOUS SIMPLE CARD LAYOUT */}
+                        {view === "auth" && (
+                            <div className="animate-fade-in max-w-2xl mx-auto lg:mx-0">
+                                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                                    <div className="bg-gray-50 px-8 py-6 border-b border-gray-100">
+                                        <h3 className="text-sm font-black uppercase tracking-widest text-gray-700 flex items-center gap-2">
+                                            {authTab === "login" ? <><FaUserShield className="text-primary" /> Identificação do Cidadão</> : <><FaUser className="text-primary" /> Cadastro de Novo Usuário</>}
+                                        </h3>
+                                    </div>
+
+                                    <div className="p-8">
+                                        {authTab === "login" ? (
+                                            <form onSubmit={handleLogin} className="space-y-6">
+                                                <div className="space-y-2">
+                                                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400">E-mail ou CPF/CNPJ</label>
+                                                    <div className="relative">
+                                                        <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" />
+                                                        <input 
+                                                            type="text" required
+                                                            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-12 py-4 text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary outline-none transition-all font-bold"
+                                                            placeholder="Digite seu identificador"
+                                                            value={loginForm.email} onChange={e => setLoginForm({...loginForm, email: e.target.value})}
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400">Senha de Acesso</label>
+                                                    <div className="relative">
+                                                        <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" />
+                                                        <input 
+                                                            type="password" required
+                                                            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-12 py-4 text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary outline-none transition-all font-bold"
+                                                            placeholder="••••••••"
+                                                            value={loginForm.senha} onChange={e => setLoginForm({...loginForm, senha: e.target.value})}
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <button 
+                                                    type="submit" disabled={submitting}
+                                                    className="w-full bg-primary hover:bg-primary-600 text-white font-black py-4 rounded-xl shadow-lg shadow-primary-500/20 transition-all uppercase tracking-widest text-xs flex items-center justify-center gap-3 disabled:opacity-50"
+                                                >
+                                                    {submitting && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />}
+                                                    Entrar no Sistema
+                                                </button>
+                                                
+                                                <div className="pt-4 border-t border-gray-50 flex flex-col sm:flex-row items-center justify-between gap-4">
+                                                    <button type="button" onClick={() => setAuthTab("register")} className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline">Criar uma nova conta</button>
+                                                    <button type="button" className="text-[10px] font-black text-gray-400 uppercase tracking-widest hover:underline">Esqueci minha senha</button>
+                                                </div>
+                                            </form>
+                                        ) : (
+                                            <form onSubmit={handleRegister} className="space-y-6">
+                                                <div className="flex items-center justify-between mb-6">
+                                                    <button type="button" onClick={() => setAuthTab("login")} className="text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2 hover:text-primary transition-colors">
+                                                        <FaArrowLeft /> Voltar para o login
+                                                    </button>
+                                                    <div className="flex gap-2 p-1 bg-gray-100 rounded-lg">
+                                                        <button type="button" onClick={() => setTipoPessoa("Física")} className={`px-4 py-2 rounded-md text-[9px] font-black uppercase tracking-widest transition-all ${tipoPessoa === "Física" ? "bg-white shadow-sm text-primary" : "text-gray-400"}`}>Pessoa Física</button>
+                                                        <button type="button" onClick={() => setTipoPessoa("Jurídica")} className={`px-4 py-2 rounded-md text-[9px] font-black uppercase tracking-widest transition-all ${tipoPessoa === "Jurídica" ? "bg-white shadow-sm text-primary" : "text-gray-400"}`}>Pessoa Jurídica</button>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                    <div className="md:col-span-2 space-y-1">
+                                                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Nome Completo / Responsável *</label>
+                                                        <input type="text" required value={registerForm.nome} onChange={e => setRegisterForm({...registerForm, nome: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold focus:border-primary outline-none" />
+                                                    </div>
+                                                    
+                                                    {tipoPessoa === "Física" ? (
+                                                        <>
+                                                            <div className="space-y-1">
+                                                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">CPF *</label>
+                                                                <input type="text" required value={registerForm.cpf} onChange={e => setRegisterForm({...registerForm, cpf: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold" />
+                                                            </div>
+                                                            <div className="space-y-1">
+                                                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">RG</label>
+                                                                <input type="text" value={registerForm.rg} onChange={e => setRegisterForm({...registerForm, rg: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold" />
+                                                            </div>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <div className="space-y-1">
+                                                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">CNPJ *</label>
+                                                                <input type="text" required value={registerForm.cnpj} onChange={e => setRegisterForm({...registerForm, cnpj: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold" />
+                                                            </div>
+                                                            <div className="space-y-1">
+                                                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Razão Social *</label>
+                                                                <input type="text" required value={registerForm.razaoSocial} onChange={e => setRegisterForm({...registerForm, razaoSocial: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold" />
+                                                            </div>
+                                                        </>
+                                                    )}
+
+                                                    <div className="space-y-1">
+                                                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">E-mail de Acesso *</label>
+                                                        <input type="email" required value={registerForm.email} onChange={e => setRegisterForm({...registerForm, email: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold" />
+                                                    </div>
+                                                    <div className="space-y-1">
+                                                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Senha *</label>
+                                                        <input type="password" required value={registerForm.senha} onChange={e => setRegisterForm({...registerForm, senha: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold" />
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100 italic text-[10px] text-gray-500">
+                                                    <input type="checkbox" checked={registerForm.concordo} onChange={e => setRegisterForm({...registerForm, concordo: e.target.checked})} className="mt-1 shrink-0 accent-primary" />
+                                                    <label>DECLARO que as informações fornecidas são verdadeiras e estou ciente das responsabilidades legais e da política de privacidade (LGPD).</label>
+                                                </div>
+
+                                                <button type="submit" disabled={submitting} className="w-full bg-primary hover:bg-primary-600 text-white font-black py-4 rounded-xl uppercase tracking-widest text-xs shadow-lg transition-all disabled:opacity-50">Confirmar Cadastro</button>
+                                            </form>
+                                        )}
+                                    </div>
+                                </div>
+                                
+                                <div className="mt-8 bg-primary-50 rounded-2xl p-6 border border-primary-100 flex items-start gap-4">
+                                    <FaInfoCircle className="text-primary mt-1 shrink-0" />
+                                    <div>
+                                        <h4 className="text-[10px] font-black uppercase tracking-widest text-primary-800 mb-1">Acesso à Informação</h4>
+                                        <p className="text-[11px] text-primary-700 font-medium leading-relaxed">
+                                            O acesso à informação pública é um direito constitucional. Através deste sistema, você pode solicitar dados sobre a gestão municipal de forma rápida e segura.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* VIEW: DASHBOARD (USER LOGGED IN) */}
+                        {view === "dashboard" && user && (
+                            <div className="space-y-8 animate-fade-in">
+                                <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 flex items-center justify-between">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-14 h-14 bg-primary-50 text-primary rounded-2xl flex items-center justify-center font-black text-xl">{user.nome.charAt(0)}</div>
+                                        <div>
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Bem-vindo(a)</p>
+                                            <p className="text-lg font-black text-gray-800">{user.nome}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-3">
+                                        <button onClick={fetchHistory} className="px-6 py-3 rounded-2xl bg-gray-50 text-gray-600 font-black text-[10px] uppercase tracking-widest border border-gray-100">Meus Pedidos</button>
+                                        <button onClick={logout} className="px-6 py-3 rounded-2xl bg-red-50 text-red-600 font-black text-[10px] uppercase tracking-widest border border-red-100">Sair</button>
+                                    </div>
+                                </div>
+
+                                <div className="bg-white rounded-[3rem] shadow-xl p-10 border-2 border-white">
+                                    <h3 className="text-xl font-black text-primary-800 uppercase tracking-tighter mb-8 flex items-center gap-3"><FaFileAlt /> Novo Pedido de Informação</h3>
+                                    {protocolo ? (
+                                        <div className="text-center py-12">
+                                            <FaCheckCircle className="text-primary-500 text-5xl mx-auto mb-4" />
+                                            <h4 className="text-2xl font-black text-gray-800 mb-2">Enviado com Sucesso!</h4>
+                                            <p className="text-gray-400 mb-8 font-bold">Protocolo: <span className="text-primary-600">{protocolo}</span></p>
+                                            <button onClick={() => setProtocolo(null)} className="bg-primary text-white font-black py-4 px-12 rounded-2xl">Novo Pedido</button>
+                                        </div>
+                                    ) : (
                                         <form onSubmit={handleEsicSubmit} className="space-y-6">
                                             <div className="space-y-1">
-                                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1 block">Órgão / Secretaria *</label>
-                                                <select 
-                                                    required value={esicForm.orgao} onChange={e => setEsicForm({...esicForm, orgao: e.target.value})}
-                                                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none appearance-none cursor-pointer"
-                                                >
-                                                    <option value="">Selecione o órgão...</option>
+                                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400">Órgão / Secretaria *</label>
+                                                <select required value={esicForm.orgao} onChange={e => setEsicForm({...esicForm, orgao: e.target.value})} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold">
+                                                    <option value="">Selecione...</option>
                                                     <option>Gabinete do Prefeito</option>
                                                     <option>Secretaria de Administração</option>
                                                     <option>Secretaria de Saúde</option>
                                                     <option>Secretaria de Educação</option>
-                                                    <option>Secretaria de Infraestrutura</option>
-                                                    <option>Secretaria de Finanças</option>
-                                                    <option>Secretaria de Assistência Social</option>
                                                 </select>
                                             </div>
                                             <div className="space-y-1">
-                                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1 block">Forma de Retorno *</label>
-                                                <select 
-                                                    required value={esicForm.formaRetorno} onChange={e => setEsicForm({...esicForm, formaRetorno: e.target.value})}
-                                                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none appearance-none cursor-pointer"
-                                                >
-                                                    <option value="sistema">De forma eletrônica via sistema (Recomendado)</option>
-                                                    <option value="email">Por E-mail</option>
-                                                    <option value="retirar">Retirar Pessoalmente</option>
-                                                </select>
+                                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400">Descrição *</label>
+                                                <textarea required rows={8} value={esicForm.pedido} onChange={e => setEsicForm({...esicForm, pedido: e.target.value})} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold" />
                                             </div>
-                                            <div className="space-y-1">
-                                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1 block">Descrição do Pedido *</label>
-                                                <textarea 
-                                                    required rows={6} value={esicForm.pedido} onChange={e => setEsicForm({...esicForm, pedido: e.target.value})}
-                                                    placeholder="Descreva claramente a informação que deseja solicitar..."
-                                                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none resize-none"
-                                                />
-                                            </div>
-                                            <button 
-                                                type="submit" disabled={submitting}
-                                                className="w-full bg-[#01b0ef] text-white font-black py-5 rounded-[1.5rem] uppercase tracking-widest text-xs shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
-                                            >
-                                                {submitting ? "Processando..." : "Enviar Pedido de Informação"}
-                                            </button>
+                                            <button type="submit" disabled={submitting} className="w-full bg-primary text-white font-black py-5 rounded-[1.5rem]">Enviar Solicitação</button>
                                         </form>
-                                    </div>
-                                )}
-                            </>
+                                    )}
+                                </div>
+                            </div>
                         )}
 
-                        {/* ESTADO: HISTORY */}
+                        {/* VIEW: HISTORY */}
                         {view === "history" && (
-                            <div className="bg-white rounded-[3.5rem] shadow-xl p-10 border-2 border-white">
-                                <h2 className="text-xl font-black text-[#0088b9] uppercase tracking-tighter mb-8 flex items-center gap-3">
-                                    <FaHistory /> Meus Pedidos Realizados
-                                </h2>
-                                
-                                {pedidos.length === 0 ? (
-                                    <div className="text-center py-20 text-gray-400 italic">Você ainda não possui pedidos registrados.</div>
-                                ) : (
+                            <div className="bg-white rounded-[3rem] shadow-xl p-10 border-2 border-white animate-fade-in">
+                                <div className="flex items-center justify-between mb-8">
+                                    <h2 className="text-xl font-black text-primary-800 uppercase tracking-tighter"><FaHistory /> Histórico de Pedidos</h2>
+                                    <button onClick={() => setView("dashboard")} className="text-[10px] font-black text-primary uppercase">Voltar</button>
+                                </div>
+                                {pedidos.length === 0 ? <p className="text-center py-12 text-gray-400">Nenhum pedido encontrado.</p> : (
                                     <div className="space-y-4">
                                         {pedidos.map(p => (
-                                            <div key={p.id} className="p-6 bg-gray-50 rounded-2xl border border-gray-100 group hover:border-[#01b0ef] transition-colors">
-                                                <div className="flex justify-between items-start mb-4">
-                                                    <div>
-                                                        <span className="text-[9px] font-black text-blue-500 uppercase tracking-widest mb-1 block">Protocolo {p.protocolo}</span>
-                                                        <h4 className="font-bold text-gray-800">{p.orgao}</h4>
-                                                    </div>
-                                                    <span className="px-3 py-1 bg-white text-[10px] font-bold text-gray-500 rounded-full border border-gray-200 uppercase tracking-widest">{p.status}</span>
+                                            <div key={p.id} className="p-6 bg-gray-50 rounded-2xl border border-gray-100">
+                                                <div className="flex justify-between items-center mb-2">
+                                                    <span className="text-[10px] font-black text-primary">#{p.protocolo}</span>
+                                                    <span className="text-[9px] font-black uppercase bg-white px-2 py-1 rounded border">{p.status}</span>
                                                 </div>
-                                                <p className="text-xs text-gray-500 line-clamp-2 italic mb-2">"{p.pedido}"</p>
-                                                <div className="text-[9px] text-gray-300 font-bold uppercase">Solicitado em: {new Date(p.criadoEm).toLocaleDateString()}</div>
+                                                <p className="font-bold text-gray-800 mb-1">{p.orgao}</p>
+                                                <p className="text-xs text-gray-500 line-clamp-2 italic">"{p.pedido}"</p>
                                             </div>
                                         ))}
                                     </div>
@@ -431,103 +586,18 @@ export default function ESICPage() {
                         )}
 
                     </div>
-
-                    {/* ====== SIDEBAR DIREITA ====== */}
-                    <div className="space-y-6">
-                        <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-7 relative overflow-hidden">
-                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#01b0ef] to-[#0088b9]" />
-                            <h3 className="text-sm font-black text-gray-800 uppercase tracking-tighter mb-6 flex items-center gap-2 pt-2">
-                                <FaInfoCircle className="text-[#01b0ef]" /> Informações do SIC
-                            </h3>
-                            <div className="space-y-5">
-                                <div className="flex items-start gap-3">
-                                    <div className="w-9 h-9 bg-blue-50 text-[#01b0ef] rounded-xl flex items-center justify-center shrink-0 text-sm">
-                                        <FaPhoneAlt />
-                                    </div>
-                                    <div>
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-0.5">Contatos do SIC</p>
-                                        <p className="text-sm font-bold text-gray-700">(84) 3533-2244</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <div className="w-9 h-9 bg-blue-50 text-[#01b0ef] rounded-xl flex items-center justify-center shrink-0 text-sm">
-                                        <FaEnvelope />
-                                    </div>
-                                    <div>
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-0.5">E-mail</p>
-                                        <p className="text-sm font-bold text-gray-700 break-all">esic@lajespintadas.rn.gov.br</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Bloco de Prazo Legal — obrigatório PNTP/LAI */}
-                        <div className="bg-white rounded-[2rem] shadow-sm border-2 border-blue-100 p-7 relative overflow-hidden">
-                            <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-emerald-500 to-teal-500" />
-                            <h3 className="text-sm font-black text-gray-800 uppercase tracking-tighter mb-6 flex items-center gap-2 pt-2">
-                                <FaBalanceScale className="text-emerald-500" /> Seus Direitos — LAI
-                            </h3>
-                            <div className="space-y-4">
-                                <div className="flex items-start gap-3 p-3 bg-emerald-50 rounded-xl border border-emerald-100">
-                                    <FaClock className="text-emerald-500 mt-0.5 shrink-0" size={14} />
-                                    <div>
-                                        <p className="text-[10px] font-black text-emerald-800 uppercase tracking-widest">Prazo de Resposta</p>
-                                        <p className="text-[11px] font-bold text-emerald-700 mt-0.5">
-                                            <strong>20 dias úteis</strong>, prorrogável por mais <strong>10 dias</strong> mediante justificativa.
-                                        </p>
-                                    </div>
-                                </div>
-                                <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-xl border border-blue-100">
-                                    <FaGavel className="text-blue-500 mt-0.5 shrink-0" size={14} />
-                                    <div>
-                                        <p className="text-[10px] font-black text-blue-800 uppercase tracking-widest">Direito a Recurso</p>
-                                        <p className="text-[11px] font-bold text-blue-700 mt-0.5">
-                                            Em caso de negativa, você pode recorrer em até <strong>10 dias</strong> à autoridade hierarquicamente superior.
-                                        </p>
-                                    </div>
-                                </div>
-                                <div className="flex items-start gap-3 p-3 bg-amber-50 rounded-xl border border-amber-100">
-                                    <FaCheckCircle className="text-amber-500 mt-0.5 shrink-0" size={14} />
-                                    <div>
-                                        <p className="text-[10px] font-black text-amber-800 uppercase tracking-widest">Gratuidade</p>
-                                        <p className="text-[11px] font-bold text-amber-700 mt-0.5">
-                                            O acesso à informação é <strong>gratuito</strong>. Apenas reproduções físicas poderão ter custo de reprodução cobrado.
-                                        </p>
-                                    </div>
-                                </div>
-                                <div className="flex items-start gap-3 p-3 bg-purple-50 rounded-xl border border-purple-100">
-                                    <FaUserShield className="text-purple-500 mt-0.5 shrink-0" size={14} />
-                                    <div>
-                                        <p className="text-[10px] font-black text-purple-800 uppercase tracking-widest">Anonimato</p>
-                                        <p className="text-[11px] font-bold text-purple-700 mt-0.5">
-                                            Não é necessário justificar o pedido. Seus dados são protegidos pela <strong>LGPD (Lei 13.709/2018)</strong>.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Links Laterais */}
-                        <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-7">
-                            <h3 className="text-sm font-black text-gray-800 uppercase tracking-tighter mb-5">Mais Informações</h3>
-                            <div className="space-y-1.5">
-                                {[
-                                    { label: "Relatório Anual do SIC", href: "/servicos/esic/relatorio-anual", icon: FaChartBar },
-                                    ...linksLaterais
-                                ].map((link, idx) => (
-                                    <Link key={idx} href={link.href} className="flex items-center gap-3 text-sm font-semibold text-gray-600 hover:text-[#01b0ef] hover:bg-blue-50/50 px-4 py-3 rounded-xl transition-all group">
-                                        <link.icon className="text-gray-400 group-hover:text-[#01b0ef] transition-colors shrink-0" />
-                                        <span className="flex-1">{link.label}</span>
-                                        <FaExternalLinkAlt className="text-[10px] text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                    </Link>
-                                ))}
-                            </div>
-                        </div>
-
-                    </div>
-
                 </div>
             </div>
+
+            <style jsx global>{`
+                @keyframes fade-in {
+                    from { opacity: 0; transform: translateY(10px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                .animate-fade-in {
+                    animation: fade-in 0.4s ease-out forwards;
+                }
+            `}</style>
         </div>
     );
 }

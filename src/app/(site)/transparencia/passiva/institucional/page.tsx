@@ -16,10 +16,12 @@ async function getConfig(chave: string, padrao: string) {
 
 export default async function InstitucionalSICPage() {
     const municipio = await getConfig("municipio_nome", "Prefeitura Municipal de Lajes Pintadas");
-    const endereco = await getConfig("endereco_sede", "Praça 03 de Dezembro, 03 - Centro, Lajes Pintadas - RN");
-    const horario = await getConfig("horario_funcionamento", "Segunda a Sexta, das 08h às 13h");
-    const email = await getConfig("contato_email_sic", "esic@lajespintadas.rn.gov.br");
-    const telefone = await getConfig("contato_telefone", "(84) 3292-0002");
+    const endereco = await getConfig("endereco_sede", "Rua São Francisco, nº 275 – Centro – CEP: 59.235-000");
+    const horario = await getConfig("horario_funcionamento", "Segunda a Sexta, das 07:00 às 13:00");
+    const email = await getConfig("contato_email_sic", "ouvidoria@lajespintadas.rn.gov.br");
+    const telefone = await getConfig("contato_telefone", "(84) 9.8748 – 0287 (WhatsApp)");
+    const autoridade = await getConfig("sic_autoridade", "Sidcley Gomes da Silva (Ouvidoria)");
+
 
     const secoes = [
         {
@@ -78,9 +80,10 @@ export default async function InstitucionalSICPage() {
                                 Autoridade de Monitoramento
                             </h2>
                             <div className="bg-gray-50 rounded-[2rem] p-8 border border-gray-100 italic text-gray-500">
-                                <p className="mb-4 font-bold text-gray-700 not-italic">Órgão Responsável: Secretaria Municipal de Administração</p>
+                                <p className="mb-4 font-bold text-gray-700 not-italic">Autoridade Responsável: {autoridade}</p>
                                 <p>Em conformidade com o Art. 40 da Lei Federal nº 12.527/2011, a Autoridade de Monitoramento do SIC é vinculada diretamente à pasta de Administração e Planejamento, assegurando o cumprimento das normas relativas ao acesso à informação.</p>
                             </div>
+
                         </section>
                     </div>
 

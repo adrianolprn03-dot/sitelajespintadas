@@ -33,6 +33,7 @@ const categoriasDeModulos = [
             { icon: MapPinned, titulo: "Serviços", desc: "Carta de Serviços.", href: "/transparencia/carta-servicos", cor: "from-purple-600 to-indigo-700", badge: "CIDADÃO" },
             { icon: HelpCircle, titulo: "FAQ", desc: "Dúvidas Frequentes.", href: "/transparencia/faq", cor: "from-slate-600 to-slate-800", badge: "AJUDA" },
             { icon: BookOpen, titulo: "Glossário", desc: "Termos da Gestão.", href: "/transparencia/glossario", cor: "from-indigo-500 to-blue-600", badge: "TERMOS" },
+            { icon: ClipboardCheck, titulo: "Pesquisa Satisfação", desc: "Avalie os serviços municipais.", href: "/transparencia/pesquisa-satisfacao", cor: "from-fuchsia-600 to-pink-700", badge: "PNTP" },
             { icon: PhoneCall, titulo: "Fale Conosco", desc: "Atendimento ao Cidadão.", href: "/contato", cor: "from-rose-500 to-pink-600", badge: "CONTATO" },
         ]
     },

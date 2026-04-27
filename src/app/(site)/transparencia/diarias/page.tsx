@@ -371,7 +371,6 @@ export default function DiariasPage() {
                                                 <th className="px-8 py-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">Qtd</th>
                                                 <th className="px-8 py-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-right">Vlr. Unitário</th>
                                                 <th className="px-8 py-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-right">Total</th>
-                                                <th className="px-8 py-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-center whitespace-nowrap">Ações</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -399,7 +398,15 @@ export default function DiariasPage() {
                                                     </td>
                                                     <td className="px-8 py-8 max-w-[250px]">
                                                         <p className="text-[11px] font-black text-slate-800 uppercase tracking-tight mb-1 truncate">{d.destino}</p>
-                                                        <p className="text-[10px] text-slate-400 font-bold italic line-clamp-2 leading-relaxed">"{d.motivo}"</p>
+                                                        <p className="text-[10px] text-slate-400 font-bold italic line-clamp-2 leading-relaxed mb-3">"{d.motivo}"</p>
+                                                        <a 
+                                                            href={d.portariaUrl || `/transparencia/diarias/portaria-${d.id}.pdf`}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-600 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all border border-slate-200 hover:border-blue-200"
+                                                        >
+                                                            <FaFileSignature size={10} /> Ver Portaria
+                                                        </a>
                                                     </td>
                                                     <td className="px-8 py-8">
                                                         <div className="flex flex-col">
@@ -421,19 +428,6 @@ export default function DiariasPage() {
                                                         <span className="text-sm font-black text-emerald-600 tracking-tight">
                                                             {fmt(d.valor)}
                                                         </span>
-                                                    </td>
-                                                    <td className="px-8 py-8">
-                                                        <div className="flex items-center justify-center">
-                                                            <a 
-                                                                href={d.portariaUrl || `/transparencia/diarias/portaria-${d.id}.pdf`}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                className="flex items-center justify-center w-10 h-10 bg-slate-900 text-white rounded-xl hover:bg-blue-600 transition-all shadow-lg active:scale-95 group/btn"
-                                                                title="Ver Portaria (PDF)"
-                                                            >
-                                                                <FaFileSignature className="text-sm group-hover/btn:rotate-12 transition-transform" />
-                                                            </a>
-                                                        </div>
                                                     </td>
                                                 </motion.tr>
                                             ))}
