@@ -1,6 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+    try {
+        const item = await prisma.emendaPix.findUnique({
+            where: { id: params.id },
+        });
+        if (!item) return NextResponse.json({ error: "Não encontrado" }, { status: 404 });
+        return NextResponse.json(item);
+    } catch (error) {
+        return NextResponse.json({ error: "Erro ao buscar emenda" }, { status: 500 });
+    }
+}
+
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
     try {
         const body = await req.json();

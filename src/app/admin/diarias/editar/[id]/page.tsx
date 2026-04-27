@@ -46,11 +46,7 @@ export default function EditarDiariaPage() {
                     ano: data.ano?.toString() || "",
                     portariaUrl: data.portariaUrl || "",
                 });
-                if (data.portariaUrl && !data.portariaUrl.startsWith("http")) {
-                    setUploadMode("file");
-                } else if (data.portariaUrl && data.portariaUrl.startsWith("http")) {
-                    setUploadMode("url");
-                }
+
             } catch {
                 toast.error("Erro ao carregar dados");
             } finally {
