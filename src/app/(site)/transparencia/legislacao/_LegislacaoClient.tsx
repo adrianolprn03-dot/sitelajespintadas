@@ -276,24 +276,30 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                                                     className="group bg-white rounded-xl border border-slate-200/80 hover:border-primary-300 shadow-sm hover:shadow-lg hover:shadow-primary-500/5 transition-all duration-300 flex flex-col"
                                                 >
                                                     {/* Card body */}
-                                                    <div className="p-5 flex-1">
-                                                        <div className="flex items-start gap-4">
-                                                            <div className="w-11 h-11 bg-red-50 text-red-500 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-red-500 group-hover:text-white transition-colors duration-300">
-                                                                <FaFilePdf size={18} />
-                                                            </div>
-                                                            <div className="min-w-0 flex-1">
-                                                                <h4 className="font-bold text-slate-800 text-sm leading-snug mb-1.5 line-clamp-3 group-hover:text-primary-700 transition-colors" title={l.ementa}>
-                                                                    {l.ementa}
+                                                    <div className="p-6 flex-1">
+                                                        <div className="flex justify-between items-start mb-4">
+                                                            <div className="flex flex-col">
+                                                                <span className="text-[10px] font-black text-primary-600 bg-primary-50 px-2.5 py-1 rounded-md border border-primary-100 uppercase tracking-widest mb-2 w-fit">
+                                                                    {info.label}
+                                                                </span>
+                                                                <h4 className="text-2xl font-black text-slate-900 group-hover:text-primary-600 transition-colors duration-300">
+                                                                    Nº {l.numero}
                                                                 </h4>
-                                                                <div className="flex items-center gap-2 flex-wrap">
-                                                                    <span className="text-[10px] font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded border border-primary-100 uppercase">
-                                                                        {info.label} Nº {l.numero}
-                                                                    </span>
-                                                                    <span className="text-[11px] text-slate-400">
-                                                                        {new Date(l.criadoEm).toLocaleDateString("pt-BR")}
-                                                                    </span>
-                                                                </div>
                                                             </div>
+                                                            <div className="w-10 h-10 bg-red-50 text-red-500 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-red-500 group-hover:text-white transition-all duration-300 shadow-sm">
+                                                                <FaFilePdf size={16} />
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <p className="text-[13px] font-medium text-slate-600 leading-relaxed mb-4 line-clamp-4 group-hover:text-slate-800 transition-colors" title={l.ementa}>
+                                                            {l.ementa}
+                                                        </p>
+
+                                                        <div className="flex items-center gap-2 mt-auto pt-2">
+                                                            <FaCalendarDays size={12} className="text-slate-300" />
+                                                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-tight">
+                                                                Publicado em {new Date(l.criadoEm).toLocaleDateString("pt-BR")}
+                                                            </span>
                                                         </div>
                                                     </div>
 

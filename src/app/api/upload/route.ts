@@ -1,7 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import { join } from "path";
-import { existsSync } from "fs";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+
+// Configuração do Cloudflare R2
+const s3Client = new S3Client({
+    region: "auto",
+    endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+    credentials: {
+        accessKeyId: process.env.R2_ACCESS_KEY_ID || "",
+        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || "",
+    },
+});
 
 export async function POST(req: NextRequest) {
     try {
@@ -12,19 +20,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Nenhum arquivo enviado" }, { status: 400 });
         }
 
-        const bytes = await file.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-
-        // Define o diretório de upload
-        const uploadDir = join(process.cwd(), "public", "uploads");
-
-        // Cria o diretório se não existir
-        if (!existsSync(uploadDir)) {
-            await mkdir(uploadDir, { recursive: true });
-        }
-
-        // Gera um nome único e limpo para o arquivo
-        const timestamp = Date.now();
+        // Gera um nome limpo para o arquivo
         const safeName = file.name
             .toLowerCase()
             .normalize("NFD")
@@ -32,27 +28,31 @@ export async function POST(req: NextRequest) {
             .replace(/[^a-z0-9.]/g, "_") // remove caracs especiais
             .replace(/_+/g, "_"); // remove duplicatas de _
 
-        const fileName = `${timestamp}-${safeName}`;
-        const path = join(uploadDir, fileName);
+        const fileName = `uploads/${Date.now()}-${safeName}`;
 
-        try {
-            await writeFile(path, buffer);
-            console.log(`✅ Arquivo salvo com sucesso em: ${path}`);
-        } catch (writeError: any) {
-            console.error("❌ Erro ao gravar arquivo no disco:", writeError);
-            return NextResponse.json({ 
-                error: "Erro ao gravar no disco", 
-                details: writeError.message 
-            }, { status: 500 });
-        }
+        // Converte para Buffer
+        const buffer = Buffer.from(await file.arrayBuffer());
 
-        const fileUrl = `/uploads/${fileName}`;
-        console.log(`🔗 URL gerada: ${fileUrl}`);
-        return NextResponse.json({ url: fileUrl });
+        // Faz o upload para o Cloudflare R2
+        await s3Client.send(new PutObjectCommand({
+            Bucket: process.env.R2_BUCKET_NAME,
+            Key: fileName,
+            Body: buffer,
+            ContentType: file.type,
+        }));
+
+        // Remove a barra final do public url se existir
+        const baseUrl = process.env.R2_PUBLIC_URL?.replace(/\/$/, '') || "";
+        const publicUrl = `${baseUrl}/${fileName}`;
+
+        console.log(`✅ Arquivo salvo com sucesso no R2: ${publicUrl}`);
+
+        // Retorna a URL pública do blob
+        return NextResponse.json({ url: publicUrl });
     } catch (error: any) {
         console.error("❌ Erro crítico no upload:", error);
         return NextResponse.json({ 
-            error: "Erro interno no servidor", 
+            error: "Erro no servidor ao realizar upload (R2)", 
             details: error.message 
         }, { status: 500 });
     }

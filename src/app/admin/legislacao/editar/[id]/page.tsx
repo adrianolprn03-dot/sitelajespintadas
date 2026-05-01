@@ -158,43 +158,71 @@ export default function EditarLegislacaoPage({ params }: { params: { id: string 
                     />
                 </div>
 
-                <div>
+                <div className="space-y-4">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                         Arquivo da Norma (PDF ou Imagem)
                     </label>
-                    <div className="flex flex-col gap-3">
-                        <label className="flex items-center justify-center gap-2 px-4 py-8 border-2 border-dashed border-gray-300 rounded-xl hover:border-blue-500 hover:text-blue-500 cursor-pointer transition-all bg-gray-50/50">
-                            <div className="text-center">
-                                <p className="text-sm font-bold text-gray-700">{arquivo ? "Arquivo anexado (Clique para trocar)" : "Clique para anexar arquivo (PDF ou Imagem)"}</p>
-                            </div>
-                            <input
-                                type="file"
-                                accept=".pdf, image/*"
-                                className="hidden"
-                                onChange={async (e) => {
-                                    const file = e.target.files?.[0];
-                                    if (file) {
-                                        const formData = new FormData();
-                                        formData.append("file", file);
-                                        try {
-                                            const res = await fetch("/api/upload", { method: "POST", body: formData });
-                                            const data = await res.json();
-                                            if (data.url) {
-                                                setArquivo(data.url);
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Opção 1: Upload</span>
+                            <label className="flex items-center justify-center gap-2 px-4 py-8 border-2 border-dashed border-gray-300 rounded-xl hover:border-blue-500 hover:text-blue-500 cursor-pointer transition-all bg-gray-50/50">
+                                <div className="text-center">
+                                    <p className="text-sm font-bold text-gray-700">{arquivo && arquivo.includes('vercel-storage.com') ? "Arquivo carregado" : "Clique para anexar arquivo"}</p>
+                                </div>
+                                <input
+                                    type="file"
+                                    accept=".pdf, image/*"
+                                    className="hidden"
+                                    onChange={async (e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file) {
+                                            const formData = new FormData();
+                                            formData.append("file", file);
+                                            try {
+                                                const res = await fetch("/api/upload", { method: "POST", body: formData });
+                                                if (res.ok) {
+                                                    const data = await res.json();
+                                                    setArquivo(data.url);
+                                                } else {
+                                                    const data = await res.json();
+                                                    alert(`Erro no upload: ${data.error || "Erro desconhecido"}. ${data.details || ""}`);
+                                                }
+                                            } catch (err: any) {
+                                                alert(`Erro na requisição de upload: ${err.message}`);
                                             }
-                                        } catch {
-                                            alert("Erro no upload");
                                         }
-                                    }
-                                }}
-                            />
-                        </label>
-                        {arquivo && (
-                            <div className="text-sm text-blue-600 bg-blue-50 p-3 rounded-md break-all">
-                                <strong>Atual:</strong> {arquivo}
+                                    }}
+                                />
+                            </label>
+                        </div>
+
+                        <div className="space-y-2">
+                            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Opção 2: URL Externa</span>
+                            <div className="h-full flex items-center">
+                                <input
+                                    type="url"
+                                    value={arquivo}
+                                    onChange={(e) => setArquivo(e.target.value)}
+                                    placeholder="https://exemplo.com/arquivo.pdf"
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                                />
                             </div>
-                        )}
+                        </div>
                     </div>
+
+                    {arquivo && (
+                        <div className="text-sm text-blue-600 bg-blue-50 p-3 rounded-md break-all flex justify-between items-center">
+                            <span><strong>Caminho/URL atual:</strong> {arquivo}</span>
+                            <button 
+                                type="button"
+                                onClick={() => setArquivo("")}
+                                className="text-red-500 hover:text-red-700 font-bold ml-2"
+                            >
+                                Remover
+                            </button>
+                        </div>
+                    )}
                 </div>
                 
                 <div className="flex items-center">

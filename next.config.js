@@ -7,8 +7,11 @@ const nextConfig = {
     ],
   },
   experimental: {
-    serverActions: { allowedOrigins: ['*'] }
+    serverActions: { allowedOrigins: ['*'] },
+    serverComponentsExternalPackages: ["@vercel/blob"]
   }
 }
+
+
 
 module.exports = nextConfig
