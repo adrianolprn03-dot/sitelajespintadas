@@ -34,11 +34,11 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # Gera o client do Prisma
 RUN npx prisma generate
 
+# Limita a memória do Node.js para evitar travamento no VPS
+ENV NODE_OPTIONS="--max-old-space-size=1024"
+
 # Executa o build
 RUN npm run build
-
-# Verificar se standalone foi gerado
-RUN ls -la .next/standalone && echo "STANDALONE OK" || echo "STANDALONE FALHOU"
 
 # Estágio de Runner
 FROM node:20-alpine AS runner
