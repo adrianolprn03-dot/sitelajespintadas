@@ -13,7 +13,22 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Desabilita o envio de telemetria do Next.js durante o build
+# Receber variáveis de ambiente do Easypanel (--build-arg)
+ARG DATABASE_URL
+ARG DIRECT_URL
+ARG NEXTAUTH_SECRET
+ARG NEXTAUTH_URL
+ARG NEXT_PUBLIC_BASE_URL
+ARG BLOB_READ_WRITE_TOKEN
+ARG NODE_ENV=production
+
+ENV DATABASE_URL=${DATABASE_URL}
+ENV DIRECT_URL=${DIRECT_URL}
+ENV NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+ENV NEXTAUTH_URL=${NEXTAUTH_URL}
+ENV NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL}
+ENV BLOB_READ_WRITE_TOKEN=${BLOB_READ_WRITE_TOKEN}
+ENV NODE_ENV=${NODE_ENV}
 ENV NEXT_TELEMETRY_DISABLED=1
 
 # Gera o client do Prisma
@@ -21,6 +36,9 @@ RUN npx prisma generate
 
 # Executa o build
 RUN npm run build
+
+# Verificar se standalone foi gerado
+RUN ls -la .next/standalone && echo "STANDALONE OK" || echo "STANDALONE FALHOU"
 
 # Estágio de Runner
 FROM node:20-alpine AS runner
@@ -33,7 +51,6 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Cria diretórios para persistência
 RUN mkdir -p /app/prisma /app/public/uploads && chown -R nextjs:nodejs /app
 
 COPY --from=builder /app/public ./public
