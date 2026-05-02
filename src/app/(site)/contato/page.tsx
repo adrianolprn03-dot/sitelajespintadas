@@ -54,8 +54,8 @@ export default function ContatoPage() {
                                     </div>
                                     <div>
                                         <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Endereço</p>
-                                        <p className="text-sm font-bold text-gray-700">Rua da Matriz, s/n - Centro</p>
-                                        <p className="text-xs font-medium text-gray-500 mt-0.5">Lajes Pintadas - RN, 59230-000</p>
+                                        <p className="text-sm font-bold text-gray-700">Rua São Francisco, 275, centro</p>
+                                        <p className="text-xs font-medium text-gray-500 mt-0.5">Lajes Pintadas/RN, CEP: 59.235-000</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-4">
@@ -74,7 +74,7 @@ export default function ContatoPage() {
                                     </div>
                                     <div>
                                         <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Telefone</p>
-                                        <p className="text-sm font-bold text-gray-700">(84) 3680-0000</p>
+                                        <p className="text-sm font-bold text-gray-700">(84) 98748-0287</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-4">
@@ -83,7 +83,7 @@ export default function ContatoPage() {
                                     </div>
                                     <div>
                                         <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">E-mail Administrativo</p>
-                                        <p className="text-sm font-bold text-gray-700">contato@lajespintadas.rn.gov.br</p>
+                                        <p className="text-sm font-bold text-gray-700">ouvidoria@lajespintadas.rn.gov.br</p>
                                     </div>
                                 </div>
                             </div>

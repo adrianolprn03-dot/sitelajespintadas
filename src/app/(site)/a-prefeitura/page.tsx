@@ -26,16 +26,16 @@ export default function APrefeituraPage() {
                             <img src="/images/brasao.png" alt="Brasão de Lajes Pintadas" className="w-16 h-16 object-contain" />
                             <div>
                                 <h2 className="text-xl font-black text-[#0088b9] uppercase tracking-tight">Prefeitura Municipal de Lajes Pintadas</h2>
-                                <p className="text-sm font-bold text-gray-500 mt-1">CNPJ: 08.XXX.XXX/0001-XX</p>
+                                <p className="text-sm font-bold text-gray-500 mt-1">CNPJ: 08.159.394/0001-37</p>
                             </div>
                         </div>
                         <div className="text-right border-l-2 border-gray-100 pl-6 hidden md:block">
                             <p className="text-sm text-gray-600 font-medium whitespace-pre-line">
-                                Rua Principal, s/n – Centro{"\n"}
-                                CEP: 59.233-000 | Lajes Pintadas – RN
+                                Rua São Francisco, 275, Centro{"\n"}
+                                Lajes Pintadas/RN | Funcionamento: Segunda à Sexta, 07h às 13h
                             </p>
                             <p className="text-sm font-bold text-[#01b0ef] mt-2">
-                                (84) 3000-0000 | contato@lajespintadas.rn.gov.br
+                                (84) 9 8748-0287 | ouvidoria@lajespintadas.rn.gov.br
                             </p>
                         </div>
                     </div>

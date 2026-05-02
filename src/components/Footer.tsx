@@ -54,10 +54,10 @@ async function getConfig(chave: string, padrao: string) {
 }
 
 export default async function Footer() {
-    const cnpj = await getConfig("cnpj", "08.000.000/0001-00");
-    const endereco = await getConfig("endereco_sede", "Palácio Municipal, Centro, Lajes Pintadas - RN");
-    const email = await getConfig("contato_email", "contato@lajespintadas.rn.gov.br");
-    const telefone = await getConfig("contato_telefone", "(84) 3000-0000");
+    const cnpj = await getConfig("cnpj", "08.159.394/0001-37");
+    const endereco = await getConfig("endereco_sede", "Rua São Francisco, 275, Centro, Lajes Pintadas/RN");
+    const email = await getConfig("contato_email", "ouvidoria@lajespintadas.rn.gov.br");
+    const telefone = await getConfig("contato_telefone", "(84) 9 8748-0287");
     const razaoSocial = await getConfig("municipio_nome", "Prefeitura Municipal de Lajes Pintadas");
     const whatsapp = await getConfig("contato_whatsapp", "");
     const facebook = await getConfig("redes_facebook", "#");
