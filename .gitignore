@@ -50,6 +50,19 @@ dirs.txt
 /tmp/
 *.html
 prefeitura_redesign*.png
+tmp_seed.ts
+old_seed.ts
+test_api.js
+test_prisma.js
+legis.json
+deploy.zip
+deploy_vps.zip
+*.txt
+scratch/
+cocal*.html
+build*.log
+build_v2.log
+build_utf8.log
 
 .vercel
 .env*.local
