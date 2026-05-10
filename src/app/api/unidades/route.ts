@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 
@@ -55,3 +56,4 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
     }
 }
+

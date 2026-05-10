@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
@@ -37,6 +38,12 @@ export async function DELETE(
     { params }: { params: { id: string } }
 ) {
     try {
+        // Busca o registro para obter a URL do arquivo antes de deletar
+        const item = await prisma.documento.findUnique({ where: { id: params.id } });
+        if (item?.arquivo) {
+            const { deleteFileFromR2 } = await import("@/lib/r2");
+            await deleteFileFromR2(item.arquivo);
+        }
         await prisma.documento.delete({
             where: { id: params.id },
         });

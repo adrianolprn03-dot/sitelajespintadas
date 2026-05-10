@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1039.0",
+    "@djpfs/react-vlibras": "^2.0.2",
     "@prisma/client": "^5.14.0",
     "@vercel/blob": "^2.3.3",
     "bcryptjs": "^2.4.3",

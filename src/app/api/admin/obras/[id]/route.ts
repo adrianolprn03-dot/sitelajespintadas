@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
@@ -41,6 +42,12 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
     try {
+        // Busca o registro para obter a URL da imagem antes de deletar
+        const item = await prisma.obra.findUnique({ where: { id: params.id } });
+        if (item?.imagem) {
+            const { deleteFileFromR2 } = await import("@/lib/r2");
+            await deleteFileFromR2(item.imagem);
+        }
         await prisma.obra.delete({ where: { id: params.id } });
         return NextResponse.json({ message: "Obra excluída com sucesso" });
     } catch (error) {

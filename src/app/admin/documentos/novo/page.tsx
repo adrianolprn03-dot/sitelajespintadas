@@ -69,8 +69,8 @@ export default function NovoDocumentoPage() {
                                 <option value="loa">LOA - Lei Orçamentária Anual</option>
                                 <option value="ldo">LDO - Lei de Diretrizes Orçamentárias</option>
                                 <option value="ppa">PPA - Plano Plurianual</option>
-                                <option value="pms">Plano Municipal de Saúde (PMS)</option>
-                                <option value="pme">Plano Municipal de Educação (PME)</option>
+                                <option value="plano-saude">Plano Municipal de Saúde (PMS)</option>
+                                <option value="plano-educacao">Plano Municipal de Educação (PME)</option>
                             </optgroup>
                             <optgroup label="Relatórios Fiscais">
                                 <option value="rreo">RREO - Relat. Resumido Execução Orçamentária</option>

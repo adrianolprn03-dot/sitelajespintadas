@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
@@ -29,6 +30,12 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
     try {
+        // Busca o registro para obter a URL do arquivo antes de deletar
+        const item = await prisma.relatorioFiscal.findUnique({ where: { id: params.id } });
+        if (item?.arquivo) {
+            const { deleteFileFromR2 } = await import("@/lib/r2");
+            await deleteFileFromR2(item.arquivo);
+        }
         await prisma.relatorioFiscal.delete({
             where: { id: params.id },
         });

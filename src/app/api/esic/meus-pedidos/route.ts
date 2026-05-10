@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { verifyESICToken } from "@/lib/esic-auth";
 import { prisma } from "@/lib/prisma";
@@ -27,3 +28,4 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Erro interno no servidor" }, { status: 500 });
   }
 }
+

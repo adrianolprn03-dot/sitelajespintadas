@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getLicitacoesPNCP } from "@/lib/pncp-service";
 
@@ -39,3 +40,4 @@ export async function GET(request: NextRequest) {
         }, { status: 500 });
     }
 }
+

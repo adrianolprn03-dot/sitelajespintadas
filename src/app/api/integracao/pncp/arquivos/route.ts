@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 
 const CNPJ_LAJES = "08159394000137";
@@ -49,3 +50,4 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: "Falha ao buscar documentos." }, { status: 500 });
     }
 }
+
