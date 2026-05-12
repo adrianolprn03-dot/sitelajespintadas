@@ -11,9 +11,21 @@ export default function AdminConfiguracoesPage() {
         prefeito_nome: "",
         prefeito_descricao: "",
         prefeito_foto: "",
+        prefeito_mandato: "",
+        prefeito_partido: "",
+        prefeito_naturalidade: "",
+        prefeito_nascimento: "",
+        prefeito_profissao: "",
+        prefeito_escolaridade: "",
         vice_nome: "",
         vice_descricao: "",
         vice_foto: "",
+        vice_mandato: "",
+        vice_partido: "",
+        vice_naturalidade: "",
+        vice_nascimento: "",
+        vice_profissao: "",
+        vice_escolaridade: "",
         municipio_nome: "",
         cnpj: "",
         endereco_sede: "",
@@ -138,16 +150,74 @@ export default function AdminConfiguracoesPage() {
                                         onChange={(url) => setForm({...form, prefeito_foto: url})}
                                     />
                                 </div>
+                            <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1">
-                                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Biografia Curta</label>
-                                    <textarea
-                                        name="prefeito_descricao"
-                                        value={form.prefeito_descricao}
+                                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Mandato</label>
+                                    <input
+                                        name="prefeito_mandato"
+                                        value={form.prefeito_mandato}
                                         onChange={handleChange}
-                                        rows={3}
-                                        className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-medium focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                        placeholder="Ex: 2021 — 2024"
+                                        className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
                                     />
                                 </div>
+                                <div className="space-y-1">
+                                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Partido</label>
+                                    <input
+                                        name="prefeito_partido"
+                                        value={form.prefeito_partido}
+                                        onChange={handleChange}
+                                        className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                    />
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Naturalidade</label>
+                                    <input
+                                        name="prefeito_naturalidade"
+                                        value={form.prefeito_naturalidade}
+                                        onChange={handleChange}
+                                        className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                    />
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Data de Nascimento</label>
+                                    <input
+                                        name="prefeito_nascimento"
+                                        value={form.prefeito_nascimento}
+                                        onChange={handleChange}
+                                        placeholder="DD/MM/AAAA"
+                                        className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                    />
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Ocupação / Profissão</label>
+                                    <input
+                                        name="prefeito_profissao"
+                                        value={form.prefeito_profissao}
+                                        onChange={handleChange}
+                                        className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                    />
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Escolaridade</label>
+                                    <input
+                                        name="prefeito_escolaridade"
+                                        value={form.prefeito_escolaridade}
+                                        onChange={handleChange}
+                                        className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                    />
+                                </div>
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Biografia Completa</label>
+                                <textarea
+                                    name="prefeito_descricao"
+                                    value={form.prefeito_descricao}
+                                    onChange={handleChange}
+                                    rows={4}
+                                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-medium focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                />
+                            </div>
                             </div>
                         </div>
 
@@ -184,16 +254,74 @@ export default function AdminConfiguracoesPage() {
                                         onChange={(url) => setForm({...form, vice_foto: url})}
                                     />
                                 </div>
+                            <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1">
-                                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Biografia Curta</label>
-                                    <textarea
-                                        name="vice_descricao"
-                                        value={form.vice_descricao}
+                                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Mandato</label>
+                                    <input
+                                        name="vice_mandato"
+                                        value={form.vice_mandato}
                                         onChange={handleChange}
-                                        rows={3}
-                                        className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-medium focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                        placeholder="Ex: 2021 — 2024"
+                                        className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
                                     />
                                 </div>
+                                <div className="space-y-1">
+                                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Partido</label>
+                                    <input
+                                        name="vice_partido"
+                                        value={form.vice_partido}
+                                        onChange={handleChange}
+                                        className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                    />
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Naturalidade</label>
+                                    <input
+                                        name="vice_naturalidade"
+                                        value={form.vice_naturalidade}
+                                        onChange={handleChange}
+                                        className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                    />
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Data de Nascimento</label>
+                                    <input
+                                        name="vice_nascimento"
+                                        value={form.vice_nascimento}
+                                        onChange={handleChange}
+                                        placeholder="DD/MM/AAAA"
+                                        className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                    />
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Ocupação / Profissão</label>
+                                    <input
+                                        name="vice_profissao"
+                                        value={form.vice_profissao}
+                                        onChange={handleChange}
+                                        className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                    />
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Escolaridade</label>
+                                    <input
+                                        name="vice_escolaridade"
+                                        value={form.vice_escolaridade}
+                                        onChange={handleChange}
+                                        className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                    />
+                                </div>
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Biografia Completa</label>
+                                <textarea
+                                    name="vice_descricao"
+                                    value={form.vice_descricao}
+                                    onChange={handleChange}
+                                    rows={4}
+                                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-medium focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                />
+                            </div>
                             </div>
                         </div>
                     </div>
