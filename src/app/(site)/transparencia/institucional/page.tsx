@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
 import {
@@ -35,6 +36,8 @@ async function getSecretarias() {
 }
 
 export default async function InstitucionalPage() {
+    const [
+        razaoSocial, cnpj, endereco, cep, horario, email, telefone, site,
         prefeitoNome, viceNome, secretarias,
         simboloBrasao, simboloBandeira, simboloHino, simboloHinoAudio
     ] = await Promise.all([
