@@ -35,10 +35,8 @@ async function getSecretarias() {
 }
 
 export default async function InstitucionalPage() {
-    const [
-        razaoSocial, cnpj, endereco, cep,
-        horario, email, telefone, site,
-        prefeitoNome, viceNome, secretarias
+        prefeitoNome, viceNome, secretarias,
+        simboloBrasao, simboloBandeira, simboloHino, simboloHinoAudio
     ] = await Promise.all([
         getConfig("municipio_nome", "Prefeitura Municipal de Lajes Pintadas"),
         getConfig("cnpj", "08.106.505/0001-24"),
@@ -51,6 +49,10 @@ export default async function InstitucionalPage() {
         getConfig("prefeito_nome", "Luciano da Cunha"),
         getConfig("vice_nome", "João Maria Silva"),
         getSecretarias(),
+        getConfig("simbolo_brasao", ""),
+        getConfig("simbolo_bandeira", ""),
+        getConfig("simbolo_hino", ""),
+        getConfig("simbolo_hino_audio", ""),
     ]);
 
     const fichaBasica = [
@@ -233,24 +235,58 @@ export default async function InstitucionalPage() {
                                 </span>
                                 Símbolos Municipais
                             </h2>
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                                {[
-                                    { label: "Brasão Oficial", emoji: "🛡️", desc: "Símbolo heráldico do município" },
-                                    { label: "Bandeira Municipal", emoji: "🏳️", desc: "Bandeira oficial de Lajes Pintadas" },
-                                    { label: "Hino Municipal", emoji: "🎵", desc: "Composição oficial do município" },
-                                ].map((s) => (
-                                    <div key={s.label} className="group text-center bg-gray-50 rounded-2xl p-8 border border-gray-100 hover:border-amber-200 hover:bg-amber-50 transition-all">
-                                        <div className="text-4xl mb-4">{s.emoji}</div>
-                                        <h3 className="font-black text-gray-800 text-xs uppercase tracking-widest mb-1">{s.label}</h3>
-                                        <p className="text-[10px] text-gray-400 font-medium mb-4">{s.desc}</p>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                                {/* Brasão e Bandeira */}
+                                <div className="space-y-6">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100 flex flex-col items-center gap-4 group hover:border-amber-200 transition-all">
+                                            <p className="text-[9px] font-black text-amber-600 uppercase tracking-widest">Brasão Oficial</p>
+                                            <div className="w-24 h-24 relative flex items-center justify-center">
+                                                {simboloBrasao ? (
+                                                    <img src={simboloBrasao} alt="Brasão" className="max-w-full max-h-full object-contain" />
+                                                ) : (
+                                                    <Award size={40} className="text-gray-200" />
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100 flex flex-col items-center gap-4 group hover:border-amber-200 transition-all">
+                                            <p className="text-[9px] font-black text-amber-600 uppercase tracking-widest">Bandeira Municipal</p>
+                                            <div className="w-24 h-24 relative flex items-center justify-center">
+                                                {simboloBandeira ? (
+                                                    <img src={simboloBandeira} alt="Bandeira" className="max-w-full max-h-full object-contain" />
+                                                ) : (
+                                                    <Award size={40} className="text-gray-200" />
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="bg-amber-50 rounded-2xl p-6 border border-amber-100">
+                                        <p className="text-[10px] font-bold text-amber-800 leading-relaxed italic">
+                                            "O brasão e a bandeira constituem a identidade visual máxima do município, representando sua história, valores e soberania."
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Hino */}
+                                <div className="bg-gray-50 rounded-2xl p-8 border border-gray-100 flex flex-col">
+                                    <p className="text-[9px] font-black text-amber-600 uppercase tracking-widest mb-4">Hino Municipal</p>
+                                    <div className="flex-1">
+                                        <p className="text-[11px] text-gray-600 font-medium leading-relaxed line-clamp-[8] whitespace-pre-line">
+                                            {simboloHino || "A letra do hino oficial está disponível para consulta nos canais de transparência municipal."}
+                                        </p>
+                                    </div>
+                                    <div className="mt-6 pt-6 border-t border-gray-200">
+                                        {simboloHinoAudio && (
+                                            <audio controls src={simboloHinoAudio} className="w-full h-8 mb-4" />
+                                        )}
                                         <Link
                                             href="/transparencia/simbolos"
-                                            className="inline-flex items-center gap-1.5 text-[9px] font-black text-amber-600 uppercase tracking-widest hover:underline"
+                                            className="inline-flex items-center gap-2 text-[10px] font-black text-amber-600 uppercase tracking-widest hover:text-amber-800 transition-colors"
                                         >
-                                            <Download size={10} /> Baixar Arquivo
+                                            Ver hino completo e baixar <ChevronRight size={12} />
                                         </Link>
                                     </div>
-                                ))}
+                                </div>
                             </div>
                         </section>
                     </div>
