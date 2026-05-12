@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { FaArrowRight, FaMapMarkerAlt, FaFileAlt, FaClock, FaStar, FaListOl, FaUsers, FaInfoCircle, FaExternalLinkAlt, FaTimes, FaSpinner, FaCheckCircle } from "react-icons/fa";
+import { FaArrowRight, FaMapMarkerAlt, FaFileAlt, FaClock, FaStar, FaListOl, FaUsers, FaInfoCircle, FaExternalLinkAlt, FaTimes, FaSpinner, FaCheckCircle, FaLaptop, FaHandsHelping } from "react-icons/fa";
 
 type Servico = {
     id: string;
@@ -114,6 +114,15 @@ export default function CartaServicosClient({ servicos }: { servicos: Servico[] 
                                     <div className="flex flex-col">
                                         <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Prazo</span>
                                         <span className="text-xs font-bold text-gray-700">{servico.prazo}</span>
+                                    </div>
+                                </div>
+                                <div className={`flex items-center gap-4 p-4 rounded-2xl transition-colors ${servico.linkAcesso ? 'bg-indigo-50 border border-indigo-100 group-hover:bg-indigo-100' : 'bg-orange-50 border border-orange-100 group-hover:bg-orange-100'}`}>
+                                    {servico.linkAcesso ? <FaLaptop className="text-indigo-500 shrink-0" /> : <FaHandsHelping className="text-orange-500 shrink-0" />}
+                                    <div className="flex flex-col">
+                                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Disponibilidade</span>
+                                        <span className={`text-[10px] font-black uppercase tracking-wider ${servico.linkAcesso ? 'text-indigo-600' : 'text-orange-600'}`}>
+                                            {servico.linkAcesso ? 'Digital / Online' : 'Presencial'}
+                                        </span>
                                     </div>
                                 </div>
                             </div>

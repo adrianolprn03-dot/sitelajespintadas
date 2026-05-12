@@ -104,7 +104,7 @@ export default function FrotaClient({ initialVeiculos }: FrotaClientProps) {
                                     <FaSquareCheck /> Frota Ativa
                                 </div>
                                 <div className="flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-xl text-slate-700 text-[10px] font-black uppercase tracking-widest border border-slate-100 font-mono">
-                                    PNTP 2025 GOLD
+                                    PNTP 2026 GOLD
                                 </div>
                             </div>
                         </div>

@@ -145,7 +145,7 @@ export default function OrdemCronologicaClient() {
                 <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 mb-8 flex items-start gap-4">
                     <FaInfoCircle className="text-amber-500 mt-0.5 shrink-0" size={16} />
                     <div>
-                        <p className="font-black text-amber-800 text-[9px] uppercase tracking-widest mb-1">Transparência Ativa – PNTP 2025</p>
+                        <p className="font-black text-amber-800 text-[9px] uppercase tracking-widest mb-1">Transparência Ativa – PNTP 2026</p>
                         <p className="text-amber-700 text-[10px] font-bold leading-relaxed">
                             A publicação da ordem cronológica de pagamentos é exigência da Lei 14.133/2021. 
                             Os pagamentos obedecem à ordem de liquidação, salvo exceções legais justificadas.

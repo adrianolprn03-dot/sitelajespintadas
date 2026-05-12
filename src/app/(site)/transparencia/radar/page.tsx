@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { FaChartBar, FaExternalLinkAlt, FaShieldAlt, FaCheckCircle, FaStar, FaInfoCircle } from "react-icons/fa";
+import { FaChartBar, FaExternalLinkAlt, FaShieldAlt, FaCheckCircle, FaStar, FaInfoCircle, FaArrowRight } from "react-icons/fa";
 import { Activity } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
@@ -54,7 +54,7 @@ export default function RadarPage() {
         <div className="min-h-screen bg-[#f8fafc] font-['Montserrat',sans-serif]">
             <PageHeader
                 title="Radar da Transparência Pública"
-                subtitle="Acompanhe a avaliação do município no Radar Nacional de Transparência Pública – PNTP 2025 (ATRICON/TCU)."
+                subtitle="Acompanhe a avaliação do município no Radar Nacional de Transparência Pública – PNTP 2026 (ATRICON/TCU)."
                 variant="premium"
                 icon={<Activity />}
                 breadcrumbs={[
@@ -74,7 +74,7 @@ export default function RadarPage() {
                     <div className="relative z-10 flex flex-col md:flex-row items-center gap-10">
                         <div className="flex-1 text-white">
                             <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest mb-6">
-                                <FaStar className="text-amber-400" /> PNTP 2025 – Programa Nacional de Transparência Pública
+                                <FaStar className="text-amber-400" /> PNTP 2026 – Programa Nacional de Transparência Pública
                             </div>
                             <h2 className="text-3xl md:text-4xl font-black tracking-tighter uppercase mb-4">
                                 Avaliação de Conformidade Municipal
@@ -98,7 +98,7 @@ export default function RadarPage() {
                                 <FaShieldAlt className="text-amber-400 mb-2" size={40} />
                                 <div className="text-[9px] font-black text-blue-200 uppercase tracking-widest">Meta</div>
                                 <div className="text-5xl font-black text-white tracking-tighter">OURO</div>
-                                <div className="text-[9px] font-black text-blue-300 uppercase tracking-widest">PNTP 2025</div>
+                                <div className="text-[9px] font-black text-blue-300 uppercase tracking-widest">PNTP 2026</div>
                             </div>
                         </div>
                     </div>
@@ -139,6 +139,54 @@ export default function RadarPage() {
                             </div>
                         </div>
                     ))}
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+                    <div className="bg-white rounded-[3rem] p-10 shadow-xl border border-gray-100">
+                        <h4 className="text-xl font-black text-gray-800 uppercase tracking-tighter mb-6 flex items-center gap-3">
+                            <FaShieldAlt className="text-blue-600" /> Transparência Ativa
+                        </h4>
+                        <p className="text-gray-500 text-sm font-medium leading-relaxed mb-8">
+                            Nossa transparência ativa é composta por informações publicadas espontaneamente, independentemente de solicitações. 
+                            Buscamos superar os requisitos mínimos do PNTP 2026, facilitando o controle social.
+                        </p>
+                        <div className="space-y-4">
+                            {["Atualização em tempo real", "Dados abertos (CSV/JSON)", "Linguagem acessível", "Navegação intuitiva"].map((item, i) => (
+                                <div key={i} className="flex items-center gap-3 text-xs font-bold text-gray-600 uppercase tracking-widest">
+                                    <div className="w-5 h-5 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center shrink-0">
+                                        <FaCheckCircle size={10} />
+                                    </div>
+                                    {item}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="bg-white rounded-[3rem] p-10 shadow-xl border border-gray-100">
+                        <h4 className="text-xl font-black text-gray-800 uppercase tracking-tighter mb-6 flex items-center gap-3">
+                            <FaInfoCircle className="text-indigo-600" /> Transparência Passiva (e-SIC)
+                        </h4>
+                        <p className="text-gray-500 text-sm font-medium leading-relaxed mb-8">
+                            Através do Sistema Eletrônico do Serviço de Informações ao Cidadão (e-SIC), garantimos o direito constitucional 
+                            de acesso à informação com protocolos rastreáveis e prazos rigorosos.
+                        </p>
+                        <div className="space-y-4">
+                            {["Protocolo Automático", "Prazo de 20 + 10 dias", "Relatórios Estatísticos", "Recursos em 3 instâncias"].map((item, i) => (
+                                <div key={i} className="flex items-center gap-3 text-xs font-bold text-gray-600 uppercase tracking-widest">
+                                    <div className="w-5 h-5 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center shrink-0">
+                                        <FaCheckCircle size={10} />
+                                    </div>
+                                    {item}
+                                </div>
+                            ))}
+                        </div>
+                        <Link 
+                            href="/transparencia/passiva"
+                            className="mt-8 inline-flex items-center gap-2 text-[10px] font-black text-indigo-600 uppercase tracking-widest hover:translate-x-2 transition-transform"
+                        >
+                            Acessar e-SIC <FaArrowRight />
+                        </Link>
+                    </div>
                 </div>
 
                 <BannerPNTP />

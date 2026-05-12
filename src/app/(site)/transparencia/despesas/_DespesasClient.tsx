@@ -425,7 +425,7 @@ export default function DespesasPage() {
                     <div className="mt-20 text-center">
                         <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em] leading-[2] max-w-2xl mx-auto">
                             SISTEMA INTEGRADO DE GESTÃO E TRANSPARÊNCIA • PREFEITURA DE LAJES PINTADAS/RN <br/>
-                            <span className="opacity-40 font-bold italic">Dados de acordo com o padrão PNTP 2025 para transparência ativa.</span>
+                            <span className="opacity-40 font-bold italic">Dados de acordo com o padrão PNTP 2026 para transparência ativa.</span>
                         </p>
                     </div>
                 </motion.div>

@@ -27,6 +27,7 @@ const categoriasDeModulos = [
         tituloCategoria: "Controle e Participação",
         desc: "Canais diretos de comunicação e consulta aos serviços públicos municipais.",
         modulos: [
+            { icon: Building2, titulo: "Institucional", desc: "Dados e Competências.", href: "/transparencia/institucional", cor: "from-blue-700 to-indigo-800", badge: "PNTP" },
             { icon: ClipboardList, titulo: "E-SIC", desc: "Acesso à Informação.", href: "/servicos/esic", cor: "from-amber-600 to-orange-700", badge: "LAI" },
             { icon: Headset, titulo: "Ouvidoria", desc: "Denúncias e sugestões.", href: "/servicos/ouvidoria", cor: "from-blue-600 to-cyan-600", badge: "FALA.BR" },
             { icon: ShieldCheck, titulo: "Integridade", desc: "Programa de Ética.", href: "/transparencia/integridade", cor: "from-emerald-600 to-teal-700", badge: "GOVERNANÇA" },
@@ -198,7 +199,7 @@ export default function TransparenciaPage() {
                                          { label: "LAI - LEI 12.527/2011", status: "Auditado" },
                                          { label: "LC 131/2009 (CAPIBERIBE)", status: "Ativo" },
                                          { label: "RADAR TRANSPARÊNCIA", status: "GOLD" },
-                                         { label: "PNTP 2025 COMPLIANCE", status: "V2" },
+                                         { label: "PNTP 2026 COMPLIANCE", status: "V2" },
                                      ].map((item) => (
                                          <div key={item.label} className="flex items-center justify-between border-b border-white/5 pb-4 group/item cursor-default hover:border-orange-600/30 transition-colors">
                                              <span className="text-[10px] font-black tracking-widest text-white/50 group-hover/item:text-white transition-colors">{item.label}</span>

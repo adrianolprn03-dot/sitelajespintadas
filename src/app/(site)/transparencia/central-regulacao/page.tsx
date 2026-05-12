@@ -38,7 +38,7 @@ export default function CentralRegulacaoPage() {
                     <div>
                         <p className="font-black text-blue-800 text-sm uppercase tracking-wide mb-1">Transparência Ativa – Saúde Pública</p>
                         <p className="text-blue-700 text-sm font-medium leading-relaxed">
-                            A publicação destas informações atende ao disposto no art. 7º da Lei 12.527/2011 (LAI) e às diretrizes do PNTP 2025. 
+                            A publicação destas informações atende ao disposto no art. 7º da Lei 12.527/2011 (LAI) e às diretrizes do PNTP 2026. 
                             Os dados são atualizados mensalmente pela Secretaria Municipal de Saúde. Para inclusão na fila de espera, 
                             dirija-se à Unidade Básica de Saúde de sua referência.
                         </p>

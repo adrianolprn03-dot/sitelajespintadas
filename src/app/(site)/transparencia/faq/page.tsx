@@ -8,7 +8,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
     title: "Perguntas Frequentes | Transparência Premium — Lajes Pintadas",
-    description: "Respostas para as dúvidas mais comuns dos cidadãos de Lajes Pintadas – RN, em conformidade com o PNTP 2025.",
+    description: "Respostas para as dúvidas mais comuns dos cidadãos de Lajes Pintadas – RN, em conformidade com o PNTP 2026.",
 };
 
 export default async function FAQPage() {
