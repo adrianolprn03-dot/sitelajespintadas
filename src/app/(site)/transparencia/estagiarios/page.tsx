@@ -1,22 +1,82 @@
+"use client";
+import { useState, useEffect } from "react";
 import PageHeader from "@/components/PageHeader";
-import { Info, FileText, ExternalLink, GraduationCap, Briefcase, UserCheck } from "lucide-react";
-import { FaInfoCircle } from "react-icons/fa";
+import { Info, FileText, GraduationCap, Briefcase, UserCheck, Spinner } from "lucide-react";
+import { FaInfoCircle, FaSpinner } from "react-icons/fa";
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
+import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
+import { exportToCSV, exportToJSON, exportToPDF, exportToXLSX } from "@/lib/exportUtils";
 
-export const dynamic = 'force-dynamic';
-
-export const metadata = {
-    title: "Estagiários | Portal da Transparência",
-    description: "Informações sobre estagiários e termos de estágio do Município de Lajes Pintadas.",
+type Estagiario = {
+    id: string;
+    nome: string;
+    instituicaoEnsino: string;
+    unidadeLotacao: string;
+    dataInicio: string;
+    dataFim: string | null;
+    valorBolsa: number;
+    status: string;
 };
 
-export default async function EstagiariosPage() {
-    const estagiarios = await prisma.estagiario.findMany({
-        orderBy: { nome: "asc" }
-    });
+export default function EstagiariosPage() {
+    const [estagiarios, setEstagiarios] = useState<Estagiario[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [busca, setBusca] = useState("");
+    const [ano, setAno] = useState("2026");
+    const [mes, setMes] = useState("");
+    const [status, setStatus] = useState("");
 
-    const temEstagiarios = estagiarios.length > 0;
+    const fetchEstagiarios = async () => {
+        setLoading(true);
+        try {
+            const query = new URLSearchParams({ 
+                query: busca,
+                ano,
+                mes,
+                status
+            });
+            const res = await fetch(`/api/estagiarios?${query.toString()}`);
+            const data = await res.json();
+            setEstagiarios(data.items || []);
+        } catch (error) {
+            console.error("Erro ao buscar estagiários:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchEstagiarios();
+    }, [busca, ano, mes, status]);
+
+    const handleClearFilters = () => {
+        setBusca("");
+        setAno("2026");
+        setMes("");
+        setStatus("");
+    };
+
+    const handleExport = (format: "pdf" | "csv" | "json" | "xlsx") => {
+        const payload = estagiarios.map(e => ({
+            "Nome": e.nome,
+            "Instituição": e.instituicaoEnsino,
+            "Lotação": e.unidadeLotacao,
+            "Início": new Date(e.dataInicio).toLocaleDateString('pt-BR'),
+            "Término": e.dataFim ? new Date(e.dataFim).toLocaleDateString('pt-BR') : "Vigente",
+            "Bolsa": new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(e.valorBolsa),
+            "Status": e.status
+        }));
+
+        const filename = `estagiarios_lajes_pintadas`;
+        const title = `Relatório de Estagiários – Município de Lajes Pintadas/RN`;
+
+        if (format === "csv") exportToCSV(payload, filename);
+        else if (format === "json") exportToJSON(payload, filename);
+        else if (format === "xlsx") exportToXLSX(payload, filename);
+        else exportToPDF(payload, filename, title);
+    };
+
+    const temDadosOriginalmente = estagiarios.length > 0 || busca !== "" || mes !== "";
 
     return (
         <div className="bg-[#f8fafc] min-h-screen font-['Montserrat',sans-serif]">
@@ -44,13 +104,46 @@ export default async function EstagiariosPage() {
             </div>
 
             <div className="max-w-[1240px] mx-auto px-6 pt-12">
-                {!temEstagiarios ? (
+                <TransparencyFilters
+                    searchValue={busca}
+                    onSearch={setBusca}
+                    currentYear={ano}
+                    onYearChange={setAno}
+                    currentMonth={mes}
+                    onMonthChange={setMes}
+                    onClear={handleClearFilters}
+                    onExport={handleExport}
+                    placeholder="Buscar por nome, instituição ou lotação..."
+                >
+                    <div className="w-full sm:w-48">
+                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Situação (Tipo)</label>
+                        <select
+                            value={status}
+                            onChange={(e) => setStatus(e.target.value)}
+                            className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-xs focus:ring-2 focus:ring-blue-500/10 focus:bg-white focus:border-blue-300 transition-all font-black text-slate-700 outline-none cursor-pointer"
+                        >
+                            <option value="">Todas as Situações</option>
+                            <option value="ativo">Ativos</option>
+                            <option value="encerrado">Encerrados</option>
+                        </select>
+                    </div>
+                </TransparencyFilters>
+
+                {loading ? (
+                    <div className="flex flex-col items-center justify-center py-20 gap-4">
+                        <FaSpinner className="text-4xl text-blue-600 animate-spin" />
+                        <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Carregando dados...</p>
+                    </div>
+                ) : estagiarios.length === 0 ? (
                     <div className="bg-red-50 border-l-8 border-red-500 rounded-r-3xl p-8 flex flex-col md:flex-row items-center justify-center md:justify-start gap-6 shadow-xl shadow-red-500/10 transition-all hover:bg-red-100">
                         <FaInfoCircle className="text-red-500 text-5xl shrink-0 drop-shadow-md" />
                         <div className="text-center md:text-left">
                             <h3 className="text-red-900 font-black text-xl uppercase tracking-tight mb-2">Comunicação Oficial</h3>
                             <p className="text-red-700 font-bold text-lg md:text-xl">
-                                A Prefeitura Municipal de Lajes Pintadas informa que <span className="bg-red-200 text-red-900 px-2 py-0.5 rounded-md mx-1 uppercase">Não possuímos estagiários</span> em nosso quadro de colaboradores, não havendo contratos de estágio ativos ou programas de estágio em andamento até a data de hoje, {new Date().toLocaleDateString('pt-BR')}.
+                                {busca || mes !== "" 
+                                    ? "Nenhum estagiário encontrado para os filtros aplicados."
+                                    : `A Prefeitura Municipal de Lajes Pintadas informa que NÃO POSSUÍMOS ESTAGIÁRIOS em nosso quadro de colaboradores para o período selecionado (${mes ? mes + '/' : ''}${ano}).`
+                                }
                             </p>
                         </div>
                     </div>
@@ -138,7 +231,7 @@ export default async function EstagiariosPage() {
                         <div className="flex flex-col sm:flex-row gap-6">
                             <Link 
                                 href="/contato" 
-                                className="flex-1 bg-slate-900 text-white text-center py-6 rounded-2xl font-black uppercase tracking-[0.2em] text-[11px] hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/20 active:scale-95"
+                                className="flex-1 bg-slate-900 text-white text-center py-6 rounded-2xl font-black uppercase tracking-[0.2em] text-[11px] hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/20 active:scale-95 flex items-center justify-center gap-2"
                             >
                                 Solicitar via E-SIC
                             </Link>

@@ -1,22 +1,80 @@
+"use client";
+import { useState, useEffect } from "react";
 import PageHeader from "@/components/PageHeader";
 import { Info, FileText, GraduationCap, Briefcase, UserCheck, UserPlus, Building } from "lucide-react";
-import { FaInfoCircle } from "react-icons/fa";
+import { FaInfoCircle, FaSpinner } from "react-icons/fa";
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
+import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
+import { exportToCSV, exportToJSON, exportToPDF, exportToXLSX } from "@/lib/exportUtils";
 
-export const dynamic = 'force-dynamic';
-
-export const metadata = {
-    title: "Terceirizados | Portal da Transparência",
-    description: "Informações sobre o pessoal terceirizado a serviço do Município de Lajes Pintadas.",
+type Terceirizado = {
+    id: string;
+    nome: string;
+    empresa: string;
+    funcao: string;
+    unidadeLotacao: string;
+    dataInicio: string;
+    dataFim: string | null;
+    status: string;
 };
 
-export default async function TerceirizadosPage() {
-    const terceirizados = await prisma.terceirizado.findMany({
-        orderBy: { nome: "asc" }
-    });
+export default function TerceirizadosPage() {
+    const [terceirizados, setTerceirizados] = useState<Terceirizado[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [busca, setBusca] = useState("");
+    const [ano, setAno] = useState("2026");
+    const [mes, setMes] = useState("");
+    const [status, setStatus] = useState("");
 
-    const temTerceirizados = terceirizados.length > 0;
+    const fetchTerceirizados = async () => {
+        setLoading(true);
+        try {
+            const query = new URLSearchParams({ 
+                query: busca,
+                ano,
+                mes,
+                status
+            });
+            const res = await fetch(`/api/terceirizados?${query.toString()}`);
+            const data = await res.json();
+            setTerceirizados(data.items || []);
+        } catch (error) {
+            console.error("Erro ao buscar terceirizados:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchTerceirizados();
+    }, [busca, ano, mes, status]);
+
+    const handleClearFilters = () => {
+        setBusca("");
+        setAno("2026");
+        setMes("");
+        setStatus("");
+    };
+
+    const handleExport = (format: "pdf" | "csv" | "json" | "xlsx") => {
+        const payload = terceirizados.map(t => ({
+            "Nome": t.nome,
+            "Empresa": t.empresa,
+            "Função": t.funcao,
+            "Lotação": t.unidadeLotacao,
+            "Início": new Date(t.dataInicio).toLocaleDateString('pt-BR'),
+            "Término": t.dataFim ? new Date(t.dataFim).toLocaleDateString('pt-BR') : "Vigente",
+            "Status": t.status
+        }));
+
+        const filename = `terceirizados_lajes_pintadas`;
+        const title = `Relatório de Terceirizados – Município de Lajes Pintadas/RN`;
+
+        if (format === "csv") exportToCSV(payload, filename);
+        else if (format === "json") exportToJSON(payload, filename);
+        else if (format === "xlsx") exportToXLSX(payload, filename);
+        else exportToPDF(payload, filename, title);
+    };
 
     return (
         <div className="bg-[#f8fafc] min-h-screen font-['Montserrat',sans-serif]">
@@ -44,13 +102,46 @@ export default async function TerceirizadosPage() {
             </div>
 
             <div className="max-w-[1240px] mx-auto px-6 pt-12">
-                {!temTerceirizados ? (
+                <TransparencyFilters
+                    searchValue={busca}
+                    onSearch={setBusca}
+                    currentYear={ano}
+                    onYearChange={setAno}
+                    currentMonth={mes}
+                    onMonthChange={setMes}
+                    onClear={handleClearFilters}
+                    onExport={handleExport}
+                    placeholder="Buscar por nome, empresa ou função..."
+                >
+                    <div className="w-full sm:w-48">
+                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Situação (Tipo)</label>
+                        <select
+                            value={status}
+                            onChange={(e) => setStatus(e.target.value)}
+                            className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-xs focus:ring-2 focus:ring-blue-500/10 focus:bg-white focus:border-blue-300 transition-all font-black text-slate-700 outline-none cursor-pointer"
+                        >
+                            <option value="">Todas as Situações</option>
+                            <option value="ativo">Ativos</option>
+                            <option value="encerrado">Encerrados</option>
+                        </select>
+                    </div>
+                </TransparencyFilters>
+
+                {loading ? (
+                    <div className="flex flex-col items-center justify-center py-20 gap-4">
+                        <FaSpinner className="text-4xl text-blue-600 animate-spin" />
+                        <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Carregando dados...</p>
+                    </div>
+                ) : terceirizados.length === 0 ? (
                     <div className="bg-red-50 border-l-8 border-red-500 rounded-r-3xl p-8 flex flex-col md:flex-row items-center justify-center md:justify-start gap-6 shadow-xl shadow-red-500/10 transition-all hover:bg-red-100">
                         <FaInfoCircle className="text-red-500 text-5xl shrink-0 drop-shadow-md" />
                         <div className="text-center md:text-left">
                             <h3 className="text-red-900 font-black text-xl uppercase tracking-tight mb-2">Comunicação Oficial</h3>
                             <p className="text-red-700 font-bold text-lg md:text-xl">
-                                A Prefeitura Municipal de Lajes Pintadas informa que <span className="bg-red-200 text-red-900 px-2 py-0.5 rounded-md mx-1 uppercase">Não possuímos pessoal terceirizado</span> em nosso quadro direto de colaboradores através de contratos de mão de obra exclusiva até a data de hoje, {new Date().toLocaleDateString('pt-BR')}.
+                                {busca || mes !== "" 
+                                    ? "Nenhum terceirizado encontrado para os filtros aplicados."
+                                    : `A Prefeitura Municipal de Lajes Pintadas informa que NÃO POSSUÍMOS PESSOAL TERCEIRIZADO em nosso quadro de colaboradores para o período selecionado (${mes ? mes + '/' : ''}${ano}).`
+                                }
                             </p>
                         </div>
                     </div>
