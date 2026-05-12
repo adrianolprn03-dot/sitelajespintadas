@@ -4,7 +4,7 @@ import {
     FaHammer, FaMapMarkerAlt, FaCalendarAlt, FaBuilding, 
     FaChartLine, FaSpinner, FaArrowRight, FaImage,
     FaCheckCircle, FaExclamationTriangle, FaHardHat, FaInfoCircle,
-    FaTable, FaDownload, FaExternalLinkAlt, FaMagnifyingGlass,
+    FaTable, FaDownload, FaExternalLinkAlt, FaSearch,
     FaClock, FaCoins, FaBriefcase
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
@@ -239,7 +239,7 @@ export default function ObrasPublicasPage() {
                                 className="bg-white rounded-[3rem] p-32 text-center shadow-xl border border-slate-50 group"
                             >
                                 <div className="w-28 h-28 bg-slate-50 text-slate-200 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 shadow-inner group-hover:scale-110 transition-all duration-500">
-                                    <FaMagnifyingGlass size={48} />
+                                    <FaSearch size={48} />
                                 </div>
                                 <h4 className="text-3xl font-black text-slate-800 uppercase tracking-tighter mb-4">Sem resultados para a busca</h4>
                                 <p className="text-slate-400 text-sm font-medium italic mb-10">Não encontramos nenhuma obra com os critérios selecionados.</p>
