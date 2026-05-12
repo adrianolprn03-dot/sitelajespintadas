@@ -605,3 +605,29 @@ model PesquisaSatisfacao {
 
   @@unique([cpf, mes, ano])
 }
+
+model Estagiario {
+  id                String    @id @default(cuid())
+  nome              String
+  instituicaoEnsino String
+  unidadeLotacao    String
+  dataInicio        DateTime
+  dataFim           DateTime?
+  valorBolsa        Float
+  status            String    @default("ativo")
+  criadoEm          DateTime  @default(now())
+  atualizadoEm      DateTime  @updatedAt
+}
+
+model Terceirizado {
+  id              String    @id @default(cuid())
+  nome            String
+  empresa         String
+  funcao          String
+  unidadeLotacao  String
+  dataInicio      DateTime
+  dataFim         DateTime?
+  status          String    @default("ativo")
+  criadoEm        DateTime  @default(now())
+  atualizadoEm    DateTime  @updatedAt
+}

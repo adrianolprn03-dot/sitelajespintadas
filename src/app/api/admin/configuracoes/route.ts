@@ -42,6 +42,7 @@ export async function POST(req: Request) {
         revalidatePath("/", "layout");
         revalidatePath("/municipio/simbolos");
         revalidatePath("/transparencia/simbolos");
+        revalidatePath("/transparencia/gestores");
 
         return NextResponse.json({ success: true });
     } catch (error) {

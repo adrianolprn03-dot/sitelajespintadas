@@ -56,6 +56,8 @@ const categoriasDeModulos = [
             { icon: Coins, titulo: "Receitas", desc: "Arrecadação Municipal.", href: "/transparencia/receitas", cor: "from-emerald-500 to-teal-600", badge: "RECEITA" },
             { icon: Receipt, titulo: "Despesas", desc: "Gastos e Empenhos.", href: "/transparencia/despesas", cor: "from-blue-600 to-indigo-700", badge: "GASTOS" },
             { icon: Landmark, titulo: "Orçamento", desc: "LOA, LDO e PPA.", href: "/transparencia/orcamento", cor: "from-slate-800 to-slate-950", badge: "PLANEJAMENTO" },
+            { icon: Scale, titulo: "Dívida Ativa", desc: "Cobranças e Créditos Tributários.", href: "/transparencia/divida-ativa", cor: "from-red-600 to-orange-700", badge: "FISCAL" },
+            { icon: Handshake, titulo: "Acordos Firmados", desc: "Acordos sem repasse financeiro.", href: "/transparencia/acordos-firmados", cor: "from-indigo-500 to-blue-600", badge: "ACORDOS" },
             { icon: ListOrdered, titulo: "Pagamentos", desc: "Ordem Cronológica.", href: "/transparencia/ordem-cronologica", cor: "from-amber-500 to-orange-600", badge: "TESOURARIA" },
             { icon: Database, titulo: "Repasses", desc: "Transferências Legais.", href: "/transparencia/transferencias", cor: "from-indigo-600 to-violet-700", badge: "RECURSOS" },
             { icon: Globe2, titulo: "Emendas Parlamentares", desc: "Recursos Externos.", href: "/transparencia/emendas", cor: "from-teal-600 to-emerald-800", badge: "EXTERNO" },
@@ -73,6 +75,8 @@ const categoriasDeModulos = [
             { icon: Plane, titulo: "Diárias", desc: "Viagens e Passagens.", href: "/transparencia/diarias", cor: "from-sky-500 to-blue-600", badge: "DESPESA" },
             { icon: GraduationCap, titulo: "Concursos", desc: "Editais e Provas.", href: "/transparencia/concursos", cor: "from-indigo-600 to-blue-700", badge: "SELEÇÃO" },
             { icon: UserCheck, titulo: "Processo Seletivo", desc: "Vagas Temporárias.", href: "/transparencia/processo-seletivo", cor: "from-teal-600 to-emerald-700", badge: "PSS" },
+            { icon: Briefcase, titulo: "Estagiários", desc: "Termos de Estágio.", href: "/transparencia/estagiarios", cor: "from-amber-600 to-orange-700", badge: "ESTUDANTE" },
+            { icon: UserPlus, titulo: "Terceirizados", desc: "Pessoal Terceirizado.", href: "/transparencia/terceirizados", cor: "from-blue-600 to-indigo-700", badge: "CONTRATADOS" },
         ]
     },
     {
