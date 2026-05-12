@@ -24,10 +24,21 @@ import { useEffect, useState } from "react";
 
 const categoriasDeModulos = [
     {
+        tituloCategoria: "Institucional e Estrutura",
+        desc: "Identificação oficial, competências, estrutura organizacional e base legal da prefeitura.",
+        modulos: [
+            { icon: Building2, titulo: "Institucional", desc: "Dados Gerais e Identificação.", href: "/transparencia/institucional", cor: "from-blue-700 to-indigo-800", badge: "ENTIDADE" },
+            { icon: FileText, titulo: "Competências", desc: "Atribuições e Funções Legais.", href: "/transparencia/institucional", cor: "from-emerald-600 to-teal-700", badge: "LEGAL" },
+            { icon: Users2, titulo: "Organograma", desc: "Estrutura Administrativa.", href: "/transparencia/institucional", cor: "from-indigo-600 to-blue-700", badge: "ESTRUTURA" },
+            { icon: MapPinned, titulo: "Localização", desc: "Endereços e Contatos Sede.", href: "/transparencia/institucional", cor: "from-slate-700 to-slate-900", badge: "CONTATOS" },
+            { icon: Files, titulo: "Leis", desc: "Legislação Municipal.", href: "/transparencia/leis", cor: "from-indigo-600 to-purple-700", badge: "LEGAL" },
+            { icon: Search, titulo: "Radar", desc: "Índice Transparência.", href: "/transparencia/radar", cor: "from-blue-800 to-slate-900", badge: "PNTP" },
+        ]
+    },
+    {
         tituloCategoria: "Controle e Participação",
         desc: "Canais diretos de comunicação e consulta aos serviços públicos municipais.",
         modulos: [
-            { icon: Building2, titulo: "Institucional", desc: "Dados e Competências.", href: "/transparencia/institucional", cor: "from-blue-700 to-indigo-800", badge: "PNTP" },
             { icon: ClipboardList, titulo: "E-SIC", desc: "Acesso à Informação.", href: "/servicos/esic", cor: "from-amber-600 to-orange-700", badge: "LAI" },
             { icon: Headset, titulo: "Ouvidoria", desc: "Denúncias e sugestões.", href: "/servicos/ouvidoria", cor: "from-blue-600 to-cyan-600", badge: "FALA.BR" },
             { icon: ShieldCheck, titulo: "Integridade", desc: "Programa de Ética.", href: "/transparencia/integridade", cor: "from-emerald-600 to-teal-700", badge: "GOVERNANÇA" },
@@ -77,28 +88,13 @@ const categoriasDeModulos = [
         ]
     },
     {
-        tituloCategoria: "Responsabilidade e Gestão",
-        desc: "Relatórios de gestão, fiscalização, obras e patrimônio público.",
-        modulos: [
-            { icon: BarChart3, titulo: "LRF", desc: "Responsabilidade Fiscal.", href: "/transparencia/lrf", cor: "from-slate-700 to-slate-900", badge: "LEGAL" },
-            { icon: FilePieChart, titulo: "PCG / PCS", desc: "Pareceres de Gestão.", href: "/transparencia/pcg", cor: "from-indigo-600 to-purple-700", badge: "TCE/RN" },
-            { icon: Scale, titulo: "Julgamento Contas", desc: "Pareceres das Contas.", href: "/transparencia/julgamento-contas", cor: "from-amber-700 to-orange-800", badge: "CAMARA" },
-            { icon: Construction, titulo: "Obras", desc: "Fiscalização de Obras.", href: "/transparencia/obras", cor: "from-amber-600 to-orange-800", badge: "INFRA" },
-            { icon: Truck, titulo: "Frota", desc: "Veículos Municipais.", href: "/transparencia/frota", cor: "from-blue-600 to-indigo-700", badge: "TRANSPORTE" },
-            { icon: Landmark, titulo: "Dívida Ativa", desc: "Créditos Municipais.", href: "/transparencia/divida-ativa", cor: "from-red-600 to-slate-900", badge: "FINANÇAS" },
-            { icon: FileSearch, titulo: "PCP", desc: "Prestação de Contas.", href: "/transparencia/pcs", cor: "from-emerald-600 to-green-800", badge: "GESTÃO" },
-        ]
-    },
-    {
         tituloCategoria: "Legislação e Normas",
-        desc: "Base legal, decretos, portarias e regulamentações municipais.",
+        desc: "Atos normativos, decretos e regulamentações municipais.",
         modulos: [
-            { icon: Files, titulo: "Leis", desc: "Legislação Municipal.", href: "/transparencia/leis", cor: "from-indigo-600 to-purple-700", badge: "LEGAL" },
             { icon: FileText, titulo: "Decretos", desc: "Atos do Executivo.", href: "/transparencia/decretos", cor: "from-slate-600 to-slate-800", badge: "ATOS" },
             { icon: ScrollText, titulo: "Portarias", desc: "Atos Administrativos.", href: "/transparencia/portarias", cor: "from-blue-600 to-blue-800", badge: "ADMIN" },
             { icon: ShieldCheck, titulo: "LGPD", desc: "Proteção de Dados.", href: "/transparencia/lgpd", cor: "from-emerald-500 to-green-700", badge: "PRIVACIDADE" },
             { icon: Presentation, titulo: "Dados Abertos", desc: "Exportação de Dados.", href: "/transparencia/dados-abertos", cor: "from-orange-500 to-amber-600", badge: "OPEN-DATA" },
-            { icon: Search, titulo: "Radar", desc: "Índice Transparência.", href: "/transparencia/radar", cor: "from-blue-800 to-slate-900", badge: "PNTP" },
         ]
     }
 ];
