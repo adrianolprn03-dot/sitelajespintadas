@@ -139,8 +139,8 @@ export default function QuadroServidoresClient({
                     onClear={handleClear}
                     onExport={handleExport}
                     placeholder="Buscar por cargo, vínculo ou lei..."
-                    hideYear
-                    hideMonth
+                    hideYearFilter
+                    hideMonthFilter
                 />
 
                 <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-blue-500/5 border border-slate-100 overflow-hidden">

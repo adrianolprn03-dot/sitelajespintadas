@@ -4,13 +4,13 @@ import { useState } from "react";
 
 interface TransparencyFiltersProps {
     onSearch: (query: string) => void;
-    onYearChange: (year: string) => void;
-    onMonthChange: (month: string) => void;
+    onYearChange?: (year: string) => void;
+    onMonthChange?: (month: string) => void;
     onClear: () => void;
     onExport: (format: "pdf" | "csv" | "json" | "xlsx") => void;
     availableYears?: string[];
-    currentYear: string;
-    currentMonth: string;
+    currentYear?: string;
+    currentMonth?: string;
     searchValue: string;
     placeholder?: string;
     hideYearFilter?: boolean;
@@ -20,13 +20,13 @@ interface TransparencyFiltersProps {
 
 export default function TransparencyFilters({
     onSearch,
-    onYearChange,
-    onMonthChange,
+    onYearChange = () => {},
+    onMonthChange = () => {},
     onClear,
     onExport,
     availableYears = ["2026", "2025", "2024", "2023", "2022", "2021"],
-    currentYear,
-    currentMonth,
+    currentYear = "",
+    currentMonth = "",
     searchValue,
     placeholder = "Pesquisar nos resultados...",
     hideYearFilter = false,
