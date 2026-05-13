@@ -1,17 +1,17 @@
 import { prisma } from "@/lib/prisma";
 import type { Metadata } from "next";
-import ConcursosClient from "./_ConcursosClient";
+import ConcursosClient from "../concursos/_ConcursosClient";
 
 export const metadata: Metadata = {
-    title: "Concursos e Seleções | Portal da Transparência",
-    description: "Acompanhe todos os editais de concursos públicos e processos seletivos da Prefeitura de Lajes Pintadas.",
+    title: "Editais Diversos | Portal da Transparência",
+    description: "Acompanhe todos os editais de chamamento, notificações e outros processos públicos da Prefeitura de Lajes Pintadas.",
 };
 
-export default async function ConcursosTransparencyPage() {
-    // Busca inicial de concursos do tipo "concurso"
+export default async function EditaisTransparencyPage() {
+    // Busca inicial de concursos do tipo "Edital"
     const initialData = await prisma.concurso.findMany({
         where: { 
-            tipo: { in: ["concurso", "Concurso Público"] },
+            tipo: { in: ["edital", "Edital"] },
             ativo: true 
         },
         orderBy: { dataPublicacao: "desc" },
@@ -28,9 +28,9 @@ export default async function ConcursosTransparencyPage() {
     return (
         <ConcursosClient 
             initialData={formattedData as any} 
-            typeFilter="concurso"
-            title="Concursos Públicos"
-            subtitle="Editais, convocações e resultados dos concursos efetivos da Prefeitura."
+            typeFilter="edital"
+            title="Editais Diversos"
+            subtitle="Editais de chamamento, notificações e processos públicos diversos da Prefeitura."
         />
     );
 }

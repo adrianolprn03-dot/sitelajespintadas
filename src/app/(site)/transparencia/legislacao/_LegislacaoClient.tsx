@@ -100,9 +100,49 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
 
     const hasActiveFilters = buscaFiltro || anoFiltro || (tipoFiltro !== "TODOS" && !hideTipoFilter);
 
+    // Estatísticas para Bento Cards
+    const stats = {
+        total: filtered.length,
+        anoAtual: filtered.filter(l => l.ano === new Date().getFullYear()).length,
+        comArquivo: filtered.filter(l => l.arquivo).length
+    };
+
     return (
         <div className="w-full px-4 md:px-10 lg:px-20 py-10 font-['Montserrat',sans-serif]">
             
+            {/* Bento Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <div className="bg-white p-8 rounded-[2.5rem] shadow-xl shadow-blue-500/5 border border-slate-100 flex items-center gap-6 transition-all hover:scale-[1.02]">
+                    <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center shadow-inner">
+                        <FaScroll size={24} />
+                    </div>
+                    <div>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Total de Atos</p>
+                        <p className="text-3xl font-black text-slate-900 tracking-tighter">{stats.total}</p>
+                    </div>
+                </div>
+
+                <div className="bg-white p-8 rounded-[2.5rem] shadow-xl shadow-blue-500/5 border border-slate-100 flex items-center gap-6 transition-all hover:scale-[1.02]">
+                    <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-3xl flex items-center justify-center shadow-inner">
+                        <FaCalendarDays size={24} />
+                    </div>
+                    <div>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Publicados em {new Date().getFullYear()}</p>
+                        <p className="text-3xl font-black text-emerald-600 tracking-tighter">{stats.anoAtual}</p>
+                    </div>
+                </div>
+
+                <div className="bg-white p-8 rounded-[2.5rem] shadow-xl shadow-blue-500/5 border border-slate-100 flex items-center gap-6 transition-all hover:scale-[1.02]">
+                    <div className="w-16 h-16 bg-amber-50 text-amber-600 rounded-3xl flex items-center justify-center shadow-inner">
+                        <FaFilePdf size={24} />
+                    </div>
+                    <div>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Arquivos Disponíveis</p>
+                        <p className="text-3xl font-black text-amber-600 tracking-tighter">{stats.comArquivo}</p>
+                    </div>
+                </div>
+            </div>
+
             {/* ═══════ FILTROS ═══════ */}
             <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm mb-8">
                 

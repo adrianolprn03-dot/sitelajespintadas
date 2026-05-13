@@ -123,8 +123,8 @@ export default function RelatoriosFiscaisPage() {
         <div className="p-6 max-w-7xl mx-auto font-['Montserrat',sans-serif]">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
                 <div>
-                    <h1 className="text-3xl font-black text-gray-800 uppercase tracking-tighter">Transparência Fiscal (LRF)</h1>
-                    <p className="text-gray-500 text-sm font-medium">Gestão de relatórios RREO e RGF para cumprimento da Lei de Responsabilidade Fiscal.</p>
+                    <h1 className="text-3xl font-black text-gray-800 uppercase tracking-tighter">Relatórios e Contas</h1>
+                    <p className="text-gray-500 text-sm font-medium">Gestão de LRF (RREO, RGF), Balanços e Contas de Governo/Gestão.</p>
                 </div>
                 <button 
                     onClick={() => { setEditItem(null); setModalOpen(true); }}
@@ -221,9 +221,24 @@ export default function RelatoriosFiscaisPage() {
                                             value={form.tipo}
                                             onChange={(e) => setForm({ ...form, tipo: e.target.value })}
                                         >
-                                            <option value="RREO">RREO (Resumido Exec. Orç.)</option>
-                                            <option value="RGF">RGF (Gestão Fiscal)</option>
-                                            <option value="OUTROS">Outros Relatórios LRF</option>
+                                            <optgroup label="Lei de Responsabilidade Fiscal">
+                                                <option value="RREO">RREO (Resumido Exec. Orç.)</option>
+                                                <option value="RGF">RGF (Gestão Fiscal)</option>
+                                            </optgroup>
+                                            <optgroup label="Contas de Governo (PCG)">
+                                                <option value="PCG">Contas de Governo Anual</option>
+                                            </optgroup>
+                                            <optgroup label="Contas de Gestão (PCS)">
+                                                <option value="PCS">Contas de Gestão Anual</option>
+                                            </optgroup>
+                                            <optgroup label="Balanço e Relatórios">
+                                                <option value="BALANCO">Prestação de Contas (Balanço)</option>
+                                                <option value="RELATORIO_GESTAO">Relatório de Gestão</option>
+                                            </optgroup>
+                                            <optgroup label="Tribunal de Contas">
+                                                <option value="PARECER_TCE">Parecer Prévio TCE</option>
+                                            </optgroup>
+                                            <option value="OUTROS">Outros Documentos / Contas</option>
                                         </select>
                                     </div>
                                     <div>

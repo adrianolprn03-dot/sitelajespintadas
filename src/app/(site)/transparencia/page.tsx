@@ -16,7 +16,7 @@ import {
     BarChart, HardHat, GraduationCap,
     Map, Pill, Shield, Lock, FileClock,
     UserPlus, UserCheck, FileJson, BadgeCheck,
-    FilePieChart, Presentation
+    FilePieChart, Presentation, Megaphone
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import PageHeader from "@/components/PageHeader";
@@ -56,12 +56,15 @@ const categoriasDeModulos = [
             { icon: Coins, titulo: "Receitas", desc: "Arrecadação Municipal.", href: "/transparencia/receitas", cor: "from-emerald-500 to-teal-600", badge: "RECEITA" },
             { icon: Receipt, titulo: "Despesas", desc: "Gastos e Empenhos.", href: "/transparencia/despesas", cor: "from-blue-600 to-indigo-700", badge: "GASTOS" },
             { icon: Landmark, titulo: "Orçamento", desc: "LOA, LDO e PPA.", href: "/transparencia/orcamento", cor: "from-slate-800 to-slate-950", badge: "PLANEJAMENTO" },
+            { icon: BarChart3, titulo: "LRF", desc: "RREO e RGF.", href: "/transparencia/lrf", cor: "from-blue-800 to-slate-900", badge: "FISCAL" },
             { icon: Scale, titulo: "Dívida Ativa", desc: "Cobranças e Créditos Tributários.", href: "/transparencia/divida-ativa", cor: "from-red-600 to-orange-700", badge: "FISCAL" },
             { icon: Handshake, titulo: "Acordos Firmados", desc: "Acordos sem repasse financeiro.", href: "/transparencia/acordos-firmados", cor: "from-indigo-500 to-blue-600", badge: "ACORDOS" },
             { icon: ListOrdered, titulo: "Pagamentos", desc: "Ordem Cronológica.", href: "/transparencia/ordem-cronologica", cor: "from-amber-500 to-orange-600", badge: "TESOURARIA" },
             { icon: Database, titulo: "Repasses", desc: "Transferências Legais.", href: "/transparencia/transferencias", cor: "from-indigo-600 to-violet-700", badge: "RECURSOS" },
             { icon: Globe2, titulo: "Emendas Parlamentares", desc: "Recursos Externos.", href: "/transparencia/emendas", cor: "from-teal-600 to-emerald-800", badge: "EXTERNO" },
             { icon: Coins, titulo: "Emendas PIX", desc: "Transferências Diretas.", href: "/transparencia/emendas-pix", cor: "from-pink-600 to-rose-700", badge: "PIX" },
+            { icon: FileSearch, titulo: "Renúncias Fiscais", desc: "Incentivos e Renúncias.", href: "/transparencia/renuncias-fiscais", cor: "from-purple-600 to-indigo-700", badge: "FISCAL" },
+            { icon: TrendingUp, titulo: "Desonerações", desc: "Desonerações Fiscais.", href: "/transparencia/desoneracoes", cor: "from-blue-500 to-cyan-600", badge: "FISCAL" },
         ]
     },
     {
@@ -69,6 +72,7 @@ const categoriasDeModulos = [
         desc: "Transparência sobre processos licitatórios, contratos firmados e quadro de servidores.",
         modulos: [
             { icon: Gavel, titulo: "Licitações", desc: "Certames e Editais.", href: "/transparencia/licitacoes", cor: "from-orange-600 to-red-700", badge: "COMPRAS" },
+            { icon: Megaphone, titulo: "Editais Diversos", desc: "Chamamentos e Avisos.", href: "/transparencia/editais", cor: "from-amber-500 to-orange-600", badge: "AVISOS" },
             { icon: FileSignature, titulo: "Contratos", desc: "Ajustes e Aditivos.", href: "/transparencia/contratos", cor: "from-blue-700 to-indigo-800", badge: "ATOS" },
             { icon: FileStack, titulo: "Atas de Registro", desc: "Preços Registrados.", href: "/transparencia/atas-registro", cor: "from-purple-600 to-violet-800", badge: "SRP" },
             { icon: Users, titulo: "Servidores", desc: "Folha de Pagamento.", href: "/transparencia/servidores", cor: "from-slate-700 to-slate-900", badge: "PESSOAL" },
@@ -99,6 +103,21 @@ const categoriasDeModulos = [
             { icon: ScrollText, titulo: "Portarias", desc: "Atos Administrativos.", href: "/transparencia/portarias", cor: "from-blue-600 to-blue-800", badge: "ADMIN" },
             { icon: ShieldCheck, titulo: "LGPD", desc: "Proteção de Dados.", href: "/transparencia/lgpd", cor: "from-emerald-500 to-green-700", badge: "PRIVACIDADE" },
             { icon: Presentation, titulo: "Dados Abertos", desc: "Exportação de Dados.", href: "/transparencia/dados-abertos", cor: "from-orange-500 to-amber-600", badge: "OPEN-DATA" },
+        ]
+    },
+    {
+        tituloCategoria: "Gestão, Obras e Contas",
+        desc: "Acompanhamento de obras públicas, convênios, frota municipal e prestação de contas (RREO, RGF, PCG, PCS).",
+        modulos: [
+            { icon: Construction, titulo: "Obras", desc: "Obras Públicas.", href: "/transparencia/obras", cor: "from-amber-600 to-orange-700", badge: "ACOMPANHAMENTO" },
+            { icon: Handshake, titulo: "Convênios", desc: "Convênios e Repasses.", href: "/transparencia/convenios", cor: "from-indigo-600 to-blue-700", badge: "PARCERIAS" },
+            { icon: FilePieChart, titulo: "Prestação de Contas", desc: "Balanços Anuais.", href: "/transparencia/prestacao-contas", cor: "from-emerald-600 to-teal-700", badge: "CONTAS" },
+            { icon: BarChart3, titulo: "Contas de Governo (PCG)", desc: "Prestação de Governo.", href: "/transparencia/pcg", cor: "from-blue-700 to-indigo-800", badge: "PCG" },
+            { icon: FileBarChart, titulo: "Contas de Gestão (PCS)", desc: "Prestação de Gestão.", href: "/transparencia/pcs", cor: "from-slate-700 to-slate-900", badge: "PCS" },
+            { icon: ClipboardList, titulo: "Relatório de Gestão", desc: "Atividades e Metas.", href: "/transparencia/relatorio-gestao", cor: "from-purple-600 to-violet-700", badge: "DESEMPENHO" },
+            { icon: Scale, titulo: "Parecer do TCE", desc: "Julgamento de Contas.", href: "/transparencia/parecer-tce", cor: "from-red-600 to-rose-700", badge: "TCE-RN" },
+            { icon: Truck, titulo: "Frota Municipal", desc: "Veículos e Máquinas.", href: "/transparencia/frota", cor: "from-sky-500 to-cyan-600", badge: "PATRIMÔNIO" },
+            { icon: UserCircle2, titulo: "Gestores", desc: "Responsáveis por Setor.", href: "/transparencia/gestores", cor: "from-teal-500 to-emerald-600", badge: "CONTATOS" },
         ]
     }
 ];
