@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import PageHeader from "@/components/PageHeader";
 import { FaTable, FaInfoCircle, FaCheckCircle, FaUserFriends, FaUserPlus, FaUserMinus } from "react-icons/fa";
-import { Info, Briefcase, Download, Trash2, Search, Spinner } from "lucide-react";
+import { Info, Briefcase, Download, Trash2, Search, Loader2 } from "lucide-react";
 import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
 import { exportToCSV, exportToJSON, exportToPDF, exportToXLSX } from "@/lib/exportUtils";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
@@ -160,7 +160,7 @@ export default function QuadroServidoresClient({
                                 {loading ? (
                                     <tr>
                                         <td colSpan={6} className="px-8 py-20 text-center">
-                                            <Spinner className="animate-spin text-blue-600 mx-auto mb-4" size={32} />
+                                            <Loader2 className="animate-spin text-blue-600 mx-auto mb-4" size={32} />
                                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Atualizando quadro...</p>
                                         </td>
                                     </tr>

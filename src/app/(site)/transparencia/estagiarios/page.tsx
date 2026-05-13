@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import PageHeader from "@/components/PageHeader";
-import { Info, FileText, GraduationCap, Briefcase, UserCheck, Spinner } from "lucide-react";
+import { Info, FileText, GraduationCap, Briefcase, UserCheck, Loader2 } from "lucide-react";
 import { FaInfoCircle, FaSpinner } from "react-icons/fa";
 import Link from "next/link";
 import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
