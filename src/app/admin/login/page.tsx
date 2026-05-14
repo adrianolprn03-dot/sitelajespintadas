@@ -1,15 +1,22 @@
 "use client";
-import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { useState, useEffect } from "react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { FaEye, FaEyeSlash, FaSpinner } from "react-icons/fa";
 import toast from "react-hot-toast";
 
 export default function AdminLoginPage() {
     const router = useRouter();
+    const { data: session, status } = useSession();
     const [form, setForm] = useState({ email: "", password: "" });
     const [showPass, setShowPass] = useState(false);
     const [carregando, setCarregando] = useState(false);
+
+    useEffect(() => {
+        if (status === "authenticated") {
+            router.push("/admin");
+        }
+    }, [status, router]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
