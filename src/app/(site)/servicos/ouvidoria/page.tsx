@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { FaSearch, FaQuestionCircle, FaChartBar, FaUserShield, FaPhone, FaEnvelope, FaMapMarker, FaClock, FaClipboardList, FaFile, FaSmile, FaExternalLink, FaShield, FaInfoCircle } from "react-icons/fa";
+import { FaSearch, FaQuestionCircle, FaChartBar, FaUserShield, FaPhone, FaEnvelope, FaMapMarker, FaClock, FaClipboardList, FaFile, FaSmile, FaExternalLinkAlt, FaShieldAlt, FaInfoCircle } from "react-icons/fa";
 import toast from "react-hot-toast";
 import PageHeader from "@/components/PageHeader";
 import Link from "next/link";
@@ -139,7 +139,7 @@ export default function OuvidoriaPage() {
                                                 />
                                             </div>
                                             <label htmlFor="anonimo" className="text-[10px] font-black uppercase tracking-[0.15em] text-gray-500 cursor-pointer select-none group-hover:text-gray-700 transition-colors flex items-center gap-2">
-                                                <FaShield className="text-[#01b0ef]" />
+                                                <FaShieldAlt className="text-[#01b0ef]" />
                                                 Desejo fazer uma manifestação anônima
                                             </label>
                                         </div>
@@ -272,7 +272,7 @@ export default function OuvidoriaPage() {
                                     >
                                         <link.icon className="text-gray-400 group-hover:text-[#01b0ef] transition-colors shrink-0" />
                                         <span className="flex-1">{link.label}</span>
-                                        <FaExternalLink className="text-[10px] text-gray-300 group-hover:text-[#01b0ef] transition-colors opacity-0 group-hover:opacity-100" />
+                                        <FaExternalLinkAlt className="text-[10px] text-gray-300 group-hover:text-[#01b0ef] transition-colors opacity-0 group-hover:opacity-100" />
                                     </Link>
                                 ))}
                             </div>

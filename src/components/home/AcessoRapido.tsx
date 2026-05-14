@@ -6,7 +6,7 @@ import {
     HiOutlineEnvelope,
 } from "react-icons/hi2";
 import { prisma } from "@/lib/prisma";
-import { FaExternalLink } from "react-icons/fa";
+import { FaExternalLinkAlt } from "react-icons/fa";
 
 const acessosBase = [
     {
@@ -90,7 +90,7 @@ export default async function AcessoRapido() {
                                     <item.icon size={38} strokeWidth={1.5} />
                                     {isExternal && (
                                         <div className="absolute -top-1.5 -right-1.5 bg-secondary-400 text-[#002241] p-1 rounded-lg shadow-lg">
-                                            <FaExternalLink size={9} />
+                                            <FaExternalLinkAlt size={9} />
                                         </div>
                                     )}
                                 </div>

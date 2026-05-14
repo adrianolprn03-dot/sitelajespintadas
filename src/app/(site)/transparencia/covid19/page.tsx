@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { FaVirus, FaHandsWash, FaHospital, FaMoneyBillWave, FaExternalLink, FaInfoCircle, FaCheckCircle, FaFilePdf } from "react-icons/fa";
+import { FaVirus, FaHandsWash, FaHospital, FaMoneyBillWave, FaExternalLinkAlt, FaInfoCircle, FaCheckCircle, FaFilePdf } from "react-icons/fa";
 import { Shield } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
@@ -198,7 +198,7 @@ export default function Covid19Page() {
                         className="group bg-white border border-gray-100 rounded-[2rem] p-8 shadow-sm hover:shadow-xl hover:border-red-100 transition-all flex items-center gap-5"
                     >
                         <div className="w-12 h-12 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center shrink-0 group-hover:bg-red-600 group-hover:text-white transition-all">
-                            <FaExternalLink size={18} />
+                            <FaExternalLinkAlt size={18} />
                         </div>
                         <div>
                             <h4 className="font-black text-gray-800 text-sm uppercase tracking-tight mb-1 group-hover:text-red-600 transition-colors">Ministério da Saúde – Covid-19</h4>

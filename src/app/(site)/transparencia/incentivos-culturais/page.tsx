@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { FaMusic, FaRunning, FaTheaterMasks, FaBook, FaTrophy, FaExternalLink, FaFile, FaCalendar, FaMoneyBillWave } from "react-icons/fa";
+import { FaMusic, FaRunning, FaTheaterMasks, FaBook, FaTrophy, FaExternalLinkAlt, FaFile, FaCalendar, FaMoneyBillWave } from "react-icons/fa";
 import { Star } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
@@ -204,7 +204,7 @@ export default function IncentivosCulturaisPage() {
                                         </td>
                                         <td className="px-8 py-5 text-center">
                                             <button className="inline-flex items-center gap-1.5 text-amber-600 hover:text-amber-800 font-black text-[10px] uppercase tracking-widest transition-colors">
-                                                <FaExternalLink size={9} /> Acessar
+                                                <FaExternalLinkAlt size={9} /> Acessar
                                             </button>
                                         </td>
                                     </tr>

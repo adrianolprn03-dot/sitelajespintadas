@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { FaHeartbeat, FaUserMd, FaFlask, FaStethoscope, FaAmbulance, FaInfoCircle, FaPhone, FaExternalLink } from "react-icons/fa";
+import { FaHeartbeat, FaUserMd, FaFlask, FaStethoscope, FaAmbulance, FaInfoCircle, FaPhone, FaExternalLinkAlt } from "react-icons/fa";
 import PageHeader from "@/components/PageHeader";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
 import Link from "next/link";
@@ -122,7 +122,7 @@ export default function CentralRegulacaoPage() {
                             href="/unidades-de-saude"
                             className="mt-8 flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-black uppercase text-[9px] tracking-widest py-4 rounded-2xl transition-all"
                         >
-                            Ver Unidades de Saúde <FaExternalLink size={9} />
+                            Ver Unidades de Saúde <FaExternalLinkAlt size={9} />
                         </Link>
                     </div>
                 </div>

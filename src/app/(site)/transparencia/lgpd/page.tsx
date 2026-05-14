@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
-import { FaShield, FaUserShield, FaServer, FaBalanceScale, FaCheckCircle, FaLock, FaUserCheck } from "react-icons/fa";
+import { FaShieldAlt, FaUserShield, FaServer, FaBalanceScale, FaCheckCircle, FaLock, FaUserCheck } from "react-icons/fa";
 import { FaScaleBalanced } from "react-icons/fa6";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
 
@@ -16,7 +16,7 @@ export default function LGPDPage() {
                 title="Privacidade e Proteção de Dados (LGPD)"
                 subtitle="Segurança jurídica e integridade digital no tratamento das informações da nossa população."
                 variant="premium"
-                icon={<FaShield />}
+                icon={<FaShieldAlt />}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
                     { label: "Transparência", href: "/transparencia" },

@@ -4,7 +4,7 @@ import {
     FaHammer, FaMapMarker, FaCalendar, FaBuilding, 
     FaChartLine, FaSpinner, FaArrowRight, FaImage,
     FaCheckCircle, FaExclamationTriangle, FaHardHat, FaInfoCircle,
-    FaTable, FaDownload, FaExternalLink, FaSearch,
+    FaTable, FaDownload, FaExternalLinkAlt, FaSearch,
     FaClock, FaCoins, FaBriefcase
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
@@ -539,7 +539,7 @@ export default function ObrasPublicasPage() {
                                             </div>
                                             <div className="bg-slate-900 rounded-[2rem] p-8 text-white relative overflow-hidden group">
                                                 <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:rotate-12 transition-transform duration-700">
-                                                    <FaExternalLink size={80} />
+                                                    <FaExternalLinkAlt size={80} />
                                                 </div>
                                                 <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] mb-6">Arquivos Vinculados ao Processo</p>
                                                 <div className="space-y-4">

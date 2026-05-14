@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { HiOutlineMagnifyingGlassCircle, HiOutlineClipboardDocumentCheck, HiOutlineReceiptPercent, HiOutlineIdentification } from "react-icons/hi2";
 import { prisma } from "@/lib/prisma";
-import { FaExternalLink } from "react-icons/fa";
+import { FaExternalLinkAlt } from "react-icons/fa";
 
 const servicos = [
     {
@@ -83,7 +83,7 @@ export default async function ServicosRapidos() {
                                     <Icon size={34} strokeWidth={1.5} />
                                     {isExternal && (
                                         <div className="absolute -top-2 -right-2 bg-primary-500 text-white p-1.5 rounded-lg shadow-lg border-2 border-white">
-                                            <FaExternalLink size={12} />
+                                            <FaExternalLinkAlt size={12} />
                                         </div>
                                     )}
                                 </div>

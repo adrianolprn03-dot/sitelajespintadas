@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { FaLink, FaExternalLink, FaEdit, FaTrash, FaPlus, FaGlobe } from "react-icons/fa";
+import { FaLink, FaExternalLinkAlt, FaEdit, FaTrash, FaPlus, FaGlobe } from "react-icons/fa";
 import toast from "react-hot-toast";
 
 type LinkExterno = {
@@ -113,7 +113,7 @@ export default function LinksExternosPage() {
                                 </div>
                                 {link.descricao && <p className="text-xs text-gray-400 mt-0.5 truncate">{link.descricao}</p>}
                                 <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-xs text-[#01b0ef] hover:underline flex items-center gap-1 mt-1 truncate">
-                                    <FaExternalLink size={10} /> {link.url}
+                                    <FaExternalLinkAlt size={10} /> {link.url}
                                 </a>
                             </div>
                             <div className="flex items-center gap-2 shrink-0">

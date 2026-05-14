@@ -2,7 +2,7 @@
 import { useState, useMemo } from "react";
 import { 
     FaSearch, FaFilter, FaTimes, FaDownload, 
-    FaExternalLink, FaChevronRight, FaFileInvoiceDollar, 
+    FaExternalLinkAlt, FaChevronRight, FaFileInvoiceDollar, 
     FaCalendar, FaUserTie, FaTags
 } from "react-icons/fa";
 import { FaBuildingColumns } from "react-icons/fa6";
@@ -195,7 +195,7 @@ export default function EmendasClientPage({ initialData }: { initialData: Emenda
                                             rel="noopener noreferrer"
                                             className="flex-1 inline-flex items-center justify-center gap-3 bg-slate-900 text-white px-8 py-5 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl shadow-slate-200"
                                         >
-                                            <FaExternalLink /> Ver na fonte oficial
+                                            <FaExternalLinkAlt /> Ver na fonte oficial
                                         </a>
                                     )}
                                     <button

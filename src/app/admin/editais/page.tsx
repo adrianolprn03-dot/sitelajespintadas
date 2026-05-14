@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { FaBullhorn, FaPlus, FaEdit, FaTrash, FaSpinner, FaSearch, FaBriefcase, FaLock, FaCheckCircle, FaFileUpload, FaLink, FaExternalLink, FaTrash } from "react-icons/fa";
+import { FaBullhorn, FaPlus, FaEdit, FaTrash, FaSpinner, FaSearch, FaBriefcase, FaLock, FaCheckCircle, FaFileUpload, FaLink, FaExternalLinkAlt } from "react-icons/fa";
 import toast from "react-hot-toast";
 
 type Concurso = {
@@ -278,7 +278,7 @@ export default function AdminEditaisPage() {
                                                 </div>
                                                 <div className="flex gap-2">
                                                     <a href={form.linkEdital} target="_blank" className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors">
-                                                        <FaExternalLink size={12} />
+                                                        <FaExternalLinkAlt size={12} />
                                                     </a>
                                                     <button type="button" onClick={() => setForm({ ...form, linkEdital: "" })} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors">
                                                         <FaTrash size={12} />

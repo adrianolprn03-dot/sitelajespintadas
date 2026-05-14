@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { 
-    FaChartBar, FaSpinner, FaExternalLink, FaBuilding, 
+    FaChartBar, FaSpinner, FaExternalLinkAlt, FaBuilding, 
     FaGavel, FaRegCalendar, FaBriefcase,
     FaArrowRight, FaCheckCircle, FaClock, FaBan,
     FaFileContract, FaBolt, FaInfoCircle

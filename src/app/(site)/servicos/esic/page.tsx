@@ -5,8 +5,8 @@ import PageHeader from "@/components/PageHeader";
 import { 
     FaSearch, FaQuestionCircle, FaChartBar, FaUserShield, 
     FaPhone, FaEnvelope, FaMapMarker, FaClock, 
-    FaFile, FaExternalLink, FaInfoCircle, FaBullhorn, 
-    FaGavel, FaLock, FaBalanceScale, FaBook, FaSignOut, 
+    FaFile, FaExternalLinkAlt, FaInfoCircle, FaBullhorn, 
+    FaGavel, FaLock, FaBalanceScale, FaBook, FaSignOutAlt, 
     FaHistory, FaCheckCircle, FaChevronDown, FaChevronUp,
     FaUser, FaBuilding, FaIdCard, FaBriefcase, FaArrowLeft, FaHome
 } from "react-icons/fa";
@@ -367,7 +367,7 @@ export default function ESICPage() {
                                             <Link href="/transparencia/passiva/perguntas" className="block p-6 bg-gray-50 rounded-2xl border border-gray-100 hover:border-primary-500 transition-all group">
                                                 <div className="flex justify-between items-center">
                                                     <p className="font-bold text-gray-700">Clique aqui para acessar o FAQ completo da LAI</p>
-                                                    <FaExternalLink className="text-gray-400 group-hover:text-primary" />
+                                                    <FaExternalLinkAlt className="text-gray-400 group-hover:text-primary" />
                                                 </div>
                                             </Link>
                                         </div>

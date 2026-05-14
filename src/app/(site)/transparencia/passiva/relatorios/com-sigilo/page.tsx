@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import PageHeader from "@/components/PageHeader";
-import { FaShield, FaLock, FaExclamationTriangle, FaInfoCircle, FaFile, FaCalendar, FaCheckCircle, FaUserShield, FaChevronRight, FaBalanceScale, FaSpinner, FaArrowCircleRight } from "react-icons/fa";
+import { FaShieldAlt, FaLock, FaExclamationTriangle, FaInfoCircle, FaFile, FaCalendar, FaCheckCircle, FaUserShield, FaChevronRight, FaBalanceScale, FaSpinner, FaArrowCircleRight } from "react-icons/fa";
 import Link from "next/link";
 import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
 import { exportToCSV, exportToJSON, exportToPDF, exportToXLSX } from "@/lib/exportUtils";
@@ -82,7 +82,7 @@ export default function SICRelatoriosComSigiloPage() {
                 title="Informações Classificadas (Sigilo)"
                 subtitle="Relação de solicitações que possuem restrição de acesso temporária por força de lei."
                 variant="premium"
-                icon={<FaShield />}
+                icon={<FaShieldAlt />}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
                     { label: "Transparência", href: "/transparencia" },
@@ -176,7 +176,7 @@ export default function SICRelatoriosComSigiloPage() {
                                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                                      <div className="flex items-center gap-4">
                                         <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center shrink-0 border border-purple-50 shadow-sm">
-                                           <FaShield size={20} />
+                                           <FaShieldAlt size={20} />
                                         </div>
                                         <div>
                                            <h3 className="text-base font-black text-gray-800 uppercase tracking-tighter mb-0.5">PROTOCOLO #{p.protocolo}</h3>

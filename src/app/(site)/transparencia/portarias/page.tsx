@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
 import LegislacaoClient from "../legislacao/_LegislacaoClient";
 import { prisma } from "@/lib/prisma";
-import { FaExternalLink, FaGlobe } from "react-icons/fa";
+import { FaExternalLinkAlt, FaGlobe } from "react-icons/fa";
 import { FaFileCircleCheck } from "react-icons/fa6";
 
 export const metadata: Metadata = {
@@ -57,7 +57,7 @@ export default async function PortariasPage() {
                                 className="group flex items-start gap-4 bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-xl shadow-gray-200/40 hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-900/10 hover:-translate-y-1 transition-all duration-500"
                             >
                                 <div className="w-14 h-14 bg-gray-50 text-blue-500 rounded-2xl flex items-center justify-center shrink-0 border border-gray-100 group-hover:bg-blue-600 group-hover:text-white transition-all duration-500">
-                                    <FaExternalLink size={20} />
+                                    <FaExternalLinkAlt size={20} />
                                 </div>
                                 <div className="min-w-0 pt-1">
                                     <span className="font-black text-gray-800 text-sm block mb-1 group-hover:text-blue-600 transition-colors uppercase tracking-tight">

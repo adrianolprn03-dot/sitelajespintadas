@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { HiOutlineDocumentMagnifyingGlass, HiOutlineArrowLongRight, HiOutlineEye } from "react-icons/hi2";
 import { prisma } from "@/lib/prisma";
-import { FaExternalLink } from "react-icons/fa";
+import { FaExternalLinkAlt } from "react-icons/fa";
 
 // Mapeamento de status do banco → exibição
 function getStatusDisplay(status: string): { label: string; className: string } {
@@ -55,7 +55,7 @@ export default async function TransparenciaHub() {
                         className="group flex items-center gap-3 text-[#01b0ef] font-black text-[11px] uppercase tracking-widest hover:text-[#0088b9] transition-all"
                     >
                         Portal da Transparência 
-                        {isExternal && <FaExternalLink size={10} className="ml-1" />}
+                        {isExternal && <FaExternalLinkAlt size={10} className="ml-1" />}
                         <HiOutlineArrowLongRight className="group-hover:translate-x-1 transition-transform" size={20} />
                     </Link>
                 </div>

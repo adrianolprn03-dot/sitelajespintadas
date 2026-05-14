@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { 
     FaUsers, FaMoneyBillWave, FaFileInvoiceDollar, 
     FaUserTie, FaTable, FaChevronRight, FaInfoCircle,
-    FaArrowRight, FaBriefcase, FaExternalLink
+    FaArrowRight, FaBriefcase, FaExternalLinkAlt
 } from "react-icons/fa";
 import {
     FaShieldHalved, FaClockRotateLeft,
@@ -233,7 +233,7 @@ export default function ServidoresHub() {
                                     
                                     <div className="flex items-center text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 group-hover:gap-5 transition-all">
                                         {isExternal ? "ACESSAR MÓDULO EXTERNO" : "Ver Dados"} 
-                                        {isExternal ? <FaExternalLink className="ml-2" /> : <FaChevronRight className="ml-2 group-hover:translate-x-1" />}
+                                        {isExternal ? <FaExternalLinkAlt className="ml-2" /> : <FaChevronRight className="ml-2 group-hover:translate-x-1" />}
                                     </div>
                                 </div>
 
@@ -242,7 +242,7 @@ export default function ServidoresHub() {
                                 {isExternal && (
                                     <div className="absolute top-8 right-8">
                                         <span className="flex items-center gap-1.5 text-[8px] font-black text-blue-600 uppercase tracking-widest bg-blue-50 px-3 py-1 rounded-lg border border-blue-100 shadow-sm">
-                                            <FaExternalLink size={8} /> PORTAL TERCEIRIZADO
+                                            <FaExternalLinkAlt size={8} /> PORTAL TERCEIRIZADO
                                         </span>
                                     </div>
                                 )}

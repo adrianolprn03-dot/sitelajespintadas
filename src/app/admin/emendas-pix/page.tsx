@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { FaPlus, FaTrash, FaSpinner, FaSearch, FaEdit, FaExternalLink } from "react-icons/fa";
+import { FaPlus, FaTrash, FaSpinner, FaSearch, FaEdit, FaExternalLinkAlt } from "react-icons/fa";
 import { FaHandHoldingDollar, FaPix } from "react-icons/fa6";
 import toast from "react-hot-toast";
 

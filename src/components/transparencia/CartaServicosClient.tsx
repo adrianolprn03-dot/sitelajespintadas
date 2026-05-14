@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { FaArrowRight, FaMapMarker, FaFile, FaClock, FaStar, FaListOl, FaUsers, FaInfoCircle, FaExternalLink, FaTimes, FaSpinner, FaCheckCircle, FaLaptop, FaHandsHelping } from "react-icons/fa";
+import { FaArrowRight, FaMapMarker, FaFile, FaClock, FaStar, FaListOl, FaUsers, FaInfoCircle, FaExternalLinkAlt, FaTimes, FaSpinner, FaCheckCircle, FaLaptop, FaHandsHelping } from "react-icons/fa";
 
 type Servico = {
     id: string;
@@ -142,7 +142,7 @@ export default function CartaServicosClient({ servicos }: { servicos: Servico[] 
                                         title="Acesso Direto ao Serviço"
                                         className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center shadow-inner"
                                     >
-                                        <FaExternalLink />
+                                        <FaExternalLinkAlt />
                                     </a>
                                 )}
                                 <button 
@@ -190,7 +190,7 @@ export default function CartaServicosClient({ servicos }: { servicos: Servico[] 
                                 <section className="space-y-8">
                                     <div className="bg-blue-900 text-white p-8 rounded-[2rem] shadow-xl shadow-blue-200 flex flex-col h-full">
                                         <h5 className="flex items-center gap-3 text-xs font-black text-blue-300 uppercase tracking-widest mb-6 border-b border-blue-800 pb-4">
-                                            <FaExternalLink /> Formas de Acesso
+                                            <FaExternalLinkAlt /> Formas de Acesso
                                         </h5>
                                         <p className="text-sm text-blue-100 leading-relaxed font-medium whitespace-pre-line flex-1">{selectedServico.formasAcesso || "Informação não disponível."}</p>
                                         
@@ -201,7 +201,7 @@ export default function CartaServicosClient({ servicos }: { servicos: Servico[] 
                                                 rel="noopener noreferrer"
                                                 className="mt-8 bg-blue-500 hover:bg-white hover:text-blue-900 text-white px-6 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-lg"
                                             >
-                                                Acessar Serviço Agora <FaExternalLink />
+                                                Acessar Serviço Agora <FaExternalLinkAlt />
                                             </a>
                                         )}
                                     </div>

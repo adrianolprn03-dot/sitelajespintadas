@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
 import LegislacaoClient from "./_LegislacaoClient";
 import { prisma } from "@/lib/prisma";
-import { FaExternalLink, FaGlobe } from "react-icons/fa";
+import { FaExternalLinkAlt, FaGlobe } from "react-icons/fa";
 
 export const metadata: Metadata = {
     title: "Legislação Municipal | Prefeitura de Lajes Pintadas – RN",
@@ -59,7 +59,7 @@ export default async function LegislacaoPage() {
                                 className="group flex items-start gap-4 bg-white rounded-[2rem] p-6 border border-gray-100 shadow-sm hover:border-primary-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
                             >
                                 <div className="w-12 h-12 bg-gray-50 text-primary-500 rounded-2xl flex items-center justify-center shrink-0 border border-gray-100 group-hover:bg-primary-500 group-hover:text-white transition-all">
-                                    <FaExternalLink size={16} />
+                                    <FaExternalLinkAlt size={16} />
                                 </div>
                                 <div className="min-w-0 pt-1">
                                     <span className="font-black text-gray-800 text-sm block mb-1 group-hover:text-primary-600 transition-colors uppercase tracking-tight">

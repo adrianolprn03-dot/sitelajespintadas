@@ -5,7 +5,7 @@ import Link from "next/link";
 import {
     FaUniversalAccess, FaAdjust, FaSearchPlus, FaKeyboard,
     FaVolumeUp, FaCheckCircle, FaExclamationTriangle, FaEnvelope,
-    FaFile, FaMousePointer, FaMobile, FaExternalLink
+    FaFile, FaMousePointer, FaMobile, FaExternalLinkAlt
 } from "react-icons/fa";
 
 export const metadata: Metadata = {
@@ -235,17 +235,17 @@ export default function AcessibilidadePage() {
                                 <a href="https://emag.governoeletronico.gov.br" target="_blank" rel="noopener noreferrer"
                                     className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:border-primary-200 hover:bg-primary-50/30 transition-all group">
                                     <span className="font-bold text-sm text-gray-600 group-hover:text-primary-700">e-MAG — Modelo de Acessibilidade Gov.</span>
-                                    <FaExternalLink size={12} className="text-gray-400 group-hover:text-primary-500" />
+                                    <FaExternalLinkAlt size={12} className="text-gray-400 group-hover:text-primary-500" />
                                 </a>
                                 <a href="https://www.w3.org/WAI/WCAG21/quickref/" target="_blank" rel="noopener noreferrer"
                                     className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:border-primary-200 hover:bg-primary-50/30 transition-all group">
                                     <span className="font-bold text-sm text-gray-600 group-hover:text-primary-700">WCAG 2.1 — W3C Diretrizes Oficiais</span>
-                                    <FaExternalLink size={12} className="text-gray-400 group-hover:text-primary-500" />
+                                    <FaExternalLinkAlt size={12} className="text-gray-400 group-hover:text-primary-500" />
                                 </a>
                                 <Link href="/servicos/esic"
                                     className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:border-primary-200 hover:bg-primary-50/30 transition-all group">
                                     <span className="font-bold text-sm text-gray-600 group-hover:text-primary-700">e-SIC — Solicitar Informações</span>
-                                    <FaExternalLink size={12} className="text-gray-400 group-hover:text-primary-500" />
+                                    <FaExternalLinkAlt size={12} className="text-gray-400 group-hover:text-primary-500" />
                                 </Link>
                             </div>
                         </div>

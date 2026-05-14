@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie } from "recharts";
-import { FaChartPie, FaChartBar, FaSpinner, FaShield } from "react-icons/fa";
+import { FaChartPie, FaChartBar, FaSpinner, FaShieldAlt } from "react-icons/fa";
 
 type StatData = { name: string; value: number };
 
@@ -141,7 +141,7 @@ export default function StatisticsDashboard({ type }: StatisticsDashboardProps) 
                 {type === "esic" && (
                     <div className="bg-white p-10 rounded-[3rem] shadow-xl shadow-gray-200/40 border border-white lg:col-span-2">
                         <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-10 flex items-center gap-2">
-                           <FaShield className="text-purple-500" /> Distribuição por Grau de Sigilo
+                           <FaShieldAlt className="text-purple-500" /> Distribuição por Grau de Sigilo
                         </h3>
                         <div className="h-[300px] w-full">
                             {sigiloData && sigiloData.length > 0 ? (

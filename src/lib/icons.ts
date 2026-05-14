@@ -1,7 +1,7 @@
 import { 
     FaBuilding, FaHeartbeat, FaGraduationCap, 
     FaHardHat, FaTractor, FaHandsHelping, FaFileInvoiceDollar, FaBalanceScale,
-    FaBus, FaTheaterMasks, FaLandmark, FaShield
+    FaBus, FaTheaterMasks, FaLandmark, FaShieldAlt
 } from "react-icons/fa";
 
 export function getSecretariaIcon(nome: string) {
@@ -17,7 +17,7 @@ export function getSecretariaIcon(nome: string) {
     if (n.includes('transporte') || n.includes('trânsito')) return FaBus;
     if (n.includes('esporte') || n.includes('lazer') || n.includes('turismo')) return FaTheaterMasks;
     if (n.includes('gabinete') || n.includes('prefeito')) return FaLandmark;
-    if (n.includes('controladoria') || n.includes('controle')) return FaShield;
+    if (n.includes('controladoria') || n.includes('controle')) return FaShieldAlt;
     
     return FaBuilding; // Ícone Padrão
 }
