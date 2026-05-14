@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
 
+env:
+  ACTIONS_STEP_DEBUG: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -11,6 +14,21 @@ jobs:
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
+
+      - name: Diagnóstico do ambiente
+        run: |
+          echo "=== Node version ==="
+          node --version || echo "node not found"
+          echo "=== Docker version ==="
+          docker --version
+          echo "=== Disk space ==="
+          df -h
+          echo "=== Memory ==="
+          free -h
+          echo "=== Arquivos no contexto ==="
+          ls -la
+          echo "=== Package.json ==="
+          cat package.json
 
       - name: Login no GitHub Container Registry
         uses: docker/login-action@v3
