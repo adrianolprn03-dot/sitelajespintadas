@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { FaFileAlt, FaDownload, FaCalendarAlt, FaSearch, FaHistory, FaInfoCircle, FaCheckCircle, FaChevronRight } from "react-icons/fa";
+import { FaFileAlt, FaDownload, FaCalendar, FaSearch, FaHistory, FaInfoCircle, FaCheckCircle, FaChevronRight } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import BannerPNTP from "./transparencia/BannerPNTP";
 
@@ -87,7 +87,7 @@ export default function ListaDocumentosClient({
                     <div className="w-full md:w-64 space-y-4">
                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Exercício</label>
                         <div className="relative group">
-                            <FaCalendarAlt className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none group-focus-within:text-indigo-500 transition-colors" />
+                            <FaCalendar className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none group-focus-within:text-indigo-500 transition-colors" />
                             <select
                                 value={anoFiltro}
                                 onChange={(e) => setAnoFiltro(e.target.value)}

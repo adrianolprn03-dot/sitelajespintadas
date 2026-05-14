@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { FaImages, FaSpinner, FaEye, FaCalendarAlt } from "react-icons/fa";
+import { FaImages, FaSpinner, FaEye, FaCalendar } from "react-icons/fa";
 import PageHeader from "@/components/PageHeader";
 
 type Foto = {
@@ -94,7 +94,7 @@ export default function GaleriaPage() {
                                     <span className="text-[10px] font-black uppercase text-indigo-400 mb-1 tracking-widest">{f.album || "Geral"}</span>
                                     <h3 className="text-white font-bold leading-tight mb-2 line-clamp-2">{f.titulo}</h3>
                                     <div className="flex items-center gap-4 text-xs text-gray-300">
-                                        <span className="flex items-center gap-1"><FaCalendarAlt size={10} /> {new Date(f.criadoEm).toLocaleDateString("pt-BR")}</span>
+                                        <span className="flex items-center gap-1"><FaCalendar size={10} /> {new Date(f.criadoEm).toLocaleDateString("pt-BR")}</span>
                                         <button className="flex items-center gap-1 text-indigo-400 hover:text-white transition-colors">
                                             <FaEye size={12} /> Ampliar
                                         </button>

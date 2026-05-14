@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { FaNewspaper, FaSpinner, FaDownload, FaSearch, FaCalendarAlt, FaTag, FaFilter } from "react-icons/fa";
+import { FaNewspaper, FaSpinner, FaDownload, FaSearch, FaCalendar, FaTag, FaFilter } from "react-icons/fa";
 import { FileText } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
@@ -208,7 +208,7 @@ export default function PublicacoesPage() {
                                                 <FaTag size={7} /> {pub.tipo}
                                             </span>
                                             <span className="flex items-center gap-1 text-[9px] font-bold text-gray-400 uppercase">
-                                                <FaCalendarAlt size={8} className="text-gray-300" />
+                                                <FaCalendar size={8} className="text-gray-300" />
                                                 {new Date(pub.dataPublicacao).toLocaleDateString("pt-BR")}
                                             </span>
                                         </div>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { 
-    FaHandshake, FaSpinner, FaBuilding, FaCalendarAlt, 
+    FaHandshake, FaSpinner, FaBuilding, FaCalendar, 
     FaMoneyBillWave, FaArrowRight, FaHistory, FaCheckCircle, 
     FaTimesCircle, FaInfoCircle, FaFileSignature, FaLayerGroup
 } from "react-icons/fa";

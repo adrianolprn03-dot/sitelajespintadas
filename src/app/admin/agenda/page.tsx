@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { FaPlus, FaEdit, FaTrash, FaSpinner, FaSearch, FaCalendarAlt, FaClock, FaMapMarkerAlt } from "react-icons/fa";
+import { FaPlus, FaEdit, FaTrash, FaSpinner, FaSearch, FaCalendar, FaClock, FaMapMarkerAlt } from "react-icons/fa";
 import toast from "react-hot-toast";
 
 type Evento = {
@@ -57,7 +57,7 @@ export default function AdminAgendaPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-                        <FaCalendarAlt className="text-primary-500" /> Agenda Municipal
+                        <FaCalendar className="text-primary-500" /> Agenda Municipal
                     </h1>
                     <p className="text-gray-500 text-sm">Gerencie o calendário de eventos e compromissos oficiais.</p>
                 </div>
@@ -108,7 +108,7 @@ export default function AdminAgendaPage() {
                                     <tr key={i.id} className="hover:bg-gray-50 transition-colors group">
                                         <td className="px-6 py-4 font-bold text-gray-700">{i.titulo}</td>
                                         <td className="px-6 py-4 text-sm text-gray-500">
-                                            <div className="flex items-center gap-2"><FaCalendarAlt className="text-primary-400" /> {new Date(i.dataInicio).toLocaleDateString("pt-BR")}</div>
+                                            <div className="flex items-center gap-2"><FaCalendar className="text-primary-400" /> {new Date(i.dataInicio).toLocaleDateString("pt-BR")}</div>
                                             <div className="flex items-center gap-2 mt-1"><FaClock className="text-primary-300" /> {new Date(i.dataInicio).toLocaleTimeString("pt-BR", { hour: '2-digit', minute: '2-digit' })}</div>
                                         </td>
                                         <td className="px-6 py-4 text-sm text-gray-500">

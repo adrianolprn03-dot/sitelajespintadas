@@ -3,7 +3,7 @@ import { useState, useMemo } from "react";
 import { 
     FaSearch, FaFilter, FaTimes, FaDownload, 
     FaExternalLinkAlt, FaChevronRight, FaFileInvoiceDollar, 
-    FaCalendarAlt, FaUserTie, FaTags
+    FaCalendar, FaUserTie, FaTags
 } from "react-icons/fa";
 import { FaBuildingColumns } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
@@ -136,7 +136,7 @@ export default function EmendasClientPage({ initialData }: { initialData: Emenda
                                     <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100">
                                         <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-1">Ano / Exercício</span>
                                         <div className="flex items-center gap-2 text-slate-900 font-black text-sm tracking-tight uppercase">
-                                            <FaCalendarAlt className="text-blue-500" /> {detalhe.anoEmenda}
+                                            <FaCalendar className="text-blue-500" /> {detalhe.anoEmenda}
                                         </div>
                                     </div>
                                     <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100">

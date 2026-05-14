@@ -5,7 +5,7 @@ import { signOut } from "next-auth/react";
 import {
     FaHome, FaNewspaper, FaGavel, FaFileContract, FaUsers,
     FaMoneyBillWave, FaChartBar, FaBuilding, FaBullhorn,
-    FaSignOutAlt, FaTimes, FaBars, FaCalendarAlt, FaImages, FaEnvelope,
+    FaSignOutAlt, FaTimes, FaBars, FaCalendar, FaImages, FaEnvelope,
     FaHandshake, FaPlane, FaHammer, FaQuestionCircle, FaBook,
     FaUserFriends, FaUpload, FaFileAlt, FaExternalLinkAlt, FaUserShield, FaUserGraduate, FaUserTie
 } from "react-icons/fa";
@@ -14,7 +14,7 @@ import { useState } from "react";
 const menuItems = [
     { label: "Dashboard", href: "/admin", icon: FaHome, exact: true, roles: ["admin", "editor", "comunicacao"] },
     { label: "Notícias", href: "/admin/noticias", icon: FaNewspaper, roles: ["admin", "editor", "comunicacao"] },
-    { label: "Agenda", href: "/admin/agenda", icon: FaCalendarAlt, roles: ["admin", "editor", "comunicacao"] },
+    { label: "Agenda", href: "/admin/agenda", icon: FaCalendar, roles: ["admin", "editor", "comunicacao"] },
     { label: "Galeria", href: "/admin/galeria", icon: FaImages, roles: ["admin", "editor", "comunicacao"] },
     { label: "Obras", href: "/admin/obras", icon: FaHammer, roles: ["admin", "editor"] },
     { label: "FAQ", href: "/admin/faq", icon: FaQuestionCircle, roles: ["admin", "editor"] },

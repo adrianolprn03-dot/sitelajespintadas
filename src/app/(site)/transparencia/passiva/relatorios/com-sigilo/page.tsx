@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import PageHeader from "@/components/PageHeader";
-import { FaShieldAlt, FaLock, FaExclamationTriangle, FaInfoCircle, FaFileAlt, FaCalendarAlt, FaCheckCircle, FaUserShield, FaChevronRight, FaBalanceScale, FaSpinner, FaArrowCircleRight } from "react-icons/fa";
+import { FaShieldAlt, FaLock, FaExclamationTriangle, FaInfoCircle, FaFileAlt, FaCalendar, FaCheckCircle, FaUserShield, FaChevronRight, FaBalanceScale, FaSpinner, FaArrowCircleRight } from "react-icons/fa";
 import Link from "next/link";
 import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
 import { exportToCSV, exportToJSON, exportToPDF, exportToXLSX } from "@/lib/exportUtils";
@@ -182,7 +182,7 @@ export default function SICRelatoriosComSigiloPage() {
                                            <h3 className="text-base font-black text-gray-800 uppercase tracking-tighter mb-0.5">PROTOCOLO #{p.protocolo}</h3>
                                            <div className="flex items-center gap-3">
                                               <span className="flex items-center gap-1.5 text-[9px] font-black text-gray-400 uppercase tracking-widest">
-                                                 <FaCalendarAlt size={10} /> {new Date(p.criadoEm).toLocaleDateString('pt-BR')}
+                                                 <FaCalendar size={10} /> {new Date(p.criadoEm).toLocaleDateString('pt-BR')}
                                               </span>
                                               <span className="w-1 h-1 bg-gray-200 rounded-full" />
                                               <span className="text-[9px] font-black text-purple-500 uppercase tracking-widest">{p.orgao}</span>

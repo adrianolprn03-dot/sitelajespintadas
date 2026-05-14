@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { 
-    FaSpinner, FaCalendarAlt, FaBuilding, 
+    FaSpinner, FaCalendar, FaBuilding, 
     FaDownload, FaSearch, FaCheckCircle, FaTimesCircle,
     FaArrowRight, FaBriefcase, FaWallet
 } from "react-icons/fa";
@@ -294,7 +294,7 @@ export default function AtasRegistroClient() {
 
                                                 <div className="flex items-center gap-5">
                                                     <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-slate-400 shadow-sm border border-slate-100">
-                                                        <FaCalendarAlt size={20} />
+                                                        <FaCalendar size={20} />
                                                     </div>
                                                     <div>
                                                         <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Vigência Homologada</p>

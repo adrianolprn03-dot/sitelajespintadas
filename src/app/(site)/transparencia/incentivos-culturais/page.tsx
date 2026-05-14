@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { FaMusic, FaRunning, FaTheaterMasks, FaBook, FaTrophy, FaExternalLinkAlt, FaFileAlt, FaCalendarAlt, FaMoneyBillWave } from "react-icons/fa";
+import { FaMusic, FaRunning, FaTheaterMasks, FaBook, FaTrophy, FaExternalLinkAlt, FaFileAlt, FaCalendar, FaMoneyBillWave } from "react-icons/fa";
 import { Star } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
@@ -183,7 +183,7 @@ export default function IncentivosCulturaisPage() {
                                         </td>
                                         <td className="px-8 py-5">
                                             <div className="flex items-center gap-2 text-[10px] font-bold text-gray-500">
-                                                <FaCalendarAlt size={10} className="text-gray-300" />
+                                                <FaCalendar size={10} className="text-gray-300" />
                                                 {new Date(e.publicacao).toLocaleDateString("pt-BR")}
                                             </div>
                                         </td>

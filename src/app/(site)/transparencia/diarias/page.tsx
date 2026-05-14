@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { 
     FaPlaneDeparture, FaSpinner, FaUserTie, FaMapMarkerAlt, 
-    FaCalendarAlt, FaMoneyBillWave, FaBuilding, FaArrowRight, 
+    FaCalendar, FaMoneyBillWave, FaBuilding, FaArrowRight, 
     FaInfoCircle, FaDownload
 } from "react-icons/fa";
 import { 
@@ -484,7 +484,7 @@ export default function DiariasPage() {
                 <motion.div variants={itemVariants} className="mt-32 pt-24 border-t border-slate-100">
                     <div className="flex flex-col md:flex-row md:items-center gap-8 mb-16">
                         <div className="w-20 h-20 bg-gradient-to-br from-blue-600 to-indigo-900 text-white rounded-[2rem] flex items-center justify-center shadow-2xl shadow-blue-500/20 shrink-0">
-                            <FaCalendarAlt size={32} />
+                            <FaCalendar size={32} />
                         </div>
                         <div>
                             <h2 className="text-4xl font-black text-slate-950 uppercase tracking-tighter leading-none mb-3 italic">Atos Oficiais <span className="text-blue-600 font-bold not-italic">de Concessão</span></h2>

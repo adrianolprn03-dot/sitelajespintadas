@@ -5,7 +5,7 @@ import {
     Loader2, AlertCircle, Search, ChevronLeft, ChevronRight 
 } from "lucide-react";
 import { FaLandmark, FaChartLine, FaRegClock } from "react-icons/fa6";
-import { FaCalendarAlt } from "react-icons/fa";
+import { FaCalendar } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Transferencia {
@@ -77,7 +77,7 @@ export default function ListaTransferenciasFederal() {
 
                 <div className="flex items-center gap-4 bg-slate-50/50 p-2 rounded-[1.5rem] border border-slate-100 shadow-inner">
                     <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl shadow-sm border border-slate-100">
-                        <FaCalendarAlt className="text-slate-300" size={12} />
+                        <FaCalendar className="text-slate-300" size={12} />
                         <select 
                             value={ano} 
                             onChange={(e) => setAno(e.target.value)}
@@ -183,7 +183,7 @@ export default function ListaTransferenciasFederal() {
                                                     </span>
                                                     <span className="w-1 h-1 bg-slate-200 rounded-full" />
                                                     <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100 flex items-center gap-2">
-                                                        <FaCalendarAlt size={8} /> {new Date(item.dataLancamento).toLocaleDateString('pt-BR')}
+                                                        <FaCalendar size={8} /> {new Date(item.dataLancamento).toLocaleDateString('pt-BR')}
                                                     </span>
                                                 </div>
                                             </div>
