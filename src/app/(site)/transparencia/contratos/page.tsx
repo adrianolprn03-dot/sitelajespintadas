@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { 
     FaFileContract, FaSpinner, FaHistory, FaCheckCircle, 
     FaExclamationTriangle, FaTimesCircle, FaBuilding, 
-    FaWallet, FaArrowRight, FaRegCalendarAlt,
+    FaWallet, FaArrowRight, FaRegCalendar,
     FaBriefcase
 } from "react-icons/fa";
 import { 
@@ -294,7 +294,7 @@ export default function ContratosPage() {
                                                                 <FaBuildingColumns size={12} className="text-orange-300" /> {c.secretaria}
                                                             </span>
                                                             <span className="text-[10px] font-black text-orange-600 uppercase tracking-widest bg-orange-50 px-5 py-2.5 rounded-xl border border-orange-100 flex items-center gap-2.5 shadow-sm">
-                                                                <FaRegCalendarAlt size={14} /> Vigência: {new Date(c.dataInicio).toLocaleDateString("pt-BR")} — {new Date(c.dataFim).toLocaleDateString("pt-BR")}
+                                                                <FaRegCalendar size={14} /> Vigência: {new Date(c.dataInicio).toLocaleDateString("pt-BR")} — {new Date(c.dataFim).toLocaleDateString("pt-BR")}
                                                             </span>
                                                         </div>
                                                     </div>

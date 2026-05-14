@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { FaChartBar, FaExternalLinkAlt, FaShieldAlt, FaCheckCircle, FaStar, FaInfoCircle, FaArrowRight } from "react-icons/fa";
+import { FaChartBar, FaExternalLink, FaShield, FaCheckCircle, FaStar, FaInfoCircle, FaArrowRight } from "react-icons/fa";
 import { Activity } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
@@ -90,12 +90,12 @@ export default function RadarPage() {
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center gap-3 bg-white text-blue-800 px-8 py-4 rounded-[2rem] font-black uppercase text-[10px] tracking-widest hover:scale-105 transition-all shadow-xl"
                             >
-                                Acessar Radar ATRICON <FaExternalLinkAlt size={12} />
+                                Acessar Radar ATRICON <FaExternalLink size={12} />
                             </Link>
                         </div>
                         <div className="flex-shrink-0 text-center">
                             <div className="w-48 h-48 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex flex-col items-center justify-center">
-                                <FaShieldAlt className="text-amber-400 mb-2" size={40} />
+                                <FaShield className="text-amber-400 mb-2" size={40} />
                                 <div className="text-[9px] font-black text-blue-200 uppercase tracking-widest">Meta</div>
                                 <div className="text-5xl font-black text-white tracking-tighter">OURO</div>
                                 <div className="text-[9px] font-black text-blue-300 uppercase tracking-widest">PNTP 2026</div>
@@ -144,7 +144,7 @@ export default function RadarPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
                     <div className="bg-white rounded-[3rem] p-10 shadow-xl border border-gray-100">
                         <h4 className="text-xl font-black text-gray-800 uppercase tracking-tighter mb-6 flex items-center gap-3">
-                            <FaShieldAlt className="text-blue-600" /> Transparência Ativa
+                            <FaShield className="text-blue-600" /> Transparência Ativa
                         </h4>
                         <p className="text-gray-500 text-sm font-medium leading-relaxed mb-8">
                             Nossa transparência ativa é composta por informações publicadas espontaneamente, independentemente de solicitações. 

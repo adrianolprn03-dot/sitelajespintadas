@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { 
-    FaPlaneDeparture, FaSpinner, FaUserTie, FaMapMarkerAlt, 
+    FaPlaneDeparture, FaSpinner, FaUserTie, FaMapMarker, 
     FaCalendar, FaMoneyBillWave, FaBuilding, FaArrowRight, 
     FaInfoCircle, FaDownload
 } from "react-icons/fa";

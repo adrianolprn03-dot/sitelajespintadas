@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { FaPlus, FaTrash, FaSpinner, FaSearch, FaFileAlt } from "react-icons/fa";
+import { FaPlus, FaTrash, FaSpinner, FaSearch, FaFile } from "react-icons/fa";
 import toast from "react-hot-toast";
 
 type Documento = {
@@ -58,7 +58,7 @@ export default function AdminDocumentosPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-                        <FaFileAlt className="text-primary-500" /> Portal de Documentos
+                        <FaFile className="text-primary-500" /> Portal de Documentos
                     </h1>
                     <p className="text-gray-500 text-sm">Gerencie Leis, Decretos, RREO, RGF e Publicações Oficiais.</p>
                 </div>
@@ -113,7 +113,7 @@ export default function AdminDocumentosPage() {
                                         <td className="px-6 py-4 text-right">
                                             <div className="flex justify-end gap-2 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                                                 <a href={i.arquivo || i.documentUrl || "#"} target="_blank" className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg" title={i.arquivo ? "Ver Arquivo" : "Ver Link"}>
-                                                    <FaFileAlt />
+                                                    <FaFile />
                                                 </a>
                                                 <Link href={`/admin/documentos/editar/${i.id}`} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg" title="Editar">
                                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>

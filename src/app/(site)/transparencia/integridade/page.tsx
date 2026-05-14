@@ -7,14 +7,14 @@ import {
     FaFileSignature, FaArrowTrendUp, FaFeatherPointed
 } from "react-icons/fa6";
 import { 
-    FaShieldAlt, FaCheckCircle, FaUsers, FaFileAlt, FaSearch, 
-    FaGlobeAmericas, FaGavel, FaExternalLinkAlt, FaArrowRight, FaBolt
+    FaShield, FaCheckCircle, FaUsers, FaFile, FaSearch, 
+    FaGlobeAmericas, FaGavel, FaExternalLink, FaArrowRight, FaBolt
 } from "react-icons/fa";
 import { motion } from "framer-motion";
 
 const pilares = [
     {
-        icon: FaShieldAlt,
+        icon: FaShield,
         titulo: "Comprometimento da Alta Gestão",
         descricao: "O Prefeito Municipal e todos os Secretários demonstram compromisso formal com os princípios da integridade, ética e transparência na gestão dos recursos públicos.",
         cor: "from-blue-600 to-indigo-700",
@@ -42,7 +42,7 @@ const pilares = [
         shadow: "shadow-emerald-500/10"
     },
     {
-        icon: FaFileAlt,
+        icon: FaFile,
         titulo: "Canais de Denúncia",
         descricao: "Canal de ouvidoria com garantia de anonimato ao denunciante. Proibição de retaliação mediante norma interna e proteção ao servidor que relata irregularidades.",
         cor: "from-blue-500 to-indigo-500",
@@ -153,7 +153,7 @@ export default function IntegridadePage() {
                          <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-blue-50/50 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                          <div className="relative">
                             <div className="w-20 h-20 bg-slate-50 rounded-[2rem] flex items-center justify-center mb-8 group-hover:bg-blue-600 transition-all duration-500 group-hover:rotate-6 group-hover:scale-110 shadow-inner group-hover:shadow-blue-600/40">
-                                <FaShieldAlt className="text-blue-400 group-hover:text-white transition-colors" size={36} />
+                                <FaShield className="text-blue-400 group-hover:text-white transition-colors" size={36} />
                             </div>
                             <div className="text-6xl font-black text-slate-900 tracking-tighter mb-2 tabular-nums">
                                 {acoes.filter(a => a.status === "concluido").length}/{acoes.length}
@@ -276,7 +276,7 @@ export default function IntegridadePage() {
                                 <h4 className="text-xs font-black text-slate-800 uppercase tracking-tight mb-2 px-2 leading-tight">{doc.titulo}</h4>
                                 <p className="text-[9px] font-bold text-slate-300 uppercase tracking-[0.2em] mb-8">{doc.tamanho} • {doc.data}</p>
                                 <button className="mt-auto w-full py-4 bg-slate-50 text-slate-400 text-[10px] font-black uppercase tracking-widest rounded-2xl border border-slate-100 group-hover:bg-slate-950 group-hover:text-white group-hover:border-slate-950 transition-all flex items-center justify-center gap-3 active:scale-95 shadow-lg group-hover:shadow-slate-900/20">
-                                    Download PDF <FaExternalLinkAlt size={10} className="opacity-50" />
+                                    Download PDF <FaExternalLink size={10} className="opacity-50" />
                                 </button>
                             </div>
                         ))}

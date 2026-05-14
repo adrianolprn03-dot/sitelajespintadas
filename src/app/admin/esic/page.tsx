@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { FaFileAlt, FaSpinner, FaSearch, FaCheckCircle, FaClock, FaExclamationTriangle } from "react-icons/fa";
+import { FaFile, FaSpinner, FaSearch, FaCheckCircle, FaClock, FaExclamationTriangle } from "react-icons/fa";
 import toast from "react-hot-toast";
 
 type Esic = {
@@ -51,7 +51,7 @@ export default function AdminEsicPage() {
         <div className="space-y-6">
             <div>
                 <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-                    <FaFileAlt className="text-primary-500" /> e-SIC (Acesso à Informação)
+                    <FaFile className="text-primary-500" /> e-SIC (Acesso à Informação)
                 </h1>
                 <p className="text-gray-500 text-sm">Gerencie os pedidos de informação da LAI.</p>
             </div>

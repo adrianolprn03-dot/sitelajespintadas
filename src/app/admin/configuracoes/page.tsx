@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { FaBuilding, FaUserTie, FaSave, FaSpinner, FaMapMarkerAlt, FaClock, FaEnvelope, FaPhone, FaCamera } from "react-icons/fa";
+import { FaBuilding, FaUserTie, FaSave, FaSpinner, FaMapMarker, FaClock, FaEnvelope, FaPhone, FaCamera } from "react-icons/fa";
 import toast from "react-hot-toast";
 import ImageUpload from "@/components/admin/ImageUpload";
 
@@ -353,7 +353,7 @@ export default function AdminConfiguracoesPage() {
                         </div>
                         <div className="md:col-span-2 space-y-1">
                             <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1 flex items-center gap-2">
-                                <FaMapMarkerAlt /> Endereço Completo (Sede)
+                                <FaMapMarker /> Endereço Completo (Sede)
                             </label>
                             <input
                                 name="endereco_sede"

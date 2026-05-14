@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { FaBuilding, FaPlus, FaEdit, FaTrash, FaSpinner, FaSearch, FaImage, FaMapMarkerAlt, FaPhone, FaEnvelope, FaClock, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import { FaBuilding, FaPlus, FaEdit, FaTrash, FaSpinner, FaSearch, FaImage, FaMapMarker, FaPhone, FaEnvelope, FaClock, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import toast from "react-hot-toast";
 import ImageUpload from "@/components/admin/ImageUpload";
 

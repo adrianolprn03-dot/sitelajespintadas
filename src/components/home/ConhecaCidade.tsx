@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { FaUsers, FaMapMarkedAlt, FaBirthdayCake, FaInfoCircle } from "react-icons/fa";
+import { FaUsers, FaMapMarked, FaBirthdayCake, FaInfoCircle } from "react-icons/fa";
 import { motion } from "framer-motion";
 
 const infoCards = [
@@ -10,7 +10,7 @@ const infoCards = [
         legenda: "Habitantes (Censo 2022)",
     },
     {
-        icon: FaMapMarkedAlt,
+        icon: FaMapMarked,
         numero: "130.4 km²",
         legenda: "Área Territorial",
     },

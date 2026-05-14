@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { FaUpload, FaFileAlt, FaCheckCircle, FaExclamationTriangle } from "react-icons/fa";
+import { FaUpload, FaFile, FaCheckCircle, FaExclamationTriangle } from "react-icons/fa";
 import Link from "next/link";
 
 const MODULOS = [
@@ -66,7 +66,7 @@ export default function ImportacaoCSVPage() {
 
                     <div className="bg-blue-50 rounded-2xl p-6 border border-blue-100">
                         <h3 className="text-sm font-black text-blue-700 uppercase tracking-wider mb-3 flex items-center gap-2">
-                            <FaFileAlt /> Colunas Esperadas
+                            <FaFile /> Colunas Esperadas
                         </h3>
                         <p className="text-xs text-blue-600 font-mono leading-relaxed">
                             {selectedModulo.campos}

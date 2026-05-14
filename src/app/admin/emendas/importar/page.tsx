@@ -2,7 +2,7 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import Link from "next/link";
-import { FaUpload, FaFileAlt, FaCheckCircle, FaExclamationTriangle, FaArrowLeft, FaDownload } from "react-icons/fa";
+import { FaUpload, FaFile, FaCheckCircle, FaExclamationTriangle, FaArrowLeft, FaDownload } from "react-icons/fa";
 
 export default function ImportarEmendasPage() {
     const [file, setFile] = useState<File | null>(null);
@@ -62,7 +62,7 @@ export default function ImportarEmendasPage() {
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 space-y-6">
                     <div className="bg-blue-50 rounded-2xl p-6 border border-blue-100">
                         <h3 className="text-sm font-black text-blue-700 uppercase tracking-wider mb-3 flex items-center gap-2">
-                            <FaFileAlt /> Colunas Esperadas no CSV
+                            <FaFile /> Colunas Esperadas no CSV
                         </h3>
                         <p className="text-xs text-blue-600 font-mono leading-relaxed">
                             codigo_emenda; ano_emenda; autor_nome; numero_emenda; tipo_emenda; objeto; funcao_governo; subfuncao_governo; localidade; uf; favorecido_nome; favorecido_cnpj_cpf; valor_previsto; valor_empenhado; valor_liquidado; valor_pago; situacao_execucao; orgao_concedente; instrumento_numero; plano_acao_numero; convenio_numero; url_fonte_oficial; fonte_dado

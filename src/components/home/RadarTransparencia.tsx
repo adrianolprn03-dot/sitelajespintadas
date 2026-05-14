@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FaExternalLinkAlt, FaChartPie, FaCheckCircle, FaShieldAlt } from "react-icons/fa";
+import { FaExternalLink, FaChartPie, FaCheckCircle, FaShield } from "react-icons/fa";
 import { motion } from "framer-motion";
 
 export default function RadarTransparencia() {
@@ -16,7 +16,7 @@ export default function RadarTransparencia() {
                     {/* Left Side: Text Content */}
                     <div className="flex-1 space-y-10">
                         <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-100 px-4 py-2 rounded-full text-[10px] font-black text-blue-600 uppercase tracking-widest shadow-sm">
-                            <FaShieldAlt className="animate-pulse" /> PNTP 2026 – ATRICON / TCU
+                            <FaShield className="animate-pulse" /> PNTP 2026 – ATRICON / TCU
                         </div>
                         
                         <h2 className="text-4xl md:text-5xl font-black text-slate-900 uppercase tracking-tighter leading-[0.9] mb-6">
@@ -50,7 +50,7 @@ export default function RadarTransparencia() {
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center gap-3 bg-slate-900 text-white px-10 py-5 rounded-[2rem] font-black text-xs uppercase tracking-widest hover:bg-blue-600 transition-all hover:scale-105 shadow-2xl active:scale-95 group"
                             >
-                                Consultar Índice Oficial <FaExternalLinkAlt className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                                Consultar Índice Oficial <FaExternalLink className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                             </Link>
                             
                             <Link 

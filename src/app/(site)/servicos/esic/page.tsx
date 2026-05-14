@@ -4,9 +4,9 @@ import toast from "react-hot-toast";
 import PageHeader from "@/components/PageHeader";
 import { 
     FaSearch, FaQuestionCircle, FaChartBar, FaUserShield, 
-    FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaClock, 
-    FaFileAlt, FaExternalLinkAlt, FaInfoCircle, FaBullhorn, 
-    FaGavel, FaLock, FaBalanceScale, FaBook, FaSignOutAlt, 
+    FaPhone, FaEnvelope, FaMapMarker, FaClock, 
+    FaFile, FaExternalLink, FaInfoCircle, FaBullhorn, 
+    FaGavel, FaLock, FaBalanceScale, FaBook, FaSignOut, 
     FaHistory, FaCheckCircle, FaChevronDown, FaChevronUp,
     FaUser, FaBuilding, FaIdCard, FaBriefcase, FaArrowLeft, FaHome
 } from "react-icons/fa";
@@ -272,11 +272,11 @@ export default function ESICPage() {
                             <h4 className="text-[10px] font-black uppercase tracking-widest text-primary mb-4">Contato Presencial</h4>
                             <div className="space-y-4">
                                 <div className="flex gap-3">
-                                    <FaMapMarkerAlt className="text-gray-400 mt-1" size={14} />
+                                    <FaMapMarker className="text-gray-400 mt-1" size={14} />
                                     <p className="text-[11px] font-bold text-gray-600 leading-snug">Rua São Francisco, nº 275 – Centro<br/>CEP: 59.235-000</p>
                                 </div>
                                 <div className="flex gap-3">
-                                    <FaPhoneAlt className="text-gray-400 mt-1" size={14} />
+                                    <FaPhone className="text-gray-400 mt-1" size={14} />
                                     <p className="text-[11px] font-bold text-gray-600 leading-snug">(84) 9.8748 – 0287</p>
                                 </div>
                                 <div className="flex gap-3">
@@ -367,7 +367,7 @@ export default function ESICPage() {
                                             <Link href="/transparencia/passiva/perguntas" className="block p-6 bg-gray-50 rounded-2xl border border-gray-100 hover:border-primary-500 transition-all group">
                                                 <div className="flex justify-between items-center">
                                                     <p className="font-bold text-gray-700">Clique aqui para acessar o FAQ completo da LAI</p>
-                                                    <FaExternalLinkAlt className="text-gray-400 group-hover:text-primary" />
+                                                    <FaExternalLink className="text-gray-400 group-hover:text-primary" />
                                                 </div>
                                             </Link>
                                         </div>
@@ -376,7 +376,7 @@ export default function ESICPage() {
                                 {infoTab !== "sic" && infoTab !== "prazos" && infoTab !== "faq" && (
                                     <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
                                         <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center text-gray-300 text-4xl">
-                                            <FaFileAlt />
+                                            <FaFile />
                                         </div>
                                         <div>
                                             <h3 className="text-xl font-black text-gray-400 uppercase tracking-widest">Página em Construção</h3>
@@ -530,7 +530,7 @@ export default function ESICPage() {
                                 </div>
 
                                 <div className="bg-white rounded-[3rem] shadow-xl p-10 border-2 border-white">
-                                    <h3 className="text-xl font-black text-primary-800 uppercase tracking-tighter mb-8 flex items-center gap-3"><FaFileAlt /> Novo Pedido de Informação</h3>
+                                    <h3 className="text-xl font-black text-primary-800 uppercase tracking-tighter mb-8 flex items-center gap-3"><FaFile /> Novo Pedido de Informação</h3>
                                     {protocolo ? (
                                         <div className="text-center py-12">
                                             <FaCheckCircle className="text-primary-500 text-5xl mx-auto mb-4" />

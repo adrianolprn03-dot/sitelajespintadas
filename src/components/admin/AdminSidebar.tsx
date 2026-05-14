@@ -5,9 +5,9 @@ import { signOut } from "next-auth/react";
 import {
     FaHome, FaNewspaper, FaGavel, FaFileContract, FaUsers,
     FaMoneyBillWave, FaChartBar, FaBuilding, FaBullhorn,
-    FaSignOutAlt, FaTimes, FaBars, FaCalendar, FaImages, FaEnvelope,
+    FaSignOut, FaTimes, FaBars, FaCalendar, FaImages, FaEnvelope,
     FaHandshake, FaPlane, FaHammer, FaQuestionCircle, FaBook,
-    FaUserFriends, FaUpload, FaFileAlt, FaExternalLinkAlt, FaUserShield, FaUserGraduate, FaUserTie
+    FaUserFriends, FaUpload, FaFile, FaExternalLink, FaUserShield, FaUserGraduate, FaUserTie
 } from "react-icons/fa";
 import { useState } from "react";
 
@@ -34,9 +34,9 @@ const menuItems = [
     { label: "Secretarias", href: "/admin/secretarias", icon: FaBuilding, roles: ["admin", "editor"] },
     { label: "Unidades At.", href: "/admin/unidades", icon: FaBuilding, roles: ["admin", "editor"] },
     { label: "Ouvidoria", href: "/admin/ouvidoria", icon: FaBullhorn, roles: ["admin", "editor"] },
-    { label: "e-SIC", href: "/admin/esic", icon: FaFileAlt, roles: ["admin", "editor"] },
+    { label: "e-SIC", href: "/admin/esic", icon: FaFile, roles: ["admin", "editor"] },
     { label: "Fale Conosco", href: "/admin/contatos", icon: FaEnvelope, roles: ["admin", "editor"] },
-    { label: "Links Externos", href: "/admin/links-externos", icon: FaExternalLinkAlt, roles: ["admin", "editor"] },
+    { label: "Links Externos", href: "/admin/links-externos", icon: FaExternalLink, roles: ["admin", "editor"] },
     { label: "Configurações", href: "/admin/configuracoes", icon: FaBuilding, roles: ["admin"] },
     { label: "Usuários", href: "/admin/usuarios", icon: FaUserShield, roles: ["admin"] },
     { label: "Saúde / REMUME", href: "/admin/saude", icon: FaBook, roles: ["admin", "editor"] },
@@ -47,7 +47,7 @@ const menuItems = [
     { label: "Pesquisas (PNTP)", href: "/admin/pesquisa-satisfacao", icon: FaChartBar, roles: ["admin", "editor"] },
     { label: "Concursos", href: "/admin/concursos", icon: FaUsers, roles: ["admin", "editor"] },
     { label: "Editais", href: "/admin/editais", icon: FaBullhorn, roles: ["admin", "editor"] },
-    { label: "Carta de Serviços", href: "/admin/carta-servicos", icon: FaFileAlt, roles: ["admin", "editor"] },
+    { label: "Carta de Serviços", href: "/admin/carta-servicos", icon: FaFile, roles: ["admin", "editor"] },
     { label: "Símbolos Oficiais", href: "/admin/configuracoes/simbolos", icon: FaImages, roles: ["admin"] },
     { label: "Importar CSV", href: "/admin/importacao", icon: FaUpload, roles: ["admin"] },
 ];
@@ -140,7 +140,7 @@ export default function AdminSidebar({ userRole = "admin" }: { userRole?: string
                         title={collapsed ? "Sair" : undefined}
                         className={`w-full group flex items-center gap-3 py-2.5 rounded-xl text-red-500/80 hover:text-red-600 hover:bg-red-50/80 transition-all ${collapsed ? 'justify-center' : 'px-2'}`}
                     >
-                        <FaSignOutAlt className="group-hover:-translate-x-0.5 transition-transform" size={14} />
+                        <FaSignOut className="group-hover:-translate-x-0.5 transition-transform" size={14} />
                         {!collapsed && <span className="text-xs font-bold tracking-wide">Encerrar Sessão</span>}
                     </button>
                 </div>

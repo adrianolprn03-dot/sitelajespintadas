@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import PageHeader from "@/components/PageHeader";
-import { FaPaperPlane, FaPhoneAlt, FaMapMarkerAlt, FaEnvelope, FaClock } from "react-icons/fa";
+import { FaPaperPlane, FaPhone, FaMapMarker, FaEnvelope, FaClock } from "react-icons/fa";
 
 export default function ContatoPage() {
     const [formData, setFormData] = useState({ nome: '', email: '', assunto: '', mensagem: '' });
@@ -50,7 +50,7 @@ export default function ContatoPage() {
                             <div className="space-y-6">
                                 <div className="flex items-start gap-4">
                                     <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center shrink-0">
-                                        <FaMapMarkerAlt />
+                                        <FaMapMarker />
                                     </div>
                                     <div>
                                         <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Endereço</p>
@@ -70,7 +70,7 @@ export default function ContatoPage() {
                                 </div>
                                 <div className="flex items-start gap-4">
                                     <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center shrink-0">
-                                        <FaPhoneAlt />
+                                        <FaPhone />
                                     </div>
                                     <div>
                                         <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Telefone</p>

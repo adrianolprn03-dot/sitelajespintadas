@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { FaStar, FaRegStar, FaSpinner, FaCommentAlt, FaCalendar } from "react-icons/fa";
+import { FaStar, FaRegStar, FaSpinner, FaComment, FaCalendar } from "react-icons/fa";
 import PageHeader from "@/components/PageHeader";
 
 type Avaliacao = {
@@ -77,7 +77,7 @@ export default function AdminAvaliacoesPage() {
                                     <FaCalendar /> {new Date(av.respondidoEm).toLocaleDateString('pt-BR')} - {new Date(av.respondidoEm).toLocaleTimeString('pt-BR')}
                                 </div>
                                 <div className="bg-gray-50 rounded-2xl p-6 relative">
-                                    <FaCommentAlt className="absolute -top-3 left-6 text-gray-100" size={20} />
+                                    <FaComment className="absolute -top-3 left-6 text-gray-100" size={20} />
                                     <p className="text-gray-600 text-sm italic">
                                         {av.comentario || "Nenhum comentário enviado."}
                                     </p>

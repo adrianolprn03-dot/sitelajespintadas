@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { FaPlus, FaEdit, FaTrash, FaSpinner, FaSearch, FaCalendar, FaClock, FaMapMarkerAlt } from "react-icons/fa";
+import { FaPlus, FaEdit, FaTrash, FaSpinner, FaSearch, FaCalendar, FaClock, FaMapMarker } from "react-icons/fa";
 import toast from "react-hot-toast";
 
 type Evento = {
@@ -112,7 +112,7 @@ export default function AdminAgendaPage() {
                                             <div className="flex items-center gap-2 mt-1"><FaClock className="text-primary-300" /> {new Date(i.dataInicio).toLocaleTimeString("pt-BR", { hour: '2-digit', minute: '2-digit' })}</div>
                                         </td>
                                         <td className="px-6 py-4 text-sm text-gray-500">
-                                            <div className="flex items-center gap-2"><FaMapMarkerAlt className="text-gray-400" /> {i.local || "Não informado"}</div>
+                                            <div className="flex items-center gap-2"><FaMapMarker className="text-gray-400" /> {i.local || "Não informado"}</div>
                                         </td>
                                         <td className="px-6 py-4 text-right">
                                             <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">

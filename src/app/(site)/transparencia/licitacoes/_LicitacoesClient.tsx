@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { 
-    FaChartBar, FaSpinner, FaExternalLinkAlt, FaBuilding, 
-    FaGavel, FaRegCalendarAlt, FaBriefcase,
+    FaChartBar, FaSpinner, FaExternalLink, FaBuilding, 
+    FaGavel, FaRegCalendar, FaBriefcase,
     FaArrowRight, FaCheckCircle, FaClock, FaBan,
     FaFileContract, FaBolt, FaInfoCircle
 } from "react-icons/fa";
@@ -397,7 +397,7 @@ export default function LicitacoesClient() {
                                                             <div className="lg:col-span-2 flex flex-col justify-center">
                                                                 <div className="bg-white px-8 py-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/40 flex flex-col items-center justify-center gap-6 group-hover:border-blue-200 hover:scale-[1.02] transition-all duration-500 relative overflow-hidden group/date">
                                                                     <div className="absolute top-0 right-0 p-6 opacity-[0.05] group-hover/date:rotate-12 transition-transform">
-                                                                        <FaRegCalendarAlt size={48} />
+                                                                        <FaRegCalendar size={48} />
                                                                     </div>
                                                                     <div className="text-center">
                                                                         <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em] mb-3">Data de Abertura</p>

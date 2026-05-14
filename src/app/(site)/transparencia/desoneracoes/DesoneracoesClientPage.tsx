@@ -1,6 +1,6 @@
 "use client";
 import { useState, useMemo } from "react";
-import { FaPercentage, FaInfoCircle, FaFileAlt, FaSearch } from "react-icons/fa";
+import { FaPercentage, FaInfoCircle, FaFile, FaSearch } from "react-icons/fa";
 import { TrendingDown } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
@@ -129,7 +129,7 @@ export default function DesoneracoesClientPage({ initialData }: { initialData: D
                                             </td>
                                             <td className="px-8 py-5">
                                                 <div className="inline-flex items-center gap-2 bg-gray-50 border border-gray-100 px-3 py-1.5 rounded-xl text-[10px] font-mono text-gray-700">
-                                                    <FaFileAlt size={10} className="text-gray-400" /> {d.fundamentoLegal}
+                                                    <FaFile size={10} className="text-gray-400" /> {d.fundamentoLegal}
                                                 </div>
                                             </td>
                                             <td className="px-8 py-5 text-right">

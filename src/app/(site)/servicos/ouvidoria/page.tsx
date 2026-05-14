@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { FaSearch, FaQuestionCircle, FaChartBar, FaUserShield, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaClock, FaClipboardList, FaFileAlt, FaSmile, FaExternalLinkAlt, FaShieldAlt, FaInfoCircle } from "react-icons/fa";
+import { FaSearch, FaQuestionCircle, FaChartBar, FaUserShield, FaPhone, FaEnvelope, FaMapMarker, FaClock, FaClipboardList, FaFile, FaSmile, FaExternalLink, FaShield, FaInfoCircle } from "react-icons/fa";
 import toast from "react-hot-toast";
 import PageHeader from "@/components/PageHeader";
 import Link from "next/link";
@@ -18,7 +18,7 @@ const linksLaterais = [
     { label: "Estatísticas da Ouvidoria", href: "/transparencia/relatorios", icon: FaChartBar },
     { label: "Acompanhar Manifestação", href: "/servicos/consulta-protocolo", icon: FaSearch },
     { label: "Pesquisa de Satisfação", href: "/transparencia/pesquisa-satisfacao", icon: FaSmile },
-    { label: "Regulamentação da Ouvidoria", href: "/transparencia/legislacao", icon: FaFileAlt },
+    { label: "Regulamentação da Ouvidoria", href: "/transparencia/legislacao", icon: FaFile },
 ];
 
 export default function OuvidoriaPage() {
@@ -139,7 +139,7 @@ export default function OuvidoriaPage() {
                                                 />
                                             </div>
                                             <label htmlFor="anonimo" className="text-[10px] font-black uppercase tracking-[0.15em] text-gray-500 cursor-pointer select-none group-hover:text-gray-700 transition-colors flex items-center gap-2">
-                                                <FaShieldAlt className="text-[#01b0ef]" />
+                                                <FaShield className="text-[#01b0ef]" />
                                                 Desejo fazer uma manifestação anônima
                                             </label>
                                         </div>
@@ -221,7 +221,7 @@ export default function OuvidoriaPage() {
                                 </div>
                                 <div className="flex items-start gap-3">
                                     <div className="w-9 h-9 bg-blue-50 text-[#01b0ef] rounded-xl flex items-center justify-center shrink-0 text-sm">
-                                        <FaPhoneAlt />
+                                        <FaPhone />
                                     </div>
                                     <div>
                                         <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-0.5">Contatos da Ouvidoria</p>
@@ -239,7 +239,7 @@ export default function OuvidoriaPage() {
                                 </div>
                                 <div className="flex items-start gap-3">
                                     <div className="w-9 h-9 bg-blue-50 text-[#01b0ef] rounded-xl flex items-center justify-center shrink-0 text-sm">
-                                        <FaMapMarkerAlt />
+                                        <FaMapMarker />
                                     </div>
                                     <div>
                                         <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-0.5">Endereço da Ouvidoria</p>
@@ -272,7 +272,7 @@ export default function OuvidoriaPage() {
                                     >
                                         <link.icon className="text-gray-400 group-hover:text-[#01b0ef] transition-colors shrink-0" />
                                         <span className="flex-1">{link.label}</span>
-                                        <FaExternalLinkAlt className="text-[10px] text-gray-300 group-hover:text-[#01b0ef] transition-colors opacity-0 group-hover:opacity-100" />
+                                        <FaExternalLink className="text-[10px] text-gray-300 group-hover:text-[#01b0ef] transition-colors opacity-0 group-hover:opacity-100" />
                                     </Link>
                                 ))}
                             </div>
@@ -283,7 +283,7 @@ export default function OuvidoriaPage() {
                             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10" />
                             <div className="absolute bottom-0 left-0 w-20 h-20 bg-white/5 rounded-full blur-xl -ml-6 -mb-6" />
                             <h3 className="text-sm font-black uppercase tracking-tighter mb-3 relative z-10 flex items-center gap-2">
-                                <FaFileAlt /> Acesso à Informação (e-SIC)
+                                <FaFile /> Acesso à Informação (e-SIC)
                             </h3>
                             <p className="text-blue-100 text-xs font-medium mb-5 relative z-10 leading-relaxed">
                                 Solicite informações públicas à Prefeitura Municipal conforme a Lei de Acesso à Informação.

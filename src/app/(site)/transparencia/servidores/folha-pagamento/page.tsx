@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { 
-    FaSpinner, FaMoneyCheckAlt, FaBuilding, FaUserTie, 
+    FaSpinner, FaMoneyCheck, FaBuilding, FaUserTie, 
     FaWallet, FaSearch, FaArrowRight,
     FaFilter, FaDownload, FaCheckCircle
 } from "react-icons/fa";
@@ -132,7 +132,7 @@ export default function FolhaPagamentoPage() {
                 title="Folha de Pagamento"
                 subtitle="Consulta pública de remunerações, proventos e descontos dos agentes públicos municipais."
                 variant="premium"
-                icon={<FaMoneyCheckAlt />}
+                icon={<FaMoneyCheck />}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
                     { label: "Transparência", href: "/transparencia" },

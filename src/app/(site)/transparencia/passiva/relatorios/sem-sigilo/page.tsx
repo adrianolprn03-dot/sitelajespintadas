@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import PageHeader from "@/components/PageHeader";
-import { FaEye, FaFileAlt, FaCheckCircle, FaClock, FaArrowRight, FaSpinner } from "react-icons/fa";
+import { FaEye, FaFile, FaCheckCircle, FaClock, FaArrowRight, FaSpinner } from "react-icons/fa";
 import Link from "next/link";
 import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
 import { exportToCSV, exportToJSON, exportToPDF, exportToXLSX } from "@/lib/exportUtils";
@@ -129,7 +129,7 @@ export default function SICRelatoriosSemSigiloPage() {
                                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                                        <div className="flex items-center gap-4">
                                           <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-500 shadow-sm border border-blue-50">
-                                             <FaFileAlt size={20} />
+                                             <FaFile size={20} />
                                           </div>
                                           <div>
                                              <h3 className="text-base font-black text-gray-800 uppercase tracking-tighter mb-0.5">PROTOCOLO #{p.protocolo}</h3>
@@ -169,7 +169,7 @@ export default function SICRelatoriosSemSigiloPage() {
                     ) : (
                         <div className="bg-white rounded-[3rem] p-20 text-center border-2 border-dashed border-gray-100">
                             <div className="w-20 h-20 bg-gray-50 text-gray-200 rounded-full flex items-center justify-center mx-auto mb-8">
-                               <FaFileAlt size={40} />
+                               <FaFile size={40} />
                             </div>
                             <h3 className="text-xl font-black text-gray-800 uppercase tracking-tighter mb-4">Nenhum registro encontrado</h3>
                             <p className="text-gray-400 font-medium text-sm max-w-sm mx-auto">

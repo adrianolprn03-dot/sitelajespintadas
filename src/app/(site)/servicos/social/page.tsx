@@ -1,6 +1,6 @@
 "use client";
 import PageHeader from "@/components/PageHeader";
-import { FaHandsHelping, FaMapMarkerAlt, FaPhoneAlt, FaClock } from "react-icons/fa";
+import { FaHandsHelping, FaMapMarker, FaPhone, FaClock } from "react-icons/fa";
 
 import { useState, useEffect } from "react";
 
@@ -70,14 +70,14 @@ export default function SocialPage() {
                                 </div>
                                 <div className="p-8 space-y-4 flex-1">
                                     <div className="flex items-start gap-3">
-                                        <FaMapMarkerAlt className="text-[#01b0ef] text-lg mt-0.5 shrink-0" />
+                                        <FaMapMarker className="text-[#01b0ef] text-lg mt-0.5 shrink-0" />
                                         <div>
                                             <p className="text-xs font-bold uppercase text-gray-400 mb-0.5 tracking-widest">Endereço</p>
                                             <p className="text-sm font-medium text-gray-700">{unidade.endereco}</p>
                                         </div>
                                     </div>
                                     <div className="flex items-start gap-3">
-                                        <FaPhoneAlt className="text-[#01b0ef] text-lg mt-0.5 shrink-0" />
+                                        <FaPhone className="text-[#01b0ef] text-lg mt-0.5 shrink-0" />
                                         <div>
                                             <p className="text-xs font-bold uppercase text-gray-400 mb-0.5 tracking-widest">Telefone Público</p>
                                             <p className="text-sm font-medium text-gray-700">{unidade.telefone}</p>

@@ -2,8 +2,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { 
-    FaExchangeAlt, FaExternalLinkAlt, FaInfoCircle, FaHospital, 
-    FaSchool, FaMoneyCheckAlt, FaBuilding, FaSync, FaGlobeAmericas,
+    FaExchange, FaExternalLink, FaInfoCircle, FaHospital, 
+    FaSchool, FaMoneyCheck, FaBuilding, FaSync, FaGlobeAmericas,
     FaArrowRight
 } from "react-icons/fa";
 import { FaShieldHalved } from "react-icons/fa6";
@@ -32,7 +32,7 @@ export default function TransferenciasPage() {
                 title="Transferências e Repasses"
                 subtitle="Acompanhe os recursos fiscais, constitucionais e legais repassados pela União e pelo Estado ao nosso município."
                 variant="premium"
-                icon={<FaExchangeAlt />}
+                icon={<FaExchange />}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
                     { label: "Transparência", href: "/transparencia" },
@@ -54,7 +54,7 @@ export default function TransferenciasPage() {
                         </div>
                         
                         <div className="w-24 h-24 shrink-0 bg-blue-600 text-white rounded-[2rem] flex items-center justify-center shadow-2xl shadow-blue-500/30 relative z-10">
-                            <FaExchangeAlt size={40} />
+                            <FaExchange size={40} />
                         </div>
                         <div className="relative z-10 flex-1">
                             <div className="flex items-center gap-3 mb-4">
@@ -115,7 +115,7 @@ export default function TransferenciasPage() {
                                 rel="noopener noreferrer"
                                 className="h-16 flex items-center justify-between bg-slate-900 hover:bg-emerald-600 text-white font-black px-8 rounded-2xl transition-all duration-500 shadow-xl shadow-slate-200 text-[10px] uppercase tracking-widest group/btn"
                             >
-                                Acessar Portal CGU <FaExternalLinkAlt className="group-hover/btn:rotate-12 transition-transform" />
+                                Acessar Portal CGU <FaExternalLink className="group-hover/btn:rotate-12 transition-transform" />
                             </a>
                         </div>
                     </div>
@@ -142,7 +142,7 @@ export default function TransferenciasPage() {
                                 rel="noopener noreferrer"
                                 className="h-14 flex items-center justify-between bg-white hover:bg-blue-50 text-slate-700 hover:text-blue-700 font-black px-6 rounded-2xl transition-all border border-slate-100 hover:border-blue-200 text-[9px] uppercase tracking-widest"
                             >
-                                Acessar FNS <FaExternalLinkAlt />
+                                Acessar FNS <FaExternalLink />
                             </a>
                         </div>
                     </div>
@@ -169,7 +169,7 @@ export default function TransferenciasPage() {
                                 rel="noopener noreferrer"
                                 className="h-14 flex items-center justify-between bg-white hover:bg-amber-50 text-slate-700 hover:text-amber-700 font-black px-6 rounded-2xl transition-all border border-slate-100 hover:border-amber-200 text-[9px] uppercase tracking-widest"
                             >
-                                Acessar FNDE <FaExternalLinkAlt />
+                                Acessar FNDE <FaExternalLink />
                             </a>
                         </div>
                     </div>
@@ -180,7 +180,7 @@ export default function TransferenciasPage() {
                     {/* Emendas Parlamentares - Destaque */}
                     <div className="lg:col-span-2 bg-gradient-to-br from-indigo-900 to-slate-900 rounded-[2.5rem] p-10 lg:p-12 text-white shadow-2xl shadow-indigo-900/10 relative overflow-hidden group">
                         <div className="absolute top-0 right-0 p-12 opacity-10 group-hover:scale-110 transition-transform">
-                            <FaMoneyCheckAlt size={160} />
+                            <FaMoneyCheck size={160} />
                         </div>
                         <div className="relative z-10">
                             <div className="flex items-center gap-2 mb-6">

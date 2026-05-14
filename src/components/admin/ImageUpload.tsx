@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef } from "react";
-import { FaCloudUploadAlt, FaTrash, FaSpinner, FaImage } from "react-icons/fa";
+import { FaUpload, FaTrash, FaSpinner, FaImage } from "react-icons/fa";
 import toast from "react-hot-toast";
 
 interface ImageUploadProps {
@@ -71,7 +71,7 @@ export default function ImageUpload({ value, onChange, label }: ImageUploadProps
                                 className="bg-white text-gray-800 p-3 rounded-xl hover:bg-gray-100 transition-colors shadow-lg"
                                 title="Alterar Foto"
                             >
-                                <FaCloudUploadAlt size={20} />
+                                <FaUpload size={20} />
                             </button>
                             <button
                                 type="button"
@@ -95,7 +95,7 @@ export default function ImageUpload({ value, onChange, label }: ImageUploadProps
                         ) : (
                             <>
                                 <div className="w-12 h-12 bg-white rounded-xl shadow-sm border border-gray-100 flex items-center justify-center group-hover:scale-110 transition-transform">
-                                    <FaCloudUploadAlt size={24} />
+                                    <FaUpload size={24} />
                                 </div>
                                 <div className="text-center">
                                     <p className="text-sm font-bold uppercase tracking-tight">Clique para carregar</p>

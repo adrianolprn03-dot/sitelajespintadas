@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { FaArrowLeft, FaSpinner, FaPaperPlane, FaUser, FaInfoCircle, FaCheckCircle, FaFileAlt, FaClock, FaPaperclip, FaExclamationTriangle } from "react-icons/fa";
+import { FaArrowLeft, FaSpinner, FaPaperPlane, FaUser, FaInfoCircle, FaCheckCircle, FaFile, FaClock, FaPaperclip, FaExclamationTriangle } from "react-icons/fa";
 import Link from "next/link";
 import toast from "react-hot-toast";
 
@@ -146,7 +146,7 @@ export default function DetalhesEsicPage() {
                             )}
                         </div>
 
-                        <h1 className="text-xl font-bold text-gray-800 flex items-center gap-2 mb-4"><FaFileAlt className="text-primary-500" /> Requerimento</h1>
+                        <h1 className="text-xl font-bold text-gray-800 flex items-center gap-2 mb-4"><FaFile className="text-primary-500" /> Requerimento</h1>
                         <p className="text-gray-600 leading-relaxed bg-gray-50 p-6 rounded-2xl border border-gray-100 whitespace-pre-wrap">
                             {item.pedido}
                         </p>

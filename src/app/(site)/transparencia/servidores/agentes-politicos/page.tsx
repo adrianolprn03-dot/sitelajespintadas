@@ -1,5 +1,5 @@
 import PageHeader from "@/components/PageHeader";
-import { FaIdCardAlt, FaInfoCircle } from "react-icons/fa";
+import { FaIdCard, FaInfoCircle } from "react-icons/fa";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
 
 export default function AgentesPoliticosPage() {
@@ -9,7 +9,7 @@ export default function AgentesPoliticosPage() {
                 title="Agentes Políticos"
                 subtitle="Remuneração e subsídios do Prefeito, Vice-Prefeito e Secretários Municipais."
                 variant="premium"
-                icon={<FaIdCardAlt />}
+                icon={<FaIdCard />}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
                     { label: "Transparência", href: "/transparencia" },
@@ -21,7 +21,7 @@ export default function AgentesPoliticosPage() {
             <div className="max-w-[1240px] mx-auto px-6 py-16 -mt-24 relative z-30 text-center">
                 <div className="bg-white rounded-[3rem] p-20 shadow-xl shadow-gray-200/40 border border-white">
                     <div className="w-24 h-24 bg-sky-50 text-sky-500 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-inner">
-                        <FaIdCardAlt size={40} />
+                        <FaIdCard size={40} />
                     </div>
                     <h2 className="text-3xl font-black text-gray-800 uppercase tracking-tighter mb-4">
                         Subsídios de Gestores

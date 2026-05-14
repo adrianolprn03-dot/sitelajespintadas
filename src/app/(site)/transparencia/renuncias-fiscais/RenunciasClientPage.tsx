@@ -5,7 +5,7 @@ import {
     FaCoins, FaArrowRight, FaSearch
 } from "react-icons/fa";
 import { FaShieldHalved, FaClockRotateLeft, FaHandHoldingDollar } from "react-icons/fa6";
-import { FaExternalLinkAlt, FaFileAlt } from "react-icons/fa";
+import { FaExternalLink, FaFile } from "react-icons/fa";
 import { motion } from "framer-motion";
 import PageHeader from "@/components/PageHeader";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";

@@ -1,6 +1,6 @@
 "use client";
 import { useState, useMemo } from "react";
-import { FaSearch, FaFilter, FaTimes, FaExternalLinkAlt, FaChevronRight } from "react-icons/fa";
+import { FaSearch, FaFilter, FaTimes, FaExternalLink, FaChevronRight } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import ExportButtons from "@/components/transparencia/ExportButtons";
 
@@ -111,7 +111,7 @@ export default function EmendaPixClientPage({ initialData }: { initialData: Emen
                                 <div className="pt-6 flex flex-col md:flex-row gap-4">
                                     {detalhe.urlFonteOficial && (
                                         <a href={detalhe.urlFonteOficial} target="_blank" rel="noopener noreferrer" className="flex-1 inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-200">
-                                            <FaExternalLinkAlt /> Ver Fonte Oficial
+                                            <FaExternalLink /> Ver Fonte Oficial
                                         </a>
                                     )}
                                     <button onClick={() => setDetalheId(null)} className="inline-flex items-center justify-center gap-2 bg-gray-100 text-gray-600 px-6 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-gray-200 transition-all">

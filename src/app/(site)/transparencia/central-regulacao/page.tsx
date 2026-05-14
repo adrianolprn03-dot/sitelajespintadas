@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { FaHeartbeat, FaUserMd, FaFlask, FaStethoscope, FaAmbulance, FaInfoCircle, FaPhoneAlt, FaExternalLinkAlt } from "react-icons/fa";
+import { FaHeartbeat, FaUserMd, FaFlask, FaStethoscope, FaAmbulance, FaInfoCircle, FaPhone, FaExternalLink } from "react-icons/fa";
 import PageHeader from "@/components/PageHeader";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
 import Link from "next/link";
@@ -113,7 +113,7 @@ export default function CentralRegulacaoPage() {
                             </div>
                             <a href="tel:+558434000000" className="flex items-center gap-3 text-slate-300 hover:text-white transition-colors mt-4">
                                 <div className="w-10 h-10 bg-slate-700 rounded-xl flex items-center justify-center shrink-0">
-                                    <FaPhoneAlt size={14} />
+                                    <FaPhone size={14} />
                                 </div>
                                 <span className="font-medium text-sm">(84) 3400-0000</span>
                             </a>
@@ -122,7 +122,7 @@ export default function CentralRegulacaoPage() {
                             href="/unidades-de-saude"
                             className="mt-8 flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-black uppercase text-[9px] tracking-widest py-4 rounded-2xl transition-all"
                         >
-                            Ver Unidades de Saúde <FaExternalLinkAlt size={9} />
+                            Ver Unidades de Saúde <FaExternalLink size={9} />
                         </Link>
                     </div>
                 </div>

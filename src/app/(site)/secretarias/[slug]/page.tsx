@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import PageHeader from "@/components/PageHeader";
-import { FaBuilding, FaUserTie, FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock, FaNewspaper } from "react-icons/fa";
+import { FaBuilding, FaUserTie, FaPhone, FaEnvelope, FaMapMarker, FaClock, FaNewspaper } from "react-icons/fa";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getSecretariaIcon } from "@/lib/icons";
@@ -125,7 +125,7 @@ export default async function SecretariaDetalhesPage({ params }: { params: { slu
 
                                 <div className="flex gap-4">
                                     <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center shrink-0">
-                                        <FaMapMarkerAlt size={14} />
+                                        <FaMapMarker size={14} />
                                     </div>
                                     <div>
                                         <p className="text-[10px] font-black uppercase tracking-widest text-blue-200 mb-1">Endereço</p>

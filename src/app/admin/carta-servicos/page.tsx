@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { FaFileAlt, FaPlus, FaEdit, FaTrash, FaSpinner, FaSearch, FaMapMarkerAlt, FaClock } from "react-icons/fa";
+import { FaFile, FaPlus, FaEdit, FaTrash, FaSpinner, FaSearch, FaMapMarker, FaClock } from "react-icons/fa";
 import toast from "react-hot-toast";
 
 type Servico = {
@@ -125,7 +125,7 @@ export default function AdminCartaServicosPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-                        <FaFileAlt className="text-orange-500" /> Carta de Serviços - PNTP 2026
+                        <FaFile className="text-orange-500" /> Carta de Serviços - PNTP 2026
                     </h1>
                     <p className="text-gray-500 text-sm">Gerencie o guia de serviços públicos com campos de conformidade legal.</p>
                 </div>
@@ -155,7 +155,7 @@ export default function AdminCartaServicosPage() {
                             <h3 className="font-bold text-gray-800 mb-2">{s.nome}</h3>
                             <p className="text-xs text-gray-500 line-clamp-2 mb-4">{s.descricao}</p>
                             <div className="space-y-2 pt-4 border-t border-gray-50">
-                                <div className="flex items-center gap-2 text-[10px] text-gray-400 font-bold"><FaMapMarkerAlt /> {s.local}</div>
+                                <div className="flex items-center gap-2 text-[10px] text-gray-400 font-bold"><FaMapMarker /> {s.local}</div>
                                 <div className="flex items-center gap-2 text-[10px] text-gray-400 font-bold"><FaClock /> {s.prazo}</div>
                             </div>
                         </div>

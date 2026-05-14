@@ -1,10 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
 import { 
-    FaHammer, FaMapMarkerAlt, FaCalendar, FaBuilding, 
+    FaHammer, FaMapMarker, FaCalendar, FaBuilding, 
     FaChartLine, FaSpinner, FaArrowRight, FaImage,
     FaCheckCircle, FaExclamationTriangle, FaHardHat, FaInfoCircle,
-    FaTable, FaDownload, FaExternalLinkAlt, FaSearch,
+    FaTable, FaDownload, FaExternalLink, FaSearch,
     FaClock, FaCoins, FaBriefcase
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
@@ -285,7 +285,7 @@ export default function ObrasPublicasPage() {
                                                             {statusInfo.label}
                                                         </div>
                                                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter flex items-center gap-1.5">
-                                                            <FaMapMarkerAlt className="text-blue-400" /> {o.local}
+                                                            <FaMapMarker className="text-blue-400" /> {o.local}
                                                         </span>
                                                     </div>
                                                     <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight group-hover:text-blue-600 transition-colors mb-2 truncate">
@@ -508,7 +508,7 @@ export default function ObrasPublicasPage() {
                                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Localização</p>
                                                 <div className="flex items-center gap-4">
                                                     <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
-                                                        <FaMapMarkerAlt size={20} />
+                                                        <FaMapMarker size={20} />
                                                     </div>
                                                     <p className="text-lg font-bold text-slate-700 uppercase tracking-tight">{selectedObra.local}</p>
                                                 </div>
@@ -539,7 +539,7 @@ export default function ObrasPublicasPage() {
                                             </div>
                                             <div className="bg-slate-900 rounded-[2rem] p-8 text-white relative overflow-hidden group">
                                                 <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:rotate-12 transition-transform duration-700">
-                                                    <FaExternalLinkAlt size={80} />
+                                                    <FaExternalLink size={80} />
                                                 </div>
                                                 <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] mb-6">Arquivos Vinculados ao Processo</p>
                                                 <div className="space-y-4">

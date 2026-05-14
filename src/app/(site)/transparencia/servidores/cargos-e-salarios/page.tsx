@@ -1,5 +1,5 @@
 import PageHeader from "@/components/PageHeader";
-import { FaMoneyCheckAlt, FaFilePdf, FaArrowRight } from "react-icons/fa";
+import { FaMoneyCheck, FaFilePdf, FaArrowRight } from "react-icons/fa";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
 
 const tabelas = [
@@ -27,7 +27,7 @@ export default function CargosSalariosPage() {
                 title="Padrão Remuneratório"
                 subtitle="Consulte a estrutura remuneratória e a tabela de vencimentos dos servidores municipais."
                 variant="premium"
-                icon={<FaMoneyCheckAlt />}
+                icon={<FaMoneyCheck />}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
                     { label: "Transparência", href: "/transparencia" },
@@ -42,7 +42,7 @@ export default function CargosSalariosPage() {
                         <div key={idx} className="bg-white rounded-2xl shadow-xl shadow-blue-900/5 border border-white overflow-hidden">
                             <div className="bg-[#1E293B] px-6 py-4 text-white flex items-center justify-between">
                                 <h2 className="text-base font-black uppercase tracking-tight flex items-center gap-2">
-                                    <FaMoneyCheckAlt className="text-blue-400" size={18} /> {tab.categoria}
+                                    <FaMoneyCheck className="text-blue-400" size={18} /> {tab.categoria}
                                 </h2>
                                 <button className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all border border-white/10">
                                     <FaFilePdf size={12} /> Lei Completa

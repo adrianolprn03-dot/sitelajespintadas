@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import PageHeader from "@/components/PageHeader";
-import { FaSearch, FaSpinner, FaFileAlt, FaLock, FaExclamationTriangle, FaCheckCircle, FaPaperclip, FaClock } from "react-icons/fa";
+import { FaSearch, FaSpinner, FaFile, FaLock, FaExclamationTriangle, FaCheckCircle, FaPaperclip, FaClock } from "react-icons/fa";
 import toast from "react-hot-toast";
 
 type ProtocolData = {
@@ -161,7 +161,7 @@ export default function ConsultaProtocoloPage() {
                             {/* Conteudo do Pedido */}
                             <div>
                                 <h4 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
-                                    <FaFileAlt className="text-gray-400" /> Teor da Solicitação
+                                    <FaFile className="text-gray-400" /> Teor da Solicitação
                                 </h4>
                                 <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100 text-gray-700 leading-relaxed text-sm whitespace-pre-wrap font-medium">
                                     {data.descricao || data.pedido}

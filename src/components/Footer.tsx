@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FaFacebook, FaInstagram, FaYoutube, FaEnvelope, FaPhone, FaMapMarkerAlt, FaWhatsapp } from "react-icons/fa";
+import { FaFacebook, FaInstagram, FaYoutube, FaEnvelope, FaPhone, FaMapMarker, FaWhatsapp } from "react-icons/fa";
 import { prisma } from "@/lib/prisma";
 
 const footerLinks = [
@@ -129,7 +129,7 @@ export default async function Footer() {
                         <div className="space-y-4 text-sm font-bold">
                             <div className="flex items-start gap-4 text-blue-100/80">
                                 <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center shrink-0">
-                                    <FaMapMarkerAlt className="text-[#FDB913]" />
+                                    <FaMapMarker className="text-[#FDB913]" />
                                 </div>
                                 <span className="leading-tight">{endereco}</span>
                             </div>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { FaFileAlt, FaDownload, FaCalendar, FaSearch, FaHistory, FaInfoCircle, FaCheckCircle, FaChevronRight } from "react-icons/fa";
+import { FaFile, FaDownload, FaCalendar, FaSearch, FaHistory, FaInfoCircle, FaCheckCircle, FaChevronRight } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import BannerPNTP from "./transparencia/BannerPNTP";
 
@@ -151,7 +151,7 @@ export default function ListaDocumentosClient({
                                     className="group relative bg-white rounded-[2rem] border border-gray-100 p-6 md:p-8 flex flex-col md:flex-row items-center gap-8 shadow-xl shadow-gray-200/40 hover:shadow-2xl hover:shadow-blue-900/10 hover:-translate-y-1 transition-all duration-500"
                                 >
                                     <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center shrink-0 border border-gray-100 group-hover:bg-blue-600 group-hover:text-white transition-all duration-500 shadow-inner">
-                                        <FaFileAlt size={22} className="text-gray-400 group-hover:text-white transition-colors" />
+                                        <FaFile size={22} className="text-gray-400 group-hover:text-white transition-colors" />
                                     </div>
 
                                     <div className="flex-1 text-center md:text-left">

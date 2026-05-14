@@ -1,5 +1,5 @@
 import PageHeader from "@/components/PageHeader";
-import { FaFilePdf, FaChartLine, FaDownload, FaInbox, FaCheckCircle, FaLink, FaGlobe, FaExternalLinkAlt, FaSync } from "react-icons/fa";
+import { FaFilePdf, FaChartLine, FaDownload, FaInbox, FaCheckCircle, FaLink, FaGlobe, FaExternalLink, FaSync } from "react-icons/fa";
 import { prisma } from "@/lib/prisma";
 import SiconfiDashboard from "@/components/transparencia/integracao/SiconfiDashboard";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
@@ -224,7 +224,7 @@ export default async function RelatoriosPage() {
                                     className="group flex items-start gap-4 bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:border-primary-200 hover:shadow-md hover:-translate-y-1 transition-all"
                                 >
                                     <div className="w-10 h-10 bg-primary-50 text-primary-500 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-primary-500 group-hover:text-white transition-all">
-                                        <FaExternalLinkAlt size={14} />
+                                        <FaExternalLink size={14} />
                                     </div>
                                     <div className="min-w-0">
                                         <span className="font-bold text-gray-800 text-sm block group-hover:text-primary-600 transition-colors">{link.titulo}</span>
