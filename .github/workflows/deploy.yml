@@ -1,4 +1,4 @@
-name: Build e Push Docker Image
+name: Build, Push e Deploy na VPS
 
 on:
   push:
@@ -6,9 +6,10 @@ on:
 
 env:
   ACTIONS_STEP_DEBUG: true
+  GHCR_IMAGE: ghcr.io/${{ github.repository }}:latest
 
 jobs:
-  build:
+  build-and-push:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -17,21 +18,6 @@ jobs:
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
-
-      - name: Diagnóstico do ambiente
-        run: |
-          echo "=== Node version ==="
-          node --version || echo "node not found"
-          echo "=== Docker version ==="
-          docker --version
-          echo "=== Disk space ==="
-          df -h
-          echo "=== Memory ==="
-          free -h
-          echo "=== Arquivos no contexto ==="
-          ls -la
-          echo "=== Package.json ==="
-          cat package.json
 
       - name: Login no GitHub Container Registry
         uses: docker/login-action@v3
@@ -45,12 +31,31 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository }}:latest
+          tags: ${{ env.GHCR_IMAGE }}
           build-args: |
-            DATABASE_URL=postgresql://build:build@localhost:5432/build?schema=public
-            DIRECT_URL=postgresql://build:build@localhost:5432/build?schema=public
-            NEXTAUTH_SECRET=build-secret-placeholder
-            NEXTAUTH_URL=http://localhost:3000
-            NEXT_PUBLIC_BASE_URL=http://localhost:3000
-            BLOB_READ_WRITE_TOKEN=placeholder
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
+            DIRECT_URL=${{ secrets.DIRECT_URL }}
+            NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
+            NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
+            NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
+            BLOB_READ_WRITE_TOKEN=${{ secrets.BLOB_READ_WRITE_TOKEN }}
             NODE_ENV=production
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy na VPS via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          script: |
+            cd /opt/site-lajes
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            docker compose -f docker-compose.prod.yml pull web
+            docker compose -f docker-compose.prod.yml up -d --no-deps web
+            docker image prune -f
+            echo "✅ Deploy concluído!"
