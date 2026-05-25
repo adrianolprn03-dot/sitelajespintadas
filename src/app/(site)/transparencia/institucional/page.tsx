@@ -28,7 +28,7 @@ async function getSecretarias() {
         return await prisma.secretaria.findMany({
             where: { ativa: true },
             orderBy: { ordem: "asc" },
-            select: { id: true, nome: true, secretario: true, email: true, telefone: true }
+            select: { id: true, nome: true, secretario: true, email: true, telefone: true, slug: true }
         });
     } catch {
         return [];
@@ -200,7 +200,7 @@ export default async function InstitucionalPage() {
                                 <div className="space-y-2">
                                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Secretarias Municipais</p>
                                     {secretarias.map((s) => (
-                                        <div key={s.id} className="group flex items-center justify-between bg-gray-50 hover:bg-indigo-50 rounded-xl px-5 py-3 border border-gray-100 hover:border-indigo-200 transition-all">
+                                        <Link key={s.id} href={`/secretarias/${s.slug}`} className="group flex items-center justify-between bg-gray-50 hover:bg-indigo-50 rounded-xl px-5 py-3 border border-gray-100 hover:border-indigo-200 transition-all">
                                             <div>
                                                 <p className="text-sm font-bold text-gray-700 group-hover:text-indigo-700">{s.nome}</p>
                                                 {s.secretario && (
@@ -208,7 +208,7 @@ export default async function InstitucionalPage() {
                                                 )}
                                             </div>
                                             <ChevronRight size={14} className="text-gray-300 group-hover:text-indigo-400" />
-                                        </div>
+                                        </Link>
                                     ))}
                                 </div>
                             ) : (

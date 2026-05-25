@@ -28,7 +28,7 @@ const categoriasDeModulos = [
         desc: "Identificação oficial, competências, estrutura organizacional e base legal da prefeitura.",
         modulos: [
             { icon: Building2, titulo: "Institucional", desc: "Dados Gerais e Identificação.", href: "/transparencia/institucional", cor: "from-blue-700 to-indigo-800", badge: "ENTIDADE" },
-            { icon: FileText, titulo: "Competências", desc: "Atribuições e Funções Legais.", href: "/transparencia/institucional", cor: "from-emerald-600 to-teal-700", badge: "LEGAL" },
+            { icon: FileText, titulo: "Competências", desc: "Atribuições e Funções Legais.", href: "/transparencia/competencias", cor: "from-emerald-600 to-teal-700", badge: "LEGAL" },
             { icon: Users2, titulo: "Organograma", desc: "Estrutura Administrativa.", href: "/transparencia/institucional", cor: "from-indigo-600 to-blue-700", badge: "ESTRUTURA" },
             { icon: MapPinned, titulo: "Localização", desc: "Endereços e Contatos Sede.", href: "/transparencia/institucional", cor: "from-slate-700 to-slate-900", badge: "CONTATOS" },
             { icon: Files, titulo: "Leis", desc: "Legislação Municipal.", href: "/transparencia/leis", cor: "from-indigo-600 to-purple-700", badge: "LEGAL" },
