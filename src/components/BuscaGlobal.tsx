@@ -20,6 +20,7 @@ const paginasEstaticas: SearchResult[] = [
     { titulo: "Convênios", href: "/transparencia/convenios", secao: "Transparência", tipo: "pagina" },
     { titulo: "Diárias", href: "/transparencia/diarias", secao: "Transparência", tipo: "pagina" },
     { titulo: "Servidores Municipais", href: "/transparencia/servidores", secao: "Transparência", tipo: "pagina" },
+    { titulo: "Ordem Cronológica de Pagamentos", href: "/transparencia/ordem-cronologica", secao: "Transparência", tipo: "pagina" },
     { titulo: "Relatórios Fiscais (RREO/RGF)", href: "/transparencia/relatorios", secao: "Transparência", tipo: "pagina" },
     { titulo: "LOA / LDO / PPA", href: "/transparencia/orcamento", secao: "Transparência", tipo: "pagina" },
     { titulo: "Legislação Municipal", href: "/transparencia/legislacao", secao: "Transparência", tipo: "pagina" },
