@@ -12,7 +12,11 @@ export async function GET(req: NextRequest) {
     // Validar formato básico da URL
     let parsedUrl;
     try {
-        parsedUrl = new URL(url);
+        if (url.startsWith("/")) {
+            parsedUrl = new URL(url, req.url);
+        } else {
+            parsedUrl = new URL(url);
+        }
     } catch (e) {
         return NextResponse.json({ error: "URL inválida" }, { status: 400 });
     }
