@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import LeiEstruturaButtons from "@/components/transparencia/LeiEstruturaButtons";
 
 export const metadata: Metadata = {
     title: "Dados Institucionais | Portal da Transparência – Lajes Pintadas/RN",
@@ -129,6 +130,22 @@ export default async function InstitucionalPage() {
                                 </span>
                                 Identificação da Entidade
                             </h2>
+
+                            {/* Base Legal - Lei da Estrutura */}
+                            <div className="mb-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50/30 rounded-3xl border border-blue-100 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm group hover:border-blue-200 transition-all">
+                                <div className="flex items-start gap-4 w-full">
+                                    <div className="w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center shrink-0 shadow-md">
+                                        <FileText size={22} className="text-white" />
+                                    </div>
+                                    <div>
+                                        <h4 className="text-sm font-black text-slate-800 uppercase tracking-tight">Lei da Estrutura Organizacional</h4>
+                                        <p className="text-xs font-semibold text-slate-500 mt-1">Lei Municipal nº 246/2013 — Dispõe sobre a organização administrativa do município.</p>
+                                    </div>
+                                </div>
+                                <div className="shrink-0 w-full md:w-auto">
+                                    <LeiEstruturaButtons pdfUrl="/uploads/lei-estrutura-organizacional.pdf" />
+                                </div>
+                            </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 {fichaBasica.map((item) => (
                                     <div
@@ -153,6 +170,22 @@ export default async function InstitucionalPage() {
                                 </span>
                                 Competências Institucionais
                             </h2>
+
+                            {/* Base Legal - Lei da Estrutura */}
+                            <div className="mb-8 p-6 bg-gradient-to-r from-emerald-50 to-teal-50/30 rounded-3xl border border-emerald-100 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm group hover:border-emerald-200 transition-all">
+                                <div className="flex items-start gap-4 w-full">
+                                    <div className="w-12 h-12 bg-emerald-600 text-white rounded-xl flex items-center justify-center shrink-0 shadow-md">
+                                        <FileText size={22} className="text-white" />
+                                    </div>
+                                    <div>
+                                        <h4 className="text-sm font-black text-slate-800 uppercase tracking-tight">Lei da Estrutura Organizacional</h4>
+                                        <p className="text-xs font-semibold text-slate-500 mt-1">Lei Municipal nº 246/2013 — Dispõe sobre a organização administrativa do município.</p>
+                                    </div>
+                                </div>
+                                <div className="shrink-0 w-full md:w-auto">
+                                    <LeiEstruturaButtons pdfUrl="/uploads/lei-estrutura-organizacional.pdf" />
+                                </div>
+                            </div>
                             <p className="text-gray-500 text-sm font-medium mb-6 leading-relaxed italic">
                                 Conforme a Lei Orgânica Municipal e o Art. 8º, I da Lei nº 12.527/2011.
                             </p>
@@ -176,6 +209,22 @@ export default async function InstitucionalPage() {
                                 </span>
                                 Estrutura Organizacional
                             </h2>
+
+                            {/* Base Legal - Lei de Criação da Estrutura */}
+                            <div className="mb-8 p-6 bg-gradient-to-r from-indigo-50 to-blue-50/50 rounded-3xl border border-indigo-100 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm group hover:border-indigo-200 transition-all">
+                                <div className="flex items-start gap-4 w-full">
+                                    <div className="w-12 h-12 bg-indigo-600 text-white rounded-xl flex items-center justify-center shrink-0 shadow-md">
+                                        <FileText size={22} />
+                                    </div>
+                                    <div>
+                                        <h4 className="text-sm font-black text-slate-800 uppercase tracking-tight">Lei da Estrutura Organizacional</h4>
+                                        <p className="text-xs font-semibold text-slate-500 mt-1">Lei Municipal nº 246/2013 — Dispõe sobre a organização administrativa do município.</p>
+                                    </div>
+                                </div>
+                                <div className="shrink-0 w-full md:w-auto">
+                                    <LeiEstruturaButtons pdfUrl="/uploads/lei-estrutura-organizacional.pdf" />
+                                </div>
+                            </div>
 
                             {/* Gestores */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
@@ -222,12 +271,14 @@ export default async function InstitucionalPage() {
                                 </div>
                             )}
 
-                            <Link
-                                href="/a-prefeitura/estrutura"
-                                className="mt-6 inline-flex items-center gap-2 text-[10px] font-black text-indigo-600 uppercase tracking-widest hover:text-indigo-800 transition-colors"
-                            >
-                                Ver organograma completo <ExternalLink size={11} />
-                            </Link>
+                            <div className="flex flex-wrap items-center justify-between gap-4 mt-6 pt-4 border-t border-gray-100">
+                                <Link
+                                    href="/a-prefeitura/estrutura"
+                                    className="inline-flex items-center gap-2 text-[10px] font-black text-indigo-600 uppercase tracking-widest hover:text-indigo-800 transition-colors"
+                                >
+                                    Ver organograma completo <ExternalLink size={11} />
+                                </Link>
+                            </div>
                         </section>
 
                         {/* Símbolos Municipais */}
@@ -355,6 +406,7 @@ export default async function InstitucionalPage() {
                                     { label: "Gestores Municipais", href: "/transparencia/gestores", desc: "Prefeito e Vice-Prefeito" },
                                     { label: "Carta de Serviços", href: "/transparencia/carta-servicos", desc: "Serviços ao Cidadão" },
                                     { label: "Estrutura Organizacional", href: "/a-prefeitura/estrutura", desc: "Organograma completo" },
+                                    { label: "Lei da Estrutura (PDF)", href: "/uploads/lei-estrutura-organizacional.pdf", desc: "Lei Municipal nº 246/2013", target: "_blank" },
                                     { label: "Símbolos Municipais", href: "/transparencia/simbolos", desc: "Brasão, bandeira e hino" },
                                     { label: "Lei Orgânica", href: "/transparencia/leis", desc: "Legislação base do município" },
                                     { label: "Ouvidoria", href: "/servicos/ouvidoria", desc: "Fale com a gestão" },
@@ -362,6 +414,8 @@ export default async function InstitucionalPage() {
                                     <Link
                                         key={l.href}
                                         href={l.href}
+                                        target={"target" in l ? l.target : undefined}
+                                        rel={"target" in l && l.target === "_blank" ? "noopener noreferrer" : undefined}
                                         className="group flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-indigo-50 border border-gray-100 hover:border-indigo-200 transition-all"
                                     >
                                         <div>
