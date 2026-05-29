@@ -69,10 +69,10 @@ export default async function Footer() {
         : "#";
 
     const socialLinks = [
-        { Icon: FaFacebook, href: facebook, color: "hover:bg-blue-600", label: "Facebook" },
-        { Icon: FaInstagram, href: instagram, color: "hover:bg-pink-600", label: "Instagram" },
-        { Icon: FaYoutube, href: youtube, color: "hover:bg-red-600", label: "YouTube" },
-        { Icon: FaWhatsapp, href: whatsappHref, color: "hover:bg-green-600", label: "WhatsApp" },
+        { Icon: FaFacebook, href: facebook, brandColor: "hover:bg-[#1877F2]", shadowColor: "hover:shadow-[#1877F2]/30", label: "Facebook" },
+        { Icon: FaInstagram, href: instagram, brandColor: "hover:bg-gradient-to-tr hover:from-[#f9ce34] hover:via-[#ee2a7b] hover:to-[#6228d7]", shadowColor: "hover:shadow-pink-500/30", label: "Instagram" },
+        { Icon: FaYoutube, href: youtube, brandColor: "hover:bg-[#FF0000]", shadowColor: "hover:shadow-[#FF0000]/30", label: "YouTube" },
+        { Icon: FaWhatsapp, href: whatsappHref, brandColor: "hover:bg-[#25D366]", shadowColor: "hover:shadow-[#25D366]/30", label: "WhatsApp" },
     ];
 
     return (
@@ -185,13 +185,17 @@ export default async function Footer() {
                                 <a
                                     key={social.label}
                                     href={social.href}
-                                    target={social.href !== "#" ? "_blank" : undefined}
-                                    rel={social.href !== "#" ? "noopener noreferrer" : undefined}
+                                    target={social.href !== "#" && social.href !== "" ? "_blank" : undefined}
+                                    rel={social.href !== "#" && social.href !== "" ? "noopener noreferrer" : undefined}
                                     aria-label={social.label}
                                     title={social.label}
-                                    className={`w-10 h-10 bg-white/5 rounded-2xl flex items-center justify-center transition-all duration-300 text-white/50 hover:text-white hover:scale-110 shadow-lg ${social.color} ${social.href === "#" ? "opacity-30 cursor-default pointer-events-none" : ""}`}
+                                    className={`w-11 h-11 bg-white/10 border border-white/5 hover:border-white/20 rounded-2xl flex items-center justify-center transition-all duration-300 text-white/70 hover:text-white hover:scale-115 hover:-translate-y-1 shadow-lg ${social.brandColor} ${social.shadowColor} ${
+                                        social.href === "#" || social.href === "" 
+                                        ? "opacity-20 cursor-default pointer-events-none" 
+                                        : "opacity-80 hover:opacity-100 hover:shadow-xl"
+                                    }`}
                                 >
-                                    <social.Icon size={18} />
+                                    <social.Icon size={20} />
                                 </a>
                             ))}
                         </div>
