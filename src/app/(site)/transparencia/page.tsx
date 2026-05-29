@@ -59,7 +59,7 @@ const categoriasDeModulos = [
             { icon: BarChart3, titulo: "LRF", desc: "RREO e RGF.", href: "/transparencia/lrf", cor: "from-blue-800 to-slate-900", badge: "FISCAL" },
             { icon: Scale, titulo: "Dívida Ativa", desc: "Cobranças e Créditos Tributários.", href: "/transparencia/divida-ativa", cor: "from-red-600 to-orange-700", badge: "FISCAL" },
             { icon: Handshake, titulo: "Acordos Firmados", desc: "Acordos sem repasse financeiro.", href: "/transparencia/acordos-firmados", cor: "from-indigo-500 to-blue-600", badge: "ACORDOS" },
-            { icon: ListOrdered, titulo: "Pagamentos", desc: "Ordem Cronológica.", href: "/transparencia/ordem-cronologica", cor: "from-amber-500 to-orange-600", badge: "TESOURARIA" },
+            { icon: ListOrdered, titulo: "Ordem Cronológica", desc: "Fila de pagamentos a fornecedores.", href: "/transparencia/ordem-cronologica", cor: "from-amber-500 to-orange-600", badge: "TESOURARIA" },
             { icon: Database, titulo: "Repasses", desc: "Transferências Legais.", href: "/transparencia/transferencias", cor: "from-indigo-600 to-violet-700", badge: "RECURSOS" },
             { icon: Globe2, titulo: "Emendas Parlamentares", desc: "Recursos Externos.", href: "/transparencia/emendas", cor: "from-teal-600 to-emerald-800", badge: "EXTERNO" },
             { icon: Coins, titulo: "Emendas PIX", desc: "Transferências Diretas.", href: "/transparencia/emendas-pix", cor: "from-pink-600 to-rose-700", badge: "PIX" },
