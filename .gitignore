@@ -66,3 +66,5 @@ build_utf8.log
 
 .vercel
 .env*.local
+wordpress/
+migracao_wp/

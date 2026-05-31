@@ -7,7 +7,8 @@ import {
     FaMoneyBillWave, FaChartBar, FaBuilding, FaBullhorn,
     FaSignOutAlt, FaTimes, FaBars, FaCalendar, FaImages, FaEnvelope,
     FaHandshake, FaPlane, FaHammer, FaQuestionCircle, FaBook,
-    FaUserFriends, FaUpload, FaFile, FaExternalLinkAlt, FaUserShield, FaUserGraduate, FaUserTie
+    FaUserFriends, FaUpload, FaFile, FaExternalLinkAlt, FaUserShield, FaUserGraduate, FaUserTie,
+    FaExchangeAlt
 } from "react-icons/fa";
 import { useState } from "react";
 
@@ -29,6 +30,7 @@ const menuItems = [
     { label: "Receitas", href: "/admin/receitas", icon: FaMoneyBillWave, roles: ["admin", "editor"] },
     { label: "Despesas", href: "/admin/despesas", icon: FaChartBar, roles: ["admin", "editor"] },
     { label: "Conselhos", href: "/admin/conselhos", icon: FaUserFriends, roles: ["admin", "editor"] },
+    { label: "Repasses Conselhos", href: "/admin/transferencias-conselhos", icon: FaExchangeAlt, roles: ["admin", "editor"] },
     { label: "Legislação", href: "/admin/legislacao", icon: FaGavel, roles: ["admin", "editor"] },
     { label: "Documentos", href: "/admin/documentos", icon: FaFileContract, roles: ["admin", "editor"] },
     { label: "Secretarias", href: "/admin/secretarias", icon: FaBuilding, roles: ["admin", "editor"] },

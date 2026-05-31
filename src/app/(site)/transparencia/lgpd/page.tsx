@@ -124,8 +124,36 @@ export default function LGPDPage() {
                         <span className="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] mb-4 block">Base Legal e Normas</span>
                         <h2 className="text-3xl font-black text-slate-800 uppercase tracking-tighter mb-4 leading-none">Legislação e Regulamentação</h2>
                         <p className="text-slate-400 font-bold text-sm max-w-2xl italic leading-relaxed">
-                            Consulte a legislação federal de proteção de dados e governança digital aplicadas na administração municipal de Lajes Pintadas.
+                            Consulte os regulamentos municipais e as leis federais de transparência, privacidade e governança aplicados na administração pública de Lajes Pintadas.
                         </p>
+                    </div>
+
+                    {/* Regulamentação Municipal Destaque */}
+                    <div className="bg-gradient-to-br from-blue-50/40 to-indigo-50/20 p-8 md:p-12 rounded-[2.5rem] border border-blue-100/50 mb-12 flex flex-col md:flex-row gap-8 items-center justify-between group hover:shadow-xl hover:border-blue-200 transition-all duration-300">
+                        <div className="flex-1">
+                            <span className="text-[9px] font-black text-blue-600 uppercase tracking-[0.25em] block mb-2">Conformidade Municipal (PNTP)</span>
+                            <h3 className="text-xl font-black text-slate-800 uppercase tracking-tight mb-2 group-hover:text-blue-600 transition-colors">Regulamentação Municipal da LGPD</h3>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Decreto Municipal nº 180/2024</p>
+                            <p className="text-slate-500 font-bold text-xs leading-relaxed max-w-3xl italic">
+                                "Regulamenta a aplicação da Lei Geral de Proteção de Dados Pessoais (LGPD) no âmbito da Administração Pública Direta e Indireta do Município de Lajes Pintadas/RN, definindo competências, fluxos de tratamento de dados e diretrizes de segurança da informação."
+                            </p>
+                        </div>
+                        <div className="flex flex-row md:flex-col gap-3 w-full md:w-48 shrink-0">
+                            <button
+                                onClick={() => setPdfViewer({ url: "/docs/lgpd/decreto-municipal-regulamenta-lgpd.pdf", titulo: "Regulamentação Municipal da LGPD (Decreto nº 180/2024)" })}
+                                className="flex-1 flex items-center justify-center gap-2 py-3 bg-blue-600 text-white hover:bg-blue-700 rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-blue-500/10 border border-blue-500/20"
+                            >
+                                <FaEye size={12} /> Visualizar
+                            </button>
+                            <a
+                                href="/docs/lgpd/decreto-municipal-regulamenta-lgpd.pdf"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex-1 flex items-center justify-center gap-2 py-3 bg-white border border-slate-200 text-slate-600 hover:bg-slate-700 hover:text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all"
+                            >
+                                <FaDownload size={11} /> Baixar PDF
+                            </a>
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -134,13 +162,25 @@ export default function LGPDPage() {
                                 titulo: "Lei Geral de Proteção de Dados (LGPD)",
                                 subtitulo: "Lei Federal nº 13.709/2018",
                                 desc: "Dispõe sobre o tratamento de dados pessoais, inclusive nos meios digitais, por pessoa natural ou por pessoa jurídica de direito público ou privado, com o objetivo de proteger os direitos fundamentais de liberdade e de privacidade.",
-                                url: "https://www.gov.br/cidadania/pt-br/acesso-a-informacao/lgpd/lei-federal-no-13-709-de-14-de-agosto-de-2018-lei-geral-de-protecao-de-dados-pessoais-lgpd.pdf"
+                                url: "/docs/lgpd/lei-federal-13709-2018.pdf"
                             },
                             {
                                 titulo: "Lei do Governo Digital",
                                 subtitulo: "Lei Federal nº 14.129/2021",
                                 desc: "Estabelece princípios, regras e instrumentos para o Governo Digital e para o aumento da eficiência pública nas administrações federais, estaduais e municipais.",
-                                url: "https://www.gov.br/governodigital/pt-br/seguranca-da-informacao/lei-14129-governo-digital.pdf"
+                                url: "/docs/lgpd/lei-federal-14129-2021.pdf"
+                            },
+                            {
+                                titulo: "Lei de Acesso à Informação (LAI)",
+                                subtitulo: "Lei Federal nº 12.527/2011",
+                                desc: "Regulamenta o direito constitucional de acesso dos cidadãos às informações públicas e é aplicável aos três Poderes da União, dos Estados, do Distrito Federal e dos Municípios.",
+                                url: "/docs/lgpd/lei-federal-12527-2011.pdf"
+                            },
+                            {
+                                titulo: "Marco Civil da Internet",
+                                subtitulo: "Lei Federal nº 12.965/2014",
+                                desc: "Estabelece princípios, garantias, direitos e deveres para o uso da Internet no Brasil e determina as diretrizes de proteção e privacidade de registros.",
+                                url: "/docs/lgpd/lei-federal-12965-2014.pdf"
                             }
                         ].map((lei) => (
                             <div key={lei.subtitulo} className="bg-slate-50/50 p-8 rounded-3xl border border-slate-100 flex flex-col justify-between group hover:shadow-lg hover:border-blue-100 transition-all duration-300">
@@ -154,7 +194,7 @@ export default function LGPDPage() {
                                 <div className="flex gap-4">
                                     <button
                                         onClick={() => setPdfViewer({ url: lei.url, titulo: lei.titulo })}
-                                        className="flex-1 flex items-center justify-center gap-2 py-3 bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white rounded-xl text-xs font-bold transition-all"
+                                        className="flex-1 flex items-center justify-center gap-2 py-3 bg-blue-550/10 text-blue-700 hover:bg-blue-600 hover:text-white rounded-xl text-xs font-bold transition-all"
                                     >
                                         <FaEye size={12} /> Visualizar
                                     </button>

@@ -21,6 +21,8 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import PageHeader from "@/components/PageHeader";
 import { useEffect, useState } from "react";
+import { FaHospital, FaBook, FaHandsHelping, FaCheckCircle, FaClock, FaExclamationTriangle, FaChevronRight, FaExchangeAlt } from "react-icons/fa";
+
 
 const categoriasDeModulos = [
     {
@@ -121,6 +123,112 @@ const categoriasDeModulos = [
         ]
     }
 ];
+
+// ======= TIPOS E CONFIG DOS CONSELHOS =======
+type TransferenciaConselho = {
+    id: string; tipoConselho: string; mes: number; ano: number;
+    valorRepasse: number; statusPrestacao: string;
+};
+
+const CONSELHOS_CFG = [
+    {
+        tipo: "saude", titulo: "Conselho de Saúde", sigla: "CMS", Icon: FaHospital,
+        cor: "from-blue-500 to-cyan-600", corBg: "bg-blue-50", corTexto: "text-blue-600",
+        corBorda: "border-blue-200", corHover: "hover:shadow-blue-100/50",
+        desc: "Repasses do Fundo Municipal de Saúde para custeio e vigilância.",
+    },
+    {
+        tipo: "fundeb", titulo: "Conselho do FUNDEB", sigla: "FUNDEB", Icon: FaBook,
+        cor: "from-amber-500 to-orange-600", corBg: "bg-amber-50", corTexto: "text-amber-600",
+        corBorda: "border-amber-200", corHover: "hover:shadow-amber-100/50",
+        desc: "Recursos do FUNDEB para valorização do magistério e manutenção do ensino.",
+    },
+    {
+        tipo: "assistencia_social", titulo: "Assistência Social", sigla: "CMAS", Icon: FaHandsHelping,
+        cor: "from-violet-500 to-purple-600", corBg: "bg-violet-50", corTexto: "text-violet-600",
+        corBorda: "border-violet-200", corHover: "hover:shadow-violet-100/50",
+        desc: "Repasses do FMAS para proteção social básica e especial.",
+    },
+];
+
+const MESES_ABR = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+function fmtBRL(v: number) { return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }); }
+
+function BadgeStatus({ s }: { s: string }) {
+    if (s === "regular") return <span className="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full"><FaCheckCircle size={7} /> Regular</span>;
+    if (s === "pendente") return <span className="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full"><FaClock size={7} /> Pendente</span>;
+    return <span className="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-red-700 bg-red-50 border border-red-200 px-2 py-0.5 rounded-full"><FaExclamationTriangle size={7} /> Irregular</span>;
+}
+
+function CardsConselhosMini() {
+    const [dados, setDados] = useState<{
+        totais: { tipoConselho: string; _sum: { valorRepasse: number | null }; _count: { id: number } }[];
+        ultimoSaude: TransferenciaConselho | null;
+        ultimoFundeb: TransferenciaConselho | null;
+        ultimoAssistencia: TransferenciaConselho | null;
+    } | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetch("/api/transferencias-conselhos")
+            .then(r => r.json())
+            .then(d => { setDados(d); setLoading(false); })
+            .catch(() => setLoading(false));
+    }, []);
+
+    const getTotal = (tipo: string) => dados?.totais?.find(t => t.tipoConselho === tipo)?._sum?.valorRepasse || 0;
+    const getCount = (tipo: string) => dados?.totais?.find(t => t.tipoConselho === tipo)?._count?.id || 0;
+    const getUltimo = (tipo: string) => tipo === "saude" ? dados?.ultimoSaude : tipo === "fundeb" ? dados?.ultimoFundeb : dados?.ultimoAssistencia;
+
+    return (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {CONSELHOS_CFG.map(c => {
+                const total = getTotal(c.tipo);
+                const count = getCount(c.tipo);
+                const ultimo = getUltimo(c.tipo);
+                return (
+                    <Link key={c.tipo} href="/transparencia/transferencias#conselhos"
+                        className={`group bg-white rounded-3xl border border-slate-100 shadow-lg overflow-hidden transition-all duration-500 hover:shadow-xl ${c.corHover} hover:-translate-y-1`}>
+                        <div className={`h-1.5 bg-gradient-to-r ${c.cor}`} />
+                        <div className="p-6">
+                            <div className="flex items-start justify-between mb-4">
+                                <div className={`w-12 h-12 bg-gradient-to-br ${c.cor} text-white rounded-2xl flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300`}>
+                                    <c.Icon size={20} />
+                                </div>
+                                <span className={`text-[9px] font-black uppercase tracking-widest ${c.corTexto} ${c.corBg} border ${c.corBorda} px-2 py-0.5 rounded-full`}>{c.sigla}</span>
+                            </div>
+                            <h3 className="font-black text-slate-800 text-sm uppercase tracking-tight mb-1.5">{c.titulo}</h3>
+                            <p className="text-slate-400 text-[10px] font-medium leading-relaxed mb-4">{c.desc}</p>
+                            {loading ? (
+                                <div className="animate-pulse h-6 bg-gray-100 rounded-xl w-3/4" />
+                            ) : total > 0 ? (
+                                <div className="space-y-2">
+                                    <div className={`${c.corBg} border ${c.corBorda} rounded-xl px-3 py-2`}>
+                                        <div className="text-[8px] font-black text-slate-400 uppercase tracking-widest">{new Date().getFullYear()} · {count} repasse(s)</div>
+                                        <div className={`text-base font-black ${c.corTexto}`}>{fmtBRL(total)}</div>
+                                    </div>
+                                    {ultimo && <div className="flex items-center justify-between px-1">
+                                        <div className="text-[9px] font-bold text-slate-500">{fmtBRL(ultimo.valorRepasse)} · {MESES_ABR[ultimo.mes-1]}/{ultimo.ano}</div>
+                                        <BadgeStatus s={ultimo.statusPrestacao} />
+                                    </div>}
+                                </div>
+                            ) : (
+                                <div className={`${c.corBg} border ${c.corBorda} rounded-xl px-3 py-2 text-center`}>
+                                    <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Sem repasses em {new Date().getFullYear()}</div>
+                                </div>
+                            )}
+                        </div>
+                        <div className="px-6 py-3 border-t border-slate-50 bg-slate-50/50 flex items-center justify-between">
+                            <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">PNTP 2026</span>
+                            <span className={`flex items-center gap-1 text-[8px] font-black ${c.corTexto} opacity-0 group-hover:opacity-100 transition-opacity`}>Ver detalhes <FaChevronRight size={7} /></span>
+                        </div>
+                    </Link>
+                );
+            })}
+        </div>
+    );
+}
+// ======= FIM CARDS CONSELHOS =======
 
 export default function TransparenciaPage() {
     const [linksExternos, setLinksExternos] = useState<any[]>([]);
@@ -237,6 +345,33 @@ export default function TransparenciaPage() {
                              </div>
                         </div>
                     </div>
+                </motion.div>
+
+                {/* ===== CARDS REPASSES AOS CONSELHOS ===== */}
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2, duration: 0.6 }}
+                    className="mb-20"
+                >
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                        <div>
+                            <div className="flex items-center gap-3 mb-2">
+                                <span className="w-8 h-1 bg-violet-600 rounded-full" />
+                                <h2 className="text-xl font-black text-slate-800 uppercase tracking-tighter">Repasses aos Conselhos Municipais</h2>
+                            </div>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-11">
+                                Conselho de Saúde · FUNDEB · Assistência Social · Conforme PNTP 2026
+                            </p>
+                        </div>
+                        <Link
+                            href="/transparencia/transferencias#conselhos"
+                            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-violet-600 bg-violet-50 border border-violet-100 px-5 py-2.5 rounded-2xl hover:bg-violet-100 transition-colors whitespace-nowrap shadow-sm"
+                        >
+                            <FaExchangeAlt size={11} /> Ver todos os repasses
+                        </Link>
+                    </div>
+                    <CardsConselhosMini />
                 </motion.div>
 
                 {/* Categories & Modules Grid */}

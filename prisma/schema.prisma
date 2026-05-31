@@ -367,6 +367,36 @@ model ConselhoAta {
   conselho    Conselho @relation(fields: [conselhoId], references: [id], onDelete: Cascade)
 }
 
+// Transferências PNTP 2026 – Conselhos Municipais
+model TransferenciaConselho {
+  id                   String   @id @default(cuid())
+  // Identificação do conselho
+  tipoConselho         String   // "saude" | "fundeb" | "assistencia_social"
+  nomeConselho         String
+  // Período de referência
+  mes                  Int
+  ano                  Int
+  // Dados financeiros
+  valorRepasse         Float
+  natureza             String   // "custeio" | "investimento" | "capital"
+  fonteRecurso         String   // "federal" | "estadual" | "municipal"
+  // Aplicação dos recursos
+  descricaoAplicacao   String
+  // Documentação
+  numeroEmpenho        String?
+  numeroPagamento      String?
+  arquivoComprovante   String?
+  // Prestação de contas
+  statusPrestacao      String   @default("regular") // "regular" | "pendente" | "irregular"
+  observacoes          String?
+  // Metadados
+  criadoEm             DateTime @default(now())
+  atualizadoEm         DateTime @default(now()) @updatedAt
+
+  @@index([tipoConselho])
+  @@index([ano, mes])
+}
+
 model ImportacaoCSV {
   id       String   @id @default(cuid())
   modulo   String
