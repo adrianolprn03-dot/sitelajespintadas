@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
     }
 
     try {
-        const response = await fetch(url);
+        const response = await fetch(parsedUrl.toString());
 
         if (!response.ok) {
             return NextResponse.json({ error: "Arquivo não encontrado ou inacessível" }, { status: response.status });
