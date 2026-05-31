@@ -18,6 +18,7 @@
     "@djpfs/react-vlibras": "^2.0.2",
     "@prisma/client": "^5.14.0",
     "@vercel/blob": "^2.3.3",
+    "adm-zip": "^0.5.17",
     "bcryptjs": "^2.4.3",
     "cheerio": "^1.2.0",
     "date-fns": "^3.6.0",

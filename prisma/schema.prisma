@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x", "linux-musl", "linux-musl-openssl-3.0.x"]
 }
 
@@ -163,15 +163,15 @@ model Despesa {
 }
 
 model Documento {
-  id          String   @id @default(cuid())
-  titulo      String
-  tipo        String
-  arquivo     String?
-  documentUrl String?
-  tamanho     Int?
-  ano         Int?
-  ativo       Boolean  @default(true)
-  criadoEm    DateTime @default(now())
+  id           String   @id @default(cuid())
+  titulo       String
+  tipo         String
+  arquivo      String?
+  documentUrl  String?
+  tamanho      Int?
+  ano          Int?
+  ativo        Boolean  @default(true)
+  criadoEm     DateTime @default(now())
   atualizadoEm DateTime @default(now()) @updatedAt
 }
 
@@ -244,13 +244,13 @@ model Esic {
 }
 
 model CidadaoEsic {
-  id             String   @id @default(cuid())
+  id             String    @id @default(cuid())
   nome           String
-  tipoPessoa     String   @default("Física")
-  cpf            String?  @unique
-  cnpj           String?  @unique
+  tipoPessoa     String    @default("Física")
+  cpf            String?   @unique
+  cnpj           String?   @unique
   razaoSocial    String?
-  email          String   @unique
+  email          String    @unique
   senha          String
   telefone       String?
   dataNascimento DateTime?
@@ -268,10 +268,9 @@ model CidadaoEsic {
   ufEmissor      String?
   profissao      String?
   nomeFantasia   String?
-  criadoEm       DateTime @default(now())
+  criadoEm       DateTime  @default(now())
   pedidos        Esic[]
 }
-
 
 model GaleriaFoto {
   id        String   @id @default(cuid())
@@ -367,31 +366,23 @@ model ConselhoAta {
   conselho    Conselho @relation(fields: [conselhoId], references: [id], onDelete: Cascade)
 }
 
-// Transferências PNTP 2026 – Conselhos Municipais
 model TransferenciaConselho {
-  id                   String   @id @default(cuid())
-  // Identificação do conselho
-  tipoConselho         String   // "saude" | "fundeb" | "assistencia_social"
-  nomeConselho         String
-  // Período de referência
-  mes                  Int
-  ano                  Int
-  // Dados financeiros
-  valorRepasse         Float
-  natureza             String   // "custeio" | "investimento" | "capital"
-  fonteRecurso         String   // "federal" | "estadual" | "municipal"
-  // Aplicação dos recursos
-  descricaoAplicacao   String
-  // Documentação
-  numeroEmpenho        String?
-  numeroPagamento      String?
-  arquivoComprovante   String?
-  // Prestação de contas
-  statusPrestacao      String   @default("regular") // "regular" | "pendente" | "irregular"
-  observacoes          String?
-  // Metadados
-  criadoEm             DateTime @default(now())
-  atualizadoEm         DateTime @default(now()) @updatedAt
+  id                 String   @id @default(cuid())
+  tipoConselho       String
+  nomeConselho       String
+  mes                Int
+  ano                Int
+  valorRepasse       Float
+  natureza           String
+  fonteRecurso       String
+  descricaoAplicacao String
+  numeroEmpenho      String?
+  numeroPagamento    String?
+  arquivoComprovante String?
+  statusPrestacao    String   @default("regular")
+  observacoes        String?
+  criadoEm           DateTime @default(now())
+  atualizadoEm       DateTime @default(now()) @updatedAt
 
   @@index([tipoConselho])
   @@index([ano, mes])
@@ -573,23 +564,23 @@ model RenunciaFiscal {
 }
 
 model QuadroServidor {
-  id           String   @id @default(cuid())
-  cargo        String
-  vinculo      String   @default("efetivo")
-  leiCriacao   String?
-  vagasLei     Int
+  id            String   @id @default(cuid())
+  cargo         String
+  vinculo       String   @default("efetivo")
+  leiCriacao    String?
+  vagasLei      Int
   vagasOcupadas Int
-  vagasLivres  Int      @default(0)
-  ativo        Boolean  @default(true)
-  criadoEm     DateTime @default(now())
-  atualizadoEm DateTime @default(now()) @updatedAt
+  vagasLivres   Int      @default(0)
+  ativo         Boolean  @default(true)
+  criadoEm      DateTime @default(now())
+  atualizadoEm  DateTime @default(now()) @updatedAt
 }
 
 model EmendaPix {
   id                    String    @id @default(cuid())
   ano                   Int
-  origem                String    // Federal ou Estadual
-  tipoEmenda            String?   // Individual, Bancada, etc
+  origem                String
+  tipoEmenda            String?
   formaRepasse          String?   @default("Transferência Especial - PIX")
   numeroEmenda          String?
   autor                 String
@@ -650,14 +641,14 @@ model Estagiario {
 }
 
 model Terceirizado {
-  id              String    @id @default(cuid())
-  nome            String
-  empresa         String
-  funcao          String
-  unidadeLotacao  String
-  dataInicio      DateTime
-  dataFim         DateTime?
-  status          String    @default("ativo")
-  criadoEm        DateTime  @default(now())
-  atualizadoEm    DateTime  @updatedAt
+  id             String    @id @default(cuid())
+  nome           String
+  empresa        String
+  funcao         String
+  unidadeLotacao String
+  dataInicio     DateTime
+  dataFim        DateTime?
+  status         String    @default("ativo")
+  criadoEm       DateTime  @default(now())
+  atualizadoEm   DateTime  @updatedAt
 }

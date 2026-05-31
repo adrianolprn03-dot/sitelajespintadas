@@ -1,13 +1,20 @@
-import re
-import json
+import zipfile
+import os
 
-paths = set()
-with open(r'migracao_wp\prefe528_wp228.sql', 'r', encoding='utf-8', errors='ignore') as f:
-    for line in f:
-        matches = re.findall(r'(?:wp-content/uploads/|")([0-9]{4}/[0-9]{2}/[a-zA-Z0-9_\-\./]+\.pdf)', line)
-        for m in matches:
-            paths.add(m)
+zip_path = r'wordpress\uploud.zip'
+extract_dir = r'migracao_wp\uploads'
 
-print("Total PDFs found:", len(paths))
-with open(r'migracao_wp\pdfs_extraidos.json', 'w') as out:
-    json.dump(list(paths), out, indent=2)
+print("Extracting PDFs from zip...")
+os.makedirs(extract_dir, exist_ok=True)
+
+with zipfile.ZipFile(zip_path, 'r') as z:
+    for file_info in z.infolist():
+        if file_info.filename.lower().endswith('.pdf'):
+            try:
+                # Some filenames have invalid cp437 encoding
+                # Just extract normally and let zipfile handle it
+                z.extract(file_info, extract_dir)
+            except Exception as e:
+                print(f"Failed to extract {file_info.filename}: {e}")
+                
+print("Extraction complete!")
