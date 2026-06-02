@@ -14,6 +14,8 @@ type Secretaria = {
     horarioFuncionamento: string;
     descricao: string;
     imagem: string;
+    secretario_instagram?: string;
+    secretario_facebook?: string;
     ativa: boolean;
     ordem: number;
 };
@@ -33,6 +35,8 @@ export default function AdminSecretariasPage() {
         horarioFuncionamento: "08:00 às 14:00",
         descricao: "",
         imagem: "",
+        secretario_instagram: "",
+        secretario_facebook: "",
         ativa: true,
         ordem: 0
     });
@@ -66,6 +70,8 @@ export default function AdminSecretariasPage() {
                 horarioFuncionamento: item.horarioFuncionamento || "08:00 às 14:00",
                 descricao: item.descricao || "",
                 imagem: item.imagem || "",
+                secretario_instagram: item.secretario_instagram || "",
+                secretario_facebook: item.secretario_facebook || "",
                 ativa: item.ativa,
                 ordem: item.ordem || 0
             });
@@ -80,6 +86,8 @@ export default function AdminSecretariasPage() {
                 horarioFuncionamento: "08:00 às 14:00",
                 descricao: "",
                 imagem: "",
+                secretario_instagram: "",
+                secretario_facebook: "",
                 ativa: true,
                 ordem: 0
             });
@@ -282,6 +290,24 @@ export default function AdminSecretariasPage() {
                                         onChange={(e) => setForm({...form, secretario: e.target.value})}
                                         className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
                                         placeholder="Nome Completo"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Instagram do Secretário(a)</label>
+                                    <input 
+                                        value={form.secretario_instagram}
+                                        onChange={(e) => setForm({...form, secretario_instagram: e.target.value})}
+                                        className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                        placeholder="Link do Instagram"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Facebook do Secretário(a)</label>
+                                    <input 
+                                        value={form.secretario_facebook}
+                                        onChange={(e) => setForm({...form, secretario_facebook: e.target.value})}
+                                        className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                        placeholder="Link do Facebook"
                                     />
                                 </div>
                                 <div className="space-y-2">

@@ -32,6 +32,8 @@ model Secretaria {
   endereco             String?
   secretario           String?
   imagem               String?
+  secretario_instagram String?
+  secretario_facebook  String?
   horarioFuncionamento String?
   ativa                Boolean   @default(true)
   ordem                Int       @default(0)

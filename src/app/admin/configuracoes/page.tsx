@@ -17,6 +17,8 @@ export default function AdminConfiguracoesPage() {
         prefeito_nascimento: "",
         prefeito_profissao: "",
         prefeito_escolaridade: "",
+        prefeito_instagram: "",
+        prefeito_facebook: "",
         vice_nome: "",
         vice_descricao: "",
         vice_foto: "",
@@ -31,7 +33,11 @@ export default function AdminConfiguracoesPage() {
         endereco_sede: "",
         horario_funcionamento: "",
         contato_email: "",
-        contato_telefone: ""
+        contato_telefone: "",
+        redes_facebook: "",
+        redes_instagram: "",
+        redes_youtube: "",
+        contato_whatsapp: ""
     });
 
     useEffect(() => {
@@ -218,6 +224,28 @@ export default function AdminConfiguracoesPage() {
                                     className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-medium focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
                                 />
                             </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-1">
+                                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Instagram do Prefeito</label>
+                                    <input
+                                        name="prefeito_instagram"
+                                        value={form.prefeito_instagram}
+                                        onChange={handleChange}
+                                        placeholder="Link do Instagram"
+                                        className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                    />
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Facebook do Prefeito</label>
+                                    <input
+                                        name="prefeito_facebook"
+                                        value={form.prefeito_facebook}
+                                        onChange={handleChange}
+                                        placeholder="Link do Facebook"
+                                        className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                    />
+                                </div>
+                            </div>
                             </div>
                         </div>
 
@@ -393,6 +421,48 @@ export default function AdminConfiguracoesPage() {
                                     name="contato_telefone"
                                     value={form.contato_telefone}
                                     onChange={handleChange}
+                                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-medium focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                />
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 md:col-span-2 gap-6 mt-4">
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Facebook</label>
+                                <input
+                                    name="redes_facebook"
+                                    value={form.redes_facebook}
+                                    onChange={handleChange}
+                                    placeholder="Link do Facebook"
+                                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-medium focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                />
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Instagram</label>
+                                <input
+                                    name="redes_instagram"
+                                    value={form.redes_instagram}
+                                    onChange={handleChange}
+                                    placeholder="Link do Instagram"
+                                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-medium focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                />
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">YouTube</label>
+                                <input
+                                    name="redes_youtube"
+                                    value={form.redes_youtube}
+                                    onChange={handleChange}
+                                    placeholder="Link do YouTube"
+                                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-medium focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                />
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">WhatsApp</label>
+                                <input
+                                    name="contato_whatsapp"
+                                    value={form.contato_whatsapp}
+                                    onChange={handleChange}
+                                    placeholder="Número com DDD"
                                     className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-medium focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
                                 />
                             </div>

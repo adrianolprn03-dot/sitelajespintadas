@@ -11,6 +11,7 @@ import {
     HiOutlineArrowRight
 } from "react-icons/hi2";
 import { getSecretariaIcon } from "@/lib/icons";
+import { FaInstagram, FaFacebook } from "react-icons/fa";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -84,6 +85,20 @@ export default async function SecretariasPage() {
                                                     <div className="flex items-center gap-2 text-white/80 text-[10px] font-black uppercase tracking-widest">
                                                         <HiOutlineUser size={14} className="text-white/60" />
                                                         GESTOR: {s.secretario}
+                                                    </div>
+                                                )}
+                                                {(s.secretario_instagram || s.secretario_facebook) && (
+                                                    <div className="flex items-center gap-2 mt-2">
+                                                        {s.secretario_instagram && (
+                                                            <a href={s.secretario_instagram} target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-white/10 hover:bg-white/30 text-white rounded-lg flex items-center justify-center transition-colors">
+                                                                <FaInstagram size={14} />
+                                                            </a>
+                                                        )}
+                                                        {s.secretario_facebook && (
+                                                            <a href={s.secretario_facebook} target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-white/10 hover:bg-white/30 text-white rounded-lg flex items-center justify-center transition-colors">
+                                                                <FaFacebook size={14} />
+                                                            </a>
+                                                        )}
                                                     </div>
                                                 )}
                                             </div>

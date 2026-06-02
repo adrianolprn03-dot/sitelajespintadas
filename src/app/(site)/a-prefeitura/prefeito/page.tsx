@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
-import { FaEnvelope, FaBalanceScale, FaUserTie } from "react-icons/fa";
+import { FaEnvelope, FaBalanceScale, FaUserTie, FaInstagram, FaFacebook } from "react-icons/fa";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
@@ -20,7 +20,7 @@ async function getConfig(chave: string, padrao: string) {
 
 export default async function PrefeitoPage() {
     const [
-        prefeitoNome, prefeitoDesc, prefeitoFoto, prefeitoMandato, prefeitoPartido, prefeitoNaturalidade, prefeitoNascimento, prefeitoProfissao, prefeitoEscolaridade,
+        prefeitoNome, prefeitoDesc, prefeitoFoto, prefeitoMandato, prefeitoPartido, prefeitoNaturalidade, prefeitoNascimento, prefeitoProfissao, prefeitoEscolaridade, prefeitoInstagram, prefeitoFacebook,
         viceNome, viceDesc, viceFoto, viceMandato, vicePartido, viceNaturalidade, viceNascimento, viceProfissao, viceEscolaridade,
         emailGabinete, telefoneGabinete
     ] = await Promise.all([
@@ -33,6 +33,8 @@ export default async function PrefeitoPage() {
         getConfig("prefeito_nascimento", "--/--/----"),
         getConfig("prefeito_profissao", "Gestor Público"),
         getConfig("prefeito_escolaridade", "Ensino Superior"),
+        getConfig("prefeito_instagram", ""),
+        getConfig("prefeito_facebook", ""),
         getConfig("vice_nome", "João Maria Silva"),
         getConfig("vice_descricao", "Vice-Prefeito."),
         getConfig("vice_foto", ""),
@@ -104,6 +106,21 @@ export default async function PrefeitoPage() {
                                     "{prefeitoDesc}"
                                 </p>
                             </div>
+
+                            {(prefeitoInstagram || prefeitoFacebook) && (
+                                <div className="flex items-center gap-3 mt-auto">
+                                    {prefeitoInstagram && (
+                                        <a href={prefeitoInstagram} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 text-white rounded-xl flex items-center justify-center hover:scale-110 transition-transform shadow-md">
+                                            <FaInstagram size={18} />
+                                        </a>
+                                    )}
+                                    {prefeitoFacebook && (
+                                        <a href={prefeitoFacebook} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-[#1877F2] text-white rounded-xl flex items-center justify-center hover:scale-110 transition-transform shadow-md">
+                                            <FaFacebook size={18} />
+                                        </a>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     </div>
 

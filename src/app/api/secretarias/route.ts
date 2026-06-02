@@ -17,7 +17,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { nome, descricao, contato, telefone, email, endereco, secretario, imagem, ordem } = body;
+        const { nome, descricao, contato, telefone, email, endereco, secretario, imagem, ordem, secretario_instagram, secretario_facebook } = body;
 
         const slug = nome
             .toLowerCase()
@@ -35,6 +35,8 @@ export async function POST(req: NextRequest) {
                 email,
                 endereco,
                 secretario,
+                secretario_instagram,
+                secretario_facebook,
                 imagem,
                 ordem: ordem || 0,
             },

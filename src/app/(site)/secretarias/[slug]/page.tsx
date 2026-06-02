@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import PageHeader from "@/components/PageHeader";
-import { FaBuilding, FaUserTie, FaPhone, FaEnvelope, FaMapMarker, FaClock, FaNewspaper } from "react-icons/fa";
+import { FaBuilding, FaUserTie, FaPhone, FaEnvelope, FaMapMarker, FaClock, FaNewspaper, FaInstagram, FaFacebook } from "react-icons/fa";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getSecretariaIcon } from "@/lib/icons";
@@ -68,6 +68,20 @@ export default async function SecretariaDetalhesPage({ params }: { params: { slu
                                     <span className="text-[10px] font-black text-blue-500 uppercase tracking-[0.2em] mb-2 block">Secretário(a) Responsável</span>
                                     <h3 className="text-2xl font-black text-gray-800 uppercase tracking-tighter mb-4">{secretaria.secretario || "Informação em atualização"}</h3>
                                     <p className="text-gray-500 text-sm font-medium leading-relaxed">Responsável pela gestão da pasta, coordenação de equipes e execução das políticas públicas da área.</p>
+                                    {(secretaria.secretario_instagram || secretaria.secretario_facebook) && (
+                                        <div className="flex items-center gap-3 mt-4">
+                                            {secretaria.secretario_instagram && (
+                                                <a href={secretaria.secretario_instagram} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 text-white rounded-xl flex items-center justify-center hover:scale-110 transition-transform shadow-md">
+                                                    <FaInstagram size={18} />
+                                                </a>
+                                            )}
+                                            {secretaria.secretario_facebook && (
+                                                <a href={secretaria.secretario_facebook} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-[#1877F2] text-white rounded-xl flex items-center justify-center hover:scale-110 transition-transform shadow-md">
+                                                    <FaFacebook size={18} />
+                                                </a>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
                              </div>
                         </section>

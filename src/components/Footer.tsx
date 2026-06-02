@@ -189,13 +189,13 @@ export default async function Footer() {
                                     rel={social.href !== "#" && social.href !== "" ? "noopener noreferrer" : undefined}
                                     aria-label={social.label}
                                     title={social.label}
-                                    className={`w-11 h-11 bg-white/10 border border-white/5 hover:border-white/20 rounded-2xl flex items-center justify-center transition-all duration-300 text-white/70 hover:text-white hover:scale-115 hover:-translate-y-1 shadow-lg ${social.brandColor} ${social.shadowColor} ${
+                                    className={`w-12 h-12 bg-white/20 border border-white/20 hover:border-white/40 rounded-2xl flex items-center justify-center transition-all duration-300 text-white hover:text-white hover:scale-110 hover:-translate-y-1 shadow-lg ${social.brandColor} ${social.shadowColor} ${
                                         social.href === "#" || social.href === "" 
-                                        ? "opacity-20 cursor-default pointer-events-none" 
-                                        : "opacity-80 hover:opacity-100 hover:shadow-xl"
+                                        ? "opacity-30 cursor-default pointer-events-none" 
+                                        : "opacity-100 hover:shadow-xl"
                                     }`}
                                 >
-                                    <social.Icon size={20} />
+                                    <social.Icon size={24} />
                                 </a>
                             ))}
                         </div>
