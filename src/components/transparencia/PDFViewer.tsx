@@ -11,12 +11,7 @@ interface PDFViewerProps {
 }
 
 export default function PDFViewer({ url, titulo, onClose }: PDFViewerProps) {
-    const safeUrl = url || "";
-    const isRelative = safeUrl.startsWith("/") || (!safeUrl.startsWith("http://") && !safeUrl.startsWith("https://"));
-    const isR2 = safeUrl.includes("r2.dev") || safeUrl.includes("r2.cloudflarestorage.com");
-    const isVercelBlob = safeUrl.includes("vercel-storage.com");
-    const isSameDomain = safeUrl.includes("lajespintadas.rn.gov.br") || (typeof window !== "undefined" && safeUrl.includes(window.location.hostname));
-    const viewerUrl = (isRelative || isR2 || isVercelBlob || isSameDomain) ? safeUrl : `/api/pdf-proxy?url=${encodeURIComponent(safeUrl)}`;
+    const viewerUrl = `/api/pdf-proxy?url=${encodeURIComponent(url)}`;
 
     useEffect(() => {
         const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };

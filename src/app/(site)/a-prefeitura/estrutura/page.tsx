@@ -87,17 +87,9 @@ export default function EstruturaPage() {
                 </div>
 
                 {/* Aviso Final */}
-                <div className="mt-16 text-center flex flex-col sm:flex-row items-center justify-center gap-4">
+                <div className="mt-16 text-center">
                     <a href="/secretarias" className="inline-flex py-3 px-8 bg-gray-800 text-white rounded-full font-bold uppercase tracking-wider text-xs hover:bg-gray-900 transition-colors shadow-lg">
                         Ver Lista de Contatos dos Secretários
-                    </a>
-                    <a 
-                        href="/uploads/lei-estrutura-organizacional.pdf" 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
-                        className="inline-flex py-3 px-8 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-full font-bold uppercase tracking-wider text-xs transition-colors shadow-md"
-                    >
-                        Visualizar Lei da Estrutura (PDF)
                     </a>
                 </div>
 

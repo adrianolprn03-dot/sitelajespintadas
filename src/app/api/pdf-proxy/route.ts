@@ -12,11 +12,7 @@ export async function GET(req: NextRequest) {
     // Validar formato básico da URL
     let parsedUrl;
     try {
-        if (url.startsWith("/")) {
-            parsedUrl = new URL(url, req.url);
-        } else {
-            parsedUrl = new URL(url);
-        }
+        parsedUrl = new URL(url);
     } catch (e) {
         return NextResponse.json({ error: "URL inválida" }, { status: 400 });
     }
@@ -26,7 +22,7 @@ export async function GET(req: NextRequest) {
     }
 
     try {
-        const response = await fetch(parsedUrl.toString());
+        const response = await fetch(url);
 
         if (!response.ok) {
             return NextResponse.json({ error: "Arquivo não encontrado ou inacessível" }, { status: response.status });

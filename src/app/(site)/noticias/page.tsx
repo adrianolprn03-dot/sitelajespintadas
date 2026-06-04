@@ -24,10 +24,7 @@ const categoriaCores: Record<string, string> = {
 };
 
 function formatarData(dataStr: string) {
-    if (!dataStr) return "";
-    const d = new Date(dataStr);
-    if (isNaN(d.getTime())) return "Data Inválida";
-    return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
+    return new Date(dataStr + "T00:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
 }
 
 export default function NoticiasPage() {

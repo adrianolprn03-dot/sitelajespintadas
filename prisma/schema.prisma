@@ -1,5 +1,5 @@
 generator client {
-  provider      = "prisma-client-js"
+  provider = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x", "linux-musl", "linux-musl-openssl-3.0.x"]
 }
 
@@ -32,8 +32,6 @@ model Secretaria {
   endereco             String?
   secretario           String?
   imagem               String?
-  secretario_instagram String?
-  secretario_facebook  String?
   horarioFuncionamento String?
   ativa                Boolean   @default(true)
   ordem                Int       @default(0)
@@ -165,15 +163,15 @@ model Despesa {
 }
 
 model Documento {
-  id           String   @id @default(cuid())
-  titulo       String
-  tipo         String
-  arquivo      String?
-  documentUrl  String?
-  tamanho      Int?
-  ano          Int?
-  ativo        Boolean  @default(true)
-  criadoEm     DateTime @default(now())
+  id          String   @id @default(cuid())
+  titulo      String
+  tipo        String
+  arquivo     String?
+  documentUrl String?
+  tamanho     Int?
+  ano         Int?
+  ativo       Boolean  @default(true)
+  criadoEm    DateTime @default(now())
   atualizadoEm DateTime @default(now()) @updatedAt
 }
 
@@ -246,13 +244,13 @@ model Esic {
 }
 
 model CidadaoEsic {
-  id             String    @id @default(cuid())
+  id             String   @id @default(cuid())
   nome           String
-  tipoPessoa     String    @default("Física")
-  cpf            String?   @unique
-  cnpj           String?   @unique
+  tipoPessoa     String   @default("Física")
+  cpf            String?  @unique
+  cnpj           String?  @unique
   razaoSocial    String?
-  email          String    @unique
+  email          String   @unique
   senha          String
   telefone       String?
   dataNascimento DateTime?
@@ -270,9 +268,10 @@ model CidadaoEsic {
   ufEmissor      String?
   profissao      String?
   nomeFantasia   String?
-  criadoEm       DateTime  @default(now())
+  criadoEm       DateTime @default(now())
   pedidos        Esic[]
 }
+
 
 model GaleriaFoto {
   id        String   @id @default(cuid())
@@ -366,28 +365,6 @@ model ConselhoAta {
   arquivo     String?
   criadoEm    DateTime @default(now())
   conselho    Conselho @relation(fields: [conselhoId], references: [id], onDelete: Cascade)
-}
-
-model TransferenciaConselho {
-  id                 String   @id @default(cuid())
-  tipoConselho       String
-  nomeConselho       String
-  mes                Int
-  ano                Int
-  valorRepasse       Float
-  natureza           String
-  fonteRecurso       String
-  descricaoAplicacao String
-  numeroEmpenho      String?
-  numeroPagamento    String?
-  arquivoComprovante String?
-  statusPrestacao    String   @default("regular")
-  observacoes        String?
-  criadoEm           DateTime @default(now())
-  atualizadoEm       DateTime @default(now()) @updatedAt
-
-  @@index([tipoConselho])
-  @@index([ano, mes])
 }
 
 model ImportacaoCSV {
@@ -566,23 +543,23 @@ model RenunciaFiscal {
 }
 
 model QuadroServidor {
-  id            String   @id @default(cuid())
-  cargo         String
-  vinculo       String   @default("efetivo")
-  leiCriacao    String?
-  vagasLei      Int
+  id           String   @id @default(cuid())
+  cargo        String
+  vinculo      String   @default("efetivo")
+  leiCriacao   String?
+  vagasLei     Int
   vagasOcupadas Int
-  vagasLivres   Int      @default(0)
-  ativo         Boolean  @default(true)
-  criadoEm      DateTime @default(now())
-  atualizadoEm  DateTime @default(now()) @updatedAt
+  vagasLivres  Int      @default(0)
+  ativo        Boolean  @default(true)
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @default(now()) @updatedAt
 }
 
 model EmendaPix {
   id                    String    @id @default(cuid())
   ano                   Int
-  origem                String
-  tipoEmenda            String?
+  origem                String    // Federal ou Estadual
+  tipoEmenda            String?   // Individual, Bancada, etc
   formaRepasse          String?   @default("Transferência Especial - PIX")
   numeroEmenda          String?
   autor                 String
@@ -643,14 +620,14 @@ model Estagiario {
 }
 
 model Terceirizado {
-  id             String    @id @default(cuid())
-  nome           String
-  empresa        String
-  funcao         String
-  unidadeLotacao String
-  dataInicio     DateTime
-  dataFim        DateTime?
-  status         String    @default("ativo")
-  criadoEm       DateTime  @default(now())
-  atualizadoEm   DateTime  @updatedAt
+  id              String    @id @default(cuid())
+  nome            String
+  empresa         String
+  funcao          String
+  unidadeLotacao  String
+  dataInicio      DateTime
+  dataFim         DateTime?
+  status          String    @default("ativo")
+  criadoEm        DateTime  @default(now())
+  atualizadoEm    DateTime  @updatedAt
 }
