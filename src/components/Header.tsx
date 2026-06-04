@@ -199,7 +199,7 @@ export default function Header() {
 
             {/* Mobile Menu */}
             {mobileOpen && (
-                <div className="lg:hidden fixed inset-0 top-[110px] bg-white/95 backdrop-blur-xl z-40 overflow-y-auto animate-fade-in px-6 py-10">
+                <div className={`lg:hidden fixed inset-0 ${scrolled ? 'top-[104px]' : 'top-[128px]'} bg-white/95 backdrop-blur-xl z-40 overflow-y-auto animate-fade-in px-6 py-10 transition-all duration-300`}>
                     <div className="flex flex-col gap-8">
                         {navItems.map((item, index) => (
                             <div key={index} className="flex flex-col gap-4">
