@@ -17,12 +17,14 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import PageHeader from "@/components/PageHeader";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 // Categorias organizadas de acordo com as dimensões de avaliação do PNTP 2026
+// Adicionamos o ícone no nível da categoria para o Grid de Navegação
 const categoriasDeModulos = [
     {
         tituloCategoria: "Institucional e Acessibilidade",
+        icon: Building2,
         desc: "Dados oficiais, competências legais, estrutura administrativa e canais de acessibilidade.",
         modulos: [
             { icon: Building2, titulo: "Institucional", desc: "Dados gerais e identificação da entidade municipal.", href: "/transparencia/institucional", badge: "ENTIDADE", tipoCriterio: "ESSENCIAL", cor: "from-blue-700 to-indigo-850" },
@@ -37,6 +39,7 @@ const categoriasDeModulos = [
     },
     {
         tituloCategoria: "Planejamento, Orçamento e Controle Fiscal",
+        icon: Landmark,
         desc: "Leis orçamentárias (LOA, LDO, PPA), relatórios fiscais da LRF (RREO, RGF) e julgamento de contas.",
         modulos: [
             { icon: Landmark, titulo: "Planejamento Orçamentário", desc: "Instrumentos de planejamento municipal: LOA, LDO e PPA.", href: "/transparencia/orcamento", badge: "PLANEJAMENTO", tipoCriterio: "ESSENCIAL", cor: "from-slate-800 to-slate-950" },
@@ -52,6 +55,7 @@ const categoriasDeModulos = [
     },
     {
         tituloCategoria: "Receitas e Recursos Financeiros",
+        icon: Coins,
         desc: "Arrecadação de tributos em tempo real, dívida ativa, incentivos e desonerações fiscais.",
         modulos: [
             { icon: Coins, titulo: "Receitas Públicas", desc: "Arrecadação municipal em tempo real, receitas tributárias e transferências.", href: "/transparencia/receitas", badge: "ARRECADAÇÃO", tipoCriterio: "ESSENCIAL", cor: "from-emerald-500 to-teal-600" },
@@ -63,6 +67,7 @@ const categoriasDeModulos = [
     },
     {
         tituloCategoria: "Despesas e Execução Financeira",
+        icon: Receipt,
         desc: "Acompanhamento detalhado da execução da despesa, pagamentos e repasses efetuados.",
         modulos: [
             { icon: Receipt, titulo: "Despesas Públicas", desc: "Detalhamento de empenhos, liquidações e ordens de pagamento municipais.", href: "/transparencia/despesas", badge: "GASTOS", tipoCriterio: "ESSENCIAL", cor: "from-blue-600 to-indigo-700" },
@@ -72,6 +77,7 @@ const categoriasDeModulos = [
     },
     {
         tituloCategoria: "Licitações, Editais e Compras",
+        icon: Gavel,
         desc: "Processos licitatórios, atas de registro de preços, chamamentos públicos e editais diversos.",
         modulos: [
             { icon: Gavel, titulo: "Licitações", desc: "Editais, atas, julgamentos, homologações e recursos de certames públicos.", href: "/transparencia/licitacoes", badge: "CERTAMES", tipoCriterio: "ESSENCIAL", cor: "from-orange-600 to-red-700" },
@@ -82,6 +88,7 @@ const categoriasDeModulos = [
     },
     {
         tituloCategoria: "Contratos, Convênios e Parcerias",
+        icon: FileSignature,
         desc: "Contratos administrativos celebrados pela prefeitura, termos aditivos e convênios federais/estaduais.",
         modulos: [
             { icon: FileSignature, titulo: "Contratos Administrativos", desc: "Instrumentos contratuais celebrados, aditivos, valores e prazos.", href: "/transparencia/contratos", badge: "CONTRATOS", tipoCriterio: "ESSENCIAL", cor: "from-blue-700 to-indigo-800" },
@@ -94,6 +101,7 @@ const categoriasDeModulos = [
     },
     {
         tituloCategoria: "Recursos Humanos e Pessoal",
+        icon: Users,
         desc: "Folha de pagamento dos servidores públicos, diárias concedidas, concursos públicos e estagiários.",
         modulos: [
             { icon: Users, titulo: "Servidores Públicos", desc: "Folha de pagamento, cargos, remunerações e servidores municipais.", href: "/transparencia/servidores", badge: "PESSOAL", tipoCriterio: "ESSENCIAL", cor: "from-slate-700 to-slate-900" },
@@ -108,6 +116,7 @@ const categoriasDeModulos = [
     },
     {
         tituloCategoria: "Obras Públicas e Patrimônio",
+        icon: Construction,
         desc: "Acompanhamento físico de obras municipais em execução e frota de veículos oficiais.",
         modulos: [
             { icon: Construction, titulo: "Obras Públicas", desc: "Contratos de obras, medições, relatórios físicos e andamento.", href: "/transparencia/obras", badge: "EXECUÇÃO", tipoCriterio: "ESSENCIAL", cor: "from-amber-600 to-orange-700" },
@@ -116,6 +125,7 @@ const categoriasDeModulos = [
     },
     {
         tituloCategoria: "Participação Social, Ouvidoria e SIC",
+        icon: Headset,
         desc: "Serviço de Informação ao Cidadão (e-SIC), canais de Ouvidoria, Carta de Serviços e FAQ.",
         modulos: [
             { icon: ClipboardList, titulo: "e-SIC", desc: "Abertura e consulta de pedidos de acesso à informação (LAI).", href: "/servicos/esic", badge: "LAI", tipoCriterio: "ESSENCIAL", cor: "from-amber-600 to-orange-700" },
@@ -130,6 +140,7 @@ const categoriasDeModulos = [
     },
     {
         tituloCategoria: "Saúde, Educação e Políticas Sociais",
+        icon: HeartPulse,
         desc: "Ações públicas de saúde, oferta de medicamentos, centrais de regulação e diretrizes de ensino.",
         modulos: [
             { icon: HeartPulse, titulo: "Recursos da Saúde", desc: "Investimentos, repasses do SUS e execuções financeiras da Saúde.", href: "/transparencia/saude", badge: "SAÚDE", tipoCriterio: "ESSENCIAL", cor: "from-rose-500 to-red-650" },
@@ -142,6 +153,7 @@ const categoriasDeModulos = [
     },
     {
         tituloCategoria: "Governança, Legislação, LGPD e Dados Abertos",
+        icon: Files,
         desc: "Programa de integridade ética, conformidade com a LGPD, painel de dados abertos e atos normativos oficiais.",
         modulos: [
             { icon: Files, titulo: "Leis Municipais", desc: "Legislação completa aprovada pelo legislativo e executivo.", href: "/transparencia/leis", badge: "LEGISLAÇÃO", tipoCriterio: "ESSENCIAL", cor: "from-indigo-600 to-purple-700" },
@@ -155,11 +167,22 @@ const categoriasDeModulos = [
     }
 ];
 
+// Módulos mais acessados pelos cidadãos para acesso rápido e imediato
+const modulosMaisAcessados = [
+    { icon: Users, titulo: "Servidores", desc: "Folha de Pagamento", href: "/transparencia/servidores", cor: "from-indigo-50 to-indigo-100/50 hover:bg-indigo-100 text-indigo-900 border-indigo-200" },
+    { icon: Gavel, titulo: "Licitações", desc: "Certames e Editais", href: "/transparencia/licitacoes", cor: "from-orange-50 to-orange-100/50 hover:bg-orange-100 text-orange-900 border-orange-200" },
+    { icon: FileSignature, titulo: "Contratos", desc: "Ajustes e Aditivos", href: "/transparencia/contratos", cor: "from-blue-50 to-blue-100/50 hover:bg-blue-100 text-blue-900 border-blue-200" },
+    { icon: Receipt, titulo: "Despesas", desc: "Gastos e Pagamentos", href: "/transparencia/despesas", cor: "from-slate-50 to-slate-100/50 hover:bg-slate-100 text-slate-900 border-slate-200" },
+    { icon: Plane, titulo: "Diárias", desc: "Viagens e Passagens", href: "/transparencia/diarias", cor: "from-sky-50 to-sky-100/50 hover:bg-sky-100 text-sky-900 border-sky-200" },
+    { icon: ClipboardList, titulo: "e-SIC", desc: "Acesso à Informação", href: "/servicos/esic", cor: "from-amber-50 to-amber-100/50 hover:bg-amber-100 text-amber-900 border-amber-200" }
+];
+
 export default function TransparenciaPage() {
     const [linksExternos, setLinksExternos] = useState<any[]>([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedCriterio, setSelectedCriterio] = useState<string>("TODOS");
     const [selectedCategory, setSelectedCategory] = useState<string>("TODAS");
+    const modulesGridRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         async function loadExternalLinks() {
@@ -177,7 +200,6 @@ export default function TransparenciaPage() {
     }, []);
 
     // Estatísticas dinâmicas dos critérios (essenciais, obrigatórios, recomendados)
-    const countTotal = categoriasDeModulos.reduce((acc, cat) => acc + cat.modulos.length, 0);
     const countEssencial = categoriasDeModulos.reduce((acc, cat) => acc + cat.modulos.filter(m => m.tipoCriterio === "ESSENCIAL").length, 0);
     const countObrigatorio = categoriasDeModulos.reduce((acc, cat) => acc + cat.modulos.filter(m => m.tipoCriterio === "OBRIGATÓRIO").length, 0);
     const countRecomendado = categoriasDeModulos.reduce((acc, cat) => acc + cat.modulos.filter(m => m.tipoCriterio === "RECOMENDADO").length, 0);
@@ -212,6 +234,30 @@ export default function TransparenciaPage() {
 
     const hasResults = filteredCategories.length > 0;
 
+    const handleCategorySelect = (categoryName: string) => {
+        setSelectedCategory(categoryName);
+        setTimeout(() => {
+            if (modulesGridRef.current) {
+                modulesGridRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+        }, 100);
+    };
+
+    // Helper para destacar o texto buscado
+    const highlightText = (text: string, search: string) => {
+        if (!search) return text;
+        const parts = text.split(new RegExp(`(${search.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi'));
+        return (
+            <>
+                {parts.map((part, i) => 
+                    part.toLowerCase() === search.toLowerCase() 
+                        ? <mark key={i} className="bg-amber-100 text-amber-950 font-semibold px-0.5 rounded transition-all">{part}</mark> 
+                        : part
+                )}
+            </>
+        );
+    };
+
     const containerVariants = {
         hidden: { opacity: 0 },
         visible: { opacity: 1, transition: { staggerChildren: 0.05 } }
@@ -241,7 +287,7 @@ export default function TransparenciaPage() {
                     initial={{ scale: 0.98, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 0.5 }}
-                    className="bg-white rounded-[3rem] p-8 md:p-10 shadow-2xl shadow-slate-200/60 border border-slate-100 mb-12"
+                    className="bg-white rounded-[3rem] p-8 md:p-10 shadow-2xl shadow-slate-200/60 border border-slate-100 mb-8"
                 >
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
                         {/* Indicador Radial do Selo Diamante */}
@@ -330,7 +376,7 @@ export default function TransparenciaPage() {
                                         </span>
                                     </div>
                                     <span className={`text-[10px] font-black uppercase tracking-widest block ${selectedCriterio === "ESSENCIAL" ? "text-red-100" : "text-slate-400"}`}>Essenciais</span>
-                                    <span className="text-2xl font-black tracking-tight leading-none mt-1 block">{countEssencial} de {countEssencial}</span>
+                                    <span className="text-2xl font-black tracking-tight leading-none mt-1 block">{countEssencial} Módulos</span>
                                     <span className={`text-[8px] font-black uppercase tracking-widest mt-3 flex items-center gap-1.5 ${selectedCriterio === "ESSENCIAL" ? "text-white" : "text-red-600"}`}>
                                         <Check size={10} /> {selectedCriterio === "ESSENCIAL" ? "FILTRO ATIVO" : "CLIQUE PARA FILTRAR"}
                                     </span>
@@ -354,7 +400,7 @@ export default function TransparenciaPage() {
                                         </span>
                                     </div>
                                     <span className={`text-[10px] font-black uppercase tracking-widest block ${selectedCriterio === "OBRIGATÓRIO" ? "text-amber-100" : "text-slate-400"}`}>Obrigatórios</span>
-                                    <span className="text-2xl font-black tracking-tight leading-none mt-1 block">{countObrigatorio} de {countObrigatorio}</span>
+                                    <span className="text-2xl font-black tracking-tight leading-none mt-1 block">{countObrigatorio} Módulos</span>
                                     <span className={`text-[8px] font-black uppercase tracking-widest mt-3 flex items-center gap-1.5 ${selectedCriterio === "OBRIGATÓRIO" ? "text-white" : "text-amber-600"}`}>
                                         <Check size={10} /> {selectedCriterio === "OBRIGATÓRIO" ? "FILTRO ATIVO" : "CLIQUE PARA FILTRAR"}
                                     </span>
@@ -378,7 +424,7 @@ export default function TransparenciaPage() {
                                         </span>
                                     </div>
                                     <span className={`text-[10px] font-black uppercase tracking-widest block ${selectedCriterio === "RECOMENDADO" ? "text-blue-100" : "text-slate-400"}`}>Recomendados</span>
-                                    <span className="text-2xl font-black tracking-tight leading-none mt-1 block">{countRecomendado} de {countRecomendado}</span>
+                                    <span className="text-2xl font-black tracking-tight leading-none mt-1 block">{countRecomendado} Módulos</span>
                                     <span className={`text-[8px] font-black uppercase tracking-widest mt-3 flex items-center gap-1.5 ${selectedCriterio === "RECOMENDADO" ? "text-white" : "text-blue-600"}`}>
                                         <Check size={10} /> {selectedCriterio === "RECOMENDADO" ? "FILTRO ATIVO" : "CLIQUE PARA FILTRAR"}
                                     </span>
@@ -388,7 +434,102 @@ export default function TransparenciaPage() {
                     </div>
                 </motion.div>
 
-                {/* 2. Barra de Busca e Filtro Ativo */}
+                {/* 2. Módulos mais acessados (Acesso Rápido) */}
+                <motion.div 
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.1 }}
+                    className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-xl shadow-slate-200/40 mb-8"
+                >
+                    <div className="flex items-center gap-3 mb-6">
+                        <span className="p-2 rounded-xl bg-indigo-50 text-indigo-650">
+                            <TrendingUp size={20} />
+                        </span>
+                        <h4 className="text-xs font-black uppercase tracking-widest text-slate-800">Mais Consultados pelos Cidadãos</h4>
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                        {modulosMaisAcessados.map((modulo) => (
+                            <Link 
+                                key={modulo.titulo} 
+                                href={modulo.href}
+                                className={`flex flex-col items-center justify-center text-center p-5 rounded-[1.5rem] border ${modulo.cor} transition-all duration-300 hover:-translate-y-1 shadow-sm hover:shadow-md group`}
+                            >
+                                <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center mb-3 shadow-sm border border-slate-50 group-hover:scale-105 transition-transform">
+                                    <modulo.icon size={18} />
+                                </div>
+                                <span className="text-[10px] font-black uppercase tracking-wider block leading-none">{modulo.titulo}</span>
+                                <span className="text-[8px] font-bold opacity-60 uppercase tracking-widest mt-1 block">{modulo.desc}</span>
+                            </Link>
+                        ))}
+                    </div>
+                </motion.div>
+
+                {/* 3. Índice Visual de Dimensões (NOVO HUB DE NAVEGAÇÃO INTERATIVO) */}
+                <motion.div 
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.15 }}
+                    className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-xl shadow-slate-200/40 mb-8"
+                >
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-100">
+                        <div className="flex items-center gap-3">
+                            <span className="p-2 rounded-xl bg-indigo-50 text-indigo-650">
+                                <LayoutGrid size={20} />
+                            </span>
+                            <div>
+                                <h4 className="text-xs font-black uppercase tracking-widest text-slate-800">Navegue por Dimensão Temática</h4>
+                                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Clique em uma dimensão para filtrar e focar nos seus módulos</p>
+                            </div>
+                        </div>
+                        <button
+                            onClick={() => setSelectedCategory("TODAS")}
+                            className={`px-5 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${
+                                selectedCategory === "TODAS"
+                                    ? "bg-slate-950 border-transparent text-white shadow-lg"
+                                    : "bg-slate-50 border-slate-200 hover:bg-slate-100 text-slate-700"
+                            }`}
+                        >
+                            Ver Todas as Dimensões
+                        </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+                        {categoriasDeModulos.map((cat, idx) => {
+                            const isSelected = selectedCategory === cat.tituloCategoria;
+                            const countItems = cat.modulos.length;
+                            return (
+                                <button
+                                    key={cat.tituloCategoria}
+                                    onClick={() => handleCategorySelect(cat.tituloCategoria)}
+                                    className={`p-5 rounded-[1.8rem] border text-left flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 ${
+                                        isSelected
+                                            ? "bg-gradient-to-br from-indigo-600 to-indigo-850 text-white border-transparent shadow-xl shadow-indigo-600/25"
+                                            : "bg-slate-50/50 hover:bg-white border-slate-200/60 hover:border-indigo-150 text-slate-850 hover:shadow-lg hover:shadow-slate-100"
+                                    }`}
+                                >
+                                    <div className="flex items-center justify-between w-full mb-6">
+                                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${isSelected ? "bg-white/20" : "bg-indigo-50 text-indigo-650"}`}>
+                                            <cat.icon size={16} />
+                                        </div>
+                                        <span className={`text-[8px] font-black px-2 py-0.5 rounded ${isSelected ? "bg-white/20 text-white" : "bg-slate-200/70 text-slate-600"}`}>
+                                            {countItems} {countItems === 1 ? "ITENS" : "ITENS"}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span className={`text-[8px] font-black uppercase tracking-widest ${isSelected ? "text-indigo-200" : "text-indigo-650"} block mb-1`}>
+                                            DIMENSÃO {idx + 1 < 10 ? `0${idx + 1}` : idx + 1}
+                                        </span>
+                                        <h5 className="text-[10px] font-black uppercase tracking-tight leading-snug line-clamp-2">
+                                            {cat.tituloCategoria.split(" e ")[0].split(",")[0]}
+                                        </h5>
+                                    </div>
+                                </button>
+                            );
+                        })}
+                    </div>
+                </motion.div>
+
+                {/* 4. Barra de Busca */}
                 <div className="bg-white rounded-[2rem] p-6 shadow-xl shadow-slate-100/80 border border-slate-100 mb-12">
                     <div className="flex flex-col lg:flex-row gap-6 items-stretch">
                         {/* Campo de Pesquisa */}
@@ -398,7 +539,7 @@ export default function TransparenciaPage() {
                             </div>
                             <input 
                                 type="text" 
-                                placeholder="Busque por folha de pagamento, diárias, licitações, saúde..."
+                                placeholder="Busque pelo nome do módulo, termo ou descrição (ex: 'folha', 'diárias', 'obras')..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-16 pr-12 py-5 text-xs font-bold placeholder:text-slate-300 outline-none focus:ring-4 focus:ring-indigo-600/5 focus:bg-white focus:border-indigo-600/30 transition-all shadow-inner"
@@ -413,17 +554,17 @@ export default function TransparenciaPage() {
                             )}
                         </div>
 
-                        {/* Filtro Dropdown de Dimensões para Mobile/Fácil Acesso */}
+                        {/* Dropdown Auxiliar */}
                         <div className="lg:w-80 relative flex items-center bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 focus-within:ring-4 focus-within:ring-indigo-600/5 focus-within:bg-white focus-within:border-indigo-600/30 transition-all">
                             <select
                                 value={selectedCategory}
                                 onChange={(e) => setSelectedCategory(e.target.value)}
                                 className="w-full bg-transparent font-bold text-xs uppercase outline-none text-slate-700 cursor-pointer pr-4"
                             >
-                                <option value="TODAS">Todas as Dimensões</option>
+                                <option value="TODAS">Filtro: Todas as Dimensões</option>
                                 {categoriasDeModulos.map(cat => (
                                     <option key={cat.tituloCategoria} value={cat.tituloCategoria}>
-                                        {cat.tituloCategoria.split(" e ")[0].split(",")[0]}
+                                        {cat.tituloCategoria}
                                     </option>
                                 ))}
                             </select>
@@ -465,209 +606,172 @@ export default function TransparenciaPage() {
                     )}
                 </div>
 
-                {/* 3. Navegação Rápida (Sticky Anchors) */}
-                {selectedCategory === "TODAS" && (
-                    <motion.div 
-                        initial={{ y: 15, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.2 }}
-                        className="sticky top-4 z-50 bg-white/90 backdrop-blur-md border border-slate-200/50 rounded-[2rem] p-3.5 mb-16 shadow-xl shadow-slate-200/30 max-w-7xl mx-auto"
-                    >
-                        <div className="flex items-center gap-4 overflow-x-auto scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden scroll-smooth py-1">
-                            <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 whitespace-nowrap border-r border-slate-200 pr-4 pl-2 flex items-center gap-1.5">
-                                <LayoutGrid size={12} className="text-slate-450" /> Índice de Navegação
-                            </span>
-                            <div className="flex items-center gap-2">
-                                {categoriasDeModulos.map((categoria, idx) => {
-                                    const slug = categoria.tituloCategoria.toLowerCase().replace(/[^a-z0-9]/g, "-");
-                                    return (
-                                        <button
-                                            key={categoria.tituloCategoria}
-                                            onClick={() => {
-                                                const el = document.getElementById(slug);
-                                                if (el) {
-                                                    const yOffset = -140; // offset for sticky menu
-                                                    const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
-                                                    window.scrollTo({ top: y, behavior: "smooth" });
-                                                }
-                                            }}
-                                            className="flex items-center gap-2 px-4 py-2 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 border border-slate-250/30 rounded-full text-[9px] font-black uppercase tracking-wider text-slate-650 hover:text-indigo-650 transition-all shrink-0 shadow-sm"
-                                        >
-                                            <span className="text-indigo-650 font-black">{idx + 1 < 10 ? `0${idx + 1}` : idx + 1}</span>
-                                            {categoria.tituloCategoria.split(" e ")[0].split(",")[0]}
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    </motion.div>
-                )}
+                {/* Seção Principal de Cards */}
+                <div ref={modulesGridRef} className="scroll-mt-6">
+                    {hasResults ? (
+                        <div className="space-y-20">
+                            {filteredCategories.map((categoria, catIdx) => {
+                                const slug = categoria.tituloCategoria.toLowerCase().replace(/[^a-z0-9]/g, "-");
+                                if (categoria.modulos.length === 0) return null;
 
-                {/* 4. Grade de Categorias e Módulos */}
-                {hasResults ? (
-                    <div className="space-y-24">
-                        {filteredCategories.map((categoria, catIdx) => {
-                            const slug = categoria.tituloCategoria.toLowerCase().replace(/[^a-z0-9]/g, "-");
-                            
-                            // Se a categoria não tem módulos após filtros, ela é pulada
-                            if (categoria.modulos.length === 0) return null;
-
-                            return (
-                                <motion.section 
-                                    id={slug}
-                                    key={categoria.tituloCategoria}
-                                    initial="hidden"
-                                    whileInView="visible"
-                                    viewport={{ once: true, margin: "-120px" }}
-                                    variants={containerVariants}
-                                >
-                                    {/* Título da Seção */}
-                                    <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-10 border-b border-slate-100 pb-8">
-                                        <div className="max-w-3xl">
-                                            <motion.div variants={itemVariants} className="flex items-center gap-4 mb-4">
-                                                <span className="px-5 py-2 bg-slate-950 text-white rounded-full text-[9px] font-black uppercase tracking-[0.25em] shadow-lg shadow-slate-950/20">
-                                                    DIMENSÃO {catIdx + 1 < 10 ? `0${catIdx + 1}` : catIdx + 1}
-                                                </span>
-                                                <div className="h-0.5 w-10 bg-indigo-600 rounded-full" />
-                                            </motion.div>
-                                            <motion.h2 variants={itemVariants} className="text-3xl md:text-4xl font-black text-slate-900 tracking-tighter uppercase mb-3 leading-none">
-                                                {categoria.tituloCategoria}
-                                            </motion.h2>
-                                            <motion.p variants={itemVariants} className="text-slate-400 font-bold uppercase tracking-wider text-[10px] leading-relaxed max-w-2xl opacity-90">
-                                                {categoria.desc}
-                                            </motion.p>
-                                        </div>
-                                        <motion.div variants={itemVariants}>
-                                            <div className="flex items-center gap-3 px-5 py-2.5 bg-white rounded-2xl border border-slate-100 shadow-sm text-[9px] font-black uppercase tracking-wider text-slate-400">
-                                                <FileSearch size={14} className="text-indigo-600" /> {categoria.modulos.length} {categoria.modulos.length === 1 ? "Módulo" : "Módulos"}
+                                return (
+                                    <motion.section 
+                                        id={slug}
+                                        key={categoria.tituloCategoria}
+                                        initial="hidden"
+                                        whileInView="visible"
+                                        viewport={{ once: true, margin: "-120px" }}
+                                        variants={containerVariants}
+                                        className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-xl shadow-slate-200/10"
+                                    >
+                                        {/* Título da Seção */}
+                                        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-8 border-b border-slate-100 pb-6">
+                                            <div className="max-w-3xl">
+                                                <motion.div variants={itemVariants} className="flex items-center gap-4 mb-3">
+                                                    <span className="px-4 py-1.5 bg-slate-950 text-white rounded-full text-[9px] font-black uppercase tracking-[0.25em] shadow-lg shadow-slate-950/20">
+                                                        DIMENSÃO {catIdx + 1 < 10 ? `0${catIdx + 1}` : catIdx + 1}
+                                                    </span>
+                                                    <div className="h-0.5 w-10 bg-indigo-650 rounded-full" />
+                                                </motion.div>
+                                                <motion.h2 variants={itemVariants} className="text-2xl md:text-3xl font-black text-slate-900 tracking-tighter uppercase mb-2 leading-none">
+                                                    {categoria.tituloCategoria}
+                                                </motion.h2>
+                                                <motion.p variants={itemVariants} className="text-slate-400 font-bold uppercase tracking-wider text-[9px] leading-relaxed max-w-2xl opacity-90">
+                                                    {categoria.desc}
+                                                </motion.p>
                                             </div>
-                                        </motion.div>
-                                    </div>
-                                    
-                                    {/* Grid de Cards */}
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                                        {categoria.modulos.map((m, idx) => {
-                                            const identifier = m.href.split("/").pop()?.toLowerCase() || "";
-                                            const override = linksExternos.find((l: any) => 
-                                                l.moduloAlvo?.toLowerCase() === identifier
-                                            );
-                                            const finalHref = override ? override.url : m.href;
-                                            const isExternal = !!override;
+                                            <motion.div variants={itemVariants}>
+                                                <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-xl border border-slate-100 text-[9px] font-black uppercase tracking-wider text-slate-500 shadow-inner">
+                                                    <FileSearch size={12} className="text-indigo-650" /> {categoria.modulos.length} {categoria.modulos.length === 1 ? "Módulo" : "Módulos"}
+                                                </div>
+                                            </motion.div>
+                                        </div>
+                                        
+                                        {/* Grid de Cards */}
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                            {categoria.modulos.map((m) => {
+                                                const identifier = m.href.split("/").pop()?.toLowerCase() || "";
+                                                const override = linksExternos.find((l: any) => 
+                                                    l.moduloAlvo?.toLowerCase() === identifier
+                                                );
+                                                const finalHref = override ? override.url : m.href;
+                                                const isExternal = !!override;
 
-                                            return (
-                                                <motion.div
-                                                    key={m.href}
-                                                    variants={itemVariants}
-                                                    whileHover={{ y: -8, transition: { duration: 0.3 } }}
-                                                >
-                                                    <Link 
-                                                        href={finalHref} 
-                                                        target={isExternal ? "_blank" : undefined}
-                                                        rel={isExternal ? "noopener noreferrer" : undefined}
-                                                        className="group relative flex flex-col h-full bg-white rounded-[2rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.015)] hover:shadow-[0_20px_50px_rgba(30,41,59,0.12)] hover:border-indigo-600/10 transition-all duration-500 overflow-hidden"
+                                                return (
+                                                    <motion.div
+                                                        key={m.href}
+                                                        variants={itemVariants}
+                                                        whileHover={{ y: -6, transition: { duration: 0.3 } }}
                                                     >
-                                                        {/* Header do Card (Gradiente de Identificação) */}
-                                                        <div className={`h-20 bg-gradient-to-br ${m.cor} relative p-5 flex items-start justify-between`}>
-                                                            <div className="absolute inset-0 bg-slate-950/10 backdrop-blur-[1px]" />
-                                                            <div className="absolute top-0 right-0 p-5 opacity-0 group-hover:opacity-10 group-hover:scale-125 transition-all duration-700">
-                                                                <m.icon size={80} strokeWidth={1} />
-                                                            </div>
-                                                            <span className={`relative z-10 px-2.5 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest border shadow-inner backdrop-blur-md ${
-                                                                m.tipoCriterio === "ESSENCIAL" 
-                                                                    ? "bg-red-500/20 border-red-400/30 text-red-100" 
-                                                                    : m.tipoCriterio === "OBRIGATÓRIO"
-                                                                    ? "bg-amber-500/20 border-amber-400/30 text-amber-100"
-                                                                    : "bg-blue-500/20 border-blue-400/30 text-blue-100"
-                                                            }`}>
-                                                                {m.tipoCriterio}
-                                                            </span>
-                                                            <span className="relative z-10 px-2.5 py-1 bg-white/20 backdrop-blur-md rounded-lg text-[8px] font-black uppercase tracking-widest text-white border border-white/20 shadow-sm">
-                                                                {m.badge}
-                                                            </span>
-                                                        </div>
-
-                                                        {/* Ícone Flutuante */}
-                                                        <div className="absolute top-10 left-6 transition-transform duration-500 group-hover:-translate-y-1.5 group-hover:scale-105">
-                                                            <div className="w-14 h-14 bg-white rounded-2xl shadow-lg shadow-slate-200/50 flex items-center justify-center border border-slate-50 group-hover:shadow-indigo-650/10 transition-all">
-                                                                <m.icon className="text-slate-900 group-hover:text-indigo-650 transition-colors" size={24} />
-                                                            </div>
-                                                        </div>
-
-                                                        {/* Conteúdo do Card */}
-                                                        <div className="px-6 pt-9 pb-6 flex flex-col flex-1 bg-white">
-                                                            <h3 className="text-md font-black text-slate-900 group-hover:text-indigo-650 transition-colors tracking-tight leading-snug mb-3 uppercase mt-2">
-                                                                {m.titulo}
-                                                            </h3>
-                                                            <p className="text-slate-400 text-[10px] font-semibold uppercase tracking-wider leading-relaxed mb-8 opacity-90 grow line-clamp-3">
-                                                                {m.desc}
-                                                            </p>
-
-                                                            {/* Footer de Acesso */}
-                                                            <div className="pt-4 border-t border-slate-100 mt-auto flex items-center justify-between">
-                                                                <span className="text-[8px] font-black uppercase tracking-[0.25em] text-indigo-650 opacity-0 group-hover:opacity-100 -translate-x-3 group-hover:translate-x-0 transition-all duration-300">
-                                                                    ACESSAR BASE
+                                                        <Link 
+                                                            href={finalHref} 
+                                                            target={isExternal ? "_blank" : undefined}
+                                                            rel={isExternal ? "noopener noreferrer" : undefined}
+                                                            className="group relative flex flex-col h-full bg-white rounded-[2rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.015)] hover:shadow-[0_20px_50px_rgba(30,41,59,0.08)] hover:border-indigo-600/10 transition-all duration-500 overflow-hidden"
+                                                        >
+                                                            {/* Header do Card (Gradiente de Identificação) */}
+                                                            <div className={`h-20 bg-gradient-to-br ${m.cor} relative p-5 flex items-start justify-between`}>
+                                                                <div className="absolute inset-0 bg-slate-950/10 backdrop-blur-[1px]" />
+                                                                <div className="absolute top-0 right-0 p-5 opacity-0 group-hover:opacity-10 group-hover:scale-125 transition-all duration-700">
+                                                                    <m.icon size={80} strokeWidth={1} />
+                                                                </div>
+                                                                <span className={`relative z-10 px-2.5 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest border shadow-inner backdrop-blur-md ${
+                                                                    m.tipoCriterio === "ESSENCIAL" 
+                                                                        ? "bg-red-500/20 border-red-400/30 text-red-100" 
+                                                                        : m.tipoCriterio === "OBRIGATÓRIO"
+                                                                        ? "bg-amber-500/20 border-amber-400/30 text-amber-100"
+                                                                        : "bg-blue-500/20 border-blue-400/30 text-blue-100"
+                                                                }`}>
+                                                                    {m.tipoCriterio}
                                                                 </span>
-                                                                <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center group-hover:bg-slate-950 transition-all duration-350 shadow-inner group-hover:rotate-[360deg]">
-                                                                    <ArrowRight size={14} className="text-slate-400 group-hover:text-white transition-colors" />
+                                                                <span className="relative z-10 px-2.5 py-1 bg-white/20 backdrop-blur-md rounded-lg text-[8px] font-black uppercase tracking-widest text-white border border-white/20 shadow-sm">
+                                                                    {m.badge}
+                                                                </span>
+                                                            </div>
+
+                                                            {/* Ícone Flutuante */}
+                                                            <div className="absolute top-10 left-6 transition-transform duration-500 group-hover:-translate-y-1.5 group-hover:scale-105">
+                                                                <div className="w-14 h-14 bg-white rounded-2xl shadow-lg shadow-slate-200/50 flex items-center justify-center border border-slate-50 group-hover:shadow-indigo-650/10 transition-all">
+                                                                    <m.icon className="text-slate-900 group-hover:text-indigo-650 transition-colors" size={24} />
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                        
-                                                        {isExternal && (
-                                                            <div className="absolute bottom-2.5 left-6">
-                                                                <span className="flex items-center gap-1.5 text-[7px] font-black text-blue-600 uppercase tracking-widest bg-blue-50 px-2.5 py-0.5 rounded border border-blue-100">
-                                                                    <ExternalLink size={6} /> SISTEMA INTEGRADO
-                                                                </span>
+
+                                                            {/* Conteúdo do Card */}
+                                                            <div className="px-6 pt-9 pb-6 flex flex-col flex-1 bg-white">
+                                                                <h3 className="text-xs font-black text-slate-900 group-hover:text-indigo-650 transition-colors tracking-tight leading-snug mb-3 uppercase mt-2">
+                                                                    {highlightText(m.titulo, searchTerm)}
+                                                                </h3>
+                                                                <p className="text-slate-400 text-[9px] font-semibold uppercase tracking-wider leading-relaxed mb-8 opacity-90 grow line-clamp-3">
+                                                                    {highlightText(m.desc, searchTerm)}
+                                                                </p>
+
+                                                                {/* Footer de Acesso */}
+                                                                <div className="pt-4 border-t border-slate-100 mt-auto flex items-center justify-between">
+                                                                    <span className="text-[8px] font-black uppercase tracking-[0.25em] text-indigo-650 opacity-0 group-hover:opacity-100 -translate-x-3 group-hover:translate-x-0 transition-all duration-300">
+                                                                        ACESSAR BASE
+                                                                    </span>
+                                                                    <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center group-hover:bg-slate-950 transition-all duration-350 shadow-inner group-hover:rotate-[360deg]">
+                                                                        <ArrowRight size={14} className="text-slate-400 group-hover:text-white transition-colors" />
+                                                                    </div>
+                                                                </div>
                                                             </div>
-                                                        )}
-                                                    </Link>
-                                                </motion.div>
-                                            );
-                                        })}
-                                    </div>
-                                </motion.section>
-                            );
-                        })}
-                    </div>
-                ) : (
-                    /* Feedback Sem Resultados */
-                    <motion.div 
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="bg-white rounded-[3rem] p-20 text-center border border-dashed border-slate-200"
-                    >
-                        <div className="w-16 h-16 bg-slate-50 text-slate-350 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-slate-100">
-                            <Info size={28} />
+                                                            
+                                                            {isExternal && (
+                                                                <div className="absolute bottom-2.5 left-6">
+                                                                    <span className="flex items-center gap-1.5 text-[7px] font-black text-blue-600 uppercase tracking-widest bg-blue-50 px-2.5 py-0.5 rounded border border-blue-100">
+                                                                        <ExternalLink size={6} /> SISTEMA INTEGRADO
+                                                                    </span>
+                                                                </div>
+                                                            )}
+                                                        </Link>
+                                                    </motion.div>
+                                                );
+                                            })}
+                                        </div>
+                                    </motion.section>
+                                );
+                            })}
                         </div>
-                        <h4 className="text-lg font-black text-slate-800 uppercase tracking-tighter mb-2">Nenhum módulo encontrado</h4>
-                        <p className="text-slate-400 font-bold text-xs uppercase tracking-wider max-w-md mx-auto mb-8">
-                            Não encontramos nenhum item correspondente aos filtros ativos ou termo digitado: "{searchTerm}".
-                        </p>
-                        <button
-                            onClick={() => {
-                                setSearchTerm("");
-                                setSelectedCriterio("TODOS");
-                                setSelectedCategory("TODAS");
-                            }}
-                            className="bg-slate-950 hover:bg-slate-900 text-white px-6 py-3 rounded-xl font-black uppercase text-[10px] tracking-widest transition-all shadow-lg active:scale-95"
+                    ) : (
+                        /* Feedback Sem Resultados */
+                        <motion.div 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="bg-white rounded-[3rem] p-20 text-center border border-dashed border-slate-200"
                         >
-                            Limpar Todos os Filtros
-                        </button>
-                    </motion.div>
-                )}
+                            <div className="w-16 h-16 bg-slate-50 text-slate-350 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-slate-100">
+                                <Info size={28} />
+                            </div>
+                            <h4 className="text-lg font-black text-slate-800 uppercase tracking-tighter mb-2">Nenhum módulo encontrado</h4>
+                            <p className="text-slate-400 font-bold text-xs uppercase tracking-wider max-w-md mx-auto mb-8">
+                                Não encontramos nenhum item correspondente aos filtros ativos ou termo digitado: "{searchTerm}".
+                            </p>
+                            <button
+                                onClick={() => {
+                                    setSearchTerm("");
+                                    setSelectedCriterio("TODOS");
+                                    setSelectedCategory("TODAS");
+                                }}
+                                className="bg-slate-950 hover:bg-slate-900 text-white px-6 py-3 rounded-xl font-black uppercase text-[10px] tracking-widest transition-all shadow-lg active:scale-95"
+                            >
+                                Limpar Todos os Filtros
+                            </button>
+                        </motion.div>
+                    )}
+                </div>
             </div>
 
             {/* Hub Footer - Ultra Premium */}
             <div className="relative py-24 overflow-hidden bg-slate-950 border-t border-slate-900">
                 <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
                 <div className="absolute inset-0 opacity-10 pointer-events-none">
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-indigo-600/10 rounded-full blur-[120px]" />
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-indigo-650/10 rounded-full blur-[120px]" />
                 </div>
                 
                 <div className="max-w-7xl mx-auto px-6 relative z-10">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                         <div>
-                             <div className="flex items-center gap-4 mb-8">
+                            <div className="flex items-center gap-4 mb-8">
                                 <Landmark className="text-white" size={40} />
                                 <div className="h-8 w-px bg-white/15" />
                                 <div className="text-left">
@@ -680,10 +784,10 @@ export default function TransparenciaPage() {
                             </h4>
                             <p className="text-white/40 text-[10px] font-semibold uppercase tracking-[0.2em] leading-relaxed max-w-lg mb-8 italic border-l border-white/10 pl-6">
                                 Em cumprimento à Lei Federal nº 12.527/2011 (Lei de Acesso à Informação) e ao Programa Nacional de Transparência Pública, garantimos a integridade e atualização dos atos oficiais municipais.
-                             </p>
-                             <div className="flex gap-4">
-                                 <Link href="/contato" className="px-6 py-3.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest text-white hover:text-white transition-all active:scale-95 shadow-md">Suporte e Dúvidas</Link>
-                             </div>
+                            </p>
+                            <div className="flex gap-4">
+                                <Link href="/contato" className="px-6 py-3.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest text-white hover:text-white transition-all active:scale-95 shadow-md">Suporte e Dúvidas</Link>
+                            </div>
                         </div>
 
                         <div className="bg-white/5 rounded-[2.5rem] p-10 border border-white/5 backdrop-blur-md relative overflow-hidden group">
