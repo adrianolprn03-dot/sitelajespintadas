@@ -20,12 +20,11 @@ import PageHeader from "@/components/PageHeader";
 import { useEffect, useState, useRef } from "react";
 
 // Categorias organizadas de acordo com as dimensões de avaliação do PNTP 2026
-// Adicionamos o ícone no nível da categoria para o Grid de Navegação
 const categoriasDeModulos = [
     {
-        tituloCategoria: "Institucional e Acessibilidade",
+        tituloCategoria: "Institucional & Acessibilidade",
         icon: Building2,
-        desc: "Dados oficiais, competências legais, estrutura administrativa e canais de acessibilidade.",
+        desc: "Dados oficiais, competências legais, estrutura administrativa, contatos dos órgãos públicos, acessibilidade e governo digital.",
         modulos: [
             { icon: Building2, titulo: "Institucional", desc: "Dados gerais e identificação da entidade municipal.", href: "/transparencia/institucional", badge: "ENTIDADE", tipoCriterio: "ESSENCIAL", cor: "from-blue-700 to-indigo-850" },
             { icon: FileText, titulo: "Competências", desc: "Atribuições e funções legais do município.", href: "/transparencia/institucional", badge: "LEGAL", tipoCriterio: "ESSENCIAL", cor: "from-slate-700 to-slate-900" },
@@ -38,9 +37,9 @@ const categoriasDeModulos = [
         ]
     },
     {
-        tituloCategoria: "Planejamento, Orçamento e Controle Fiscal",
+        tituloCategoria: "Planejamento & Finanças",
         icon: Landmark,
-        desc: "Leis orçamentárias (LOA, LDO, PPA), relatórios fiscais da LRF (RREO, RGF) e julgamento de contas.",
+        desc: "Leis orçamentárias (LOA, LDO, PPA), demonstrativos fiscais da LRF, prestação de contas do executivo, pareceres do TCE e conselhos municipais.",
         modulos: [
             { icon: Landmark, titulo: "Planejamento Orçamentário", desc: "Instrumentos de planejamento municipal: LOA, LDO e PPA.", href: "/transparencia/orcamento", badge: "PLANEJAMENTO", tipoCriterio: "ESSENCIAL", cor: "from-slate-800 to-slate-950" },
             { icon: BarChart3, titulo: "Relatórios da LRF", desc: "Demonstrativos fiscais exigidos pela LRF: RREO e RGF.", href: "/transparencia/lrf", badge: "FISCAL", tipoCriterio: "ESSENCIAL", cor: "from-blue-800 to-slate-900" },
@@ -54,9 +53,9 @@ const categoriasDeModulos = [
         ]
     },
     {
-        tituloCategoria: "Receitas e Recursos Financeiros",
+        tituloCategoria: "Receitas & Arrecadação",
         icon: Coins,
-        desc: "Arrecadação de tributos em tempo real, dívida ativa, incentivos e desonerações fiscais.",
+        desc: "Arrecadação de tributos em tempo real, dívida ativa municipal, renúncias fiscais e fomento à cultura.",
         modulos: [
             { icon: Coins, titulo: "Receitas Públicas", desc: "Arrecadação municipal em tempo real, receitas tributárias e transferências.", href: "/transparencia/receitas", badge: "ARRECADAÇÃO", tipoCriterio: "ESSENCIAL", cor: "from-emerald-500 to-teal-600" },
             { icon: Scale, titulo: "Dívida Ativa", desc: "Controle de créditos a receber e cobranças tributárias do município.", href: "/transparencia/divida-ativa", badge: "COBRANÇA", tipoCriterio: "OBRIGATÓRIO", cor: "from-red-600 to-orange-700" },
@@ -66,31 +65,17 @@ const categoriasDeModulos = [
         ]
     },
     {
-        tituloCategoria: "Despesas e Execução Financeira",
-        icon: Receipt,
-        desc: "Acompanhamento detalhado da execução da despesa, pagamentos e repasses efetuados.",
+        tituloCategoria: "Despesas, Licitações & Contratos",
+        icon: FileSignature,
+        desc: "Execução de despesas, fila cronológica de pagamentos, repasses voluntários, processos licitatórios, atas de registro de preço, plano de contratação anual, contratos e convênios.",
         modulos: [
             { icon: Receipt, titulo: "Despesas Públicas", desc: "Detalhamento de empenhos, liquidações e ordens de pagamento municipais.", href: "/transparencia/despesas", badge: "GASTOS", tipoCriterio: "ESSENCIAL", cor: "from-blue-600 to-indigo-700" },
             { icon: ListOrdered, titulo: "Ordem Cronológica", desc: "Fila cronológica e execuções de pagamentos a credores e fornecedores.", href: "/transparencia/ordem-cronologica", badge: "TESOURARIA", tipoCriterio: "OBRIGATÓRIO", cor: "from-amber-500 to-orange-600" },
-            { icon: Database, titulo: "Repasses e Transferências", desc: "Transferências voluntárias, repasses constitucionais e recursos federais.", href: "/transparencia/transferencias", badge: "RECURSOS", tipoCriterio: "ESSENCIAL", cor: "from-indigo-600 to-violet-700" }
-        ]
-    },
-    {
-        tituloCategoria: "Licitações, Editais e Compras",
-        icon: Gavel,
-        desc: "Processos licitatórios, atas de registro de preços, chamamentos públicos e editais diversos.",
-        modulos: [
+            { icon: Database, titulo: "Repasses e Transferências", desc: "Transferências voluntárias, repasses constitucionais e recursos federais.", href: "/transparencia/transferencias", badge: "RECURSOS", tipoCriterio: "ESSENCIAL", cor: "from-indigo-600 to-violet-700" },
             { icon: Gavel, titulo: "Licitações", desc: "Editais, atas, julgamentos, homologações e recursos de certames públicos.", href: "/transparencia/licitacoes", badge: "CERTAMES", tipoCriterio: "ESSENCIAL", cor: "from-orange-600 to-red-700" },
             { icon: Megaphone, titulo: "Editais Diversos", desc: "Chamamentos públicos, avisos e outros atos convocatórios da gestão.", href: "/transparencia/editais", badge: "AVISOS", tipoCriterio: "OBRIGATÓRIO", cor: "from-amber-500 to-orange-600" },
             { icon: FileStack, titulo: "Atas de Registro de Preços", desc: "Registro de preços vigente para aquisições públicas e contratações.", href: "/transparencia/atas-registro", badge: "SRP", tipoCriterio: "OBRIGATÓRIO", cor: "from-purple-600 to-violet-850" },
-            { icon: FileText, titulo: "Plano de Contratação Anual", desc: "Planejamento anual de contratações públicas municipais (Lei 14.133).", href: "/transparencia/plano-contratacao", badge: "PCA", tipoCriterio: "RECOMENDADO", cor: "from-slate-650 to-slate-800" }
-        ]
-    },
-    {
-        tituloCategoria: "Contratos, Convênios e Parcerias",
-        icon: FileSignature,
-        desc: "Contratos administrativos celebrados pela prefeitura, termos aditivos e convênios federais/estaduais.",
-        modulos: [
+            { icon: FileText, titulo: "Plano de Contratação Anual", desc: "Planejamento anual de contratações públicas municipais (Lei 14.133).", href: "/transparencia/plano-contratacao", badge: "PCA", tipoCriterio: "RECOMENDADO", cor: "from-slate-650 to-slate-800" },
             { icon: FileSignature, titulo: "Contratos Administrativos", desc: "Instrumentos contratuais celebrados, aditivos, valores e prazos.", href: "/transparencia/contratos", badge: "CONTRATOS", tipoCriterio: "ESSENCIAL", cor: "from-blue-700 to-indigo-800" },
             { icon: Handshake, titulo: "Convênios Celebrados", desc: "Parcerias, convênios estaduais, federais e transferências de recursos.", href: "/transparencia/convenios", badge: "PARCERIAS", tipoCriterio: "ESSENCIAL", cor: "from-indigo-600 to-blue-700" },
             { icon: Globe2, titulo: "Emendas Parlamentares", desc: "Acompanhamento de emendas destinadas ao município (estaduais e federais).", href: "/transparencia/emendas", badge: "EMENDAS", tipoCriterio: "OBRIGATÓRIO", cor: "from-teal-600 to-emerald-800" },
@@ -100,9 +85,9 @@ const categoriasDeModulos = [
         ]
     },
     {
-        tituloCategoria: "Recursos Humanos e Pessoal",
+        tituloCategoria: "Pessoal & Diárias",
         icon: Users,
-        desc: "Folha de pagamento dos servidores públicos, diárias concedidas, concursos públicos e estagiários.",
+        desc: "Quadro de pessoal da prefeitura, servidores públicos, terceirizados, estagiários, concessão de diárias, concursos públicos e processos seletivos.",
         modulos: [
             { icon: Users, titulo: "Servidores Públicos", desc: "Folha de pagamento, cargos, remunerações e servidores municipais.", href: "/transparencia/servidores", badge: "PESSOAL", tipoCriterio: "ESSENCIAL", cor: "from-slate-700 to-slate-900" },
             { icon: Plane, titulo: "Diárias de Viagem", desc: "Diárias e passagens concedidas a servidores e agentes públicos.", href: "/transparencia/diarias", badge: "DIÁRIAS", tipoCriterio: "ESSENCIAL", cor: "from-sky-500 to-blue-600" },
@@ -115,18 +100,18 @@ const categoriasDeModulos = [
         ]
     },
     {
-        tituloCategoria: "Obras Públicas e Patrimônio",
+        tituloCategoria: "Obras & Frota",
         icon: Construction,
-        desc: "Acompanhamento físico de obras municipais em execução e frota de veículos oficiais.",
+        desc: "Contratos de obras municipais em andamento, medições financeiras e relação de frota de veículos oficiais.",
         modulos: [
             { icon: Construction, titulo: "Obras Públicas", desc: "Contratos de obras, medições, relatórios físicos e andamento.", href: "/transparencia/obras", badge: "EXECUÇÃO", tipoCriterio: "ESSENCIAL", cor: "from-amber-600 to-orange-700" },
             { icon: Truck, titulo: "Frota Municipal", desc: "Relação de veículos oficiais próprios, locados ou cedidos.", href: "/transparencia/frota", badge: "VEÍCULOS", tipoCriterio: "RECOMENDADO", cor: "from-sky-500 to-cyan-600" }
         ]
     },
     {
-        tituloCategoria: "Participação Social, Ouvidoria e SIC",
+        tituloCategoria: "Cidadão, Ouvidoria & SIC",
         icon: Headset,
-        desc: "Serviço de Informação ao Cidadão (e-SIC), canais de Ouvidoria, Carta de Serviços e FAQ.",
+        desc: "Serviço de Informação ao Cidadão (e-SIC), Ouvidoria Municipal, Carta de Serviços ao Cidadão, FAQ, glossário de termos e relatórios de transparência passiva.",
         modulos: [
             { icon: ClipboardList, titulo: "e-SIC", desc: "Abertura e consulta de pedidos de acesso à informação (LAI).", href: "/servicos/esic", badge: "LAI", tipoCriterio: "ESSENCIAL", cor: "from-amber-600 to-orange-700" },
             { icon: Headset, titulo: "Ouvidoria Municipal", desc: "Canal oficial para manifestações, denúncias, elogios e críticas.", href: "/servicos/ouvidoria", badge: "OUVIDORIA", tipoCriterio: "ESSENCIAL", cor: "from-blue-600 to-cyan-600" },
@@ -139,23 +124,16 @@ const categoriasDeModulos = [
         ]
     },
     {
-        tituloCategoria: "Saúde, Educação e Políticas Sociais",
+        tituloCategoria: "Saúde, Educação & Legislação",
         icon: HeartPulse,
-        desc: "Ações públicas de saúde, oferta de medicamentos, centrais de regulação e diretrizes de ensino.",
+        desc: "Transparência finalística da saúde municipal, unidades de atendimento, medicamentos SUS, planos de saúde e educação, leis municipais, decretos, portarias, LGPD, dados abertos e integridade.",
         modulos: [
             { icon: HeartPulse, titulo: "Recursos da Saúde", desc: "Investimentos, repasses do SUS e execuções financeiras da Saúde.", href: "/transparencia/saude", badge: "SAÚDE", tipoCriterio: "ESSENCIAL", cor: "from-rose-500 to-red-650" },
             { icon: Building, titulo: "Unidades de Saúde", desc: "Informações, contatos e funcionamento da rede municipal de saúde.", href: "/transparencia/unidades-saude", badge: "UNIDADES", tipoCriterio: "OBRIGATÓRIO", cor: "from-blue-500 to-cyan-600" },
             { icon: Pill, titulo: "Medicamentos SUS", desc: "Lista de remédios disponíveis na rede do SUS e controle de estoques.", href: "/transparencia/medicamentos-sus", badge: "FARMÁCIA", tipoCriterio: "OBRIGATÓRIO", cor: "from-emerald-500 to-teal-600" },
             { icon: Activity, titulo: "Central de Regulação", desc: "Agendamentos de exames, filas e regulação das especialidades.", href: "/transparencia/central-regulacao", badge: "EXAMES", tipoCriterio: "OBRIGATÓRIO", cor: "from-orange-500 to-amber-600" },
             { icon: Heart, titulo: "Plano de Saúde", desc: "Diretrizes, metas e metas estratégicas de saúde do município.", href: "/transparencia/plano-saude", badge: "PLANO", tipoCriterio: "OBRIGATÓRIO", cor: "from-pink-500 to-rose-600" },
-            { icon: GraduationCap, titulo: "Plano de Educação", desc: "Diretrizes e metas do Plano Municipal de Educação.", href: "/transparencia/plano-educacao", badge: "ENSINO", tipoCriterio: "OBRIGATÓRIO", cor: "from-amber-600 to-orange-700" }
-        ]
-    },
-    {
-        tituloCategoria: "Governança, Legislação, LGPD e Dados Abertos",
-        icon: Files,
-        desc: "Programa de integridade ética, conformidade com a LGPD, painel de dados abertos e atos normativos oficiais.",
-        modulos: [
+            { icon: GraduationCap, titulo: "Plano de Educação", desc: "Diretrizes e metas do Plano Municipal de Educação.", href: "/transparencia/plano-educacao", badge: "ENSINO", tipoCriterio: "OBRIGATÓRIO", cor: "from-amber-600 to-orange-700" },
             { icon: Files, titulo: "Leis Municipais", desc: "Legislação completa aprovada pelo legislativo e executivo.", href: "/transparencia/leis", badge: "LEGISLAÇÃO", tipoCriterio: "ESSENCIAL", cor: "from-indigo-600 to-purple-700" },
             { icon: FileText, titulo: "Decretos Municipais", desc: "Atos normativos assinados pelo poder executivo do município.", href: "/transparencia/decretos", badge: "ATOS", tipoCriterio: "ESSENCIAL", cor: "from-slate-600 to-slate-800" },
             { icon: ScrollText, titulo: "Portarias Executivas", desc: "Atos administrativos de provimento, nomeações e atribuições.", href: "/transparencia/portarias", badge: "PORTARIAS", tipoCriterio: "ESSENCIAL", cor: "from-blue-600 to-blue-800" },
@@ -489,11 +467,11 @@ export default function TransparenciaPage() {
                                     : "bg-slate-50 border-slate-200 hover:bg-slate-100 text-slate-700"
                             }`}
                         >
-                            Ver Todas as Dimensões
+                            Ver Todas as Áreas
                         </button>
                     </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+ 
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4">
                         {categoriasDeModulos.map((cat, idx) => {
                             const isSelected = selectedCategory === cat.tituloCategoria;
                             const countItems = cat.modulos.length;
@@ -512,15 +490,15 @@ export default function TransparenciaPage() {
                                             <cat.icon size={16} />
                                         </div>
                                         <span className={`text-[8px] font-black px-2 py-0.5 rounded ${isSelected ? "bg-white/20 text-white" : "bg-slate-200/70 text-slate-600"}`}>
-                                            {countItems} {countItems === 1 ? "ITENS" : "ITENS"}
+                                            {countItems} {countItems === 1 ? "MÓDULO" : "MÓDULOS"}
                                         </span>
                                     </div>
                                     <div>
                                         <span className={`text-[8px] font-black uppercase tracking-widest ${isSelected ? "text-indigo-200" : "text-indigo-650"} block mb-1`}>
-                                            DIMENSÃO {idx + 1 < 10 ? `0${idx + 1}` : idx + 1}
+                                            ÁREA {idx + 1 < 10 ? `0${idx + 1}` : idx + 1}
                                         </span>
                                         <h5 className="text-[10px] font-black uppercase tracking-tight leading-snug line-clamp-2">
-                                            {cat.tituloCategoria.split(" e ")[0].split(",")[0]}
+                                            {cat.tituloCategoria}
                                         </h5>
                                     </div>
                                 </button>
@@ -561,7 +539,7 @@ export default function TransparenciaPage() {
                                 onChange={(e) => setSelectedCategory(e.target.value)}
                                 className="w-full bg-transparent font-bold text-xs uppercase outline-none text-slate-700 cursor-pointer pr-4"
                             >
-                                <option value="TODAS">Filtro: Todas as Dimensões</option>
+                                <option value="TODAS">Filtro: Todas as Áreas Temáticas</option>
                                 {categoriasDeModulos.map(cat => (
                                     <option key={cat.tituloCategoria} value={cat.tituloCategoria}>
                                         {cat.tituloCategoria}
@@ -583,7 +561,7 @@ export default function TransparenciaPage() {
                                 )}
                                 {selectedCategory !== "TODAS" && (
                                     <span className="flex items-center gap-1 bg-cyan-50 border border-cyan-100 text-cyan-700 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider">
-                                        Dimensão: {selectedCategory.split(" e ")[0].split(",")[0]}
+                                        Área: {selectedCategory}
                                     </span>
                                 )}
                                 {searchTerm && (
@@ -629,7 +607,7 @@ export default function TransparenciaPage() {
                                             <div className="max-w-3xl">
                                                 <motion.div variants={itemVariants} className="flex items-center gap-4 mb-3">
                                                     <span className="px-4 py-1.5 bg-slate-950 text-white rounded-full text-[9px] font-black uppercase tracking-[0.25em] shadow-lg shadow-slate-950/20">
-                                                        DIMENSÃO {catIdx + 1 < 10 ? `0${catIdx + 1}` : catIdx + 1}
+                                                        ÁREA TEMÁTICA {catIdx + 1 < 10 ? `0${catIdx + 1}` : catIdx + 1}
                                                     </span>
                                                     <div className="h-0.5 w-10 bg-indigo-650 rounded-full" />
                                                 </motion.div>
