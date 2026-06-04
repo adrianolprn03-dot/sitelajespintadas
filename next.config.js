@@ -1,8 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Usa 'standalone' apenas quando NEXT_OUTPUT_STANDALONE=true (para VPS/Docker)
-  // Na Vercel, não define output para usar o modo padrão
-  ...(process.env.NEXT_OUTPUT_STANDALONE === 'true' ? { output: 'standalone' } : {}),
+  // Na Vercel (onde VERCEL=1), não define output para usar o modo padrão.
+  // Em outros ambientes (VPS, Docker, Easypanel), usa o modo standalone.
+  output: process.env.VERCEL === '1' ? undefined : 'standalone',
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '**' },
