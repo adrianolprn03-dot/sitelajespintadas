@@ -7,7 +7,7 @@ import {
     FaMoneyBillWave, FaChartBar, FaBuilding, FaBullhorn,
     FaSignOutAlt, FaTimes, FaBars, FaCalendar, FaImages, FaEnvelope,
     FaHandshake, FaPlane, FaHammer, FaQuestionCircle, FaBook,
-    FaUserFriends, FaUpload, FaFile, FaExternalLinkAlt, FaUserShield, FaUserGraduate, FaUserTie
+    FaUserFriends, FaUpload, FaFile, FaExternalLinkAlt, FaUserShield, FaUserGraduate, FaUserTie, FaCog
 } from "react-icons/fa";
 import { useState } from "react";
 
@@ -37,7 +37,7 @@ const menuItems = [
     { label: "e-SIC", href: "/admin/esic", icon: FaFile, roles: ["admin", "editor"] },
     { label: "Fale Conosco", href: "/admin/contatos", icon: FaEnvelope, roles: ["admin", "editor"] },
     { label: "Links Externos", href: "/admin/links-externos", icon: FaExternalLinkAlt, roles: ["admin", "editor"] },
-    { label: "Configurações", href: "/admin/configuracoes", icon: FaBuilding, roles: ["admin"] },
+    { label: "Configurações", href: "/admin/configuracoes", icon: FaCog, roles: ["admin", "editor", "comunicacao"] },
     { label: "Usuários", href: "/admin/usuarios", icon: FaUserShield, roles: ["admin"] },
     { label: "Saúde / REMUME", href: "/admin/saude", icon: FaBook, roles: ["admin", "editor"] },
     { label: "Frota Municipal", href: "/admin/frota", icon: FaHome, roles: ["admin", "editor"] },
