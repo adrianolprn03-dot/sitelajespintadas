@@ -160,6 +160,14 @@ export default function TransparenciaPage() {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedCriterio, setSelectedCriterio] = useState<string>("TODOS");
     const [selectedCategory, setSelectedCategory] = useState<string>("TODAS");
+    const [configs, setConfigs] = useState<Record<string, string>>({
+        transparencia_pntp_ativo: "false",
+        transparencia_pntp_indice: "98.5%",
+        transparencia_pntp_selo: "SELO DIAMANTE",
+        transparencia_pntp_essenciais: "28 Módulos",
+        transparencia_pntp_obrigatorios: "23 Módulos",
+        transparencia_pntp_recomendados: "15 Módulos"
+    });
     const modulesGridRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -174,7 +182,25 @@ export default function TransparenciaPage() {
                 console.error("Erro ao carregar links:", error);
             }
         }
+        async function loadConfigs() {
+            try {
+                const res = await fetch("/api/admin/configuracoes");
+                if (res.ok) {
+                    const data = await res.json();
+                    const pntpConfigs: Record<string, string> = {};
+                    data.forEach((c: any) => {
+                        if (c.chave.startsWith("transparencia_pntp_")) {
+                            pntpConfigs[c.chave] = c.valor;
+                        }
+                    });
+                    setConfigs(prev => ({ ...prev, ...pntpConfigs }));
+                }
+            } catch (error) {
+                console.error("Erro ao carregar configurações:", error);
+            }
+        }
         loadExternalLinks();
+        loadConfigs();
     }, []);
 
     // Estatísticas dinâmicas dos critérios (essenciais, obrigatórios, recomendados)
@@ -261,6 +287,161 @@ export default function TransparenciaPage() {
 
             <div className="max-w-7xl mx-auto px-6 -mt-16 relative z-40 pb-32">
 
+                {/* 1. Painel de Conformidade (Transparômetro Dinâmico) */}
+                {configs.transparencia_pntp_ativo === "true" && (
+                    <motion.div 
+                        initial={{ scale: 0.98, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.5 }}
+                        className="bg-white rounded-[3rem] p-8 md:p-10 shadow-2xl shadow-slate-200/60 border border-slate-100 mb-8"
+                    >
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+                            {/* Indicador Radial do Selo */}
+                            <div className="lg:col-span-4 bg-slate-950 text-white rounded-[2rem] p-8 relative flex flex-col justify-between overflow-hidden shadow-xl">
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-600/10 rounded-full blur-[80px] -mr-32 -mt-32" />
+                                <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-650/10 rounded-full blur-[80px] -ml-32 -mb-32" />
+                                
+                                <div className="relative z-10 flex flex-col items-center text-center">
+                                    <div className="text-[10px] font-black uppercase tracking-[0.3em] text-cyan-400 mb-6 flex items-center gap-2 border border-cyan-500/20 px-4 py-1.5 rounded-full bg-cyan-500/5">
+                                        <ShieldCheck size={12} className="text-cyan-400" /> PNTP Metodologia 2026
+                                    </div>
+
+                                    {/* Circular Progress */}
+                                    <div className="relative flex items-center justify-center my-4 group">
+                                        <svg className="w-32 h-32 transform -rotate-90">
+                                            <circle
+                                                cx="64"
+                                                cy="64"
+                                                r="52"
+                                                className="stroke-slate-800"
+                                                strokeWidth="6"
+                                                fill="transparent"
+                                            />
+                                            <circle
+                                                cx="64"
+                                                cy="64"
+                                                r="52"
+                                                className="stroke-cyan-400 transition-all duration-1000"
+                                                strokeWidth="8"
+                                                fill="transparent"
+                                                strokeDasharray={2 * Math.PI * 52}
+                                                strokeDashoffset={2 * Math.PI * 52 * (1 - parseFloat(configs.transparencia_pntp_indice.replace(",", ".").replace("%", "")) / 100)}
+                                                strokeLinecap="round"
+                                            />
+                                        </svg>
+                                        <div className="absolute flex flex-col items-center">
+                                            <span className="text-3xl font-black text-white leading-none tracking-tight">{configs.transparencia_pntp_indice}</span>
+                                            <span className="text-[9px] font-black text-cyan-400 tracking-widest mt-1 uppercase">ÍNDICE</span>
+                                        </div>
+                                    </div>
+
+                                    {configs.transparencia_pntp_selo !== "SEM SELO" && (
+                                        <div className="mt-4">
+                                            <h4 className="text-md font-black text-white uppercase tracking-wider flex items-center gap-1.5 justify-center">
+                                                <Sparkles size={16} className="text-amber-400 animate-pulse" /> {configs.transparencia_pntp_selo}
+                                            </h4>
+                                            <p className="text-white/60 text-[9px] font-bold uppercase tracking-widest mt-1 max-w-[200px] mx-auto leading-relaxed">
+                                                Grau de Transparência Pública Recomendado pela ATRICON
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="relative z-10 mt-8 pt-6 border-t border-white/10 flex items-center justify-between text-[8px] font-black text-white/40 tracking-widest uppercase">
+                                    <span>ÚLTIMA AUDITORIA: 2026</span>
+                                    <span className="text-emerald-400">ATIVO</span>
+                                </div>
+                            </div>
+
+                            {/* Filtros por Classificação de Critério */}
+                            <div className="lg:col-span-8 flex flex-col justify-between">
+                                <div>
+                                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 block mb-2 pl-1">Auditoria e Requisitos Legais</span>
+                                    <h3 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tighter leading-none mb-6">
+                                        Classificação por <span className="text-slate-400 italic">Rigor de Critério</span>
+                                    </h3>
+                                    <p className="text-slate-500 font-semibold text-xs leading-relaxed max-w-xl mb-6">
+                                        A cartilha de avaliação classifica os dados pelo nível de impacto legal. Clique nos contadores abaixo para isolar instantaneamente os módulos na visualização:
+                                    </p>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    {/* CARD ESSENCIAL */}
+                                    <button
+                                        onClick={() => setSelectedCriterio(selectedCriterio === "ESSENCIAL" ? "TODOS" : "ESSENCIAL")}
+                                        className={`p-5 rounded-[2rem] border text-left transition-all duration-300 relative overflow-hidden group ${
+                                            selectedCriterio === "ESSENCIAL"
+                                                ? "bg-gradient-to-br from-red-500 to-rose-600 text-white border-transparent shadow-xl shadow-red-500/20"
+                                                : "bg-red-50/50 hover:bg-red-50 hover:border-red-200 border-red-100 text-slate-900 shadow-sm"
+                                        }`}
+                                    >
+                                        <div className="flex items-center justify-between mb-4">
+                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${selectedCriterio === "ESSENCIAL" ? "bg-white/20" : "bg-red-100 text-red-600"}`}>
+                                                <ShieldAlert size={20} />
+                                            </div>
+                                            <span className={`text-[8px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg ${selectedCriterio === "ESSENCIAL" ? "bg-white/20 text-white" : "bg-red-100 text-red-700"}`}>
+                                                NÍVEL 1
+                                            </span>
+                                        </div>
+                                        <span className={`text-[10px] font-black uppercase tracking-widest block ${selectedCriterio === "ESSENCIAL" ? "text-red-100" : "text-slate-400"}`}>Essenciais</span>
+                                        <span className="text-2xl font-black tracking-tight leading-none mt-1 block">{configs.transparencia_pntp_essenciais}</span>
+                                        <span className={`text-[8px] font-black uppercase tracking-widest mt-3 flex items-center gap-1.5 ${selectedCriterio === "ESSENCIAL" ? "text-white" : "text-red-600"}`}>
+                                            <Check size={10} /> {selectedCriterio === "ESSENCIAL" ? "FILTRO ATIVO" : "CLIQUE PARA FILTRAR"}
+                                        </span>
+                                    </button>
+
+                                    {/* CARD OBRIGATÓRIO */}
+                                    <button
+                                        onClick={() => setSelectedCriterio(selectedCriterio === "OBRIGATÓRIO" ? "TODOS" : "OBRIGATÓRIO")}
+                                        className={`p-5 rounded-[2rem] border text-left transition-all duration-300 relative overflow-hidden group ${
+                                            selectedCriterio === "OBRIGATÓRIO"
+                                                ? "bg-gradient-to-br from-amber-500 to-orange-600 text-white border-transparent shadow-xl shadow-amber-500/20"
+                                                : "bg-amber-50/50 hover:bg-amber-50 hover:border-amber-200 border-amber-100 text-slate-900 shadow-sm"
+                                        }`}
+                                    >
+                                        <div className="flex items-center justify-between mb-4">
+                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${selectedCriterio === "OBRIGATÓRIO" ? "bg-white/20" : "bg-amber-100 text-amber-600"}`}>
+                                                <FileSearch size={20} />
+                                            </div>
+                                            <span className={`text-[8px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg ${selectedCriterio === "OBRIGATÓRIO" ? "bg-white/20 text-white" : "bg-amber-100 text-amber-700"}`}>
+                                                NÍVEL 2
+                                            </span>
+                                        </div>
+                                        <span className={`text-[10px] font-black uppercase tracking-widest block ${selectedCriterio === "OBRIGATÓRIO" ? "text-amber-100" : "text-slate-400"}`}>Obrigatórios</span>
+                                        <span className="text-2xl font-black tracking-tight leading-none mt-1 block">{configs.transparencia_pntp_obrigatorios}</span>
+                                        <span className={`text-[8px] font-black uppercase tracking-widest mt-3 flex items-center gap-1.5 ${selectedCriterio === "OBRIGATÓRIO" ? "text-white" : "text-amber-600"}`}>
+                                            <Check size={10} /> {selectedCriterio === "OBRIGATÓRIO" ? "FILTRO ATIVO" : "CLIQUE PARA FILTRAR"}
+                                        </span>
+                                    </button>
+
+                                    {/* CARD RECOMENDADO */}
+                                    <button
+                                        onClick={() => setSelectedCriterio(selectedCriterio === "RECOMENDADO" ? "TODOS" : "RECOMENDADO")}
+                                        className={`p-5 rounded-[2rem] border text-left transition-all duration-300 relative overflow-hidden group ${
+                                            selectedCriterio === "RECOMENDADO"
+                                                ? "bg-gradient-to-br from-blue-500 to-indigo-650 text-white border-transparent shadow-xl shadow-blue-500/20"
+                                                : "bg-blue-50/50 hover:bg-blue-50 hover:border-blue-200 border-blue-100 text-slate-900 shadow-sm"
+                                        }`}
+                                    >
+                                        <div className="flex items-center justify-between mb-4">
+                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${selectedCriterio === "RECOMENDADO" ? "bg-white/20" : "bg-blue-100 text-blue-600"}`}>
+                                                <Sparkles size={20} />
+                                            </div>
+                                            <span className={`text-[8px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg ${selectedCriterio === "RECOMENDADO" ? "bg-white/20 text-white" : "bg-blue-100 text-blue-700"}`}>
+                                                BOAS PRÁTICAS
+                                            </span>
+                                        </div>
+                                        <span className={`text-[10px] font-black uppercase tracking-widest block ${selectedCriterio === "RECOMENDADO" ? "text-blue-100" : "text-slate-400"}`}>Recomendados</span>
+                                        <span className="text-2xl font-black tracking-tight leading-none mt-1 block">{configs.transparencia_pntp_recomendados}</span>
+                                        <span className={`text-[8px] font-black uppercase tracking-widest mt-3 flex items-center gap-1.5 ${selectedCriterio === "RECOMENDADO" ? "text-white" : "text-blue-600"}`}>
+                                            <Check size={10} /> {selectedCriterio === "RECOMENDADO" ? "FILTRO ATIVO" : "CLIQUE PARA FILTRAR"}
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
 
                 {/* 2. Módulos mais acessados (Acesso Rápido) */}
                 <motion.div 

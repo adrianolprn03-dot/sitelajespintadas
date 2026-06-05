@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { FaBuilding, FaUserTie, FaSave, FaSpinner, FaMapMarker, FaClock, FaEnvelope, FaPhone, FaCamera } from "react-icons/fa";
+import { FaBuilding, FaUserTie, FaSave, FaSpinner, FaMapMarker, FaClock, FaEnvelope, FaPhone, FaCamera, FaFacebook, FaInstagram, FaYoutube, FaWhatsapp, FaShieldAlt, FaGlobe } from "react-icons/fa";
 import toast from "react-hot-toast";
 import ImageUpload from "@/components/admin/ImageUpload";
 
@@ -31,7 +31,17 @@ export default function AdminConfiguracoesPage() {
         endereco_sede: "",
         horario_funcionamento: "",
         contato_email: "",
-        contato_telefone: ""
+        contato_telefone: "",
+        redes_facebook: "",
+        redes_instagram: "",
+        redes_youtube: "",
+        contato_whatsapp: "",
+        transparencia_pntp_ativo: "false",
+        transparencia_pntp_indice: "98.5%",
+        transparencia_pntp_selo: "SELO DIAMANTE",
+        transparencia_pntp_essenciais: "28 Módulos",
+        transparencia_pntp_obrigatorios: "23 Módulos",
+        transparencia_pntp_recomendados: "15 Módulos"
     });
 
     useEffect(() => {
@@ -399,7 +409,145 @@ export default function AdminConfiguracoesPage() {
                         </div>
                     </div>
                 </div>
+
+                {/* Seção Mídias Sociais */}
+                <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-gray-100">
+                    <h2 className="text-lg font-black text-gray-800 mb-8 flex items-center gap-2 border-b border-gray-50 pb-5 uppercase tracking-tighter">
+                        <FaGlobe className="text-blue-600" /> Mídias Sociais & Canais de Comunicação
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-1">
+                            <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1 flex items-center gap-1.5">
+                                <FaFacebook className="text-blue-600" /> Facebook (Link Completo)
+                            </label>
+                            <input
+                                name="redes_facebook"
+                                value={form.redes_facebook}
+                                onChange={handleChange}
+                                placeholder="Ex: https://facebook.com/prefeitura"
+                                className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-medium focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                            />
+                        </div>
+                        <div className="space-y-1">
+                            <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1 flex items-center gap-1.5">
+                                <FaInstagram className="text-pink-600" /> Instagram (Link Completo)
+                            </label>
+                            <input
+                                name="redes_instagram"
+                                value={form.redes_instagram}
+                                onChange={handleChange}
+                                placeholder="Ex: https://instagram.com/prefeitura"
+                                className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-medium focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                            />
+                        </div>
+                        <div className="space-y-1">
+                            <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1 flex items-center gap-1.5">
+                                <FaYoutube className="text-red-600" /> YouTube (Link Completo)
+                            </label>
+                            <input
+                                name="redes_youtube"
+                                value={form.redes_youtube}
+                                onChange={handleChange}
+                                placeholder="Ex: https://youtube.com/prefeitura"
+                                className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-medium focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                            />
+                        </div>
+                        <div className="space-y-1">
+                            <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1 flex items-center gap-1.5">
+                                <FaWhatsapp className="text-green-600" /> WhatsApp (Apenas Números com DDD)
+                            </label>
+                            <input
+                                name="contato_whatsapp"
+                                value={form.contato_whatsapp}
+                                onChange={handleChange}
+                                placeholder="Ex: 84987480287"
+                                className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-medium focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Seção PNTP 2026 */}
+                <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-gray-100">
+                    <h2 className="text-lg font-black text-gray-800 mb-8 flex items-center gap-2 border-b border-gray-50 pb-5 uppercase tracking-tighter">
+                        <FaShieldAlt className="text-cyan-600" /> Radar de Transparência Pública (PNTP 2026)
+                    </h2>
+                    <div className="space-y-6">
+                        <div className="flex items-center gap-3 bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                            <input
+                                type="checkbox"
+                                id="transparencia_pntp_ativo"
+                                name="transparencia_pntp_ativo"
+                                checked={form.transparencia_pntp_ativo === "true"}
+                                onChange={(e) => setForm({ ...form, transparencia_pntp_ativo: e.target.checked ? "true" : "false" })}
+                                className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
+                            />
+                            <label htmlFor="transparencia_pntp_ativo" className="text-xs font-black uppercase text-gray-700 cursor-pointer select-none">
+                                Exibir Banner do Transparômetro no Portal da Transparência
+                            </label>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Índice Geral de Transparência</label>
+                                <input
+                                    name="transparencia_pntp_indice"
+                                    value={form.transparencia_pntp_indice}
+                                    onChange={handleChange}
+                                    placeholder="Ex: 98,5%"
+                                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                />
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Selo Atricon Recomendado</label>
+                                <select
+                                    name="transparencia_pntp_selo"
+                                    value={form.transparencia_pntp_selo}
+                                    onChange={(e) => setForm({ ...form, transparencia_pntp_selo: e.target.value })}
+                                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:ring-4 focus:ring-blue-500/10 outline-none transition-all cursor-pointer"
+                                >
+                                    <option value="SELO DIAMANTE">SELO DIAMANTE (Grau Máximo)</option>
+                                    <option value="SELO OURO">SELO OURO</option>
+                                    <option value="SELO PRATA">SELO PRATA</option>
+                                    <option value="SELO BRONZE">SELO BRONZE</option>
+                                    <option value="SEM SELO">SEM SELO</option>
+                                </select>
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Módulos Essenciais (Nível 1)</label>
+                                <input
+                                    name="transparencia_pntp_essenciais"
+                                    value={form.transparencia_pntp_essenciais}
+                                    onChange={handleChange}
+                                    placeholder="Ex: 28 Módulos"
+                                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-medium focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                />
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Módulos Obrigatórios (Nível 2)</label>
+                                <input
+                                    name="transparencia_pntp_obrigatorios"
+                                    value={form.transparencia_pntp_obrigatorios}
+                                    onChange={handleChange}
+                                    placeholder="Ex: 23 Módulos"
+                                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-medium focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                />
+                            </div>
+                            <div className="md:col-span-2 space-y-1">
+                                <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Módulos Recomendados (Boas Práticas)</label>
+                                <input
+                                    name="transparencia_pntp_recomendados"
+                                    value={form.transparencia_pntp_recomendados}
+                                    onChange={handleChange}
+                                    placeholder="Ex: 15 Módulos"
+                                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-medium focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </form>
+
         </div>
     );
 }
