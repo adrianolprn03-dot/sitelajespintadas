@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
+import { MUNICIPIO } from "@/config/municipio";
 import {
     FaHome, FaNewspaper, FaGavel, FaFileContract, FaUsers,
     FaMoneyBillWave, FaChartBar, FaBuilding, FaBullhorn,
@@ -73,7 +74,7 @@ export default function AdminSidebar({ userRole = "admin" }: { userRole?: string
                         </div>
                         <div className="whitespace-nowrap">
                             <div className="text-sm font-black text-gray-800 tracking-tight leading-none mb-1">Painel Admin</div>
-                            <div className="text-[10px] uppercase font-bold text-gray-400 tracking-widest leading-none">Lajes Pintadas</div>
+                            <div className="text-[10px] uppercase font-bold text-gray-400 tracking-widest leading-none">{MUNICIPIO.nome}</div>
                         </div>
                     </div>
                 )}

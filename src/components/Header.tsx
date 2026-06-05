@@ -6,6 +6,7 @@ import { useAccessibility } from "./AccessibilityProvider";
 import { usePathname } from "next/navigation";
 import { HiOutlineCloud, HiOutlineBars3, HiOutlineXMark, HiMagnifyingGlass } from "react-icons/hi2";
 import BuscaGlobal from "./BuscaGlobal";
+import { MUNICIPIO } from "@/config/municipio";
 
 
 const navItems = [
@@ -115,7 +116,7 @@ export default function Header() {
                     <Link href="/" className="flex items-center group">
                         <img
                             src={logo}
-                            alt="Prefeitura de Lajes Pintadas"
+                            alt={`Prefeitura de ${MUNICIPIO.nome}`}
                             className="object-contain h-10 w-auto md:h-12 group-hover:scale-105 transition-transform duration-500"
                         />
                     </Link>

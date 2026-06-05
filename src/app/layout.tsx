@@ -2,21 +2,23 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
 
+import { MUNICIPIO } from "@/config/municipio";
+
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
     title: {
-        default: "Prefeitura Municipal de Lajes Pintadas – RN",
-        template: "%s | Prefeitura de Lajes Pintadas",
+        default: `Prefeitura Municipal de ${MUNICIPIO.nome} – ${MUNICIPIO.uf}`,
+        template: `%s | Prefeitura de ${MUNICIPIO.nome}`,
     },
-    description: "Site oficial da Prefeitura Municipal de Lajes Pintadas, Rio Grande do Norte. Serviços ao cidadão, Portal da Transparência, notícias e informações institucionais.",
-    keywords: ["Lajes Pintadas", "Prefeitura", "Rio Grande do Norte", "Transparência", "Serviços Públicos"],
-    authors: [{ name: "Prefeitura Municipal de Lajes Pintadas" }],
+    description: `Site oficial da Prefeitura Municipal de ${MUNICIPIO.nome}, ${MUNICIPIO.estado}. Serviços ao cidadão, Portal da Transparência, notícias e informações institucionais.`,
+    keywords: [MUNICIPIO.nome, "Prefeitura", MUNICIPIO.estado, "Transparência", "Serviços Públicos"],
+    authors: [{ name: MUNICIPIO.nomeCompleto }],
     robots: "index, follow",
     openGraph: {
         type: "website",
         locale: "pt_BR",
-        siteName: "Prefeitura de Lajes Pintadas – RN",
+        siteName: `Prefeitura de ${MUNICIPIO.nome} – ${MUNICIPIO.uf}`,
     },
 };
 

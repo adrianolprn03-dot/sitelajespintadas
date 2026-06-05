@@ -2,6 +2,8 @@ import Link from "next/link";
 import { FaFacebook, FaInstagram, FaYoutube, FaEnvelope, FaPhone, FaMapMarker, FaWhatsapp } from "react-icons/fa";
 import { prisma } from "@/lib/prisma";
 
+import { MUNICIPIO } from "@/config/municipio";
+
 const footerLinks = [
     {
         title: "Institucional",
@@ -54,11 +56,11 @@ async function getConfig(chave: string, padrao: string) {
 }
 
 export default async function Footer() {
-    const cnpj = await getConfig("cnpj", "08.159.394/0001-37");
-    const endereco = await getConfig("endereco_sede", "Rua São Francisco, 275, Centro, Lajes Pintadas/RN");
-    const email = await getConfig("contato_email", "ouvidoria@lajespintadas.rn.gov.br");
-    const telefone = await getConfig("contato_telefone", "(84) 9 8748-0287");
-    const razaoSocial = await getConfig("municipio_nome", "Prefeitura Municipal de Lajes Pintadas");
+    const cnpj = await getConfig("cnpj", MUNICIPIO.cnpj);
+    const endereco = await getConfig("endereco_sede", `${MUNICIPIO.endereco}, ${MUNICIPIO.nome}/${MUNICIPIO.uf}`);
+    const email = await getConfig("contato_email", MUNICIPIO.email);
+    const telefone = await getConfig("contato_telefone", MUNICIPIO.telefone);
+    const razaoSocial = await getConfig("municipio_nome", MUNICIPIO.nomeCompleto);
     const whatsapp = await getConfig("contato_whatsapp", "");
     const facebook = await getConfig("redes_facebook", "#");
     const instagram = await getConfig("redes_instagram", "#");
@@ -82,7 +84,7 @@ export default async function Footer() {
                 <div className="max-w-[1300px] mx-auto px-6 py-14 flex flex-col md:flex-row items-center justify-between gap-10">
                     <div>
                         <h3 className="text-white font-black text-2xl lg:text-4xl uppercase tracking-tighter mb-4">Central de Atendimento</h3>
-                        <p className="text-[#FDB913] font-black text-[11px] tracking-[0.3em] uppercase opacity-90">Prefeitura de Lajes Pintadas – RN</p>
+                        <p className="text-[#FDB913] font-black text-[11px] tracking-[0.3em] uppercase opacity-90">Prefeitura de {MUNICIPIO.nome} – {MUNICIPIO.uf}</p>
                     </div>
                     <div className="flex flex-wrap gap-4 w-full md:w-auto">
                         <Link
@@ -111,19 +113,19 @@ export default async function Footer() {
                             <div className="p-2 transition-transform duration-500 group-hover:scale-105 group-hover:rotate-2">
                                 <img
                                     src="/logo_v2_white.png"
-                                    alt="Brasão Oficial de Lajes Pintadas"
+                                    alt={`Brasão Oficial de ${MUNICIPIO.nome}`}
                                     className="h-16 md:h-20 w-auto object-contain drop-shadow-md max-w-[200px]"
                                 />
                             </div>
                             <div className="text-white font-black text-2xl leading-[1.1] uppercase tracking-tighter">
                                 Prefeitura Municipal <br />
-                                <span className="text-[#FDB913] drop-shadow-sm">Lajes Pintadas</span>
-                                <div className="text-[10px] text-blue-100/30 mt-2 font-black tracking-[0.3em]">Rio Grande do Norte</div>
+                                <span className="text-[#FDB913] drop-shadow-sm">{MUNICIPIO.nome}</span>
+                                <div className="text-[10px] text-blue-100/30 mt-2 font-black tracking-[0.3em]">{MUNICIPIO.estado}</div>
                             </div>
                         </div>
                         
                         <p className="text-blue-100/60 text-sm mb-8 leading-relaxed font-medium">
-                            Compromisso com o desenvolvimento sustentável e a transparência em prol de todos os cidadãos lajes-pintadenses.
+                            Compromisso com o desenvolvimento sustentável e a transparência em prol de todos os cidadãos.
                         </p>
 
                         <div className="space-y-4 text-sm font-bold">
