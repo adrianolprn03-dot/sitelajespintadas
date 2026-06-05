@@ -1,0 +1,21 @@
+name: Deploy to VPS (Easypanel)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Trigger Easypanel Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Easypanel Webhook
+        run: |
+          if [ -z "${{ secrets.EASYPANEL_WEBHOOK_URL }}" ]; then
+            echo "Erro: EASYPANEL_WEBHOOK_URL não configurado nos Secrets do GitHub."
+            exit 1
+          fi
+          echo "Disparando deploy na VPS..."
+          curl -s -X POST "${{ secrets.EASYPANEL_WEBHOOK_URL }}"
+          echo "Deploy disparado com sucesso!"
