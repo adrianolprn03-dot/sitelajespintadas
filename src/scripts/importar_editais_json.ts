@@ -140,12 +140,11 @@ async function main() {
     });
     
     if (existente) {
-      // Atualizar editalUrl se estava vazio e agora temos
-      if (!existente.editalUrl && reg.editalUrl) {
+      // Atualizar documentos se estava vazio e agora temos
+      if (existente.documentos === '[]' && reg.documentos !== '[]') {
         await prisma.licitacao.update({
           where: { id: existente.id },
           data: { 
-            editalUrl: reg.editalUrl,
             documentos: reg.documentos,
           }
         });
@@ -155,7 +154,8 @@ async function main() {
       }
     } else {
       // Criar novo registro
-      await prisma.licitacao.create({ data: reg });
+      const { editalUrl, dataPublicacaoEdital, ...prismaData } = reg;
+      await prisma.licitacao.create({ data: prismaData });
       novos++;
     }
   }

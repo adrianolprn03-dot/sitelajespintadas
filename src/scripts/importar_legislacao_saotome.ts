@@ -72,13 +72,13 @@ async function scrapeSource(source: typeof SOURCES[0]) {
     
     return records;
   } catch (error) {
-    console.error(`❌ Erro ao raspar ${source.url}:`, error.message);
+    console.error(`❌ Erro ao raspar ${source.url}:`, (error as Error).message);
     return [];
   }
 }
 
 async function main() {
-  let allRecords = [];
+  let allRecords: any[] = [];
   
   for (const source of SOURCES) {
     const records = await scrapeSource(source);

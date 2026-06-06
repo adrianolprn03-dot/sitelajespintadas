@@ -40,7 +40,7 @@ async function scrapeSource(source: typeof SOURCES[0]) {
     
     console.log(`📊 Encontradas ${rows.length} linhas na tabela.`);
     
-    const records = [];
+    const records: any[] = [];
     
     rows.each((i, el) => {
       const tds = $(el).find('td');
@@ -64,8 +64,7 @@ async function scrapeSource(source: typeof SOURCES[0]) {
           objeto: objeto || 'Não informado',
           secretaria: 'Prefeitura Municipal',
           status: 'aberta',
-          faseAtual: 'externa',
-          editalUrl,
+          documentos: editalUrl ? JSON.stringify([{ nome: 'Edital', url: editalUrl }]) : '[]',
           valor: null
         });
       }
@@ -79,7 +78,7 @@ async function scrapeSource(source: typeof SOURCES[0]) {
 }
 
 async function main() {
-  let allRecords = [];
+  let allRecords: any[] = [];
   
   for (const source of SOURCES) {
     const records = await scrapeSource(source);

@@ -4,6 +4,7 @@ import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { FaEye, FaEyeSlash, FaSpinner } from "react-icons/fa";
 import toast from "react-hot-toast";
+import { MUNICIPIO } from "@/config/municipio";
 
 export default function AdminLoginPage() {
     const router = useRouter();
@@ -39,88 +40,146 @@ export default function AdminLoginPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-primary-700 to-primary-900 flex items-center justify-center px-4">
-            <div className="w-full max-w-md">
-                {/* Logo */}
-                <div className="text-center mb-8">
-                    <div className="flex items-center justify-center mx-auto mb-6">
-                        <img 
-                            src="/logo_v2_white.png" 
-                            alt="Prefeitura Municipal de Lajes Pintadas" 
-                            className="h-20 w-auto object-contain drop-shadow-xl" 
-                        />
-                    </div>
-                    <h1 className="text-white font-bold text-2xl">Painel Administrativo</h1>
-                    <p className="text-blue-300 text-sm mt-1">Prefeitura Municipal de Lajes Pintadas – RN</p>
-                </div>
+        <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-slate-950 font-sans">
+            {/* Imagem de fundo com desfoque e overlay escuro */}
+            <div 
+                className="absolute inset-0 bg-cover bg-center transition-all duration-1000 scale-105"
+                style={{ 
+                    backgroundImage: "url('/images/hero-bg.jpg')",
+                }}
+            />
+            {/* Overlay escuro e desfoque */}
+            <div className="absolute inset-0 bg-[#0a1424]/75 backdrop-blur-sm z-0" />
 
-                <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-2xl p-8 space-y-5">
-                    <div>
-                        <h2 className="text-xl font-bold text-gray-800 mb-1">Entrar no Sistema</h2>
-                        <p className="text-gray-500 text-sm">Acesso restrito a servidores autorizados</p>
-                    </div>
-
-                    <div>
-                        <label htmlFor="email-login" className="block text-sm font-semibold text-gray-700 mb-1">
-                            E-mail Institucional *
-                        </label>
-                        <input
-                            id="email-login"
-                            type="email"
-                            required
-                            autoComplete="username"
-                            value={form.email}
-                            onChange={(e) => setForm({ ...form, email: e.target.value })}
-                            placeholder="usuario@lajespintadas.rn.gov.br"
-                            className="input-field"
-                        />
-                    </div>
-
-                    <div>
-                        <label htmlFor="senha-login" className="block text-sm font-semibold text-gray-700 mb-1">
-                            Senha *
-                        </label>
-                        <div className="relative">
-                            <input
-                                id="senha-login"
-                                type={showPass ? "text" : "password"}
-                                required
-                                autoComplete="current-password"
-                                value={form.password}
-                                onChange={(e) => setForm({ ...form, password: e.target.value })}
-                                placeholder="••••••••"
-                                className="input-field pr-10"
+            {/* Cartão de Login */}
+            <div className="relative z-10 w-full max-w-4xl mx-4 flex flex-col md:flex-row bg-white rounded-[2rem] overflow-hidden shadow-[0_25px_60px_-15px_rgba(0,0,0,0.6)] border border-white/10">
+                
+                {/* Lado Esquerdo: Painel de marca com gradiente */}
+                <div className="hidden md:flex md:w-[45%] bg-gradient-to-br from-[#005C8A] to-[#002C45] p-10 flex-col justify-between relative overflow-hidden text-white">
+                    {/* Efeito de luz radial */}
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.08),transparent_60%)]" />
+                    
+                    {/* Topo: Logo / Brasão dentro de uma pill de vidro */}
+                    <div className="relative z-10">
+                        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 flex items-center gap-3 w-fit shadow-inner shadow-white/5">
+                            <img
+                                src="/logo_v2_white.png"
+                                alt={`Brasão de ${MUNICIPIO.nome}`}
+                                className="h-10 w-auto object-contain"
                             />
-                            <button
-                                type="button"
-                                onClick={() => setShowPass(!showPass)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                                aria-label={showPass ? "Ocultar senha" : "Mostrar senha"}
-                            >
-                                {showPass ? <FaEyeSlash /> : <FaEye />}
-                            </button>
                         </div>
                     </div>
 
-                    <button
-                        type="submit"
-                        disabled={carregando}
-                        className="btn-primary w-full flex items-center justify-center gap-2 disabled:opacity-60"
-                    >
-                        {carregando && <FaSpinner className="animate-spin" />}
-                        {carregando ? "Entrando..." : "Entrar no Painel"}
-                    </button>
+                    {/* Centro: Título e Descrição */}
+                    <div className="relative z-10 my-auto py-8">
+                        <h1 className="text-3xl font-black tracking-tight uppercase mb-4 leading-tight">
+                            Painel <br />
+                            <span className="text-[#01b0ef]">Administrativo</span>
+                        </h1>
+                        <p className="text-xs text-blue-100/70 font-medium leading-relaxed">
+                            Gestão municipal transparente, eficiente e integrada. Acesso exclusivo para servidores autorizados da Prefeitura de {MUNICIPIO.nome} – {MUNICIPIO.uf}.
+                        </p>
+                    </div>
 
-                    <p className="text-center text-xs text-gray-400">
-                        Sistema de uso exclusivo de servidores públicos autorizados.
-                        <br />
-                        Acesso não autorizado é crime (Art. 154-A do Código Penal).
-                    </p>
-                </form>
+                    {/* Rodapé: Indicador de Ambiente Seguro */}
+                    <div className="relative z-10 flex items-center">
+                        <div className="bg-white/10 backdrop-blur-sm border border-white/10 rounded-full px-3 py-1.5 flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                            <span className="text-[10px] font-black tracking-wider uppercase text-blue-100/90">
+                                Ambiente Seguro
+                            </span>
+                        </div>
+                    </div>
+                </div>
 
-                <p className="text-center text-blue-300 text-xs mt-6">
-                    Problemas de acesso? Contate o setor de TI pelo (84) 3000-0000
-                </p>
+                {/* Lado Direito: Formulário */}
+                <div className="w-full md:w-[55%] bg-white p-8 md:p-12 flex flex-col justify-between min-h-[480px]">
+                    
+                    {/* Logo Mobile no topo do formulário */}
+                    <div className="md:hidden flex items-center justify-center mb-6">
+                        <div className="bg-[#0088b9]/10 rounded-2xl p-3 inline-flex items-center gap-2 border border-[#0088b9]/10">
+                            <img
+                                src="/logo_v2.png"
+                                alt={`Prefeitura de ${MUNICIPIO.nome}`}
+                                className="h-10 w-auto object-contain"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Título e Subtítulo */}
+                    <div className="mb-6 text-center md:text-left">
+                        <h2 className="text-2xl md:text-3xl font-extrabold text-[#0a1c30] tracking-tight mb-2">
+                            Acesse sua conta
+                        </h2>
+                        <p className="text-sm text-gray-500 font-semibold leading-snug">
+                            Insira suas credenciais institucionais para continuar
+                        </p>
+                    </div>
+
+                    {/* Corpo do Formulário */}
+                    <form onSubmit={handleSubmit} className="space-y-6 flex-1 flex flex-col justify-center">
+                        <div>
+                            <label htmlFor="email-login" className="block text-[10px] font-bold text-[#0a1c30]/60 tracking-widest uppercase mb-2">
+                                E-mail Institucional
+                            </label>
+                            <input
+                                id="email-login"
+                                type="email"
+                                required
+                                autoComplete="username"
+                                value={form.email}
+                                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                                placeholder="usuario@lajespintadas.rn.gov.br"
+                                className="w-full bg-[#f3f7fd] border border-transparent focus:border-[#0088b9] focus:bg-white focus:ring-4 focus:ring-[#0088b9]/10 transition-all duration-300 rounded-2xl py-3.5 px-4 text-sm font-semibold text-gray-800 outline-none placeholder-gray-400"
+                            />
+                        </div>
+
+                        <div>
+                            <label htmlFor="senha-login" className="block text-[10px] font-bold text-[#0a1c30]/60 tracking-widest uppercase mb-2">
+                                Senha de Acesso
+                            </label>
+                            <div className="relative">
+                                <input
+                                    id="senha-login"
+                                    type={showPass ? "text" : "password"}
+                                    required
+                                    autoComplete="current-password"
+                                    value={form.password}
+                                    onChange={(e) => setForm({ ...form, password: e.target.value })}
+                                    placeholder="••••••••"
+                                    className="w-full bg-[#f3f7fd] border border-transparent focus:border-[#0088b9] focus:bg-white focus:ring-4 focus:ring-[#0088b9]/10 transition-all duration-300 rounded-2xl py-3.5 px-4 text-sm font-semibold text-gray-800 outline-none placeholder-gray-400 pr-12"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPass(!showPass)}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                                    aria-label={showPass ? "Ocultar senha" : "Mostrar senha"}
+                                >
+                                    {showPass ? <FaEyeSlash className="w-4 h-4" /> : <FaEye className="w-4 h-4" />}
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Botão de Envio */}
+                        <button
+                            type="submit"
+                            disabled={carregando}
+                            className="w-full bg-[#0a1c30] hover:bg-[#061221] active:bg-[#030911] text-white font-bold text-xs uppercase tracking-widest py-4 px-6 rounded-2xl shadow-lg shadow-blue-950/10 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                        >
+                            {carregando && <FaSpinner className="animate-spin" />}
+                            {carregando ? "ENTRANDO NO SISTEMA..." : "ENTRAR NO SISTEMA"}
+                        </button>
+                    </form>
+
+                    {/* Texto Legal de Rodapé */}
+                    <div className="mt-8 text-center">
+                        <p className="text-[9px] font-bold text-gray-400/80 tracking-wider uppercase leading-relaxed max-w-sm mx-auto">
+                            Sistema de uso exclusivo autorizado. <br />
+                            Acesso indevido sujeito às penalidades da lei.
+                        </p>
+                    </div>
+                </div>
+
             </div>
         </div>
     );

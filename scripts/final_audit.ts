@@ -10,7 +10,7 @@ async function main() {
         "Secretarias": await prisma.secretaria.count(),
         "Legislação (Total)": await prisma.legislacao.count(),
         "Diárias": await prisma.diaria.count(),
-        "Instrumentos Orçamentários": await (prisma as any).instrumentoOrcamentario.count(),
+        // "Instrumentos Orçamentários": await (prisma as any).instrumentoOrcamentario?.count() || 0,
         "Relatórios Fiscais": await (prisma as any).relatorioFiscal.count(),
         "Veículos (Frota)": await (prisma as any).veiculo.count(),
         "Medicamentos (REMUME)": await (prisma as any).medicamento.count(),

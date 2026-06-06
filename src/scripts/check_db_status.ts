@@ -34,11 +34,11 @@ async function main() {
   console.log('\n--- Licitações por Ano ---');
   byAno.forEach(a => console.log(`  ${a.ano}: ${a._count}`));
   
-  // Verificar licitações com editalUrl preenchido
-  const comEdital = await prisma.licitacao.count({
-    where: { editalUrl: { not: null } }
+  // Verificar licitações com documentos preenchidos
+  const comDocumentos = await prisma.licitacao.count({
+    where: { NOT: { documentos: '[]' } }
   });
-  console.log(`\nLicitações com editalUrl: ${comEdital}`);
+  console.log(`\nLicitações com documentos: ${comDocumentos}`);
   
   // Verificar registros com "Não informado"
   const naoInformado = await prisma.licitacao.count({
