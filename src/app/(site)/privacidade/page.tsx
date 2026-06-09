@@ -36,7 +36,7 @@ export default async function PrivacidadePage() {
                 <div className="bg-blue-50 border border-blue-100 rounded-2xl px-8 py-6 flex items-center gap-4">
                     <span className="text-3xl">📋</span>
                     <div>
-                        <p className="font-black text-[#0088b9] text-sm uppercase tracking-widest mb-1">Última Atualização: Janeiro de 2025</p>
+                        <p className="font-black text-[#0088b9] text-sm uppercase tracking-widest mb-1">Última Atualização: Junho de 2026</p>
                         <p className="text-gray-500 text-sm font-medium">Em conformidade com a Lei Geral de Proteção de Dados Pessoais — LGPD (Lei Federal nº 13.709/2018)</p>
                     </div>
                 </div>
@@ -48,7 +48,7 @@ export default async function PrivacidadePage() {
                         titulo: "1. Quem somos",
                         conteudo: `${razaoSocial}, inscrita no CNPJ sob o nº ${cnpj}, com sede na ${endereco}, é a controladora dos dados pessoais coletados por este portal, nos termos da LGPD.
 
-Encarregado de Proteção de Dados (DPO): ${email}`
+Encarregado de Proteção de Dados (DPO): Francisco Adriano Bezerra da Silva (E-mail: controladoria@lajespintadas.rn.gov.br)`
                     },
                     {
                         id: "2",
@@ -106,7 +106,7 @@ Os dados poderão ser compartilhados apenas:
 • Obter informação sobre o compartilhamento de dados
 • Se opor ao tratamento realizado sem seu consentimento
 
-Para exercer seus direitos, entre em contato via e-SIC ou pelo e-mail: secretaria@lajespintadas.rn.gov.br`
+Para exercer seus direitos, entre em contato via e-SIC ou pelo e-mail: controladoria@lajespintadas.rn.gov.br`
                     },
                     {
                         id: "7",
@@ -128,7 +128,9 @@ Os cookies de sessão são automaticamente excluídos ao fechar o navegador.`
                         titulo: "9. Contato e denúncias",
                         conteudo: `Qualquer questão sobre esta política ou sobre o tratamento dos seus dados pode ser direcionada ao Encarregado de Proteção de Dados (DPO):
 
-E-mail: secretaria@lajespintadas.rn.gov.br
+Nome: Francisco Adriano Bezerra da Silva
+E-mail: controladoria@lajespintadas.rn.gov.br
+Horário de Expediente: 07h às 13h (segunda a sexta-feira)
 Canal e-SIC: /servicos/esic
 
 Você também pode registrar reclamações junto à Autoridade Nacional de Proteção de Dados (ANPD): www.gov.br/anpd`
