@@ -57,14 +57,28 @@ export default function LGPDPage() {
                             <FaUserShield size={160} />
                         </div>
                         <div className="relative z-10">
-                             <div className="p-4 bg-blue-600/20 backdrop-blur-md rounded-2xl w-fit mb-8 border border-blue-500/20">
-                                <FaBalanceScale size={32} className="text-blue-400" />
+                            <div className="p-4 bg-blue-600/20 backdrop-blur-md rounded-2xl w-fit mb-6 border border-blue-500/20">
+                                <FaUserShield size={32} className="text-blue-400" />
                             </div>
                             <span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.3em] mb-2 block">Encarregado de Dados</span>
                             <h3 className="text-2xl font-black tracking-tighter mb-4">Canal Direto com o DPO</h3>
-                            <p className="text-slate-400 font-bold text-sm leading-relaxed mb-8">
-                                Esclareça dúvidas ou exerça seus direitos de titular diretamente através do nosso Sistema de Informação.
-                            </p>
+                            
+                            <div className="text-slate-300 font-medium text-xs space-y-4 mb-8">
+                                <div>
+                                    <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-0.5">Encarregado / Responsável</span>
+                                    <span className="font-bold text-white text-sm">Francisco Adriano Bezerra da Silva</span>
+                                </div>
+                                <div>
+                                    <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-0.5">Canal de Comunicação</span>
+                                    <a href="mailto:controladoria@lajespintadas.rn.gov.br" className="font-bold text-blue-400 hover:underline break-all">
+                                        controladoria@lajespintadas.rn.gov.br
+                                    </a>
+                                </div>
+                                <div>
+                                    <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-0.5">Horário de Expediente</span>
+                                    <span className="font-bold text-white">07h às 13h (segunda a sexta-feira)</span>
+                                </div>
+                            </div>
                         </div>
                         <a href="/servicos/esic" className="relative z-10 h-14 w-full flex items-center justify-center bg-blue-600 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 border border-blue-500/50">
                             Acessar Portal e-SIC
