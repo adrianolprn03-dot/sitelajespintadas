@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
-import { FaShieldAlt, FaUserShield, FaServer, FaBalanceScale, FaCheckCircle, FaLock, FaUserCheck } from "react-icons/fa";
+import { FaShieldAlt, FaUserShield, FaServer, FaBalanceScale, FaCheckCircle, FaLock, FaUserCheck, FaEye, FaDownload } from "react-icons/fa";
 import { FaScaleBalanced } from "react-icons/fa6";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
 
@@ -116,6 +116,61 @@ export default function LGPDPage() {
                                 Nossos sistemas operam sob camadas de proteção avançada, com auditoria de registros de acesso e criptografia de dados sensíveis, mitigando riscos de incidentes e garantindo a continuidade da governança digital.
                             </p>
                         </div>
+                    </div>
+                </div>
+
+                {/* Legislação e Regulamentação */}
+                <div className="bg-white rounded-[3rem] p-12 lg:p-16 border border-slate-100 shadow-xl shadow-slate-200/30 mb-24">
+                    <div className="mb-12">
+                        <span className="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] mb-4 block">Base Legal e Normas</span>
+                        <h2 className="text-3xl font-black text-slate-800 uppercase tracking-tighter mb-4 leading-none">Legislação e Regulamentação</h2>
+                        <p className="text-slate-500 font-bold text-sm max-w-2xl italic leading-relaxed">
+                            Consulte a legislação federal de proteção de dados e governança digital aplicadas na administração municipal de Lajes Pintadas.
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {[
+                            {
+                                titulo: "Lei Geral de Proteção de Dados (LGPD)",
+                                subtitulo: "Lei Federal nº 13.709/2018",
+                                desc: "Dispõe sobre o tratamento de dados pessoais, inclusive nos meios digitais, por pessoa natural ou por pessoa jurídica de direito público ou privado, com o objetivo de proteger os direitos fundamentais de liberdade e de privacidade.",
+                                url: "/docs/lgpd/lei-federal-13709-2018.pdf"
+                            },
+                            {
+                                titulo: "Lei do Governo Digital",
+                                subtitulo: "Lei Federal nº 14.129/2021",
+                                desc: "Estabelece princípios, regras e instrumentos para o Governo Digital e para o aumento da eficiência pública nas administrações federais, estaduais e municipais.",
+                                url: "/docs/lgpd/lei-federal-14129-2021.pdf"
+                            }
+                        ].map((lei) => (
+                            <div key={lei.subtitulo} className="bg-slate-50/50 p-8 rounded-3xl border border-slate-100 flex flex-col justify-between group hover:shadow-lg hover:border-blue-100 transition-all duration-300">
+                                <div>
+                                    <span className="text-[9px] font-black text-blue-600 uppercase tracking-widest block mb-2">{lei.subtitulo}</span>
+                                    <h3 className="text-lg font-black text-slate-800 uppercase tracking-tight mb-4 group-hover:text-blue-600 transition-colors">{lei.titulo}</h3>
+                                    <p className="text-slate-500 font-bold text-xs leading-relaxed italic mb-8">
+                                        "{lei.desc}"
+                                    </p>
+                                </div>
+                                <div className="flex gap-4">
+                                    <a
+                                        href={lei.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex-1 flex items-center justify-center gap-2 py-3 bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white rounded-xl text-xs font-bold transition-all text-center"
+                                    >
+                                        <FaEye size={12} /> Visualizar
+                                    </a>
+                                    <a
+                                        href={lei.url}
+                                        download
+                                        className="flex-1 flex items-center justify-center gap-2 py-3 bg-white border border-slate-200 text-slate-600 hover:bg-slate-700 hover:text-white rounded-xl text-xs font-bold transition-all text-center"
+                                    >
+                                        <FaDownload size={11} /> Baixar
+                                    </a>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
 
