@@ -27,7 +27,7 @@ const categoriasDeModulos = [
         desc: "Dados oficiais, competências legais, estrutura administrativa, contatos dos órgãos públicos, acessibilidade e governo digital.",
         modulos: [
             { icon: Building2, titulo: "Institucional", desc: "Dados gerais e identificação da entidade municipal.", href: "/transparencia/institucional", badge: "ENTIDADE", tipoCriterio: "ESSENCIAL", cor: "from-blue-700 to-indigo-850" },
-            { icon: FileText, titulo: "Competências", desc: "Atribuições e funções legais do município.", href: "/transparencia/institucional", badge: "LEGAL", tipoCriterio: "ESSENCIAL", cor: "from-slate-700 to-slate-900" },
+            { icon: FileText, titulo: "Competências", desc: "Atribuições e funções legais do município.", href: "/transparencia/competencias", badge: "LEGAL", tipoCriterio: "ESSENCIAL", cor: "from-emerald-600 to-teal-700" },
             { icon: Users2, titulo: "Organograma", desc: "Estrutura organizacional e administrativa da prefeitura.", href: "/transparencia/institucional", badge: "ESTRUTURA", tipoCriterio: "ESSENCIAL", cor: "from-indigo-600 to-blue-700" },
             { icon: MapPinned, titulo: "Localização e Contatos", desc: "Endereços, telefones, e-mails e contatos das sedes públicas.", href: "/transparencia/institucional", badge: "CONTATOS", tipoCriterio: "ESSENCIAL", cor: "from-slate-800 to-slate-950" },
             { icon: UserCircle2, titulo: "Gestores Municipais", desc: "Identificação dos responsáveis por cada setor e secretaria.", href: "/transparencia/gestores", badge: "CONTATOS", tipoCriterio: "OBRIGATÓRIO", cor: "from-teal-500 to-emerald-600" },
@@ -145,15 +145,7 @@ const categoriasDeModulos = [
     }
 ];
 
-// Módulos mais acessados pelos cidadãos para acesso rápido e imediato
-const modulosMaisAcessados = [
-    { icon: Users, titulo: "Servidores", desc: "Folha de Pagamento", href: "/transparencia/servidores", cor: "from-indigo-50 to-indigo-100/50 hover:bg-indigo-100 text-indigo-900 border-indigo-200" },
-    { icon: Gavel, titulo: "Licitações", desc: "Certames e Editais", href: "/transparencia/licitacoes", cor: "from-orange-50 to-orange-100/50 hover:bg-orange-100 text-orange-900 border-orange-200" },
-    { icon: FileSignature, titulo: "Contratos", desc: "Ajustes e Aditivos", href: "/transparencia/contratos", cor: "from-blue-50 to-blue-100/50 hover:bg-blue-100 text-blue-900 border-blue-200" },
-    { icon: Receipt, titulo: "Despesas", desc: "Gastos e Pagamentos", href: "/transparencia/despesas", cor: "from-slate-50 to-slate-100/50 hover:bg-slate-100 text-slate-900 border-slate-200" },
-    { icon: Plane, titulo: "Diárias", desc: "Viagens e Passagens", href: "/transparencia/diarias", cor: "from-sky-50 to-sky-100/50 hover:bg-sky-100 text-sky-900 border-sky-200" },
-    { icon: ClipboardList, titulo: "e-SIC", desc: "Acesso à Informação", href: "/servicos/esic", cor: "from-amber-50 to-amber-100/50 hover:bg-amber-100 text-amber-900 border-amber-200" }
-];
+
 
 export default function TransparenciaPage() {
     const [linksExternos, setLinksExternos] = useState<any[]>([]);
@@ -443,35 +435,7 @@ export default function TransparenciaPage() {
                     </motion.div>
                 )}
 
-                {/* 2. Módulos mais acessados (Acesso Rápido) */}
-                <motion.div 
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.1 }}
-                    className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-xl shadow-slate-200/40 mb-8"
-                >
-                    <div className="flex items-center gap-3 mb-6">
-                        <span className="p-2 rounded-xl bg-indigo-50 text-indigo-650">
-                            <TrendingUp size={20} />
-                        </span>
-                        <h4 className="text-xs font-black uppercase tracking-widest text-slate-800">Mais Consultados pelos Cidadãos</h4>
-                    </div>
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                        {modulosMaisAcessados.map((modulo) => (
-                            <Link 
-                                key={modulo.titulo} 
-                                href={modulo.href}
-                                className={`flex flex-col items-center justify-center text-center p-5 rounded-[1.5rem] border ${modulo.cor} transition-all duration-300 hover:-translate-y-1 shadow-sm hover:shadow-md group`}
-                            >
-                                <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center mb-3 shadow-sm border border-slate-50 group-hover:scale-105 transition-transform">
-                                    <modulo.icon size={18} />
-                                </div>
-                                <span className="text-[10px] font-black uppercase tracking-wider block leading-none">{modulo.titulo}</span>
-                                <span className="text-[8px] font-bold opacity-60 uppercase tracking-widest mt-1 block">{modulo.desc}</span>
-                            </Link>
-                        ))}
-                    </div>
-                </motion.div>
+
 
                 {/* 3. Índice Visual de Dimensões (NOVO HUB DE NAVEGAÇÃO INTERATIVO) */}
                 <motion.div 
