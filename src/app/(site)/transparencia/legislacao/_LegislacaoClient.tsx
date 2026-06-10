@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { exportToCSV, exportToJSON, exportToPDF, exportToXLSX } from "@/lib/exportUtils";
 import PDFViewer from "@/components/transparencia/PDFViewer";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
+import { MUNICIPIO } from "@/config/municipio";
 
 type Legislacao = {
     id: string;
@@ -90,7 +91,7 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
         }));
 
         const filename = `legislacao_${tipoFiltro.toLowerCase()}_${anoFiltro || 'geral'}`;
-        const title = `Relatório de Legislação Municipal – Lajes Pintadas/RN`;
+        const title = `Relatório de Legislação Municipal – ${MUNICIPIO.nome}/${MUNICIPIO.uf}`;
 
         if (format === "csv") exportToCSV(payload, filename);
         else if (format === "json") exportToJSON(payload, filename);

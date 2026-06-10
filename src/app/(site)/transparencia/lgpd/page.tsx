@@ -3,9 +3,10 @@ import PageHeader from "@/components/PageHeader";
 import { FaShieldAlt, FaUserShield, FaServer, FaBalanceScale, FaCheckCircle, FaLock, FaUserCheck, FaEye, FaDownload } from "react-icons/fa";
 import { FaScaleBalanced } from "react-icons/fa6";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
+import { MUNICIPIO } from "@/config/municipio";
 
 export const metadata: Metadata = {
-    title: "Lei Geral de Proteção de Dados (LGPD) | Transparência Premium — Lajes Pintadas",
+    title: `Lei Geral de Proteção de Dados (LGPD) | Transparência Premium — ${MUNICIPIO.nome}`,
     description: "Conheça nossas diretrizes de privacidade, segurança da informação e como protegemos seus dados pessoais de acordo com a Lei 13.709/2018.",
 };
 
@@ -47,7 +48,7 @@ export default function LGPDPage() {
                         <span className="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] mb-4 block">Compromisso Institucional</span>
                         <h2 className="text-4xl font-black text-slate-800 mb-8 uppercase tracking-tighter leading-none">Sua privacidade é <br className="hidden md:block" /> nossa prioridade.</h2>
                         <div className="prose prose-slate max-w-none text-slate-500 font-bold leading-relaxed text-lg italic">
-                            A Prefeitura de Lajes Pintadas implementa padrões rigorosos de segurança e transparência no tratamento de dados pessoais, assegurando que cada interação com o poder público municipal respeite a dignidade e a autodeterminação informativa do cidadão.
+                            A Prefeitura de {MUNICIPIO.nome} implementa padrões rigorosos de segurança e transparência no tratamento de dados pessoais, assegurando que cada interação com o poder público municipal respeite a dignidade e a autodeterminação informativa do cidadão.
                         </div>
                     </div>
 
@@ -66,12 +67,12 @@ export default function LGPDPage() {
                             <div className="text-slate-300 font-medium text-xs space-y-4 mb-8">
                                 <div>
                                     <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-0.5">Encarregado / Responsável</span>
-                                    <span className="font-bold text-white text-sm">Francisco Adriano Bezerra da Silva</span>
+                                    <span className="font-bold text-white text-sm">{MUNICIPIO.dpo}</span>
                                 </div>
                                 <div>
                                     <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-0.5">Canal de Comunicação</span>
-                                    <a href="mailto:controladoria@lajespintadas.rn.gov.br" className="font-bold text-blue-400 hover:underline break-all">
-                                        controladoria@lajespintadas.rn.gov.br
+                                    <a href={`mailto:${MUNICIPIO.dpoEmail}`} className="font-bold text-blue-400 hover:underline break-all">
+                                        {MUNICIPIO.dpoEmail}
                                     </a>
                                 </div>
                                 <div>
@@ -125,7 +126,7 @@ export default function LGPDPage() {
                         <span className="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] mb-4 block">Base Legal e Normas</span>
                         <h2 className="text-3xl font-black text-slate-800 uppercase tracking-tighter mb-4 leading-none">Legislação e Regulamentação</h2>
                         <p className="text-slate-500 font-bold text-sm max-w-2xl italic leading-relaxed">
-                            Consulte a legislação federal de proteção de dados e governança digital aplicadas na administração municipal de Lajes Pintadas.
+                            Consulte a legislação federal de proteção de dados e governança digital aplicadas na administração municipal de {MUNICIPIO.nome}.
                         </p>
                     </div>
 

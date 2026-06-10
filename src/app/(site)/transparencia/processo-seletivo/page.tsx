@@ -1,10 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import type { Metadata } from "next";
 import ConcursosClient from "../concursos/_ConcursosClient";
+import { MUNICIPIO } from "@/config/municipio";
 
 export const metadata: Metadata = {
     title: "Processos Seletivos | Portal da Transparência",
-    description: "Acompanhe os Processos Seletivos Simplificados (PSS) da Prefeitura de Lajes Pintadas.",
+    description: `Acompanhe os Processos Seletivos Simplificados (PSS) da Prefeitura de ${MUNICIPIO.nome}.`,
 };
 
 export default async function ProcessoSeletivoPage() {
@@ -30,7 +31,7 @@ export default async function ProcessoSeletivoPage() {
             typeFilter="pss"
             title="Processos Seletivos"
             subtitle="Editais, convocações e resultados de contratações temporárias e PSS."
-            specialBannerText="A Prefeitura Municipal de Lajes Pintadas informa que não realizou processo seletivo para o período de 01/01/2021 à 21/04/2026."
+            specialBannerText={`A Prefeitura Municipal de ${MUNICIPIO.nome} informa que não realizou processo seletivo para o período de 01/01/2021 à 21/04/2026.`}
         />
     );
 }

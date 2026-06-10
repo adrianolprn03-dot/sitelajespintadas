@@ -19,6 +19,7 @@ import PageHeader from "@/components/PageHeader";
 import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
 import { exportToCSV, exportToJSON, exportToPDF, exportToXLSX } from "@/lib/exportUtils";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
+import { MUNICIPIO } from "@/config/municipio";
 
 type Receita = {
     id: string;
@@ -107,7 +108,7 @@ export default function ReceitasPage() {
         }));
 
         const filename = `receitas_${mes || 'anual'}_${ano}`;
-        const title = `Relatório de Arrecadação de Receitas – Lajes Pintadas/RN (${ano})`;
+        const title = `Relatório de Arrecadação de Receitas – ${MUNICIPIO.nome}/${MUNICIPIO.uf} (${ano})`;
 
         if (format === "csv") exportToCSV(payload, filename);
         else if (format === "json") exportToJSON(payload, filename);
@@ -267,7 +268,7 @@ export default function ReceitasPage() {
                             </button>
                         </div>
                         <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] px-6 hidden sm:block">
-                            Lajes Pintadas • Arrecadação {ano}
+                            {MUNICIPIO.nome} • Arrecadação {ano}
                         </div>
                     </div>
 
@@ -358,7 +359,7 @@ export default function ReceitasPage() {
                                                         <td className="px-10 py-10 text-right">
                                                             <div className="flex flex-col items-end">
                                                                 <span className="text-4xl font-black text-emerald-400 tracking-tighter tabular-nums mb-1">{fmt(totalArrecadado)}</span>
-                                                                <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em]">Lajes Pintadas • Recursos Públicos</span>
+                                                                <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em]">{MUNICIPIO.nome} • Recursos Públicos</span>
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -476,7 +477,7 @@ export default function ReceitasPage() {
                     <BannerPNTP />
                     <div className="mt-20 text-center">
                         <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em] leading-[2] max-w-2xl mx-auto">
-                            PORTAL DA TRANSPARÊNCIA • PREFEITURA DE LAJES PINTADAS/RN <br/>
+                            PORTAL DA TRANSPARÊNCIA • PREFEITURA DE {MUNICIPIO.nome.toUpperCase()}/{MUNICIPIO.uf} <br/>
                             <span className="opacity-40 font-bold italic">Os dados apresentados são sincronizados com a contabilidade municipal conforme LC 131/2009.</span>
                         </p>
                     </div>

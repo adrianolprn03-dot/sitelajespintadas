@@ -4,11 +4,13 @@ import { HiPlay } from "react-icons/hi2";
 import { IoClose } from "react-icons/io5";
 import { AnimatePresence, motion } from "framer-motion";
 
+import { MUNICIPIO } from "@/config/municipio";
+
 export default function VideoHero() {
     const [isOpen, setIsOpen] = useState(false);
     const [videoError, setVideoError] = useState(false);
 
-    const videoSrc = "/video_lajes_pintadas.mp4";
+    const videoSrc = MUNICIPIO.video;
 
     return (
         <section className="relative w-full py-24 md:py-32 overflow-hidden bg-gray-900 group">
@@ -28,7 +30,7 @@ export default function VideoHero() {
                 ) : (
                     <img
                         src="/images/hero-slider-2.jpg"
-                        alt="Vista de Lajes Pintadas"
+                        alt={`Vista de ${MUNICIPIO.nome}`}
                         className="w-full h-full object-cover opacity-40"
                     />
                 )}
@@ -74,7 +76,7 @@ export default function VideoHero() {
                 >
                     <h2 className="text-3xl md:text-5xl font-black text-white mb-6 uppercase tracking-tighter leading-tight">
                         Conheça a nossa <br />
-                        <span className="text-secondary-400">linda Lajes Pintadas</span>
+                        <span className="text-secondary-400">linda {MUNICIPIO.nome}</span>
                     </h2>
                     <p className="text-white/70 text-lg font-medium leading-relaxed">
                         Um olhar especial sobre a nossa terra, nossa gente e as belezas que fazem do nosso município um lugar único para se viver.

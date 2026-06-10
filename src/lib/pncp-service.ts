@@ -16,12 +16,12 @@
  *  8 = Dispensa de Licitação
  *  9 = Inexigibilidade
  * 10 = Manifestação de Interesse
- * 11 = Pré-qualificação
  * 12 = Credenciamento
  */
+import { MUNICIPIO } from "@/config/municipio";
 
 const BASE_URL = "https://pncp.gov.br/api/consulta/v1";
-const CNPJ_LAJES = "08159394000137";
+const CNPJ_LAJES = MUNICIPIO.cnpj.replace(/\D/g, "");
 
 // ──────────────────────────────────────────
 // Tipos

@@ -25,6 +25,7 @@ yarn-error.log*
 # local env files
 .env
 .env*.local
+.env.production
 
 # vercel
 .vercel
@@ -57,6 +58,8 @@ test_prisma.js
 legis.json
 deploy.zip
 deploy_vps.zip
+*.zip
+*.tar.gz
 *.txt
 scratch/
 cocal*.html
@@ -64,7 +67,15 @@ build*.log
 build_v2.log
 build_utf8.log
 
+# uploads (arquivos PDF/imagens - gerenciados pelo servidor em produção)
+# /public/uploads/
+
+# deploy artifacts
+deploy_final/
+deploy_vps/
+site_pronto.zip
+site_vps*.zip
+docker_build_test.txt
+
 .vercel
 .env*.local
-wordpress/
-migracao_wp/

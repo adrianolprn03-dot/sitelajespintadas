@@ -2,31 +2,32 @@
 import React from "react";
 import { FaUsers, FaMapMarked, FaBirthdayCake, FaInfoCircle } from "react-icons/fa";
 import { motion } from "framer-motion";
-
-const infoCards = [
-    {
-        icon: FaUsers,
-        numero: "4.743",
-        legenda: "Habitantes (Censo 2022)",
-    },
-    {
-        icon: FaMapMarked,
-        numero: "130.4 km²",
-        legenda: "Área Territorial",
-    },
-    {
-        icon: FaBirthdayCake,
-        numero: "1953",
-        legenda: "Ano de Fundação",
-    },
-    {
-        icon: FaInfoCircle,
-        numero: "Laje-pintadense",
-        legenda: "Gentílico",
-    },
-];
+import { MUNICIPIO } from "@/config/municipio";
 
 export default function ConhecaCidade() {
+    const infoCards = [
+        {
+            icon: FaUsers,
+            numero: MUNICIPIO.estatisticas.populacao,
+            legenda: "Habitantes",
+        },
+        {
+            icon: FaMapMarked,
+            numero: MUNICIPIO.estatisticas.area,
+            legenda: "Área Territorial",
+        },
+        {
+            icon: FaBirthdayCake,
+            numero: MUNICIPIO.estatisticas.fundacao,
+            legenda: "Ano de Fundação",
+        },
+        {
+            icon: FaInfoCircle,
+            numero: MUNICIPIO.nome === "Lajes Pintadas" ? "Laje-pintadense" : "São-tomeense",
+            legenda: "Gentílico",
+        },
+    ];
+
     return (
         <section className="py-24 bg-[#0055A4] relative text-white" aria-labelledby="conheca-titulo">
             {/* Pattern/Textura de Fundo estilo Cocal (Simples) */}
@@ -45,10 +46,10 @@ export default function ConhecaCidade() {
                             id="conheca-titulo"
                             className="text-4xl md:text-5xl font-black mb-6 uppercase tracking-tighter"
                         >
-                            Conheça Lajes Pintadas
+                            Conheça {MUNICIPIO.nome}
                         </motion.h2>
                         <p className="text-white/80 font-medium text-lg mb-8 leading-relaxed">
-                            Uma cidade hospitaleira, de povo trabalhador e cultura rica no coração do Rio Grande do Norte. De suas paisagens serranas à sua história, Lajes Pintadas é orgulho de todos que aqui vivem.
+                            Uma cidade hospitaleira, de povo trabalhador e cultura rica no coração do Rio Grande do Norte. De suas paisagens serranas à sua história, {MUNICIPIO.nome} é orgulho de todos que aqui vivem.
                         </p>
                     </div>
 

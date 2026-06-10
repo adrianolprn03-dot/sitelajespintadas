@@ -15,6 +15,11 @@ export const MUNICIPIO = {
         secundaria: "#01b0ef",
         destaque: "#FDB913",
     },
+    gentilico: "Laje-pintadense",
+    video: "/video_lajes_pintadas.mp4",
+    heroVideo: "https://res.cloudinary.com/drvvsfap5/video/upload/v1775670797/v%C3%ADdeo_lajes_pintadas_uf9kbm.mp4",
+    dpo: "Francisco Adriano Bezerra da Silva",
+    dpoEmail: "controladoria@lajespintadas.rn.gov.br",
     estatisticas: {
         populacao: "4.700",
         area: "311,6 km²",

@@ -1,11 +1,6 @@
-/**
- * Serviço de Integração com o SICONFI (Sistema de Informações Contábeis e Fiscais do Setor Público Brasileiro)
- * Tesouro Nacional — Lajes Pintadas | Código IBGE: 2406306
- * Documentação: https://apidatalake.tesouro.gov.br/docs/siconfi/
- */
+import { MUNICIPIO } from "@/config/municipio";
 
 const BASE_URL = "https://apidatalake.tesouro.gov.br/ords/siconfi/tt";
-const IBGE_LAJES = "2406306";
 const CACHE_FISCAL = 86400; // 24h para dados fiscais oficiais
 
 export interface SiconfiItem {
@@ -29,7 +24,7 @@ export interface SiconfiDCAAGFRequest {
 
 export async function getRREOSiconfi({ an_exercicio, periodo, nr_anexo }: SiconfiRequest): Promise<SiconfiItem[]> {
     const url =
-        `${BASE_URL}/rreo?an_exercicio=${an_exercicio}&id_ente=${IBGE_LAJES}&periodo=${periodo}&nr_anexo=${nr_anexo}`;
+        `${BASE_URL}/rreo?an_exercicio=${an_exercicio}&id_ente=${MUNICIPIO.ibge}&periodo=${periodo}&nr_anexo=${nr_anexo}`;
 
     try {
         const response = await fetch(url, {
@@ -56,7 +51,7 @@ export async function getRREOSiconfi({ an_exercicio, periodo, nr_anexo }: Siconf
 
 export async function getRGFSiconfi({ an_exercicio, periodo, nr_anexo }: SiconfiRequest): Promise<SiconfiItem[]> {
     const url =
-        `${BASE_URL}/rgf?an_exercicio=${an_exercicio}&id_ente=${IBGE_LAJES}&periodo=${periodo}&nr_anexo=${nr_anexo}`;
+        `${BASE_URL}/rgf?an_exercicio=${an_exercicio}&id_ente=${MUNICIPIO.ibge}&periodo=${periodo}&nr_anexo=${nr_anexo}`;
 
     try {
         const response = await fetch(url, {
@@ -83,7 +78,7 @@ export async function getRGFSiconfi({ an_exercicio, periodo, nr_anexo }: Siconfi
 
 export async function getDCASiconfi({ an_exercicio, nr_periodo }: SiconfiDCAAGFRequest): Promise<SiconfiItem[]> {
     const url =
-        `${BASE_URL}/dca?an_exercicio=${an_exercicio}&id_ente=${IBGE_LAJES}&nr_periodo=${nr_periodo}`;
+        `${BASE_URL}/dca?an_exercicio=${an_exercicio}&id_ente=${MUNICIPIO.ibge}&nr_periodo=${nr_periodo}`;
 
     try {
         const response = await fetch(url, {

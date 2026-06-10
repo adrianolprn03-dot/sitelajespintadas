@@ -9,16 +9,60 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: "URL não fornecida" }, { status: 400 });
     }
 
-    // Validar formato básico da URL
+    // Suporte para arquivos salvos em formato Base64 (data:application/pdf;base64,...)
+    if (url.startsWith("data:")) {
+        try {
+            const [header, base64Data] = url.split(",");
+            if (!base64Data) {
+                return NextResponse.json({ error: "Dados do arquivo corrompidos" }, { status: 400 });
+            }
+            const contentType = header.split(";")[0].split(":")[1] || "application/pdf";
+            const buffer = Buffer.from(base64Data, "base64");
+            return new NextResponse(buffer, {
+                status: 200,
+                headers: {
+                    "Content-Type": contentType,
+                    "Content-Disposition": "inline",
+                    "Cache-Control": "public, max-age=86400",
+                },
+            });
+        } catch (error) {
+            return NextResponse.json({ error: "Erro ao decodificar arquivo base64" }, { status: 500 });
+        }
+    }
+
+    const requestUrl = new URL(req.url);
+    const origin = requestUrl.origin;
+
+    // Validar formato básico da URL (resolvendo URLs relativas com o origin do site)
     let parsedUrl;
     try {
-        parsedUrl = new URL(url);
+        parsedUrl = new URL(url, origin);
     } catch (e) {
         return NextResponse.json({ error: "URL inválida" }, { status: 400 });
     }
 
     if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
         return NextResponse.json({ error: "Protocolo não permitido" }, { status: 403 });
+    }
+
+    // Se a URL pertence à mesma origem (arquivo local), verificamos se o arquivo existe fisicamente
+    // na pasta public antes de redirecionar, para evitar que o visualizador mostre a página 404 do site.
+    if (parsedUrl.origin === origin) {
+        try {
+            const fs = await import("fs");
+            const path = await import("path");
+            const filePath = path.join(process.cwd(), "public", parsedUrl.pathname);
+            
+            if (!fs.existsSync(filePath)) {
+                return NextResponse.json({ error: "Arquivo local não encontrado no servidor. Por favor, envie o arquivo PDF no painel de administração." }, { status: 404 });
+            }
+            
+            return NextResponse.redirect(parsedUrl.toString());
+        } catch (e) {
+            console.error("Erro ao verificar arquivo local:", e);
+            return NextResponse.redirect(parsedUrl.toString());
+        }
     }
 
     try {

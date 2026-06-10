@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { MUNICIPIO } from "@/config/municipio";
 
 export default function HeroSection() {
     const [videoError, setVideoError] = useState(false);
@@ -10,7 +11,7 @@ export default function HeroSection() {
             <div className="absolute inset-0 z-0 overflow-hidden">
                 {!videoError ? (
                     <video
-                        src="https://res.cloudinary.com/drvvsfap5/video/upload/v1775670797/v%C3%ADdeo_lajes_pintadas_uf9kbm.mp4"
+                        src={MUNICIPIO.heroVideo}
                         autoPlay
                         muted
                         loop
@@ -21,7 +22,7 @@ export default function HeroSection() {
                 ) : (
                     <img
                         src="/images/hero-bg.jpg"
-                        alt="Vista aérea de Lajes Pintadas"
+                        alt={`Vista aérea de ${MUNICIPIO.nome}`}
                         className="w-full h-full object-cover scale-105"
                     />
                 )}
@@ -38,7 +39,7 @@ export default function HeroSection() {
 
                 {/* Heading */}
                 <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-black text-secondary-400 leading-[1.05] mb-5 tracking-tighter drop-shadow-2xl max-w-3xl">
-                    Lajes Pintadas
+                    {MUNICIPIO.nome}
                 </h1>
 
                 <p className="text-sm md:text-lg text-white/90 max-w-xl mb-12 font-semibold drop-shadow-md leading-relaxed">

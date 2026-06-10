@@ -1,6 +1,7 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from 'xlsx';
+import { MUNICIPIO } from "@/config/municipio";
 
 export function exportToCSV(data: any[], filename: string) {
     if (typeof window === "undefined" || !data || !data.length) return;
@@ -52,7 +53,7 @@ export function exportToPDF(data: any[], filename: string, title?: string) {
     // Logo Mockup/Text (PNTP Requisito: Identificação da Entidade)
     doc.setFontSize(18);
     doc.setTextColor(1, 136, 185); // Azul Lajes Pintadas
-    doc.text("Prefeitura Municipal de Lajes Pintadas", 14, 20);
+    doc.text(MUNICIPIO.nomeCompleto, 14, 20);
     
     doc.setFontSize(10);
     doc.setTextColor(100, 116, 139);
@@ -80,7 +81,7 @@ export function exportToPDF(data: any[], filename: string, title?: string) {
             // Rodapé
             doc.setFontSize(7);
             doc.text(
-                "Documento extraído do Portal da Transparência – Lajes Pintadas/RN. Em conformidade com a Lei de Acesso à Informação (LAI).",
+                `Documento extraído do Portal da Transparência – ${MUNICIPIO.nome}/${MUNICIPIO.uf}. Em conformidade com a Lei de Acesso à Informação (LAI).`,
                 14,
                 doc.internal.pageSize.height - 10
             );

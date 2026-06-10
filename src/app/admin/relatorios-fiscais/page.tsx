@@ -20,6 +20,7 @@ export default function RelatoriosFiscaisPage() {
     const [modalOpen, setModalOpen] = useState(false);
     const [editItem, setEditItem] = useState<RelatorioFiscal | null>(null);
     const [search, setSearch] = useState("");
+    const [origem, setOrigem] = useState<"file" | "url">("file");
 
     const [form, setForm] = useState({
         titulo: "",
@@ -65,6 +66,12 @@ export default function RelatoriosFiscaisPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!form.arquivo) {
+            toast.error("Por favor, faça o upload de um arquivo ou forneça uma URL.");
+            return;
+        }
+
         const method = editItem ? "PUT" : "POST";
         const url = editItem ? `/api/admin/relatorios-fiscais/${editItem.id}` : "/api/admin/relatorios-fiscais";
 
@@ -80,6 +87,7 @@ export default function RelatoriosFiscaisPage() {
                 setModalOpen(false);
                 setEditItem(null);
                 setForm({ titulo: "", tipo: "RREO", periodo: "1º Bimestre", ano: new Date().getFullYear(), arquivo: "" });
+                setOrigem("file");
                 fetchItems();
             } else {
                 toast.error("Erro ao salvar.");
@@ -111,6 +119,7 @@ export default function RelatoriosFiscaisPage() {
             ano: item.ano,
             arquivo: item.arquivo,
         });
+        setOrigem(item.arquivo?.startsWith("data:") ? "file" : "url");
         setModalOpen(true);
     };
 
@@ -127,7 +136,12 @@ export default function RelatoriosFiscaisPage() {
                     <p className="text-gray-500 text-sm font-medium">Gestão de LRF (RREO, RGF), Balanços e Contas de Governo/Gestão.</p>
                 </div>
                 <button 
-                    onClick={() => { setEditItem(null); setModalOpen(true); }}
+                    onClick={() => { 
+                        setEditItem(null); 
+                        setForm({ titulo: "", tipo: "RREO", periodo: "1º Bimestre", ano: new Date().getFullYear(), arquivo: "" });
+                        setOrigem("file");
+                        setModalOpen(true); 
+                    }}
                     className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-blue-200"
                 >
                     <FaPlus /> Novo Relatório
@@ -277,13 +291,47 @@ export default function RelatoriosFiscaisPage() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Arquivo PDF *</label>
-                                    <input 
-                                        type="file" accept="application/pdf"
-                                        onChange={handleFileUpload}
-                                        className="w-full px-6 py-4 bg-gray-50 border border-dashed border-gray-200 rounded-2xl text-xs font-bold focus:bg-white focus:ring-4 focus:ring-blue-100 transition-all outline-none"
-                                    />
-                                    {form.arquivo && <p className="text-[10px] text-emerald-500 font-bold mt-2">✓ Arquivo carregado com sucesso.</p>}
+                                    <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Origem do Documento *</label>
+                                    <div className="flex gap-4 mb-4">
+                                        <button
+                                            type="button"
+                                            onClick={() => setOrigem("file")}
+                                            className={`flex-1 py-3 rounded-xl font-bold text-xs uppercase tracking-widest border transition-all ${origem === "file" ? "bg-blue-50 text-blue-600 border-blue-200" : "bg-white text-gray-400 border-gray-100 hover:bg-gray-50"}`}
+                                        >
+                                            Upload de PDF
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setOrigem("url")}
+                                            className={`flex-1 py-3 rounded-xl font-bold text-xs uppercase tracking-widest border transition-all ${origem === "url" ? "bg-blue-50 text-blue-600 border-blue-200" : "bg-white text-gray-400 border-gray-100 hover:bg-gray-50"}`}
+                                        >
+                                            URL Externa
+                                        </button>
+                                    </div>
+
+                                    {origem === "file" ? (
+                                        <div>
+                                            <input 
+                                                type="file" accept="application/pdf"
+                                                onChange={handleFileUpload}
+                                                className="w-full px-6 py-4 bg-gray-50 border border-dashed border-gray-200 rounded-2xl text-xs font-bold focus:bg-white focus:ring-4 focus:ring-blue-100 transition-all outline-none"
+                                            />
+                                            {form.arquivo && form.arquivo.startsWith("data:") && (
+                                                <p className="text-[10px] text-emerald-500 font-bold mt-2">✓ PDF carregado localmente com sucesso.</p>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <div>
+                                            <input 
+                                                type="url" required={origem === "url"}
+                                                placeholder="https://exemplo.com/documento.pdf"
+                                                className="w-full px-6 py-4 bg-gray-50 border border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:ring-4 focus:ring-blue-100 transition-all outline-none"
+                                                value={form.arquivo && !form.arquivo.startsWith("data:") ? form.arquivo : ""}
+                                                onChange={(e) => setForm({ ...form, arquivo: e.target.value })}
+                                            />
+                                            <p className="text-[10px] text-gray-400 mt-2">Digite o link completo (começando com http:// ou https://).</p>
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className="flex gap-4 pt-6">

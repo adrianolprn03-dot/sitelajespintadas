@@ -3,6 +3,8 @@ import { useState } from "react";
 import { HiOutlinePhone, HiOutlineEnvelope, HiOutlineMapPin, HiOutlineChatBubbleLeftEllipsis } from "react-icons/hi2";
 import toast from "react-hot-toast";
 
+import { MUNICIPIO } from "@/config/municipio";
+
 export default function ContatoRapido() {
     const [form, setForm] = useState({ nome: "", email: "", assunto: "", mensagem: "" });
     const [enviando, setEnviando] = useState(false);
@@ -48,10 +50,10 @@ export default function ContatoRapido() {
 
                             <div className="mt-12 space-y-8 w-full">
                                 {[
-                                    { icon: HiOutlineMapPin, titulo: "Localização", texto: "Rua Principal, s/n – Centro, Lajes Pintadas – RN" },
-                                    { icon: HiOutlinePhone, titulo: "Telefone", texto: "(84) 3000-0000 • Seg a Sex, 08h às 17h" },
-                                    { icon: HiOutlineChatBubbleLeftEllipsis, titulo: "WhatsApp", texto: "(84) 9 0000-0000" },
-                                    { icon: HiOutlineEnvelope, titulo: "E-mail", texto: "contato@lajespintadas.rn.gov.br" },
+                                    { icon: HiOutlineMapPin, titulo: "Localização", texto: `${MUNICIPIO.endereco}, Centro, ${MUNICIPIO.nome} – ${MUNICIPIO.uf}` },
+                                    { icon: HiOutlinePhone, titulo: "Telefone", texto: `${MUNICIPIO.telefone} • Seg a Sex, ${MUNICIPIO.horario}` },
+                                    { icon: HiOutlineChatBubbleLeftEllipsis, titulo: "WhatsApp", texto: `${MUNICIPIO.telefone}` },
+                                    { icon: HiOutlineEnvelope, titulo: "E-mail", texto: MUNICIPIO.email },
                                 ].map((c, i) => (
                                     <div key={i} className="flex items-start gap-4 justify-center lg:justify-start">
                                         <div className="w-10 h-10 rounded-xl bg-white border border-gray-100 shadow-sm flex items-center justify-center text-[#0055A4] shrink-0">

@@ -1,10 +1,6 @@
-/**
- * Serviço de Integração com o Portal da Transparência (CGU)
- * Lajes Pintadas | Código IBGE: 2406306
- */
+import { MUNICIPIO } from "@/config/municipio";
 
 const BASE_URL = "https://api.portaldatransparencia.gov.br/api-v1";
-const IBGE_LAJES = "2406306";
 const API_TOKEN = process.env.CGU_API_TOKEN || ""; // Requer Token da CGU
 
 export interface CGUTransferencia {
@@ -29,7 +25,7 @@ export async function getTransferenciasCGU(mesAno: string, pagina: number = 1) {
 
     // mesAno formato: MM/YYYY
     const [mes, ano] = mesAno.split("/");
-    const url = `${BASE_URL}/transferencias/por-municipio?codigoIbge=${IBGE_LAJES}&mesReferencia=${mes}&anoReferencia=${ano}&pagina=${pagina}`;
+    const url = `${BASE_URL}/transferencias/por-municipio?codigoIbge=${MUNICIPIO.ibge}&mesReferencia=${mes}&anoReferencia=${ano}&pagina=${pagina}`;
 
     try {
         const response = await fetch(url, {

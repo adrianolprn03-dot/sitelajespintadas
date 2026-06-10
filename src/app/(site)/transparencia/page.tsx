@@ -18,6 +18,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import PageHeader from "@/components/PageHeader";
 import { useEffect, useState, useRef } from "react";
+import { MUNICIPIO } from "@/config/municipio";
 
 // Categorias organizadas de acordo com as dimensões de avaliação do PNTP 2026
 const categoriasDeModulos = [
@@ -33,7 +34,7 @@ const categoriasDeModulos = [
             { icon: UserCircle2, titulo: "Gestores Municipais", desc: "Identificação dos responsáveis por cada setor e secretaria.", href: "/transparencia/gestores", badge: "CONTATOS", tipoCriterio: "OBRIGATÓRIO", cor: "from-teal-500 to-emerald-600" },
             { icon: Accessibility, titulo: "Acessibilidade", desc: "Ferramentas e recursos de acessibilidade digital do portal.", href: "/transparencia/acessibilidade", badge: "INCLUSÃO", tipoCriterio: "OBRIGATÓRIO", cor: "from-blue-600 to-cyan-700" },
             { icon: ShieldCheck, titulo: "Governo Digital", desc: "Desburocratização e oferta de serviços públicos por meios digitais.", href: "/transparencia/governo-digital", badge: "TECNOLOGIA", tipoCriterio: "RECOMENDADO", cor: "from-emerald-600 to-teal-700" },
-            { icon: Sparkles, titulo: "Símbolos Municipais", desc: "Brasão, bandeira, hino oficial e marcos de Lajes Pintadas/RN.", href: "/transparencia/simbolos", badge: "HISTÓRIA", tipoCriterio: "RECOMENDADO", cor: "from-amber-500 to-orange-600" }
+            { icon: Sparkles, titulo: "Símbolos Municipais", desc: `Brasão, bandeira, hino oficial e marcos de ${MUNICIPIO.nome}/${MUNICIPIO.uf}.`, href: "/transparencia/simbolos", badge: "HISTÓRIA", tipoCriterio: "RECOMENDADO", cor: "from-amber-500 to-orange-600" }
         ]
     },
     {
@@ -268,7 +269,7 @@ export default function TransparenciaPage() {
         <div className="bg-[#f8fafc] min-h-screen font-['Montserrat',sans-serif] text-slate-800">
             <PageHeader
                 title="Portal da Transparência"
-                subtitle="Acesso integral aos dados públicos, fiscalização social e prestação de contas de Lajes Pintadas/RN."
+                subtitle={`Acesso integral aos dados públicos, fiscalização social e prestação de contas de ${MUNICIPIO.nome}/${MUNICIPIO.uf}.`}
                 variant="premium"
                 icon={<Landmark className="text-white" size={32} />}
                 breadcrumbs={[
@@ -749,7 +750,7 @@ export default function TransparenciaPage() {
                                 <div className="h-8 w-px bg-white/15" />
                                 <div className="text-left">
                                     <div className="text-white font-black text-md uppercase tracking-[0.25em] leading-none mb-1">Portal da Transparência</div>
-                                    <div className="text-white/30 text-[9px] uppercase font-bold tracking-[0.2em]">Lajes Pintadas - RN</div>
+                                    <div className="text-white/30 text-[9px] uppercase font-bold tracking-[0.2em]">{MUNICIPIO.nome} - {MUNICIPIO.uf}</div>
                                 </div>
                             </div>
                             <h4 className="text-2xl md:text-3xl font-black text-white tracking-tighter uppercase mb-6 leading-tight italic">
@@ -772,7 +773,7 @@ export default function TransparenciaPage() {
                             </h5>
                             <div className="grid grid-cols-2 gap-6">
                                 {[
-                                    { label: "ACERVO DIGITAL", val: "LajesPintadas.gov" },
+                                    { label: "ACERVO DIGITAL", val: MUNICIPIO.email.split("@")[1] },
                                     { label: "RADAR PNTP", val: "SELO DIAMANTE" },
                                     { label: "AUDITOR", val: "TCE/RN" },
                                     { label: "TIPO DADOS", val: "DADOS ABERTOS" },
@@ -788,7 +789,7 @@ export default function TransparenciaPage() {
                     
                     <div className="mt-20 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
                         <p className="text-white/20 text-[9px] font-bold uppercase tracking-[0.25em]">
-                            © {new Date().getFullYear()} PREFEITURA DE LAJES PINTADAS/RN • CNPJ: 08.106.505/0001-24
+                            © {new Date().getFullYear()} PREFEITURA DE {MUNICIPIO.nome.toUpperCase()}/{MUNICIPIO.uf} • CNPJ: {MUNICIPIO.cnpj}
                         </p>
                         <div className="flex gap-8">
                             {["Privacidade", "Termos", "Ouvidoria"].map(l => (

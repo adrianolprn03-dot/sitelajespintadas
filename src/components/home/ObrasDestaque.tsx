@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { FaHammer, FaArrowRight } from "react-icons/fa";
 import Image from "next/image";
+import { MUNICIPIO } from "@/config/municipio";
 
 export default async function ObrasDestaque() {
     const obras = await prisma.obra.findMany({
@@ -21,7 +22,7 @@ export default async function ObrasDestaque() {
                     <div>
                         <span className="text-[#01b0ef] font-black text-[10px] uppercase tracking-[0.3em] mb-4 block">Investimento e Progresso</span>
                         <h2 className="text-3xl md:text-4xl font-black text-[#0088b9] uppercase tracking-tighter leading-tight">
-                            Obras em <br /> <span className="text-[#50B749]">Lajes Pintadas</span>
+                            Obras em <br /> <span className="text-[#50B749]">{MUNICIPIO.nome}</span>
                         </h2>
                     </div>
                     <Link href="/transparencia/obras" className="group flex items-center gap-3 text-[11px] font-black uppercase tracking-widest text-[#01b0ef] hover:text-[#0088b9] transition-all">
