@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 export const dynamic = "force-dynamic";
+import { MUNICIPIO } from "@/config/municipio";
 import HeroSection from "@/components/home/HeroSection";
 import ServicosRapidos from "@/components/home/ServicosRapidos";
 import TransparenciaHub from "@/components/home/TransparenciaHub";
@@ -11,12 +12,12 @@ import RadarTransparencia from "@/components/home/RadarTransparencia";
 import VideoHero from "@/components/home/VideoHero";
 
 export const metadata: Metadata = {
-    title: "Prefeitura Municipal de Lajes Pintadas – RN | Página Inicial",
-    description: "Site oficial da Prefeitura Municipal de Lajes Pintadas – RN. Transparência, serviços ao cidadão, notícias e informações institucionais.",
-    keywords: "Lajes Pintadas, prefeitura, RN, Rio Grande do Norte, transparência, serviços públicos",
+    title: `${MUNICIPIO.nomeCompleto} – ${MUNICIPIO.uf} | Página Inicial`,
+    description: `Site oficial da ${MUNICIPIO.nomeCompleto} – ${MUNICIPIO.uf}. Transparência, serviços ao cidadão, notícias e informações institucionais.`,
+    keywords: `${MUNICIPIO.nome}, prefeitura, ${MUNICIPIO.uf}, ${MUNICIPIO.estado}, transparência, serviços públicos`,
     openGraph: {
-        title: "Prefeitura Municipal de Lajes Pintadas – RN",
-        description: "Site oficial da Prefeitura Municipal de Lajes Pintadas. Transparência, serviços e informações institucionais.",
+        title: `${MUNICIPIO.nomeCompleto} – ${MUNICIPIO.uf}`,
+        description: `Site oficial da ${MUNICIPIO.nomeCompleto}. Transparência, serviços e informações institucionais.`,
         locale: "pt_BR",
         type: "website",
     },

@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import PageHeader from "@/components/PageHeader";
 import { HiOutlineCalendar, HiOutlineUser } from "react-icons/hi2";
 
+import { MUNICIPIO } from "@/config/municipio";
+
 export const dynamic = "force-dynamic";
 
 export default function NoticiaPage({ params }: { params: { slug: string } }) {
@@ -29,7 +31,7 @@ async function NoticiaLoader({ slug }: { slug: string }) {
         <main className="min-h-screen bg-gray-50 pb-20">
             <PageHeader
                 title="Notícias Municipais"
-                subtitle="Fique por dentro de tudo que acontece em Lajes Pintadas"
+                subtitle={`Fique por dentro de tudo que acontece em ${MUNICIPIO.nome}`}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
                     { label: "Notícias", href: "/noticias" },

@@ -6,6 +6,8 @@ import PageHeader from "@/components/PageHeader";
 
 
 
+import { MUNICIPIO } from "@/config/municipio";
+
 type Noticia = {
     id: string;
     titulo: string;
@@ -24,7 +26,16 @@ const categoriaCores: Record<string, string> = {
 };
 
 function formatarData(dataStr: string) {
-    return new Date(dataStr + "T00:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
+    if (!dataStr) return "";
+    try {
+        const date = dataStr.includes("T") ? new Date(dataStr) : new Date(dataStr + "T00:00:00");
+        if (isNaN(date.getTime())) {
+            return new Date(dataStr).toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
+        }
+        return date.toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
+    } catch {
+        return "Data indisponível";
+    }
 }
 
 export default function NoticiasPage() {
@@ -51,7 +62,7 @@ export default function NoticiasPage() {
         <div className="min-h-screen bg-gray-50">
             <PageHeader
                 title="Notícias Municipais"
-                subtitle="Fique por dentro de tudo que acontece em Lajes Pintadas"
+                subtitle={`Fique por dentro de tudo que acontece em ${MUNICIPIO.nome}`}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
                     { label: "Notícias" }
