@@ -20,6 +20,7 @@ export const MUNICIPIO = {
     heroVideo: "https://res.cloudinary.com/drvvsfap5/video/upload/v1775670797/v%C3%ADdeo_lajes_pintadas_uf9kbm.mp4",
     dpo: "Francisco Adriano Bezerra da Silva",
     dpoEmail: "controladoria@lajespintadas.rn.gov.br",
+    brasaoPath: "/images/brasao.png",
     estatisticas: {
         populacao: "4.700",
         area: "311,6 km²",

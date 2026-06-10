@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
 import { FaUserTie, FaUsers, FaBuilding } from "react-icons/fa";
+import { MUNICIPIO } from "@/config/municipio";
 
 export const metadata: Metadata = {
-    title: "Estrutura Administrativa (Organograma) | Lajes Pintadas – RN",
-    description: "Conheça o organograma e a estrutura de governança da Prefeitura Municipal de Lajes Pintadas.",
+    title: `Estrutura Administrativa (Organograma) | ${MUNICIPIO.nome} – ${MUNICIPIO.uf}`,
+    description: `Conheça o organograma e a estrutura de governança da ${MUNICIPIO.nomeCompleto}.`,
 };
 
 const secretarias = [

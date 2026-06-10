@@ -1,12 +1,13 @@
 export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
-import { FaEnvelope, FaBalanceScale, FaUserTie } from "react-icons/fa";
+import { FaEnvelope, FaUserTie } from "react-icons/fa";
 import { prisma } from "@/lib/prisma";
+import { MUNICIPIO } from "@/config/municipio";
 
 export const metadata: Metadata = {
-    title: "Gestores Atuais | Prefeitura de Lajes Pintadas",
-    description: "Conheça o Prefeito e Vice-Prefeito de Lajes Pintadas – RN e seus compromissos com o município.",
+    title: `Gestores Atuais | ${MUNICIPIO.nomeCompleto}`,
+    description: `Conheça o Prefeito e Vice-Prefeito de ${MUNICIPIO.nome} – ${MUNICIPIO.uf} e seus compromissos com o município.`,
 };
 
 async function getConfig(chave: string, padrao: string) {
@@ -19,31 +20,36 @@ async function getConfig(chave: string, padrao: string) {
 }
 
 export default async function PrefeitoPage() {
+    const prefeitoNomeFallback = MUNICIPIO.nome === "São Tomé" ? "Josinaldo Amaro de Lima (Gá)" : "Luciano da Cunha";
+    const viceNomeFallback = MUNICIPIO.nome === "São Tomé" ? "Lucinário Félix de Carvalho (Naro)" : "João Maria Silva";
+    const prefeitoDescFallback = MUNICIPIO.nome === "São Tomé" ? "Josinaldo Amaro de Lima, conhecido como Gá, é o atual prefeito de São Tomé/RN, focado em promover o desenvolvimento." : "Gestor municipal focado em resultados.";
+    const viceDescFallback = MUNICIPIO.nome === "São Tomé" ? "Lucinário Félix de Carvalho, o Naro, atua como vice-prefeito ao lado de Gá." : "Vice-Prefeito.";
+
     const [
         prefeitoNome, prefeitoDesc, prefeitoFoto, prefeitoMandato, prefeitoPartido, prefeitoNaturalidade, prefeitoNascimento, prefeitoProfissao, prefeitoEscolaridade,
         viceNome, viceDesc, viceFoto, viceMandato, vicePartido, viceNaturalidade, viceNascimento, viceProfissao, viceEscolaridade,
         emailGabinete, telefoneGabinete
     ] = await Promise.all([
-        getConfig("prefeito_nome", "Luciano da Cunha"),
-        getConfig("prefeito_descricao", "Gestor municipal focado em resultados."),
+        getConfig("prefeito_nome", prefeitoNomeFallback),
+        getConfig("prefeito_descricao", prefeitoDescFallback),
         getConfig("prefeito_foto", ""),
         getConfig("prefeito_mandato", "2021 — 2024"),
-        getConfig("prefeito_partido", "Não Informado"),
-        getConfig("prefeito_naturalidade", "Lajes Pintadas/RN"),
+        getConfig("prefeito_partido", MUNICIPIO.nome === "São Tomé" ? "PSD" : "Não Informado"),
+        getConfig("prefeito_naturalidade", `${MUNICIPIO.nome}/${MUNICIPIO.uf}`),
         getConfig("prefeito_nascimento", "--/--/----"),
-        getConfig("prefeito_profissao", "Gestor Público"),
+        getConfig("prefeito_profissao", MUNICIPIO.nome === "São Tomé" ? "Prefeito" : "Gestor Público"),
         getConfig("prefeito_escolaridade", "Ensino Superior"),
-        getConfig("vice_nome", "João Maria Silva"),
-        getConfig("vice_descricao", "Vice-Prefeito."),
+        getConfig("vice_nome", viceNomeFallback),
+        getConfig("vice_descricao", viceDescFallback),
         getConfig("vice_foto", ""),
         getConfig("vice_mandato", "2021 — 2024"),
-        getConfig("vice_partido", "Não Informado"),
-        getConfig("vice_naturalidade", "Lajes Pintadas/RN"),
+        getConfig("vice_partido", MUNICIPIO.nome === "São Tomé" ? "MDB" : "Não Informado"),
+        getConfig("vice_naturalidade", `${MUNICIPIO.nome}/${MUNICIPIO.uf}`),
         getConfig("vice_nascimento", "--/--/----"),
-        getConfig("vice_profissao", "Gestor Público"),
+        getConfig("vice_profissao", MUNICIPIO.nome === "São Tomé" ? "Vice-Prefeito" : "Gestor Público"),
         getConfig("vice_escolaridade", "Ensino Superior"),
-        getConfig("contato_email", "gabinete@lajespintadas.rn.gov.br"),
-        getConfig("contato_telefone", "(84) 3000-0000")
+        getConfig("contato_email", MUNICIPIO.email),
+        getConfig("contato_telefone", MUNICIPIO.telefone)
     ]);
 
     const renderInfoItem = (emoji: string, label: string, value: string) => (

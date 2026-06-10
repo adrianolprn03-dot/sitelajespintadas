@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
+import { MUNICIPIO } from "@/config/municipio";
 
 export const metadata: Metadata = {
-    title: "A Prefeitura | Prefeitura Municipal de Lajes Pintadas – RN",
+    title: `A Prefeitura | ${MUNICIPIO.nomeCompleto} – ${MUNICIPIO.uf}`,
 };
 
 export default function APrefeituraPage() {
@@ -11,7 +12,7 @@ export default function APrefeituraPage() {
         <div>
             <PageHeader
                 title="A Prefeitura Municipal"
-                subtitle="Conheça a história, a estrutura e a administração de Lajes Pintadas – RN"
+                subtitle={`Conheça a história, a estrutura e a administração de ${MUNICIPIO.nome} – ${MUNICIPIO.uf}`}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
                     { label: "A Prefeitura" }
@@ -23,19 +24,19 @@ export default function APrefeituraPage() {
                 <div className="max-w-5xl mx-auto px-4 py-8">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                         <div className="flex items-center gap-6">
-                            <img src="/images/brasao.png" alt="Brasão de Lajes Pintadas" className="w-16 h-16 object-contain" />
+                            <img src={MUNICIPIO.brasaoPath} alt={`Brasão de ${MUNICIPIO.nome}`} className="w-16 h-16 object-contain" />
                             <div>
-                                <h2 className="text-xl font-black text-[#0088b9] uppercase tracking-tight">Prefeitura Municipal de Lajes Pintadas</h2>
-                                <p className="text-sm font-bold text-gray-500 mt-1">CNPJ: 08.159.394/0001-37</p>
+                                <h2 className="text-xl font-black text-[#0088b9] uppercase tracking-tight">{MUNICIPIO.nomeCompleto}</h2>
+                                <p className="text-sm font-bold text-gray-500 mt-1">CNPJ: {MUNICIPIO.cnpj}</p>
                             </div>
                         </div>
                         <div className="text-right border-l-2 border-gray-100 pl-6 hidden md:block">
                             <p className="text-sm text-gray-600 font-medium whitespace-pre-line">
-                                Rua São Francisco, 275, Centro{"\n"}
-                                Lajes Pintadas/RN | Funcionamento: Segunda à Sexta, 07h às 13h
+                                {MUNICIPIO.endereco}{"\n"}
+                                {MUNICIPIO.nome}/{MUNICIPIO.uf} | Funcionamento: Segunda à Sexta, {MUNICIPIO.horario}
                             </p>
                             <p className="text-sm font-bold text-[#01b0ef] mt-2">
-                                (84) 9 8748-0287 | ouvidoria@lajespintadas.rn.gov.br
+                                {MUNICIPIO.telefone} | {MUNICIPIO.email}
                             </p>
                         </div>
                     </div>
@@ -47,7 +48,7 @@ export default function APrefeituraPage() {
                 <div className="max-w-5xl mx-auto px-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {[
-                            { emoji: "📖", titulo: "História da Cidade", desc: "Conheça a história e as origens de Lajes Pintadas, município do Rio Grande do Norte.", href: "/a-prefeitura/historia" },
+                            { emoji: "📖", titulo: "História da Cidade", desc: `Conheça a história e as origens de ${MUNICIPIO.nome}, município do ${MUNICIPIO.estado}.`, href: "/a-prefeitura/historia" },
                             { emoji: "👤", titulo: "Prefeito e Vice-Prefeito", desc: "Conheça o prefeito e vice-prefeito municipais, suas trajetórias e compromissos.", href: "/a-prefeitura/prefeito" },
                             { emoji: "🏛️", titulo: "Estrutura Administrativa", desc: "Organograma, secretarias, setores e atribuições de cada órgão municipal.", href: "/a-prefeitura/estrutura" },
                             { emoji: "📅", titulo: "Agenda do Prefeito", desc: "Compromissos, reuniões e agenda oficial da gestão municipal.", href: "/a-prefeitura/agenda" },
