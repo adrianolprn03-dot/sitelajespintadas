@@ -65,6 +65,7 @@ export default async function Footer() {
     const facebook = await getConfig("redes_facebook", "#");
     const instagram = await getConfig("redes_instagram", "#");
     const youtube = await getConfig("redes_youtube", "#");
+    const logoWhite = await getConfig("portal_logo_white", "/logo_v2_white.png");
 
     const whatsappHref = whatsapp
         ? `https://wa.me/55${whatsapp.replace(/\D/g, "")}`
@@ -112,7 +113,7 @@ export default async function Footer() {
                         <div className="flex items-center gap-6 mb-12 group cursor-default">
                             <div className="p-2 transition-transform duration-500 group-hover:scale-105 group-hover:rotate-2">
                                 <img
-                                    src="/logo_v2_white.png"
+                                    src={logoWhite}
                                     alt={`Brasão Oficial de ${MUNICIPIO.nome}`}
                                     className="h-16 md:h-20 w-auto object-contain drop-shadow-md max-w-[200px]"
                                 />

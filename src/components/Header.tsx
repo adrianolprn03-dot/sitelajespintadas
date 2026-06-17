@@ -77,7 +77,7 @@ export default function Header() {
     const [scrolled, setScrolled] = useState(false);
     const [openDropdown, setOpenDropdown] = useState<number | null>(null);
     const pathname = usePathname();
-    const [logo, setLogo] = useState("/logo_oficial.png");
+    const [logo, setLogo] = useState("/logo_v2.png");
     const [isSearchOpen, setIsSearchOpen] = useState(false);
 
 
@@ -87,8 +87,8 @@ export default function Header() {
                 const res = await fetch("/api/admin/configuracoes");
                 if (res.ok) {
                     const data = await res.json();
-                    const brasao = data.find((c: any) => c.chave === "simbolo_brasao")?.valor;
-                    if (brasao) setLogo(brasao);
+                    const portalLogo = data.find((c: any) => c.chave === "portal_logo")?.valor;
+                    if (portalLogo) setLogo(portalLogo);
                 }
             } catch (error) {
                 console.error("Erro ao carregar logos:", error);
