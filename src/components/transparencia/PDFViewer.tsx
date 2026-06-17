@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { FaFilePdf, FaDownload, FaTimes } from "react-icons/fa";
 import { motion } from "framer-motion";
 
@@ -11,7 +11,39 @@ interface PDFViewerProps {
 }
 
 export default function PDFViewer({ url, titulo, onClose }: PDFViewerProps) {
-    const viewerUrl = `/api/pdf-proxy?url=${encodeURIComponent(url)}`;
+    const [viewerUrl, setViewerUrl] = useState<string>("");
+
+    useEffect(() => {
+        let objectUrl = "";
+        if (url.startsWith("data:")) {
+            try {
+                const parts = url.split(',');
+                const byteString = atob(parts[1]);
+                const mimeString = parts[0].match(/:(.*?);/)?.[1] || "application/pdf";
+                
+                const ab = new ArrayBuffer(byteString.length);
+                const ia = new Uint8Array(ab);
+                for (let i = 0; i < byteString.length; i++) {
+                    ia[i] = byteString.charCodeAt(i);
+                }
+                
+                const blob = new Blob([ab], { type: mimeString });
+                objectUrl = URL.createObjectURL(blob);
+                setViewerUrl(objectUrl);
+            } catch (error) {
+                console.error("Erro ao converter data URI para Blob:", error);
+                setViewerUrl(`/api/pdf-proxy?url=${encodeURIComponent(url)}`);
+            }
+        } else {
+            setViewerUrl(`/api/pdf-proxy?url=${encodeURIComponent(url)}`);
+        }
+
+        return () => {
+            if (objectUrl) {
+                URL.revokeObjectURL(objectUrl);
+            }
+        };
+    }, [url]);
 
     useEffect(() => {
         const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
@@ -53,9 +85,10 @@ export default function PDFViewer({ url, titulo, onClose }: PDFViewerProps) {
 
                     <div className="flex items-center gap-2 shrink-0">
                         <a
-                            href={url}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                            href={url.startsWith("data:") ? viewerUrl : url}
+                            download={url.startsWith("data:") ? `${titulo}.pdf` : undefined}
+                            target={url.startsWith("data:") ? undefined : "_blank"}
+                            rel={url.startsWith("data:") ? undefined : "noopener noreferrer"}
                             className="flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white rounded-xl text-xs font-bold hover:bg-primary-700 transition-colors shadow-lg shadow-primary-600/20"
                         >
                             <FaDownload size={12} />
