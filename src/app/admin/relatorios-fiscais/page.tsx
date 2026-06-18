@@ -21,6 +21,7 @@ export default function RelatoriosFiscaisPage() {
     const [editItem, setEditItem] = useState<RelatorioFiscal | null>(null);
     const [search, setSearch] = useState("");
     const [origem, setOrigem] = useState<"file" | "url">("file");
+    const [uploading, setUploading] = useState(false);
 
     const [form, setForm] = useState({
         titulo: "",
@@ -48,7 +49,7 @@ export default function RelatoriosFiscaisPage() {
         }
     };
 
-    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
@@ -57,11 +58,27 @@ export default function RelatoriosFiscaisPage() {
             return;
         }
 
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setForm({ ...form, arquivo: reader.result as string });
-        };
-        reader.readAsDataURL(file);
+        setUploading(true);
+        const toastId = toast.loading("Enviando arquivo PDF para o servidor de arquivos...");
+        
+        const formData = new FormData();
+        formData.append("file", file);
+        
+        try {
+            const res = await fetch("/api/upload", { method: "POST", body: formData });
+            if (res.ok) {
+                const data = await res.json();
+                setForm({ ...form, arquivo: data.url });
+                toast.success("Arquivo PDF enviado com sucesso!", { id: toastId });
+            } else {
+                const data = await res.json();
+                toast.error(`Erro no upload: ${data.error || "Erro desconhecido"}`, { id: toastId });
+            }
+        } catch (err: any) {
+            toast.error(`Erro na requisição: ${err.message}`, { id: toastId });
+        } finally {
+            setUploading(false);
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -314,10 +331,16 @@ export default function RelatoriosFiscaisPage() {
                                             <input 
                                                 type="file" accept="application/pdf"
                                                 onChange={handleFileUpload}
-                                                className="w-full px-6 py-4 bg-gray-50 border border-dashed border-gray-200 rounded-2xl text-xs font-bold focus:bg-white focus:ring-4 focus:ring-blue-100 transition-all outline-none"
+                                                disabled={uploading}
+                                                className="w-full px-6 py-4 bg-gray-50 border border-dashed border-gray-200 rounded-2xl text-xs font-bold focus:bg-white focus:ring-4 focus:ring-blue-100 transition-all outline-none disabled:opacity-50"
                                             />
-                                            {form.arquivo && form.arquivo.startsWith("data:") && (
-                                                <p className="text-[10px] text-emerald-500 font-bold mt-2">✓ PDF carregado localmente com sucesso.</p>
+                                            {uploading && (
+                                                <p className="text-[10px] text-blue-500 font-bold mt-2">Enviando PDF...</p>
+                                            )}
+                                            {form.arquivo && (
+                                                <p className="text-[10px] text-emerald-500 font-bold mt-2">
+                                                    ✓ {form.arquivo.startsWith("data:") ? "PDF carregado (Formato Base64 legacy)." : "PDF enviado com sucesso para a nuvem."}
+                                                </p>
                                             )}
                                         </div>
                                     ) : (
@@ -330,6 +353,12 @@ export default function RelatoriosFiscaisPage() {
                                                 onChange={(e) => setForm({ ...form, arquivo: e.target.value })}
                                             />
                                             <p className="text-[10px] text-gray-400 mt-2">Digite o link completo (começando com http:// ou https://).</p>
+                                            
+                                            {form.arquivo && form.arquivo.includes("drive.google.com") && (
+                                                <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-700 font-medium leading-relaxed">
+                                                    ⚠️ <strong>Atenção para Google Drive:</strong> Certifique-se de que as configurações de compartilhamento no Drive estejam definidas como <strong>&quot;Qualquer pessoa com o link pode visualizar&quot;</strong>. Caso contrário, os cidadãos não conseguirão visualizar o documento.
+                                                </div>
+                                            )}
                                         </div>
                                     )}
                                 </div>
@@ -337,9 +366,10 @@ export default function RelatoriosFiscaisPage() {
                                 <div className="flex gap-4 pt-6">
                                     <button 
                                         type="submit"
-                                        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-5 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-blue-100"
+                                        disabled={uploading}
+                                        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-5 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
-                                        Gravar Relatório
+                                        {uploading ? "Aguarde o envio do PDF..." : "Gravar Relatório"}
                                     </button>
                                     <button 
                                         type="button"

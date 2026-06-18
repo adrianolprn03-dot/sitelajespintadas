@@ -47,21 +47,21 @@ export async function GET(req: NextRequest) {
     }
 
     // Se a URL pertence à mesma origem (arquivo local), verificamos se o arquivo existe fisicamente
-    // na pasta public antes de redirecionar, para evitar que o visualizador mostre a página 404 do site.
+    // na pasta public. Se existir, redirecionamos para ele. Se não existir, NÃO retornamos erro
+    // imediatamente, pois o arquivo pode estar acessível via proxy reverso/Nginx em caminhos legados (ex: /wp-content).
+    // Nesses casos, deixamos a requisição seguir para o fetch remoto abaixo.
     if (parsedUrl.origin === origin) {
         try {
             const fs = await import("fs");
             const path = await import("path");
             const filePath = path.join(process.cwd(), "public", parsedUrl.pathname);
             
-            if (!fs.existsSync(filePath)) {
-                return NextResponse.json({ error: "Arquivo local não encontrado no servidor. Por favor, envie o arquivo PDF no painel de administração." }, { status: 404 });
+            if (fs.existsSync(filePath)) {
+                return NextResponse.redirect(parsedUrl.toString());
             }
-            
-            return NextResponse.redirect(parsedUrl.toString());
+            console.log(`Arquivo local não encontrado fisicamente em ${filePath}. Tentando carregamento via fetch remoto.`);
         } catch (e) {
             console.error("Erro ao verificar arquivo local:", e);
-            return NextResponse.redirect(parsedUrl.toString());
         }
     }
 

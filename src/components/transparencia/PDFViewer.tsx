@@ -15,27 +15,51 @@ export default function PDFViewer({ url, titulo, onClose }: PDFViewerProps) {
 
     useEffect(() => {
         let objectUrl = "";
-        if (url.startsWith("data:")) {
-            try {
-                const parts = url.split(',');
-                const byteString = atob(parts[1]);
-                const mimeString = parts[0].match(/:(.*?);/)?.[1] || "application/pdf";
-                
-                const ab = new ArrayBuffer(byteString.length);
-                const ia = new Uint8Array(ab);
-                for (let i = 0; i < byteString.length; i++) {
-                    ia[i] = byteString.charCodeAt(i);
-                }
-                
-                const blob = new Blob([ab], { type: mimeString });
-                objectUrl = URL.createObjectURL(blob);
-                setViewerUrl(objectUrl);
-            } catch (error) {
-                console.error("Erro ao converter data URI para Blob:", error);
-                setViewerUrl(`/api/pdf-proxy?url=${encodeURIComponent(url)}`);
+        
+        let targetUrl = url;
+        // Se for link do Google Drive, formata para visualização direta/preview no iframe
+        if (url.includes("drive.google.com")) {
+            const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+            if (match && match[1]) {
+                targetUrl = `https://drive.google.com/file/d/${match[1]}/preview`;
             }
+        }
+
+        if (targetUrl.startsWith("data:")) {
+            // Decodifica o data URI de forma assíncrona usando o fetch nativo do navegador
+            // Isso é muito mais eficiente em termos de memória e lida corretamente com padding/codificação
+            fetch(targetUrl)
+                .then(res => res.blob())
+                .then(blob => {
+                    objectUrl = URL.createObjectURL(blob);
+                    setViewerUrl(objectUrl);
+                })
+                .catch(error => {
+                    console.error("Erro ao converter data URI para Blob:", error);
+                    // Tenta o fallback síncrono clássico em caso de erro no fetch
+                    try {
+                        const parts = targetUrl.split(',');
+                        const base64Clean = parts[1].replace(/\s/g, ''); // remove espaços e quebras
+                        const byteString = atob(base64Clean);
+                        const mimeString = parts[0].match(/:(.*?);/)?.[1] || "application/pdf";
+                        
+                        const ab = new ArrayBuffer(byteString.length);
+                        const ia = new Uint8Array(ab);
+                        for (let i = 0; i < byteString.length; i++) {
+                            ia[i] = byteString.charCodeAt(i);
+                        }
+                        
+                        const blob = new Blob([ab], { type: mimeString });
+                        objectUrl = URL.createObjectURL(blob);
+                        setViewerUrl(objectUrl);
+                    } catch (fallbackError) {
+                        console.error("Erro no fallback do atob:", fallbackError);
+                        // NUNCA mandar data: URL para o pdf-proxy para evitar URI_TOO_LONG
+                        setViewerUrl(targetUrl);
+                    }
+                });
         } else {
-            setViewerUrl(`/api/pdf-proxy?url=${encodeURIComponent(url)}`);
+            setViewerUrl(`/api/pdf-proxy?url=${encodeURIComponent(targetUrl)}`);
         }
 
         return () => {
