@@ -146,7 +146,80 @@ const categoriasDeModulos = [
     }
 ];
 
-
+const temasCategorias = [
+    {
+        bgSelected: "bg-gradient-to-br from-blue-600 to-indigo-850 text-white border-transparent shadow-xl shadow-blue-500/25",
+        bgUnselected: "bg-gradient-to-br from-blue-500/[0.02] to-indigo-500/[0.04] hover:bg-white border-blue-100 hover:border-blue-300 text-slate-800 hover:shadow-lg hover:shadow-blue-500/10",
+        iconColor: "text-blue-600 bg-blue-50",
+        iconColorSelected: "text-white bg-white/20",
+        badgeColor: "bg-blue-100 text-blue-700",
+        badgeColorSelected: "bg-white/20 text-white",
+        textColor: "text-blue-600"
+    },
+    {
+        bgSelected: "bg-gradient-to-br from-slate-700 to-slate-900 text-white border-transparent shadow-xl shadow-slate-500/25",
+        bgUnselected: "bg-gradient-to-br from-slate-500/[0.02] to-slate-800/[0.04] hover:bg-white border-slate-200 hover:border-slate-400 text-slate-800 hover:shadow-lg hover:shadow-slate-500/10",
+        iconColor: "text-slate-600 bg-slate-100",
+        iconColorSelected: "text-white bg-white/20",
+        badgeColor: "bg-slate-200 text-slate-700",
+        badgeColorSelected: "bg-white/20 text-white",
+        textColor: "text-slate-600"
+    },
+    {
+        bgSelected: "bg-gradient-to-br from-emerald-600 to-teal-850 text-white border-transparent shadow-xl shadow-emerald-500/25",
+        bgUnselected: "bg-gradient-to-br from-emerald-500/[0.02] to-teal-500/[0.04] hover:bg-white border-emerald-100 hover:border-emerald-300 text-slate-800 hover:shadow-lg hover:shadow-emerald-500/10",
+        iconColor: "text-emerald-600 bg-emerald-50",
+        iconColorSelected: "text-white bg-white/20",
+        badgeColor: "bg-emerald-100 text-emerald-700",
+        badgeColorSelected: "bg-white/20 text-white",
+        textColor: "text-emerald-600"
+    },
+    {
+        bgSelected: "bg-gradient-to-br from-orange-600 to-amber-700 text-white border-transparent shadow-xl shadow-orange-500/25",
+        bgUnselected: "bg-gradient-to-br from-orange-500/[0.02] to-amber-500/[0.04] hover:bg-white border-orange-100 hover:border-orange-300 text-slate-800 hover:shadow-lg hover:shadow-orange-500/10",
+        iconColor: "text-orange-600 bg-orange-50",
+        iconColorSelected: "text-white bg-white/20",
+        badgeColor: "bg-orange-100 text-orange-700",
+        badgeColorSelected: "bg-white/20 text-white",
+        textColor: "text-orange-600"
+    },
+    {
+        bgSelected: "bg-gradient-to-br from-sky-600 to-blue-700 text-white border-transparent shadow-xl shadow-sky-500/25",
+        bgUnselected: "bg-gradient-to-br from-sky-500/[0.02] to-blue-500/[0.04] hover:bg-white border-sky-100 hover:border-sky-300 text-slate-800 hover:shadow-lg hover:shadow-sky-500/10",
+        iconColor: "text-sky-600 bg-sky-50",
+        iconColorSelected: "text-white bg-white/20",
+        badgeColor: "bg-sky-100 text-sky-750",
+        badgeColorSelected: "bg-white/20 text-white",
+        textColor: "text-sky-650"
+    },
+    {
+        bgSelected: "bg-gradient-to-br from-amber-600 to-orange-600 text-white border-transparent shadow-xl shadow-amber-500/25",
+        bgUnselected: "bg-gradient-to-br from-amber-500/[0.02] to-orange-500/[0.04] hover:bg-white border-amber-100 hover:border-amber-300 text-slate-800 hover:shadow-lg hover:shadow-amber-500/10",
+        iconColor: "text-amber-600 bg-amber-50",
+        iconColorSelected: "text-white bg-white/20",
+        badgeColor: "bg-amber-100 text-amber-700",
+        badgeColorSelected: "bg-white/20 text-white",
+        textColor: "text-amber-600"
+    },
+    {
+        bgSelected: "bg-gradient-to-br from-purple-600 to-indigo-700 text-white border-transparent shadow-xl shadow-purple-500/25",
+        bgUnselected: "bg-gradient-to-br from-purple-500/[0.02] to-indigo-500/[0.04] hover:bg-white border-purple-100 hover:border-purple-300 text-slate-800 hover:shadow-lg hover:shadow-purple-500/10",
+        iconColor: "text-purple-600 bg-purple-50",
+        iconColorSelected: "text-white bg-white/20",
+        badgeColor: "bg-purple-100 text-purple-700",
+        badgeColorSelected: "bg-white/20 text-white",
+        textColor: "text-purple-655"
+    },
+    {
+        bgSelected: "bg-gradient-to-br from-rose-600 to-red-700 text-white border-transparent shadow-xl shadow-rose-500/25",
+        bgUnselected: "bg-gradient-to-br from-rose-500/[0.02] to-red-500/[0.04] hover:bg-white border-rose-100 hover:border-rose-300 text-slate-800 hover:shadow-lg hover:shadow-rose-500/10",
+        iconColor: "text-rose-600 bg-rose-50",
+        iconColorSelected: "text-white bg-white/20",
+        badgeColor: "bg-rose-100 text-rose-700",
+        badgeColorSelected: "bg-white/20 text-white",
+        textColor: "text-rose-600"
+    }
+];
 
 export default function TransparenciaPage() {
     const [linksExternos, setLinksExternos] = useState<any[]>([]);
@@ -471,26 +544,25 @@ export default function TransparenciaPage() {
                         {categoriasDeModulos.map((cat, idx) => {
                             const isSelected = selectedCategory === cat.tituloCategoria;
                             const countItems = cat.modulos.length;
+                            const tema = temasCategorias[idx] || temasCategorias[0];
                             return (
                                 <button
                                     key={cat.tituloCategoria}
                                     onClick={() => handleCategorySelect(cat.tituloCategoria)}
-                                    className={`p-5 rounded-[1.8rem] border text-left flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 ${
-                                        isSelected
-                                            ? "bg-gradient-to-br from-indigo-600 to-indigo-850 text-white border-transparent shadow-xl shadow-indigo-600/25"
-                                            : "bg-slate-50/50 hover:bg-white border-slate-200/60 hover:border-indigo-150 text-slate-850 hover:shadow-lg hover:shadow-slate-100"
+                                    className={`p-5 rounded-[1.8rem] border text-left flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03] ${
+                                        isSelected ? tema.bgSelected : tema.bgUnselected
                                     }`}
                                 >
                                     <div className="flex items-center justify-between w-full mb-6">
-                                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${isSelected ? "bg-white/20" : "bg-indigo-50 text-indigo-650"}`}>
+                                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-300 ${isSelected ? tema.iconColorSelected : tema.iconColor}`}>
                                             <cat.icon size={16} />
                                         </div>
-                                        <span className={`text-[8px] font-black px-2 py-0.5 rounded ${isSelected ? "bg-white/20 text-white" : "bg-slate-200/70 text-slate-600"}`}>
+                                        <span className={`text-[8px] font-black px-2.5 py-1 rounded-lg transition-all duration-300 ${isSelected ? tema.badgeColorSelected : tema.badgeColor}`}>
                                             {countItems} {countItems === 1 ? "MÓDULO" : "MÓDULOS"}
                                         </span>
                                     </div>
                                     <div>
-                                        <span className={`text-[8px] font-black uppercase tracking-widest ${isSelected ? "text-indigo-200" : "text-indigo-650"} block mb-1`}>
+                                        <span className={`text-[8px] font-black uppercase tracking-widest transition-all duration-300 ${isSelected ? "text-white/60" : tema.textColor} block mb-1`}>
                                             ÁREA {idx + 1 < 10 ? `0${idx + 1}` : idx + 1}
                                         </span>
                                         <h5 className="text-[10px] font-black uppercase tracking-tight leading-snug line-clamp-2">
