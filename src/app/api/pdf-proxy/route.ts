@@ -1,7 +1,5 @@
 export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
 
 export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
@@ -48,41 +46,18 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: "Protocolo não permitido" }, { status: 403 });
     }
 
-    // Verificar se o arquivo existe localmente
-    try {
-        const decodedPath = decodeURIComponent(parsedUrl.pathname);
-        let localPath = null;
+    // 1. Se a URL pertence à mesma origem, redireciona diretamente para o recurso estático
+    if (parsedUrl.origin === origin) {
+        return NextResponse.redirect(parsedUrl.toString());
+    }
 
-        // 1. Tentar caminho direto em public/
-        const directFilePath = path.join(process.cwd(), "public", decodedPath);
-        if (fs.existsSync(directFilePath) && fs.statSync(directFilePath).isFile()) {
-            localPath = decodedPath;
-        } 
-        // 2. Se for uma URL do WordPress (/wp-content/uploads/), verificar se está mapeada localmente
-        else if (decodedPath.includes("wp-content/uploads/")) {
-            const relativePath = decodedPath.substring(decodedPath.indexOf("wp-content/uploads/") + "wp-content/uploads/".length);
-            
-            const possibleLocalPaths = [
-                { fsPath: path.join(process.cwd(), "public", "tmp-uploads", relativePath), webPath: `/tmp-uploads/${relativePath}` },
-                { fsPath: path.join(process.cwd(), "public", "uploads", relativePath), webPath: `/uploads/${relativePath}` },
-                { fsPath: path.join(process.cwd(), "public", relativePath), webPath: `/${relativePath}` },
-            ];
-
-            for (const p of possibleLocalPaths) {
-                if (fs.existsSync(p.fsPath) && fs.statSync(p.fsPath).isFile()) {
-                    localPath = p.webPath;
-                    break;
-                }
-            }
-        }
-
-        if (localPath) {
-            const redirectUrl = new URL(localPath, req.url);
-            console.log(`[PDF Proxy] Arquivo encontrado localmente em ${localPath}. Redirecionando...`);
-            return NextResponse.redirect(redirectUrl.toString());
-        }
-    } catch (e) {
-        console.error("Erro ao verificar arquivo local:", e);
+    // 2. Se for uma URL do WordPress legado (/wp-content/uploads/), mapeia diretamente para o diretório local /tmp-uploads/
+    const decodedPath = decodeURIComponent(parsedUrl.pathname);
+    if (decodedPath.includes("wp-content/uploads/")) {
+        const relativePath = decodedPath.substring(decodedPath.indexOf("wp-content/uploads/") + "wp-content/uploads/".length);
+        const redirectUrl = new URL(`/tmp-uploads/${relativePath}`, req.url);
+        console.log(`[PDF Proxy] Redirecionando URL WordPress para local: ${redirectUrl.toString()}`);
+        return NextResponse.redirect(redirectUrl.toString());
     }
 
     try {
