@@ -51,11 +51,11 @@ export async function GET(req: NextRequest) {
         return NextResponse.redirect(parsedUrl.toString());
     }
 
-    // 2. Se for uma URL do WordPress legado (/wp-content/uploads/), mapeia diretamente para o diretório local /tmp-uploads/
+    // 2. Se for uma URL do WordPress legado (/wp-content/uploads/), mapeia diretamente para o diretório local /legacy-uploads/
     const decodedPath = decodeURIComponent(parsedUrl.pathname);
     if (decodedPath.includes("wp-content/uploads/")) {
         const relativePath = decodedPath.substring(decodedPath.indexOf("wp-content/uploads/") + "wp-content/uploads/".length);
-        const redirectUrl = new URL(`/tmp-uploads/${relativePath}`, req.url);
+        const redirectUrl = new URL(`/legacy-uploads/${relativePath}`, req.url);
         console.log(`[PDF Proxy] Redirecionando URL WordPress para local: ${redirectUrl.toString()}`);
         return NextResponse.redirect(redirectUrl.toString());
     }
