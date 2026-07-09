@@ -1,5 +1,7 @@
 export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
+import fs from "fs";
+import path from "path";
 
 export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
@@ -46,23 +48,41 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: "Protocolo não permitido" }, { status: 403 });
     }
 
-    // Se a URL pertence à mesma origem (arquivo local), verificamos se o arquivo existe fisicamente
-    // na pasta public. Se existir, redirecionamos para ele. Se não existir, NÃO retornamos erro
-    // imediatamente, pois o arquivo pode estar acessível via proxy reverso/Nginx em caminhos legados (ex: /wp-content).
-    // Nesses casos, deixamos a requisição seguir para o fetch remoto abaixo.
-    if (parsedUrl.origin === origin) {
-        try {
-            const fs = await import("fs");
-            const path = await import("path");
-            const filePath = path.join(process.cwd(), "public", parsedUrl.pathname);
+    // Verificar se o arquivo existe localmente
+    try {
+        const decodedPath = decodeURIComponent(parsedUrl.pathname);
+        let localPath = null;
+
+        // 1. Tentar caminho direto em public/
+        const directFilePath = path.join(process.cwd(), "public", decodedPath);
+        if (fs.existsSync(directFilePath) && fs.statSync(directFilePath).isFile()) {
+            localPath = decodedPath;
+        } 
+        // 2. Se for uma URL do WordPress (/wp-content/uploads/), verificar se está mapeada localmente
+        else if (decodedPath.includes("wp-content/uploads/")) {
+            const relativePath = decodedPath.substring(decodedPath.indexOf("wp-content/uploads/") + "wp-content/uploads/".length);
             
-            if (fs.existsSync(filePath)) {
-                return NextResponse.redirect(parsedUrl.toString());
+            const possibleLocalPaths = [
+                { fsPath: path.join(process.cwd(), "public", "tmp-uploads", relativePath), webPath: `/tmp-uploads/${relativePath}` },
+                { fsPath: path.join(process.cwd(), "public", "uploads", relativePath), webPath: `/uploads/${relativePath}` },
+                { fsPath: path.join(process.cwd(), "public", relativePath), webPath: `/${relativePath}` },
+            ];
+
+            for (const p of possibleLocalPaths) {
+                if (fs.existsSync(p.fsPath) && fs.statSync(p.fsPath).isFile()) {
+                    localPath = p.webPath;
+                    break;
+                }
             }
-            console.log(`Arquivo local não encontrado fisicamente em ${filePath}. Tentando carregamento via fetch remoto.`);
-        } catch (e) {
-            console.error("Erro ao verificar arquivo local:", e);
         }
+
+        if (localPath) {
+            const redirectUrl = new URL(localPath, req.url);
+            console.log(`[PDF Proxy] Arquivo encontrado localmente em ${localPath}. Redirecionando...`);
+            return NextResponse.redirect(redirectUrl.toString());
+        }
+    } catch (e) {
+        console.error("Erro ao verificar arquivo local:", e);
     }
 
     try {

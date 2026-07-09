@@ -1,0 +1,13 @@
+node_modules
+.next
+deploy_final
+deploy_vps
+.vercel
+tmp
+wordpress
+logs_extracted
+migracao_wp
+*.zip
+*.tar.gz
+*.log
+*.txt

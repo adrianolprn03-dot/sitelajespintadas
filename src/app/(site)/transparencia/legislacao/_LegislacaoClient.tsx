@@ -349,7 +349,10 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                                                         {l.arquivo ? (
                                                             <>
                                                                 <button
-                                                                    onClick={() => setPdfViewer({ url: l.arquivo!, titulo: `${info.label} Nº ${l.numero}/${l.ano}` })}
+                                                                    onClick={() => {
+                                                                        const exibirNumero = l.numero.endsWith(`/${l.ano}`) ? l.numero : `${l.numero}/${l.ano}`;
+                                                                        setPdfViewer({ url: l.arquivo!, titulo: `${info.label} Nº ${exibirNumero}` });
+                                                                    }}
                                                                     className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-primary-50 text-primary-700 rounded-lg text-xs font-bold hover:bg-primary-600 hover:text-white transition-all duration-200"
                                                                 >
                                                                     <FaEye size={12} />
