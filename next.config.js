@@ -8,6 +8,14 @@ const nextConfig = {
       { protocol: 'https', hostname: '**' },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/wp-content/uploads/:path*',
+        destination: '/legacy-uploads/:path*',
+      },
+    ];
+  },
   experimental: {
     serverActions: { allowedOrigins: ['*'] },
     serverComponentsExternalPackages: ["@vercel/blob"],

@@ -50,14 +50,14 @@ export async function GET(req: NextRequest) {
     let fetchUrl = url;
     const decodedPath = decodeURIComponent(parsedUrl.pathname);
 
-    // 1. Se a URL pertence à mesma origem, ou se for do WordPress legado (/wp-content/uploads/)
-    if (parsedUrl.origin === origin) {
-        fetchUrl = parsedUrl.toString();
-    } else if (decodedPath.includes("wp-content/uploads/")) {
+    // 1. Se for do WordPress legado (/wp-content/uploads/), mapeamos para o diretório local /legacy-uploads/
+    if (decodedPath.includes("wp-content/uploads/")) {
         const relativePath = decodedPath.substring(decodedPath.indexOf("wp-content/uploads/") + "wp-content/uploads/".length);
         const localTargetUrl = new URL(`/legacy-uploads/${relativePath}`, req.url);
         fetchUrl = localTargetUrl.toString();
         console.log(`[PDF Proxy] Mapeando URL WordPress para local: ${fetchUrl}`);
+    } else if (parsedUrl.origin === origin) {
+        fetchUrl = parsedUrl.toString();
     }
 
     // Encaminhar headers da requisição original (como cookies e bypass tokens) para o fetch interno
