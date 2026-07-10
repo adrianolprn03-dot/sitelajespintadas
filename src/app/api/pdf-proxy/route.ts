@@ -60,13 +60,21 @@ export async function GET(req: NextRequest) {
         console.log(`[PDF Proxy] Mapeando URL WordPress para local: ${fetchUrl}`);
     }
 
+    // Encaminhar headers da requisição original (como cookies e bypass tokens) para o fetch interno
+    const headers = new Headers();
+    req.headers.forEach((value, key) => {
+        if (key.toLowerCase() !== "host") {
+            headers.set(key, value);
+        }
+    });
+
     try {
-        let response = await fetch(fetchUrl);
+        let response = await fetch(fetchUrl, { headers });
 
         // Se falhar ao buscar localmente (por exemplo, 404 ou 403), tenta a URL remota original
         if (!response.ok && fetchUrl !== url) {
             console.warn(`[PDF Proxy] Falha ao carregar arquivo local mapeado (${response.status}). Tentando URL original: ${url}`);
-            response = await fetch(url);
+            response = await fetch(url, { headers });
         }
 
         if (!response.ok) {
