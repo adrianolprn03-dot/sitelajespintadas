@@ -46,22 +46,28 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: "Protocolo não permitido" }, { status: 403 });
     }
 
-    // 1. Se a URL pertence à mesma origem, redireciona diretamente para o recurso estático
-    if (parsedUrl.origin === origin) {
-        return NextResponse.redirect(parsedUrl.toString());
-    }
-
-    // 2. Se for uma URL do WordPress legado (/wp-content/uploads/), mapeia diretamente para o diretório local /legacy-uploads/
+    // Determinar qual a URL final de onde vamos obter o arquivo
+    let fetchUrl = url;
     const decodedPath = decodeURIComponent(parsedUrl.pathname);
-    if (decodedPath.includes("wp-content/uploads/")) {
+
+    // 1. Se a URL pertence à mesma origem, ou se for do WordPress legado (/wp-content/uploads/)
+    if (parsedUrl.origin === origin) {
+        fetchUrl = parsedUrl.toString();
+    } else if (decodedPath.includes("wp-content/uploads/")) {
         const relativePath = decodedPath.substring(decodedPath.indexOf("wp-content/uploads/") + "wp-content/uploads/".length);
-        const redirectUrl = new URL(`/legacy-uploads/${relativePath}`, req.url);
-        console.log(`[PDF Proxy] Redirecionando URL WordPress para local: ${redirectUrl.toString()}`);
-        return NextResponse.redirect(redirectUrl.toString());
+        const localTargetUrl = new URL(`/legacy-uploads/${relativePath}`, req.url);
+        fetchUrl = localTargetUrl.toString();
+        console.log(`[PDF Proxy] Mapeando URL WordPress para local: ${fetchUrl}`);
     }
 
     try {
-        const response = await fetch(url);
+        let response = await fetch(fetchUrl);
+
+        // Se falhar ao buscar localmente (por exemplo, 404 ou 403), tenta a URL remota original
+        if (!response.ok && fetchUrl !== url) {
+            console.warn(`[PDF Proxy] Falha ao carregar arquivo local mapeado (${response.status}). Tentando URL original: ${url}`);
+            response = await fetch(url);
+        }
 
         if (!response.ok) {
             return NextResponse.json({ error: "Arquivo não encontrado ou inacessível" }, { status: response.status });
@@ -74,10 +80,6 @@ export async function GET(req: NextRequest) {
 
         if (!isPdfOrImage && !isOctetStream) {
             console.warn(`Proxy interceptou tipo de conteúdo alternativo (${contentType}) para a URL: ${url}. Redirecionando iframe para a URL original.`);
-            
-            // Em vez de mostrar a mensagem de erro ou uma tela intermediária, 
-            // redirecionamos o iframe para a URL original. Se for uma página HTML (ex: Diário Oficial),
-            // o navegador tentará renderizá-la dentro do iframe normalmente.
             return NextResponse.redirect(url);
         }
 
