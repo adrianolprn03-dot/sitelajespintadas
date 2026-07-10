@@ -23,6 +23,11 @@ type Legislacao = {
     criadoEm: string;
 };
 
+const parseNumero = (numStr: string): number => {
+    const match = numStr.match(/^(\d+)/);
+    return match ? parseInt(match[1], 10) : 0;
+};
+
 const tipoInfo: Record<string, { label: string; icon: any }> = {
     "lei-organica": { label: "Lei Orgânica", icon: FaScroll },
     "lei": { label: "Lei Municipal", icon: FaScaleBalanced },
@@ -281,7 +286,26 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                 ) : (
                     <AnimatePresence mode="popLayout">
                         {anosDisponiveis.map(ano => {
-                            const itensDoAno = filtered.filter(l => l.ano === ano);
+                            let itensDoAno = filtered.filter(l => l.ano === ano);
+                            
+                            const isAscendingType = 
+                                tipoFiltro === "portaria" || 
+                                tipoFiltro === "decreto" || 
+                                tipoFiltro === "portaria_diaria" ||
+                                initialTipo === "portaria" ||
+                                initialTipo === "decreto" ||
+                                initialTipo === "portaria_diaria";
+
+                            if (isAscendingType) {
+                                itensDoAno = [...itensDoAno].sort((a, b) => {
+                                    const numA = parseNumero(a.numero);
+                                    const numB = parseNumero(b.numero);
+                                    if (numA !== numB) {
+                                        return numA - numB;
+                                    }
+                                    return a.numero.localeCompare(b.numero, undefined, { numeric: true, sensitivity: 'base' });
+                                });
+                            }
                             return (
                                 <motion.div
                                     key={ano}
