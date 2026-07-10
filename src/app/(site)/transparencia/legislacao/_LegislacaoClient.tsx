@@ -288,7 +288,7 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                         {anosDisponiveis.map(ano => {
                             let itensDoAno = filtered.filter(l => l.ano === ano);
                             
-                            const isAscendingType = 
+                            const isSortedType = 
                                 tipoFiltro === "portaria" || 
                                 tipoFiltro === "decreto" || 
                                 tipoFiltro === "portaria_diaria" ||
@@ -296,14 +296,14 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                                 initialTipo === "decreto" ||
                                 initialTipo === "portaria_diaria";
 
-                            if (isAscendingType) {
+                            if (isSortedType) {
                                 itensDoAno = [...itensDoAno].sort((a, b) => {
                                     const numA = parseNumero(a.numero);
                                     const numB = parseNumero(b.numero);
                                     if (numA !== numB) {
-                                        return numA - numB;
+                                        return numB - numA;
                                     }
-                                    return a.numero.localeCompare(b.numero, undefined, { numeric: true, sensitivity: 'base' });
+                                    return b.numero.localeCompare(a.numero, undefined, { numeric: true, sensitivity: 'base' });
                                 });
                             }
                             return (
