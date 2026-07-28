@@ -52,8 +52,8 @@ export default function AdminIncentivosCulturaisPage() {
     const [form, setForm] = useState<FormData>({
         title: "Incentivos Culturais e Esportivos",
         subtitle: "Editais, programas de fomento e recursos destinados à cultura, esporte e lazer da comunidade.",
-        recursosInvestidos: 137500,
-        projetosApoiados: 28,
+        recursosInvestidos: "",
+        projetosApoiados: "",
         exercicioAno: new Date().getFullYear().toString(),
         programas: []
     });

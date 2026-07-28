@@ -10,8 +10,8 @@ const CONFIG_KEY = "incentivos_culturais_data";
 const DEFAULT_DATA = {
     title: "Incentivos Culturais e Esportivos",
     subtitle: "Editais, programas de fomento e recursos destinados à cultura, esporte e lazer da comunidade.",
-    recursosInvestidos: 137500,
-    projetosApoiados: 28,
+    recursosInvestidos: "",
+    projetosApoiados: "",
     exercicioAno: "2026",
     programas: [
         {

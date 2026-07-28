@@ -105,18 +105,18 @@ export default async function IncentivosCulturaisPage() {
     const subtitle = customData.subtitle || "Editais, programas de fomento e recursos destinados à cultura, esporte e lazer da comunidade.";
     const exercicioAno = customData.exercicioAno || new Date().getFullYear().toString();
 
-    const programasList = Array.isArray(customData.programas) && customData.programas.length > 0
+    const programasList = Array.isArray(customData.programas)
         ? customData.programas
         : PROGRAMAS_DEFAULT;
 
     const calcTotalRecursos = programasList.reduce((s: number, p: any) => s + (Number(p.recursos) || 0), 0);
     const calcTotalProjetos = programasList.reduce((s: number, p: any) => s + (Number(p.projetos) || 0), 0);
 
-    const totalRecursos = customData.recursosInvestidos !== undefined && customData.recursosInvestidos !== ""
+    const totalRecursos = (customData.recursosInvestidos !== undefined && customData.recursosInvestidos !== "" && customData.recursosInvestidos !== null && !isNaN(Number(customData.recursosInvestidos)))
         ? Number(customData.recursosInvestidos)
         : calcTotalRecursos;
 
-    const totalProjetos = customData.projetosApoiados !== undefined && customData.projetosApoiados !== ""
+    const totalProjetos = (customData.projetosApoiados !== undefined && customData.projetosApoiados !== "" && customData.projetosApoiados !== null && !isNaN(Number(customData.projetosApoiados)))
         ? Number(customData.projetosApoiados)
         : calcTotalProjetos;
 
