@@ -8,7 +8,7 @@ import {
     FaMoneyBillWave, FaChartBar, FaBuilding, FaBullhorn,
     FaSignOutAlt, FaTimes, FaBars, FaCalendar, FaImages, FaEnvelope,
     FaHandshake, FaPlane, FaHammer, FaQuestionCircle, FaBook,
-    FaUserFriends, FaUpload, FaFile, FaExternalLinkAlt, FaUserShield, FaUserGraduate, FaUserTie, FaCog
+    FaUserFriends, FaUpload, FaFile, FaExternalLinkAlt, FaUserShield, FaUserGraduate, FaUserTie, FaCog, FaTheaterMasks
 } from "react-icons/fa";
 import { useState } from "react";
 
@@ -48,6 +48,7 @@ const menuItems = [
     { label: "Pesquisas (PNTP)", href: "/admin/pesquisa-satisfacao", icon: FaChartBar, roles: ["admin", "editor"] },
     { label: "Concursos", href: "/admin/concursos", icon: FaUsers, roles: ["admin", "editor"] },
     { label: "Editais", href: "/admin/editais", icon: FaBullhorn, roles: ["admin", "editor"] },
+    { label: "Incentivos Culturais", href: "/admin/incentivos-culturais", icon: FaTheaterMasks, roles: ["admin", "editor"] },
     { label: "Carta de Serviços", href: "/admin/carta-servicos", icon: FaFile, roles: ["admin", "editor"] },
     { label: "Símbolos Oficiais", href: "/admin/configuracoes/simbolos", icon: FaImages, roles: ["admin"] },
     { label: "Importar CSV", href: "/admin/importacao", icon: FaUpload, roles: ["admin"] },

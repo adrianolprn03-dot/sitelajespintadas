@@ -41,7 +41,10 @@ export default function AdminEditaisPage() {
             // The /api/admin/concursos currently fetches all, let's filter by type.
             const res = await fetch("/api/admin/concursos", { cache: "no-store" });
             const data = await res.json();
-            const editais = data.filter((item: any) => item.tipo.toLowerCase() === "edital");
+            const editais = data.filter((item: any) => {
+                const t = (item.tipo || "").toLowerCase();
+                return t !== "concurso" && t !== "processo-seletivo" && t !== "seletivo";
+            });
             setItems(editais || []);
         } catch {
             toast.error("Erro ao carregar");
@@ -219,7 +222,17 @@ export default function AdminEditaisPage() {
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="space-y-1">
                                 <label className="text-[10px] font-black uppercase text-gray-400 ml-2">Título do Edital / Chamamento</label>
-                                <input required placeholder="Ex: Edital de Chamamento 001/2026" value={form.titulo} onChange={(e) => setForm({ ...form, titulo: e.target.value })} className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500/20 transition-all" />
+                                <input required placeholder="Ex: Edital PNAB 001/2026 - Fomento à Cultura" value={form.titulo} onChange={(e) => setForm({ ...form, titulo: e.target.value })} className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500/20 transition-all" />
+                            </div>
+
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-black uppercase text-gray-400 ml-2">Categoria / Área</label>
+                                <select value={form.tipo} onChange={(e) => setForm({ ...form, tipo: e.target.value })} className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold outline-none">
+                                    <option value="Edital">Edital Geral</option>
+                                    <option value="Cultura">Cultura / PNAB (Fomento Cultural)</option>
+                                    <option value="Esporte">Esporte (Fomento Esportivo)</option>
+                                    <option value="Chamamento Público">Chamamento Público</option>
+                                </select>
                             </div>
 
                             <div className="space-y-3">
