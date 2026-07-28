@@ -24,19 +24,18 @@ export default function VideoHero() {
                         loop
                         playsInline
                         onError={() => setVideoError(true)}
-                        className="w-full h-full object-cover opacity-90 scale-105 group-hover:scale-100 transition-transform duration-[2s]"
+                        className="w-full h-full object-cover opacity-100 brightness-[1.05] contrast-[1.03] scale-105 group-hover:scale-100 transition-transform duration-[2s]"
                         aria-hidden="true"
                     />
                 ) : (
                     <img
                         src="/images/hero-slider-2.jpg"
                         alt={`Vista de ${MUNICIPIO.nome}`}
-                        className="w-full h-full object-cover opacity-40"
+                        className="w-full h-full object-cover opacity-60"
                     />
                 )}
-                {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-b from-gray-900 via-transparent to-gray-900 opacity-50" />
-                <div className="absolute inset-0 bg-primary-900/10" />
+                {/* Soft Gradient Overlay for text contrast */}
+                <div className="absolute inset-0 bg-gradient-to-b from-gray-950/40 via-transparent to-gray-950/40" />
             </div>
 
             <div className="relative z-10 max-w-7xl mx-auto px-6 flex flex-col items-center text-center">
