@@ -5,6 +5,7 @@ import Link from "next/link";
 import { FaFile, FaDownload, FaCalendar, FaSearch, FaHistory, FaInfoCircle, FaCheckCircle, FaChevronRight } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import BannerPNTP from "./transparencia/BannerPNTP";
+import DataAtualizacao from "./transparencia/DataAtualizacao";
 
 type Documento = {
     id: string;
@@ -171,7 +172,8 @@ export default function ListaDocumentosClient({
                                         <h3 className="font-black text-gray-800 text-lg uppercase tracking-tight group-hover:text-blue-600 transition-colors mb-1">
                                             {doc.titulo}
                                         </h3>
-                                        <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest opacity-60">Prefeitura de Lajes Pintadas – RN</p>
+                                        <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest opacity-60 mb-3">Prefeitura de Lajes Pintadas – RN</p>
+                                        <DataAtualizacao variant="compact" dataAtualizacao={new Date(doc.criadoEm).toLocaleDateString("pt-BR")} />
                                     </div>
 
                                     <a 

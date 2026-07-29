@@ -9,6 +9,7 @@ import {
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import LeiEstruturaButtons from "@/components/transparencia/LeiEstruturaButtons";
+import DataAtualizacao from "@/components/transparencia/DataAtualizacao";
 
 export const metadata: Metadata = {
     title: "Dados Institucionais | Portal da Transparência – Lajes Pintadas/RN",
@@ -156,18 +157,23 @@ export default async function InstitucionalPage() {
                             </h2>
 
                             {/* Base Legal - Lei da Estrutura */}
-                            <div className="mb-8 p-6 bg-gradient-to-r from-emerald-50 to-teal-50/30 rounded-3xl border border-emerald-100 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm group hover:border-emerald-200 transition-all">
-                                <div className="flex items-start gap-4 w-full">
-                                    <div className="w-12 h-12 bg-emerald-600 text-white rounded-xl flex items-center justify-center shrink-0 shadow-md">
-                                        <FileText size={22} className="text-white" />
+                            <div className="mb-8 p-6 bg-gradient-to-r from-emerald-50 to-teal-50/30 rounded-3xl border border-emerald-100 flex flex-col gap-4 shadow-sm group hover:border-emerald-200 transition-all">
+                                <div className="flex flex-col md:flex-row items-center justify-between gap-4 w-full">
+                                    <div className="flex items-start gap-4 w-full">
+                                        <div className="w-12 h-12 bg-emerald-600 text-white rounded-xl flex items-center justify-center shrink-0 shadow-md">
+                                            <FileText size={22} className="text-white" />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-sm font-black text-slate-800 uppercase tracking-tight">Lei da Estrutura Organizacional</h4>
+                                            <p className="text-xs font-semibold text-slate-500 mt-1">Lei Municipal nº 246/2013 — Dispõe sobre a organização administrativa do município.</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h4 className="text-sm font-black text-slate-800 uppercase tracking-tight">Lei da Estrutura Organizacional</h4>
-                                        <p className="text-xs font-semibold text-slate-500 mt-1">Lei Municipal nº 246/2013 — Dispõe sobre a organização administrativa do município.</p>
+                                    <div className="shrink-0 w-full md:w-auto">
+                                        <LeiEstruturaButtons pdfUrl="/uploads/lei-estrutura-organizacional.pdf" />
                                     </div>
                                 </div>
-                                <div className="shrink-0 w-full md:w-auto">
-                                    <LeiEstruturaButtons pdfUrl="/uploads/lei-estrutura-organizacional.pdf" />
+                                <div className="pt-3 border-t border-emerald-100/80">
+                                    <DataAtualizacao variant="compact" dataAtualizacao="29/07/2026" />
                                 </div>
                             </div>
 
@@ -196,18 +202,23 @@ export default async function InstitucionalPage() {
                             </h2>
 
                             {/* Base Legal - Lei de Criação da Estrutura */}
-                            <div className="mb-8 p-6 bg-gradient-to-r from-indigo-50 to-blue-50/50 rounded-3xl border border-indigo-100 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm group hover:border-indigo-200 transition-all">
-                                <div className="flex items-start gap-4 w-full">
-                                    <div className="w-12 h-12 bg-indigo-600 text-white rounded-xl flex items-center justify-center shrink-0 shadow-md">
-                                        <FileText size={22} />
+                            <div className="mb-8 p-6 bg-gradient-to-r from-indigo-50 to-blue-50/50 rounded-3xl border border-indigo-100 flex flex-col gap-4 shadow-sm group hover:border-indigo-200 transition-all">
+                                <div className="flex flex-col md:flex-row items-center justify-between gap-4 w-full">
+                                    <div className="flex items-start gap-4 w-full">
+                                        <div className="w-12 h-12 bg-indigo-600 text-white rounded-xl flex items-center justify-center shrink-0 shadow-md">
+                                            <FileText size={22} />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-sm font-black text-slate-800 uppercase tracking-tight">Lei da Estrutura Organizacional</h4>
+                                            <p className="text-xs font-semibold text-slate-500 mt-1">Lei Municipal nº 246/2013 — Dispõe sobre a organização administrativa do município.</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h4 className="text-sm font-black text-slate-800 uppercase tracking-tight">Lei da Estrutura Organizacional</h4>
-                                        <p className="text-xs font-semibold text-slate-500 mt-1">Lei Municipal nº 246/2013 — Dispõe sobre a organização administrativa do município.</p>
+                                    <div className="shrink-0 w-full md:w-auto">
+                                        <LeiEstruturaButtons pdfUrl="/uploads/lei-estrutura-organizacional.pdf" />
                                     </div>
                                 </div>
-                                <div className="shrink-0 w-full md:w-auto">
-                                    <LeiEstruturaButtons pdfUrl="/uploads/lei-estrutura-organizacional.pdf" />
+                                <div className="pt-3 border-t border-indigo-100/80">
+                                    <DataAtualizacao variant="compact" dataAtualizacao="29/07/2026" />
                                 </div>
                             </div>
 
@@ -412,12 +423,15 @@ export default async function InstitucionalPage() {
                         </div>
 
                         {/* Atualização */}
-                        <div className="bg-emerald-50 border border-emerald-100 rounded-[2.5rem] p-6">
-                            <p className="text-[9px] font-black text-emerald-600 uppercase tracking-widest mb-2">Atualização dos Dados</p>
-                            <p className="text-xs text-emerald-800 font-medium leading-relaxed">
-                                Informações atualizadas conforme a periodicidade exigida pelo Art. 8º da Lei nº 12.527/2011.
-                                Dados dinâmicos sincronizados com o painel administrativo.
-                            </p>
+                        <div className="bg-emerald-50 border border-emerald-100 rounded-[2.5rem] p-6 space-y-4">
+                            <div>
+                                <p className="text-[9px] font-black text-emerald-600 uppercase tracking-widest mb-2">Atualização dos Dados</p>
+                                <p className="text-xs text-emerald-800 font-medium leading-relaxed">
+                                    Informações atualizadas conforme a periodicidade exigida pelo Art. 8º da Lei nº 12.527/2011.
+                                    Dados dinâmicos sincronizados com o painel administrativo.
+                                </p>
+                            </div>
+                            <DataAtualizacao variant="banner" dataAtualizacao="29/07/2026" />
                         </div>
                     </div>
                 </div>

@@ -4,6 +4,7 @@ import { FaBuilding, FaUserTie, FaPhone, FaEnvelope, FaMapMarker, FaClock, FaNew
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getSecretariaIcon } from "@/lib/icons";
+import DataAtualizacao from "@/components/transparencia/DataAtualizacao";
 
 export default async function SecretariaDetalhesPage({ params }: { params: { slug: string } }) {
     const secretaria = await prisma.secretaria.findUnique({
@@ -85,6 +86,10 @@ export default async function SecretariaDetalhesPage({ params }: { params: { slu
                                 </div>
                             </section>
                         )}
+
+                        <section className="pt-4">
+                            <DataAtualizacao variant="card" dataAtualizacao={new Date(secretaria.atualizadoEm || secretaria.criadoEm).toLocaleDateString("pt-BR")} />
+                        </section>
                     </div>
 
                     {/* Coluna da Direita: Sidebar de Contato */}
