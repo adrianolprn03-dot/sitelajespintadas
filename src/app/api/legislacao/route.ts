@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
     const [items, total] = await Promise.all([
         prisma.legislacao.findMany({
             where,
-            orderBy: [{ ano: "desc" }, { numero: "desc" }, { criadoEm: "desc" }],
+            orderBy: [{ ano: "desc" }, { criadoEm: "desc" }, { id: "desc" }],
             skip,
             take: limit,
         }),

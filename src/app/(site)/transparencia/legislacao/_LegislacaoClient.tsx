@@ -24,7 +24,7 @@ type Legislacao = {
 };
 
 const parseNumero = (numStr: string): number => {
-    const match = numStr.match(/^(\d+)/);
+    const match = numStr ? numStr.match(/(\d+)/) : null;
     return match ? parseInt(match[1], 10) : 0;
 };
 
@@ -286,26 +286,27 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                 ) : (
                     <AnimatePresence mode="popLayout">
                         {anosDisponiveis.map(ano => {
-                            let itensDoAno = filtered.filter(l => l.ano === ano);
-                            
-                            const isSortedType = 
-                                tipoFiltro === "portaria" || 
-                                tipoFiltro === "decreto" || 
-                                tipoFiltro === "portaria_diaria" ||
-                                initialTipo === "portaria" ||
-                                initialTipo === "decreto" ||
-                                initialTipo === "portaria_diaria";
+                            // Ordenar itens do ano das informações mais recentes para as mais antigas
+                            const itensDoAno = filtered
+                                .filter(l => l.ano === ano)
+                                .sort((a, b) => {
+                                    // 1. Data de publicação/criação mais recente primeiro
+                                    const timeA = new Date(a.criadoEm).getTime();
+                                    const timeB = new Date(b.criadoEm).getTime();
+                                    if (timeA !== timeB && !isNaN(timeA) && !isNaN(timeB)) {
+                                        return timeB - timeA;
+                                    }
 
-                            if (isSortedType) {
-                                itensDoAno = [...itensDoAno].sort((a, b) => {
+                                    // 2. Número mais alto primeiro (ex: Nº 500/2026 antes do Nº 01/2026)
                                     const numA = parseNumero(a.numero);
                                     const numB = parseNumero(b.numero);
                                     if (numA !== numB) {
                                         return numB - numA;
                                     }
+
+                                    // 3. Fallback: Ordem alfabética/numérica reversa
                                     return b.numero.localeCompare(a.numero, undefined, { numeric: true, sensitivity: 'base' });
                                 });
-                            }
                             return (
                                 <motion.div
                                     key={ano}
