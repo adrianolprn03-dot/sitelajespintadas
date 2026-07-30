@@ -268,9 +268,7 @@ export default function DiariasPage() {
 
                     {/* Values Table Card */}
                     <a 
-                        href="/uploads/diarias/tabela-valores.pdf" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
+                        href="/transparencia/tabela-diarias"
                         className="group relative bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-xl shadow-slate-200/40 hover:shadow-2xl hover:shadow-emerald-500/10 transition-all duration-500 overflow-hidden"
                     >
                         <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-bl-[5rem] -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700 opacity-50" />
@@ -290,6 +288,17 @@ export default function DiariasPage() {
                             </div>
                         </div>
                     </a>
+                </motion.div>
+
+                {/* Declaração Oficial Banner */}
+                <motion.div variants={itemVariants} className="bg-red-50 border-l-8 border-red-500 rounded-r-3xl p-8 flex flex-col md:flex-row items-center justify-center md:justify-start gap-6 shadow-xl shadow-red-500/10 mb-12 transition-all hover:bg-red-100">
+                    <FaInfoCircle className="text-red-500 text-5xl shrink-0 drop-shadow-md" />
+                    <div className="text-center md:text-left">
+                        <h3 className="text-red-900 font-black text-xl uppercase tracking-tight mb-2">Declaração Oficial</h3>
+                        <p className="text-red-700 font-bold text-lg md:text-xl">
+                            Declaração que não existe regulamentação para Diárias Internacionais até o período de 01/06/2026.
+                        </p>
+                    </div>
                 </motion.div>
 
                 {/* Filters Section */}
