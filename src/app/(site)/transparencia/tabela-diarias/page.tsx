@@ -50,32 +50,63 @@ export default function TabelaDiariasPage() {
                      <div className="overflow-x-auto rounded-3xl border border-gray-100 shadow-sm mb-12">
                          <table className="w-full text-left border-collapse">
                              <thead>
-                                 <tr className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white text-[10px] uppercase tracking-widest">
-                                     <th className="p-5">Beneficiário / Cargo</th>
-                                     <th className="p-5">Hospedagem + Alimentação (Integral)</th>
-                                     <th className="p-5">Somente Alimentação (Meia Diária)</th>
+                                 <tr className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white text-[11px] font-black uppercase tracking-wider">
+                                     <th className="p-4 md:p-5">Cargo ou Função</th>
+                                     <th className="p-4 md:p-5 text-center">Natal, Mossoró ou Caicó</th>
+                                     <th className="p-4 md:p-5 text-center">Demais Cidades</th>
+                                     <th className="p-4 md:p-5 text-center">Outros Estados</th>
+                                     <th className="p-4 md:p-5 text-center">Brasília/DF</th>
                                  </tr>
                              </thead>
-                             <tbody className="text-sm font-medium text-gray-600 divide-y divide-gray-100">
-                                 <tr className="hover:bg-gray-50 transition-colors">
-                                     <td className="p-5 font-bold text-gray-800">Chefe do Executivo (Prefeito e Vice)</td>
-                                     <td className="p-5 text-blue-600 font-black">R$ 500,00</td>
-                                     <td className="p-5">R$ 250,00</td>
+                             <tbody className="text-xs md:text-sm font-medium text-gray-700 divide-y divide-gray-100">
+                                 <tr className="hover:bg-blue-50/40 transition-colors">
+                                     <td className="p-4 md:p-5 font-bold text-gray-900">Prefeito Municipal</td>
+                                     <td className="p-4 md:p-5 text-center font-semibold text-blue-700">R$ 400,00</td>
+                                     <td className="p-4 md:p-5 text-center">R$ 350,00</td>
+                                     <td className="p-4 md:p-5 text-center">R$ 500,00</td>
+                                     <td className="p-4 md:p-5 text-center font-bold text-emerald-600">R$ 1.000,00</td>
                                  </tr>
-                                 <tr className="hover:bg-gray-50 transition-colors">
-                                     <td className="p-5 font-bold text-gray-800">Secretários do Primeiro Escalão</td>
-                                     <td className="p-5 text-blue-600 font-black">R$ 300,00</td>
-                                     <td className="p-5">R$ 150,00</td>
+                                 <tr className="hover:bg-blue-50/40 transition-colors">
+                                     <td className="p-4 md:p-5 font-bold text-gray-900">Vice Prefeito Municipal</td>
+                                     <td className="p-4 md:p-5 text-center font-semibold text-blue-700">R$ 350,00</td>
+                                     <td className="p-4 md:p-5 text-center">R$ 300,00</td>
+                                     <td className="p-4 md:p-5 text-center">R$ 450,00</td>
+                                     <td className="p-4 md:p-5 text-center font-bold text-emerald-600">R$ 800,00</td>
                                  </tr>
-                                 <tr className="hover:bg-gray-50 transition-colors">
-                                     <td className="p-5 font-bold text-gray-800">Analistas, Assessores e Coordenações</td>
-                                     <td className="p-5 text-blue-600 font-black">R$ 220,00</td>
-                                     <td className="p-5">R$ 110,00</td>
+                                 <tr className="hover:bg-blue-50/40 transition-colors">
+                                     <td className="p-4 md:p-5 font-bold text-gray-900">Procurador</td>
+                                     <td className="p-4 md:p-5 text-center font-semibold text-blue-700">R$ 350,00</td>
+                                     <td className="p-4 md:p-5 text-center">R$ 250,00</td>
+                                     <td className="p-4 md:p-5 text-center">R$ 450,00</td>
+                                     <td className="p-4 md:p-5 text-center font-bold text-emerald-600">R$ 800,00</td>
                                  </tr>
-                                 <tr className="hover:bg-gray-50 transition-colors">
-                                     <td className="p-5 font-bold text-gray-800">Motoristas e Demais Servidores</td>
-                                     <td className="p-5 text-blue-600 font-black">R$ 150,00</td>
-                                     <td className="p-5">R$ 75,00</td>
+                                 <tr className="hover:bg-blue-50/40 transition-colors">
+                                     <td className="p-4 md:p-5 font-bold text-gray-900">Controlador</td>
+                                     <td className="p-4 md:p-5 text-center font-semibold text-blue-700">R$ 350,00</td>
+                                     <td className="p-4 md:p-5 text-center">R$ 250,00</td>
+                                     <td className="p-4 md:p-5 text-center">R$ 450,00</td>
+                                     <td className="p-4 md:p-5 text-center font-bold text-emerald-600">R$ 800,00</td>
+                                 </tr>
+                                 <tr className="hover:bg-blue-50/40 transition-colors">
+                                     <td className="p-4 md:p-5 font-bold text-gray-900">Secretários Municipais</td>
+                                     <td className="p-4 md:p-5 text-center font-semibold text-blue-700">R$ 350,00</td>
+                                     <td className="p-4 md:p-5 text-center">R$ 250,00</td>
+                                     <td className="p-4 md:p-5 text-center">R$ 450,00</td>
+                                     <td className="p-4 md:p-5 text-center font-bold text-emerald-600">R$ 800,00</td>
+                                 </tr>
+                                 <tr className="hover:bg-blue-50/40 transition-colors">
+                                     <td className="p-4 md:p-5 font-bold text-gray-900">Conselheiros Tutelares</td>
+                                     <td className="p-4 md:p-5 text-center font-semibold text-blue-700">R$ 150,00</td>
+                                     <td className="p-4 md:p-5 text-center">R$ 100,00</td>
+                                     <td className="p-4 md:p-5 text-center">R$ 150,00</td>
+                                     <td className="p-4 md:p-5 text-center font-bold text-emerald-600">R$ 550,00</td>
+                                 </tr>
+                                 <tr className="hover:bg-blue-50/40 transition-colors">
+                                     <td className="p-4 md:p-5 font-bold text-gray-900">Demais Agentes Públicos</td>
+                                     <td className="p-4 md:p-5 text-center font-semibold text-blue-700">R$ 200,00</td>
+                                     <td className="p-4 md:p-5 text-center">R$ 200,00</td>
+                                     <td className="p-4 md:p-5 text-center">R$ 300,00</td>
+                                     <td className="p-4 md:p-5 text-center font-bold text-emerald-600">R$ 550,00</td>
                                  </tr>
                              </tbody>
                          </table>
