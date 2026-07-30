@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
+import { FaInfoCircle } from "react-icons/fa";
 
 export const metadata: Metadata = {
     title: "Tabela de Valores de Diárias | Prefeitura de Lajes Pintadas",
@@ -31,6 +32,17 @@ export default function TabelaDiariasPage() {
 
             <div className="max-w-[1000px] mx-auto px-6 pb-24">
                 <div className="bg-white rounded-[3rem] p-12 md:p-20 shadow-xl shadow-gray-200/50 border border-white">
+                     {/* Declaração Oficial */}
+                     <div className="bg-red-50 border-l-8 border-red-500 rounded-r-3xl p-8 flex flex-col md:flex-row items-center justify-center md:justify-start gap-6 shadow-xl shadow-red-500/10 mb-12 transition-all hover:bg-red-100">
+                         <FaInfoCircle className="text-red-500 text-5xl shrink-0 drop-shadow-md" />
+                         <div className="text-center md:text-left">
+                             <h3 className="text-red-900 font-black text-xl uppercase tracking-tight mb-2">Declaração Oficial</h3>
+                             <p className="text-red-700 font-bold text-lg md:text-xl">
+                                 Declaração que não existe regulamentação para Diárias Internacionais até o período de 01/06/2026.
+                             </p>
+                         </div>
+                     </div>
+
                      <p className="text-xl text-gray-500 font-medium mb-12 text-center">
                          Confira a seguir a estrutura base de valores aplicada para ressarcimento de servidores no exercício de suas funções, fora da comarca do município. <br/>*(Valores referenciais podem variar mediante decreto superveniente)*.
                      </p>
