@@ -142,7 +142,7 @@ export default function EstagiariosPage() {
                             <p className="text-red-700 font-bold text-lg md:text-xl">
                                 {busca || mes !== "" 
                                     ? "Nenhum estagiário encontrado para os filtros aplicados."
-                                    : `A Prefeitura Municipal de Lajes Pintadas informa que NÃO POSSUÍMOS ESTAGIÁRIOS em nosso quadro de colaboradores para o período selecionado (${mes ? mes + '/' : '01/06/'}${ano}).`
+                                    : `A Prefeitura Municipal de Lajes Pintadas informa que NÃO POSSUÍMOS ESTAGIÁRIOS em nosso quadro de colaboradores para o período selecionado até ${mes ? mes + '/' : '01/06/'}${ano}.`
                                 }
                             </p>
                         </div>
