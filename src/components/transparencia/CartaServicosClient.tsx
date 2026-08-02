@@ -130,24 +130,24 @@ export default function CartaServicosClient({ servicos }: { servicos: Servico[] 
                             <div className="flex flex-wrap gap-2 pt-6 border-t border-gray-50">
                                 <button 
                                     onClick={() => setSelectedServico(servico)}
-                                    className="flex-[2] bg-gray-900 text-white px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
+                                    className="flex-[2] bg-gray-900 text-white px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 transition-colors flex items-center justify-center gap-2 cursor-pointer"
                                 >
                                     Ver Detalhes <FaArrowRight />
                                 </button>
                                 {servico.linkAcesso && (
                                     <a 
                                         href={servico.linkAcesso}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
+                                        target={servico.linkAcesso.startsWith("http") ? "_blank" : "_self"}
+                                        rel={servico.linkAcesso.startsWith("http") ? "noopener noreferrer" : undefined}
                                         title="Acesso Direto ao Serviço"
-                                        className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center shadow-inner"
+                                        className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center shadow-inner cursor-pointer"
                                     >
                                         <FaExternalLinkAlt />
                                     </a>
                                 )}
                                 <button 
                                     onClick={() => { setSelectedServico(servico); setIsEvalModalOpen(true); }}
-                                    className="px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest bg-yellow-400 text-white hover:bg-yellow-500 transition-colors shadow-lg shadow-yellow-100 flex items-center gap-2"
+                                    className="px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest bg-yellow-400 text-white hover:bg-yellow-500 transition-colors shadow-lg shadow-yellow-100 flex items-center gap-2 cursor-pointer"
                                 >
                                     <FaStar /> Avaliar
                                 </button>
@@ -162,7 +162,7 @@ export default function CartaServicosClient({ servicos }: { servicos: Servico[] 
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" onClick={() => setSelectedServico(null)}></div>
                     <div className="relative bg-white w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-[3rem] shadow-2xl animate-in fade-in zoom-in duration-300">
-                        <button onClick={() => setSelectedServico(null)} className="fixed top-8 right-8 md:absolute md:top-10 md:right-10 w-12 h-12 bg-white rounded-2xl shadow-xl flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors z-10">
+                        <button onClick={() => setSelectedServico(null)} className="fixed top-8 right-8 md:absolute md:top-10 md:right-10 w-12 h-12 bg-white rounded-2xl shadow-xl flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors z-10 cursor-pointer">
                             <FaTimes size={20} />
                         </button>
 
@@ -197,9 +197,9 @@ export default function CartaServicosClient({ servicos }: { servicos: Servico[] 
                                         {selectedServico.linkAcesso && (
                                             <a 
                                                 href={selectedServico.linkAcesso} 
-                                                target="_blank" 
-                                                rel="noopener noreferrer"
-                                                className="mt-8 bg-blue-500 hover:bg-white hover:text-blue-900 text-white px-6 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-lg"
+                                                target={selectedServico.linkAcesso.startsWith("http") ? "_blank" : "_self"} 
+                                                rel={selectedServico.linkAcesso.startsWith("http") ? "noopener noreferrer" : undefined}
+                                                className="mt-8 bg-blue-500 hover:bg-white hover:text-blue-900 text-white px-6 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer"
                                             >
                                                 Acessar Serviço Agora <FaExternalLinkAlt />
                                             </a>

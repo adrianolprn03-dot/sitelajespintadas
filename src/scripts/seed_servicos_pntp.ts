@@ -13,7 +13,7 @@ const servicosObrigatorios = [
         prioridadesAtendimento: "Idosos, gestantes e pessoas com deficiência conforme Lei 10.048/2000.",
         previsaoEspera: "Até 30 dias (prorrogáveis por mais 30).",
         status: "ATIVO",
-        linkAcesso: "https://ouvidoria.lajespintadas.rn.gov.br",
+        linkAcesso: "/servicos/ouvidoria",
         local: "Prefeitura Municipal de Lajes Pintadas",
         prazo: "30 dias",
         documentos: "RG, CPF e comprovante de residência (se necessário)."
@@ -28,7 +28,7 @@ const servicosObrigatorios = [
         prioridadesAtendimento: "Ordem cronológica de solicitação.",
         previsaoEspera: "Até 20 dias (prorrogáveis por mais 10).",
         status: "ATIVO",
-        linkAcesso: "https://transparencia.lajespintadas.rn.gov.br/esic",
+        linkAcesso: "/servicos/esic",
         local: "Setor de Protocolo / Online",
         prazo: "20 dias",
         documentos: "Formulário preenchido e identificação básica."
@@ -43,7 +43,7 @@ const servicosObrigatorios = [
         prioridadesAtendimento: "Padrão Legal (Preferencial).",
         previsaoEspera: "Imediato (Online) ou 15 min (Presencial).",
         status: "ATIVO",
-        linkAcesso: "https://lajespintadas.rn.gov.br/portal-contribuinte",
+        linkAcesso: "https://lajespintadas.hm2solucoes.com.br/portal/open.do?sys=PDC",
         local: "Setor de Tributos",
         prazo: "Imediato",
         documentos: "Inscrição do Imóvel."
@@ -58,7 +58,7 @@ const servicosObrigatorios = [
         prioridadesAtendimento: "Acesso Universal.",
         previsaoEspera: "Disponível 24h.",
         status: "ATIVO",
-        linkAcesso: "https://transparencia.lajespintadas.rn.gov.br",
+        linkAcesso: "/transparencia",
         local: "Online (transparencia.lajespintadas.rn.gov.br)",
         prazo: "Tempo Real / Mensal",
         documentos: "Nenhum documento exigido."
@@ -73,7 +73,7 @@ const servicosObrigatorios = [
         prioridadesAtendimento: "Acesso Digital.",
         previsaoEspera: "Imediato.",
         status: "ATIVO",
-        linkAcesso: "https://lajespintadas.rn.gov.br/portal-servidor",
+        linkAcesso: "https://app.topsolutionsrn.com.br/ContraCheque/pmlajespintadas/",
         local: "Secretaria de Administração / Online",
         prazo: "Imediato",
         documentos: "CPF e Senha."
@@ -88,6 +88,7 @@ const servicosObrigatorios = [
         prioridadesAtendimento: "Acesso Digital / Prioridade Legal para Idosos.",
         previsaoEspera: "Imediato para consultas.",
         status: "ATIVO",
+        linkAcesso: "https://lajespintadas.hm2solucoes.com.br/portal/open.do?sys=PDC",
         local: "Setor de Tributos",
         prazo: "Imediato",
         documentos: "Documentos de identificação e dados do imóvel/empresa."
@@ -98,14 +99,14 @@ const servicosObrigatorios = [
         descricao: "Consulta pública à legislação municipal, incluindo Leis Orgânicas, Decretos, Portarias e Instruções Normativas.",
         requisitos: "Nenhum requisito para consulta básica.",
         etapas: "1. Acesso ao repositório de leis;\n2. Busca por termo ou número;\n3. Visualização do documento.",
-        formasAcesso: "Portal da Transparência / Aba Legislação.",
-        prioridadesAtendimento: "Acesso Público e Universal.",
-        previsaoEspera: "Imediato.",
+        formasAcesso: "Website Oficial.",
+        prioridadesAtendimento: "Acesso Digital.",
+        previsaoEspera: "Disponível 24h.",
         status: "ATIVO",
-        linkAcesso: "https://transparencia.lajespintadas.rn.gov.br/legislacao",
-        local: "Prefeitura Online",
+        linkAcesso: "/transparencia/legislacao",
+        local: "Online",
         prazo: "Imediato",
-        documentos: "Nenhum."
+        documentos: "Nenhum documento exigido."
     },
     {
         nome: "Protocolo Geral",
