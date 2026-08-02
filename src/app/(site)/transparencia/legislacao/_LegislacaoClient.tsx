@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { 
     FaFilePdf, FaMagnifyingGlass, FaCalendarDays, FaDownload, 
     FaEye, FaXmark, FaGavel, FaFileSignature, FaScroll, FaFileLines, FaScaleBalanced,
-    FaFileExcel, FaFileCsv
+    FaFileExcel, FaFileCsv, FaArrowDownShortWide, FaArrowUpWideShort
 } from "react-icons/fa6";
 import { FaRegFileLines } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
@@ -24,7 +24,9 @@ type Legislacao = {
 };
 
 const parseNumero = (numStr: string): number => {
-    const match = numStr ? numStr.match(/(\d+)/) : null;
+    if (!numStr) return 0;
+    // Captura o primeiro número principal na string do número do ato (ex: "542/2024" -> 542, "Nº 012" -> 12, "001" -> 1)
+    const match = numStr.match(/(\d+)/);
     return match ? parseInt(match[1], 10) : 0;
 };
 
@@ -43,16 +45,16 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
     const [tipoFiltro, setTipoFiltro] = useState(initialTipo || "TODOS");
     const [anoFiltro, setAnoFiltro] = useState<number | null>(null);
     const [buscaFiltro, setBuscaFiltro] = useState("");
+    const [ordemNumero, setOrdemNumero] = useState<"desc" | "asc">("desc");
     const [pdfViewer, setPdfViewer] = useState<{ url: string; titulo: string } | null>(null);
 
     const fetchLeis = async () => {
         setLoading(true);
         try {
             const query = new URLSearchParams({ 
-                limit: "1000" // Buscamos um lote maior para filtrar no cliente ou exibir agrupado
+                limit: "1000"
             });
             if (tipoFiltro && tipoFiltro !== "TODOS") query.append("tipo", tipoFiltro);
-            // Omitimos ano e busca da query para ter todos os anos disponíveis no filtro
             
             const res = await fetch(`/api/legislacao?${query.toString()}`);
             if (res.ok) {
@@ -84,6 +86,7 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
         setBuscaFiltro("");
         setAnoFiltro(null);
         setTipoFiltro(initialTipo || "TODOS");
+        setOrdemNumero("desc");
     };
 
     const handleExport = (format: "pdf" | "csv" | "json" | "xlsx") => {
@@ -104,26 +107,25 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
         else exportToPDF(payload, filename, title);
     };
 
-    const hasActiveFilters = buscaFiltro || anoFiltro || (tipoFiltro !== "TODOS" && !hideTipoFilter);
-
-    // Estatísticas para Bento Cards
     const stats = {
         total: filtered.length,
-        anoAtual: filtered.filter(l => l.ano === new Date().getFullYear()).length,
-        comArquivo: filtered.filter(l => l.arquivo).length
+        esteAno: leis.filter(l => l.ano === new Date().getFullYear()).length,
+        comArquivo: filtered.filter(l => !!l.arquivo).length,
     };
 
+    const hasActiveFilters = buscaFiltro || anoFiltro || (tipoFiltro !== "TODOS" && !hideTipoFilter);
+
     return (
-        <div className="w-full px-4 md:px-10 lg:px-20 py-10 font-['Montserrat',sans-serif]">
+        <div className="max-w-[1240px] mx-auto px-4 md:px-6 pt-6 pb-20 font-['Montserrat',sans-serif]">
             
             {/* Bento Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
                 <div className="bg-white p-8 rounded-[2.5rem] shadow-xl shadow-blue-500/5 border border-slate-100 flex items-center gap-6 transition-all hover:scale-[1.02]">
                     <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center shadow-inner">
-                        <FaScroll size={24} />
+                        <FaScaleBalanced size={24} />
                     </div>
                     <div>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Total de Atos</p>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Total de Atos Registrados</p>
                         <p className="text-3xl font-black text-slate-900 tracking-tighter">{stats.total}</p>
                     </div>
                 </div>
@@ -134,7 +136,7 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                     </div>
                     <div>
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Publicados em {new Date().getFullYear()}</p>
-                        <p className="text-3xl font-black text-emerald-600 tracking-tighter">{stats.anoAtual}</p>
+                        <p className="text-3xl font-black text-emerald-600 tracking-tighter">{stats.esteAno}</p>
                     </div>
                 </div>
 
@@ -155,7 +157,7 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                 {/* Abas de Tipo (se não estiver escondido) */}
                 {!hideTipoFilter && (
                     <div className="px-5 pt-5 pb-0">
-                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2.5 block">Tipo de Ato</label>
+                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2.5 block">Tipo de Ato Legislação</label>
                         <div className="flex flex-wrap gap-2">
                             {[
                                 { id: "TODOS", label: "Todos" },
@@ -168,7 +170,7 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                                 <button
                                     key={tab.id}
                                     onClick={() => setTipoFiltro(tab.id)}
-                                    className={`px-5 py-2.5 rounded-lg text-xs font-bold transition-all ${
+                                    className={`px-5 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                                         tipoFiltro === tab.id
                                         ? "bg-primary-600 text-white shadow-md shadow-primary-600/20"
                                         : "bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-700"
@@ -181,7 +183,7 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                     </div>
                 )}
 
-                {/* Busca + Ano + Exportação */}
+                {/* Busca + Ano + Alternar Ordem + Exportação */}
                 <div className="p-5 flex flex-col md:flex-row gap-3 items-stretch md:items-center">
                     <div className="relative flex-1">
                         <FaMagnifyingGlass className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-300" size={13} />
@@ -194,7 +196,7 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                         />
                     </div>
 
-                    <div className="relative w-full md:w-52">
+                    <div className="relative w-full md:w-48">
                         <FaCalendarDays className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none" size={13} />
                         <select
                             value={anoFiltro ?? ""}
@@ -213,6 +215,25 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                         </div>
                     </div>
 
+                    {/* Botão de Alternar Ordem Numérica (Maior -> Menor vs Menor -> Maior) */}
+                    <button
+                        onClick={() => setOrdemNumero(prev => prev === "desc" ? "asc" : "desc")}
+                        title="Alternar ordem de exibição pelo número do ato"
+                        className="flex items-center justify-center gap-2 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:border-slate-300 transition-all cursor-pointer shadow-sm"
+                    >
+                        {ordemNumero === "desc" ? (
+                            <>
+                                <FaArrowDownShortWide className="text-primary-600" size={14} />
+                                <span>Nº Maior para o Menor</span>
+                            </>
+                        ) : (
+                            <>
+                                <FaArrowUpWideShort className="text-primary-600" size={14} />
+                                <span>Nº Menor para o Maior</span>
+                            </>
+                        )}
+                    </button>
+
                     <div className="hidden md:block w-px h-8 bg-slate-200" />
 
                     <div className="flex items-center gap-1.5">
@@ -226,7 +247,7 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                                 key={tool.id}
                                 onClick={() => handleExport(tool.id)}
                                 title={`Exportar como ${tool.label}`}
-                                className={`p-2.5 rounded-lg transition-all ${tool.color} border border-transparent hover:border-current/10`}
+                                className={`p-2.5 rounded-lg transition-all ${tool.color} border border-transparent hover:border-current/10 cursor-pointer`}
                             >
                                 {tool.icon}
                             </button>
@@ -258,7 +279,7 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                         )}
                         <button
                             onClick={handleClearFilters}
-                            className="text-[10px] font-bold text-slate-400 hover:text-red-500 uppercase transition-colors ml-1"
+                            className="text-[10px] font-bold text-slate-400 hover:text-red-500 uppercase transition-colors ml-1 cursor-pointer"
                         >
                             Limpar tudo
                         </button>
@@ -266,12 +287,12 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                 )}
             </div>
 
-            {/* ═══════ LISTAGEM ═══════ */}
+            {/* ═══════ LISTAGEM ESTRUTURADA ═══════ */}
             <div className="space-y-12 min-h-[400px]">
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-40">
                         <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin mb-4" />
-                        <p className="text-sm text-slate-400 font-medium tracking-widest uppercase text-[10px] font-black">Sincronizando base de dados...</p>
+                        <p className="text-sm text-slate-400 font-medium tracking-widest uppercase text-[10px] font-black">Carregando legislação...</p>
                     </div>
                 ) : anosDisponiveis.length === 0 ? (
                     <div className="text-center py-20 bg-white rounded-2xl border-2 border-dashed border-slate-200">
@@ -286,27 +307,31 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                 ) : (
                     <AnimatePresence mode="popLayout">
                         {anosDisponiveis.map(ano => {
-                            // Ordenar itens do ano das informações mais recentes para as mais antigas
+                            // Ordenação estrita pelo NÚMERO DO ATO (Maior para o Menor por padrão)
                             const itensDoAno = filtered
                                 .filter(l => l.ano === ano)
                                 .sort((a, b) => {
-                                    // 1. Data de publicação/criação mais recente primeiro
+                                    const numA = parseNumero(a.numero);
+                                    const numB = parseNumero(b.numero);
+
+                                    // 1. Número principal do ato (ex: Nº 542 antes de Nº 12)
+                                    if (numA !== numB) {
+                                        return ordemNumero === "desc" ? numB - numA : numA - numB;
+                                    }
+
+                                    // 2. Data de publicação/criação mais recente
                                     const timeA = new Date(a.criadoEm).getTime();
                                     const timeB = new Date(b.criadoEm).getTime();
                                     if (timeA !== timeB && !isNaN(timeA) && !isNaN(timeB)) {
                                         return timeB - timeA;
                                     }
 
-                                    // 2. Número mais alto primeiro (ex: Nº 500/2026 antes do Nº 01/2026)
-                                    const numA = parseNumero(a.numero);
-                                    const numB = parseNumero(b.numero);
-                                    if (numA !== numB) {
-                                        return numB - numA;
-                                    }
-
-                                    // 3. Fallback: Ordem alfabética/numérica reversa
-                                    return b.numero.localeCompare(a.numero, undefined, { numeric: true, sensitivity: 'base' });
+                                    // 3. Fallback alfabético/numérico de string
+                                    return ordemNumero === "desc" 
+                                        ? b.numero.localeCompare(a.numero, undefined, { numeric: true, sensitivity: 'base' })
+                                        : a.numero.localeCompare(b.numero, undefined, { numeric: true, sensitivity: 'base' });
                                 });
+
                             return (
                                 <motion.div
                                     key={ano}
@@ -320,26 +345,25 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                                             <div className="w-10 h-10 bg-primary-600 text-white rounded-xl flex items-center justify-center font-black text-sm shadow-lg shadow-primary-600/20">
                                                 <FaCalendarDays size={14} />
                                             </div>
-                                            <h3 className="text-2xl font-black text-slate-800">{ano}</h3>
+                                            <h3 className="text-2xl font-black text-slate-800">Exercício {ano}</h3>
                                         </div>
                                         <div className="flex-1 h-px bg-slate-200" />
                                         <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-3 py-1.5 rounded-lg uppercase tracking-wider">
-                                            {itensDoAno.length} {itensDoAno.length === 1 ? "Ato" : "Atos"}
+                                            {itensDoAno.length} {itensDoAno.length === 1 ? "Ato" : "Atos"} (Nº {ordemNumero === "desc" ? "Maior ao Menor" : "Menor ao Maior"})
                                         </span>
                                     </div>
 
-                                    {/* Grid de Atos */}
+                                    {/* Grid de Atos em Ordem Numérica Decrescente */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                                         {itensDoAno.map((l, idx) => {
                                             const info = tipoInfo[l.tipo] || { label: l.tipo, icon: FaFileLines };
-                                            const Icon = info.icon;
                                             return (
                                                 <motion.div
                                                     key={l.id}
                                                     initial={{ opacity: 0, y: 16 }}
                                                     animate={{ opacity: 1, y: 0 }}
-                                                    transition={{ delay: idx * 0.04 }}
-                                                    className="group bg-white rounded-xl border border-slate-200/80 hover:border-primary-300 shadow-sm hover:shadow-lg hover:shadow-primary-500/5 transition-all duration-300 flex flex-col"
+                                                    transition={{ delay: idx * 0.03 }}
+                                                    className="group bg-white rounded-2xl border border-slate-200 hover:border-primary-400 shadow-sm hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300 flex flex-col justify-between overflow-hidden"
                                                 >
                                                     {/* Card body */}
                                                     <div className="p-6 flex-1">
@@ -370,7 +394,7 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                                                     </div>
 
                                                     {/* Card footer com ações */}
-                                                    <div className="px-5 py-3 border-t border-slate-100 flex items-center gap-2">
+                                                    <div className="px-5 py-3.5 bg-slate-50/80 border-t border-slate-100 flex items-center gap-2">
                                                         {l.arquivo ? (
                                                             <>
                                                                 <button
@@ -378,7 +402,7 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                                                                         const exibirNumero = l.numero.endsWith(`/${l.ano}`) ? l.numero : `${l.numero}/${l.ano}`;
                                                                         setPdfViewer({ url: l.arquivo!, titulo: `${info.label} Nº ${exibirNumero}` });
                                                                     }}
-                                                                    className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-primary-50 text-primary-700 rounded-lg text-xs font-bold hover:bg-primary-600 hover:text-white transition-all duration-200"
+                                                                    className="flex-1 flex items-center justify-center gap-2 py-2 bg-white text-primary-700 border border-primary-200 rounded-xl text-xs font-bold hover:bg-primary-600 hover:text-white hover:border-primary-600 transition-all duration-200 shadow-sm cursor-pointer"
                                                                 >
                                                                     <FaEye size={12} />
                                                                     Visualizar
@@ -387,14 +411,14 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                                                                     href={l.arquivo}
                                                                     target="_blank"
                                                                     rel="noopener noreferrer"
-                                                                    className="flex items-center justify-center gap-2 py-2.5 px-4 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold hover:bg-slate-700 hover:text-white transition-all duration-200"
+                                                                    className="flex items-center justify-center gap-2 py-2 px-3.5 bg-slate-200/80 text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-800 hover:text-white transition-all duration-200 cursor-pointer"
                                                                 >
                                                                     <FaDownload size={11} />
                                                                     Baixar
                                                                 </a>
                                                             </>
                                                         ) : (
-                                                            <div className="w-full py-2.5 bg-slate-50 text-slate-400 rounded-lg text-xs font-bold text-center border border-dashed border-slate-200">
+                                                            <div className="w-full py-2 bg-slate-100 text-slate-400 rounded-xl text-xs font-bold text-center border border-dashed border-slate-200">
                                                                 Arquivo Indisponível
                                                             </div>
                                                         )}
@@ -427,4 +451,3 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
         </div>
     );
 }
-
