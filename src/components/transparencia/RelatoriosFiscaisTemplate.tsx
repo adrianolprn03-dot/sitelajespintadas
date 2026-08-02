@@ -43,27 +43,65 @@ const getTipoPriority = (tipo: string): number => {
     return 6;
 };
 
-// Peso cronológico do período (1º Bimestre -> 6º Bimestre, 1º Quadrimestre -> 3º Quadrimestre)
+// Extrator rigoroso da posição ordinal do período (1º ao 6º Bimestre, 1º ao 3º Quadrimestre)
 const getPeriodoWeight = (periodoStr: string, tituloStr: string): number => {
-    const text = `${periodoStr || ""} ${tituloStr || ""}`.toLowerCase();
+    const pStr = (periodoStr || "").toLowerCase();
+    const tStr = (tituloStr || "").toLowerCase();
 
-    if (text.includes("1º bim") || text.includes("1.º bim") || text.includes("1o bim") || text.includes("1 bimestre") || text.includes("jan-fev") || text.includes("janeiro/fevereiro") || text.includes("janeiro a fevereiro")) return 1.0;
-    if (text.includes("2º bim") || text.includes("2.º bim") || text.includes("2o bim") || text.includes("2 bimestre") || text.includes("mar-abr") || text.includes("março/abril") || text.includes("março a abril")) return 2.0;
-    if (text.includes("3º bim") || text.includes("3.º bim") || text.includes("3o bim") || text.includes("3 bimestre") || text.includes("mai-jun") || text.includes("maio/junho") || text.includes("maio a junho")) return 3.0;
-    if (text.includes("4º bim") || text.includes("4.º bim") || text.includes("4o bim") || text.includes("4 bimestre") || text.includes("jul-ago") || text.includes("julho/agosto") || text.includes("julho a agosto")) return 4.0;
-    if (text.includes("5º bim") || text.includes("5.º bim") || text.includes("5o bim") || text.includes("5 bimestre") || text.includes("set-out") || text.includes("setembro/outubro") || text.includes("setembro a outubro")) return 5.0;
-    if (text.includes("6º bim") || text.includes("6.º bim") || text.includes("6o bim") || text.includes("6 bimestre") || text.includes("nov-dez") || text.includes("novembro/dezembro") || text.includes("novembro a dezembro")) return 6.0;
+    // 1. Verificar menção explícita no título primeiro (ex: "RREO 1º BI", "RREO 2º BI", "RREO 3º BI", "4º BI", "5º BI", "6º BI")
+    for (let i = 1; i <= 6; i++) {
+        if (
+            tStr.includes(`${i}º bi`) || 
+            tStr.includes(`${i}.º bi`) || 
+            tStr.includes(`${i}o bi`) || 
+            tStr.includes(`${i}º bim`) || 
+            tStr.includes(`${i} bimestre`)
+        ) {
+            return i * 1.0;
+        }
+    }
 
-    if (text.includes("1º quad") || text.includes("1.º quad") || text.includes("1o quad") || text.includes("1º quadrimestre") || text.includes("1º sem")) return 1.5;
-    if (text.includes("2º quad") || text.includes("2.º quad") || text.includes("2o quad") || text.includes("2º quadrimestre") || text.includes("2º sem")) return 2.5;
-    if (text.includes("3º quad") || text.includes("3.º quad") || text.includes("3o quad") || text.includes("3º quadrimestre")) return 3.5;
+    // 2. Verificar menção explícita no período em seguida
+    for (let i = 1; i <= 6; i++) {
+        if (
+            pStr.includes(`${i}º bi`) || 
+            pStr.includes(`${i}.º bi`) || 
+            pStr.includes(`${i}o bi`) || 
+            pStr.includes(`${i}º bim`) || 
+            pStr.includes(`${i} bimestre`)
+        ) {
+            return i * 1.0;
+        }
+    }
 
-    const match = text.match(/(\d+)\s*º?\s*(bimestre|quadrimestre|semestre)/);
+    // 3. Quadrimestres (1º, 2º e 3º Quadrimestre / Semestre)
+    for (let i = 1; i <= 3; i++) {
+        if (
+            tStr.includes(`${i}º quad`) || 
+            tStr.includes(`${i}º sem`) || 
+            pStr.includes(`${i}º quad`) || 
+            pStr.includes(`${i}º sem`) ||
+            tStr.includes(`${i} quadrimestre`) ||
+            pStr.includes(`${i} quadrimestre`)
+        ) {
+            return i + 0.5;
+        }
+    }
+
+    // 4. Referências aos meses do bimestre
+    if (tStr.includes("jan") || pStr.includes("jan")) return 1.0;
+    if (tStr.includes("mar") || pStr.includes("mar")) return 2.0;
+    if (tStr.includes("mai") || pStr.includes("mai")) return 3.0;
+    if (tStr.includes("jul") || pStr.includes("jul")) return 4.0;
+    if (tStr.includes("set") || pStr.includes("set")) return 5.0;
+    if (tStr.includes("nov") || pStr.includes("nov")) return 6.0;
+
+    const match = `${pStr} ${tStr}`.match(/(\d+)\s*º?\s*(bimestre|quadrimestre|semestre)/);
     if (match) return parseFloat(match[1]);
 
-    if (text.includes("anual") || text.includes("consolidado")) return 10;
+    if (tStr.includes("anual") || pStr.includes("anual") || tStr.includes("balanço") || pStr.includes("balanço")) return 10.0;
 
-    return 99;
+    return 99.0;
 };
 
 // Metadados visuais de cada categoria de relatório
@@ -162,7 +200,20 @@ export default function RelatoriosFiscaisTemplate({ title, subtitle, tipo, icon,
                     combinedRecords = [...combinedRecords, ...mappedDocs];
                 }
 
-                setRelatorios(combinedRecords);
+                // Deduplicação inteligente de registros por id e por título/arquivo
+                const seen = new Set<string>();
+                const uniqueRecords: RelatorioFiscal[] = [];
+                for (const r of combinedRecords) {
+                    const key = r.id || `${r.ano}-${r.tipo}-${r.titulo}`.toLowerCase().trim();
+                    const urlKey = r.arquivo ? r.arquivo.toLowerCase().trim() : "";
+                    if (!seen.has(key) && (!urlKey || !seen.has(urlKey))) {
+                        seen.add(key);
+                        if (urlKey) seen.add(urlKey);
+                        uniqueRecords.push(r);
+                    }
+                }
+
+                setRelatorios(uniqueRecords);
             } catch (error) {
                 console.error("Erro ao buscar relatórios:", error);
             } finally {
@@ -325,7 +376,7 @@ export default function RelatoriosFiscaisTemplate({ title, subtitle, tipo, icon,
                             <ChevronDown />
                         </div>
 
-                        {/* Alternar Ordem dos Períodos */}
+                        {/* Alternar Ordem dos Períodos (123 vs 654) */}
                         <button
                             onClick={() => setOrdemPeriodo(prev => prev === "asc" ? "desc" : "asc")}
                             title="Alternar ordem de exibição dos períodos (1º ao 6º ou 6º ao 1º)"
@@ -334,12 +385,12 @@ export default function RelatoriosFiscaisTemplate({ title, subtitle, tipo, icon,
                             {ordemPeriodo === "asc" ? (
                                 <>
                                     <FaArrowDownShortWide className="text-primary-600" size={14} />
-                                    <span>1º ao 6º Bimestre</span>
+                                    <span>Ordem: 1º ao 6º Bimestre</span>
                                 </>
                             ) : (
                                 <>
                                     <FaArrowUpWideShort className="text-primary-600" size={14} />
-                                    <span>6º ao 1º Bimestre</span>
+                                    <span>Ordem: 6º ao 1º Bimestre</span>
                                 </>
                             )}
                         </button>
@@ -402,11 +453,11 @@ export default function RelatoriosFiscaisTemplate({ title, subtitle, tipo, icon,
                 {/* ═══════ CONTADOR ═══════ */}
                 <div className="flex items-center justify-between mb-6">
                     <p className="text-sm text-slate-500">
-                        <span className="font-bold text-slate-800">{filtered.length}</span> documento{filtered.length !== 1 ? "s" : ""} organizado{filtered.length !== 1 ? "s" : ""} por exercício e período fiscal
+                        <span className="font-bold text-slate-800">{filtered.length}</span> documento{filtered.length !== 1 ? "s" : ""} organizado{filtered.length !== 1 ? "s" : ""} em sequência cronológica (1º ao 6º Bimestre / 1º ao 3º Quadrimestre)
                     </p>
                 </div>
 
-                {/* ═══════ LISTAGEM ESTRUTURADA ═══════ */}
+                {/* ═══════ LISTAGEM ESTRUTURADA (123 456) ═══════ */}
                 <div className="space-y-12">
                     {loading ? (
                         <div className="flex flex-col items-center justify-center py-20">
@@ -470,6 +521,8 @@ export default function RelatoriosFiscaisTemplate({ title, subtitle, tipo, icon,
                                         <div className="space-y-8">
                                             {tiposDoAno.map(tipoKey => {
                                                 const meta = getTipoMeta(tipoKey);
+
+                                                // Ordenar itens dentro da categoria de forma estrita: 1º, 2º, 3º, 4º, 5º, 6º Bimestre
                                                 const itensDoTipo = relatoriosDoAno
                                                     .filter(r => r.tipo === tipoKey)
                                                     .sort((a, b) => {
@@ -498,7 +551,7 @@ export default function RelatoriosFiscaisTemplate({ title, subtitle, tipo, icon,
                                                             </span>
                                                         </div>
 
-                                                        {/* Grid de Cards Ordenados */}
+                                                        {/* Grid de Cards Ordenados estritamente 1 -> 6 */}
                                                         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                                                             {itensDoTipo.map((r, idx) => (
                                                                 <motion.div
