@@ -1,7 +1,12 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { FaFilePdf, FaMagnifyingGlass, FaCalendarDays, FaChartLine, FaDownload, FaFileExcel, FaFileCsv, FaXmark, FaEye } from "react-icons/fa6";
+import { 
+    FaFilePdf, FaMagnifyingGlass, FaCalendarDays, FaChartLine, 
+    FaDownload, FaFileExcel, FaFileCsv, FaXmark, FaEye, 
+    FaArrowDownShortWide, FaArrowUpWideShort, FaFileSignature, 
+    FaBuildingColumns 
+} from "react-icons/fa6";
 import PageHeader from "@/components/PageHeader";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
 import { motion, AnimatePresence } from "framer-motion";
@@ -27,12 +32,82 @@ interface Props {
     showTabs?: string[];
 }
 
+// Prioridade dos tipos principais na LRF
+const getTipoPriority = (tipo: string): number => {
+    const t = (tipo || "").toUpperCase();
+    if (t === "RREO") return 1;
+    if (t === "RGF") return 2;
+    if (t === "LOA") return 3;
+    if (t === "LDO") return 4;
+    if (t === "PPA") return 5;
+    return 6;
+};
+
+// Peso cronológico do período (1º Bimestre -> 6º Bimestre, 1º Quadrimestre -> 3º Quadrimestre)
+const getPeriodoWeight = (periodoStr: string, tituloStr: string): number => {
+    const text = `${periodoStr || ""} ${tituloStr || ""}`.toLowerCase();
+
+    if (text.includes("1º bim") || text.includes("1.º bim") || text.includes("1o bim") || text.includes("1 bimestre") || text.includes("jan-fev") || text.includes("janeiro/fevereiro") || text.includes("janeiro a fevereiro")) return 1.0;
+    if (text.includes("2º bim") || text.includes("2.º bim") || text.includes("2o bim") || text.includes("2 bimestre") || text.includes("mar-abr") || text.includes("março/abril") || text.includes("março a abril")) return 2.0;
+    if (text.includes("3º bim") || text.includes("3.º bim") || text.includes("3o bim") || text.includes("3 bimestre") || text.includes("mai-jun") || text.includes("maio/junho") || text.includes("maio a junho")) return 3.0;
+    if (text.includes("4º bim") || text.includes("4.º bim") || text.includes("4o bim") || text.includes("4 bimestre") || text.includes("jul-ago") || text.includes("julho/agosto") || text.includes("julho a agosto")) return 4.0;
+    if (text.includes("5º bim") || text.includes("5.º bim") || text.includes("5o bim") || text.includes("5 bimestre") || text.includes("set-out") || text.includes("setembro/outubro") || text.includes("setembro a outubro")) return 5.0;
+    if (text.includes("6º bim") || text.includes("6.º bim") || text.includes("6o bim") || text.includes("6 bimestre") || text.includes("nov-dez") || text.includes("novembro/dezembro") || text.includes("novembro a dezembro")) return 6.0;
+
+    if (text.includes("1º quad") || text.includes("1.º quad") || text.includes("1o quad") || text.includes("1º quadrimestre") || text.includes("1º sem")) return 1.5;
+    if (text.includes("2º quad") || text.includes("2.º quad") || text.includes("2o quad") || text.includes("2º quadrimestre") || text.includes("2º sem")) return 2.5;
+    if (text.includes("3º quad") || text.includes("3.º quad") || text.includes("3o quad") || text.includes("3º quadrimestre")) return 3.5;
+
+    const match = text.match(/(\d+)\s*º?\s*(bimestre|quadrimestre|semestre)/);
+    if (match) return parseFloat(match[1]);
+
+    if (text.includes("anual") || text.includes("consolidado")) return 10;
+
+    return 99;
+};
+
+// Metadados visuais de cada categoria de relatório
+const getTipoMeta = (tipo: string) => {
+    const t = (tipo || "").toUpperCase();
+    if (t === "RREO") {
+        return {
+            title: "RREO - Relatórios Resumidos da Execução Orçamentária",
+            subtitle: "Publicações Bimestrais (1º ao 6º Bimestre)",
+            badgeStyle: "bg-indigo-50 text-indigo-700 border-indigo-200",
+            icon: <FaChartLine className="text-indigo-600" size={16} />
+        };
+    }
+    if (t === "RGF") {
+        return {
+            title: "RGF - Relatórios de Gestão Fiscal",
+            subtitle: "Publicações Quadrimestrais e Semestrais (1º ao 3º Quadrimestre)",
+            badgeStyle: "bg-emerald-50 text-emerald-700 border-emerald-200",
+            icon: <FaFileSignature className="text-emerald-600" size={16} />
+        };
+    }
+    if (["LOA", "LDO", "PPA"].includes(t)) {
+        return {
+            title: `Instrumento de Planejamento (${t})`,
+            subtitle: "Leis e Diretrizes Orçamentárias",
+            badgeStyle: "bg-purple-50 text-purple-700 border-purple-200",
+            icon: <FaBuildingColumns className="text-purple-600" size={16} />
+        };
+    }
+    return {
+        title: tipo || "Documentos Fiscais",
+        subtitle: "Relatórios e Documentações Oficiais",
+        badgeStyle: "bg-slate-100 text-slate-700 border-slate-200",
+        icon: <FaFilePdf className="text-slate-600" size={16} />
+    };
+};
+
 export default function RelatoriosFiscaisTemplate({ title, subtitle, tipo, icon, breadcrumbLabel, showTabs }: Props) {
     const [relatorios, setRelatorios] = useState<RelatorioFiscal[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
     const [tabAtiva, setTabAtiva] = useState(showTabs ? "TODOS" : tipo);
     const [anoFiltro, setAnoFiltro] = useState<number | null>(null);
+    const [ordemPeriodo, setOrdemPeriodo] = useState<"asc" | "desc">("asc");
     const [pdfViewer, setPdfViewer] = useState<{ url: string; titulo: string } | null>(null);
 
     useEffect(() => {
@@ -194,7 +269,7 @@ export default function RelatoriosFiscaisTemplate({ title, subtitle, tipo, icon,
                     </div>
                 </div>
 
-                {/* ═══════ FILTROS ═══════ */}
+                {/* ═══════ FILTROS E CONTROLES ═══════ */}
                 <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm mb-8">
                     
                     {/* Categoria / Abas (se houver) */}
@@ -219,7 +294,7 @@ export default function RelatoriosFiscaisTemplate({ title, subtitle, tipo, icon,
                         </div>
                     )}
 
-                    {/* Barra de busca + Ano + Exportação */}
+                    {/* Barra de busca + Ano + Ordem + Exportação */}
                     <div className="p-5 flex flex-col md:flex-row gap-3 items-stretch md:items-center">
                         
                         {/* Busca */}
@@ -235,7 +310,7 @@ export default function RelatoriosFiscaisTemplate({ title, subtitle, tipo, icon,
                         </div>
 
                         {/* Filtro de Ano */}
-                        <div className="relative w-full md:w-52">
+                        <div className="relative w-full md:w-48">
                             <FaCalendarDays className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none" size={13} />
                             <select
                                 value={anoFiltro ?? ""}
@@ -250,11 +325,30 @@ export default function RelatoriosFiscaisTemplate({ title, subtitle, tipo, icon,
                             <ChevronDown />
                         </div>
 
+                        {/* Alternar Ordem dos Períodos */}
+                        <button
+                            onClick={() => setOrdemPeriodo(prev => prev === "asc" ? "desc" : "asc")}
+                            title="Alternar ordem de exibição dos períodos (1º ao 6º ou 6º ao 1º)"
+                            className="flex items-center justify-center gap-2 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:border-slate-300 transition-all cursor-pointer shadow-sm"
+                        >
+                            {ordemPeriodo === "asc" ? (
+                                <>
+                                    <FaArrowDownShortWide className="text-primary-600" size={14} />
+                                    <span>1º ao 6º Bimestre</span>
+                                </>
+                            ) : (
+                                <>
+                                    <FaArrowUpWideShort className="text-primary-600" size={14} />
+                                    <span>6º ao 1º Bimestre</span>
+                                </>
+                            )}
+                        </button>
+
                         {/* Separador vertical */}
                         <div className="hidden md:block w-px h-8 bg-slate-200" />
 
                         {/* Exportar */}
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-1.5 justify-end">
                             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mr-1 hidden lg:block">Exportar:</span>
                             {[
                                 { id: 'pdf' as const, icon: <FaFilePdf size={13} />, label: 'PDF', color: 'text-red-500 hover:bg-red-50' },
@@ -275,8 +369,8 @@ export default function RelatoriosFiscaisTemplate({ title, subtitle, tipo, icon,
 
                     {/* Resumo dos filtros ativos */}
                     {hasActiveFilters && (
-                        <div className="px-5 pb-4 flex items-center gap-2 flex-wrap">
-                            <span className="text-[10px] font-bold text-slate-400 uppercase">Filtros:</span>
+                        <div className="px-5 pb-4 flex items-center gap-2 flex-wrap border-t border-slate-100 pt-3">
+                            <span className="text-[10px] font-bold text-slate-400 uppercase">Filtros Ativos:</span>
                             {showTabs && tabAtiva !== "TODOS" && (
                                 <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-primary-50 text-primary-700 rounded-md text-[11px] font-semibold border border-primary-100">
                                     {tabAtiva}
@@ -308,16 +402,16 @@ export default function RelatoriosFiscaisTemplate({ title, subtitle, tipo, icon,
                 {/* ═══════ CONTADOR ═══════ */}
                 <div className="flex items-center justify-between mb-6">
                     <p className="text-sm text-slate-500">
-                        <span className="font-bold text-slate-800">{filtered.length}</span> documento{filtered.length !== 1 ? "s" : ""} encontrado{filtered.length !== 1 ? "s" : ""}
+                        <span className="font-bold text-slate-800">{filtered.length}</span> documento{filtered.length !== 1 ? "s" : ""} organizado{filtered.length !== 1 ? "s" : ""} por exercício e período fiscal
                     </p>
                 </div>
 
-                {/* ═══════ LISTAGEM ═══════ */}
+                {/* ═══════ LISTAGEM ESTRUTURADA ═══════ */}
                 <div className="space-y-12">
                     {loading ? (
                         <div className="flex flex-col items-center justify-center py-20">
                             <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin mb-4" />
-                            <p className="text-sm text-slate-400 font-medium">Carregando documentos...</p>
+                            <p className="text-sm text-slate-400 font-medium">Carregando relatórios fiscais...</p>
                         </div>
                     ) : anosDisponiveis.length === 0 ? (
                         <div className="text-center py-20 bg-white rounded-2xl border-2 border-dashed border-slate-200">
@@ -341,80 +435,128 @@ export default function RelatoriosFiscaisTemplate({ title, subtitle, tipo, icon,
                         <AnimatePresence mode="popLayout">
                             {anosDisponiveis.map(ano => {
                                 const relatoriosDoAno = filtered.filter(r => r.ano === ano);
+
+                                // Identificar os tipos presentes no ano e ordenar pela hierarquia oficial da LRF
+                                const tiposDoAno = Array.from(new Set(relatoriosDoAno.map(r => r.tipo))).sort(
+                                    (a, b) => getTipoPriority(a) - getTipoPriority(b)
+                                );
+
                                 return (
                                     <motion.div
                                         key={ano}
                                         initial={{ opacity: 0, y: 12 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, y: -12 }}
+                                        className="bg-white rounded-3xl p-6 md:p-8 border border-slate-200/80 shadow-lg shadow-slate-200/30"
                                     >
-                                        {/* Cabeçalho do ano */}
-                                        <div className="flex items-center gap-4 mb-6">
+                                        {/* Cabeçalho Principal do Ano Fiscal */}
+                                        <div className="flex items-center gap-4 mb-8 pb-4 border-b border-slate-100">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 bg-primary-600 text-white rounded-xl flex items-center justify-center font-black text-sm">
-                                                    <FaCalendarDays size={14} />
+                                                <div className="w-12 h-12 bg-primary-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-md shadow-primary-600/20">
+                                                    <FaCalendarDays size={18} />
                                                 </div>
-                                                <h3 className="text-2xl font-black text-slate-800">{ano}</h3>
+                                                <div>
+                                                    <h3 className="text-3xl font-black text-slate-800 tracking-tight">Exercício {ano}</h3>
+                                                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Demonstrativos da LRF</p>
+                                                </div>
                                             </div>
-                                            <div className="flex-1 h-px bg-slate-200" />
-                                            <span className="text-xs font-semibold text-slate-400 bg-slate-100 px-3 py-1.5 rounded-lg">
+                                            <div className="flex-1 h-px bg-slate-100" />
+                                            <span className="text-xs font-bold text-slate-500 bg-slate-100 px-4 py-2 rounded-full">
                                                 {relatoriosDoAno.length} {relatoriosDoAno.length === 1 ? "documento" : "documentos"}
                                             </span>
                                         </div>
 
-                                        {/* Grid de cards */}
-                                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-4">
-                                            {relatoriosDoAno.map((r, idx) => (
-                                                <motion.div
-                                                    key={r.id}
-                                                    initial={{ opacity: 0, y: 16 }}
-                                                    animate={{ opacity: 1, y: 0 }}
-                                                    transition={{ delay: idx * 0.04 }}
-                                                    className="group bg-white rounded-xl border border-slate-200/80 hover:border-primary-300 shadow-sm hover:shadow-lg hover:shadow-primary-500/5 transition-all duration-300 flex flex-col"
-                                                >
-                                                    {/* Card body */}
-                                                    <div className="p-5 flex-1">
-                                                        <div className="flex items-start gap-4">
-                                                            <div className="w-11 h-11 bg-red-50 text-red-500 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-red-500 group-hover:text-white transition-colors duration-300">
-                                                                <FaFilePdf size={18} />
-                                                            </div>
-                                                            <div className="min-w-0 flex-1">
-                                                                <h4 className="font-bold text-slate-800 text-sm leading-snug mb-1.5 line-clamp-2 group-hover:text-primary-700 transition-colors">
-                                                                    {r.titulo.replace(/\.pdf$/i, "")}
-                                                                </h4>
-                                                                <div className="flex items-center gap-2 flex-wrap">
-                                                                    <span className="text-[10px] font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded border border-primary-100">
-                                                                        {r.tipo}
-                                                                    </span>
-                                                                    <span className="text-[11px] text-slate-400">
-                                                                        {r.periodo}
-                                                                    </span>
+                                        {/* Grupos organizados por Categoria (RREO / RGF / etc) */}
+                                        <div className="space-y-8">
+                                            {tiposDoAno.map(tipoKey => {
+                                                const meta = getTipoMeta(tipoKey);
+                                                const itensDoTipo = relatoriosDoAno
+                                                    .filter(r => r.tipo === tipoKey)
+                                                    .sort((a, b) => {
+                                                        const dir = ordemPeriodo === "asc" ? 1 : -1;
+                                                        const wA = getPeriodoWeight(a.periodo, a.titulo);
+                                                        const wB = getPeriodoWeight(b.periodo, b.titulo);
+                                                        if (wA !== wB) return (wA - wB) * dir;
+                                                        return a.titulo.localeCompare(b.titulo, "pt-BR");
+                                                    });
+
+                                                return (
+                                                    <div key={tipoKey} className="bg-slate-50/70 rounded-2xl p-5 md:p-6 border border-slate-200/60">
+                                                        {/* Cabeçalho da Categoria */}
+                                                        <div className="flex items-center justify-between mb-5 pb-3 border-b border-slate-200/80">
+                                                            <div className="flex items-center gap-3">
+                                                                <div className="p-2.5 rounded-xl bg-white shadow-sm border border-slate-200">
+                                                                    {meta.icon}
+                                                                </div>
+                                                                <div>
+                                                                    <h4 className="text-base font-black text-slate-800 tracking-tight">{meta.title}</h4>
+                                                                    <p className="text-[11px] font-semibold text-slate-400">{meta.subtitle}</p>
                                                                 </div>
                                                             </div>
+                                                            <span className={`text-[10px] font-black px-3 py-1 rounded-full border shadow-sm ${meta.badgeStyle}`}>
+                                                                {itensDoTipo.length} {itensDoTipo.length === 1 ? "relatório" : "relatórios"}
+                                                            </span>
+                                                        </div>
+
+                                                        {/* Grid de Cards Ordenados */}
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                                                            {itensDoTipo.map((r, idx) => (
+                                                                <motion.div
+                                                                    key={r.id}
+                                                                    initial={{ opacity: 0, y: 14 }}
+                                                                    animate={{ opacity: 1, y: 0 }}
+                                                                    transition={{ delay: idx * 0.03 }}
+                                                                    className="group bg-white rounded-2xl border border-slate-200 hover:border-primary-400 shadow-sm hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300 flex flex-col justify-between overflow-hidden"
+                                                                >
+                                                                    {/* Card Content */}
+                                                                    <div className="p-5">
+                                                                        <div className="flex items-start gap-3.5">
+                                                                            <div className="w-10 h-10 bg-red-50 text-red-500 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-red-500 group-hover:text-white transition-colors duration-300 shadow-sm">
+                                                                                <FaFilePdf size={18} />
+                                                                            </div>
+                                                                            <div className="min-w-0 flex-1">
+                                                                                <h5 className="font-bold text-slate-800 text-sm leading-snug mb-2 line-clamp-2 group-hover:text-primary-700 transition-colors">
+                                                                                    {r.titulo.replace(/\.pdf$/i, "")}
+                                                                                </h5>
+                                                                                <div className="flex items-center gap-2 flex-wrap">
+                                                                                    <span className={`text-[10px] font-black px-2.5 py-0.5 rounded-full border ${meta.badgeStyle}`}>
+                                                                                        {r.tipo}
+                                                                                    </span>
+                                                                                    {r.periodo && (
+                                                                                        <span className="text-[11px] font-bold text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-md border border-slate-200/60">
+                                                                                            {r.periodo}
+                                                                                        </span>
+                                                                                    )}
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    {/* Card Footer */}
+                                                                    <div className="px-5 py-3.5 bg-slate-50/80 border-t border-slate-100 flex items-center gap-2">
+                                                                        <button
+                                                                            onClick={() => setPdfViewer({ url: r.arquivo, titulo: r.titulo.replace(/\.pdf$/i, "") })}
+                                                                            className="flex-1 flex items-center justify-center gap-2 py-2 bg-white text-primary-700 border border-primary-200 rounded-xl text-xs font-bold hover:bg-primary-600 hover:text-white hover:border-primary-600 transition-all duration-200 shadow-sm cursor-pointer"
+                                                                        >
+                                                                            <FaEye size={13} />
+                                                                            Visualizar
+                                                                        </button>
+                                                                        <a
+                                                                            href={r.arquivo}
+                                                                            target="_blank"
+                                                                            rel="noopener noreferrer"
+                                                                            className="flex items-center justify-center gap-2 py-2 px-3.5 bg-slate-200/80 text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-800 hover:text-white transition-all duration-200 cursor-pointer"
+                                                                        >
+                                                                            <FaDownload size={12} />
+                                                                            Baixar
+                                                                        </a>
+                                                                    </div>
+                                                                </motion.div>
+                                                            ))}
                                                         </div>
                                                     </div>
-
-                                                    {/* Card footer com ações */}
-                                                    <div className="px-5 py-3 border-t border-slate-100 flex items-center gap-2">
-                                                        <button
-                                                            onClick={() => setPdfViewer({ url: r.arquivo, titulo: r.titulo.replace(/\.pdf$/i, "") })}
-                                                            className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-primary-50 text-primary-700 rounded-lg text-xs font-bold hover:bg-primary-600 hover:text-white transition-all duration-200"
-                                                        >
-                                                            <FaEye size={12} />
-                                                            Visualizar
-                                                        </button>
-                                                        <a
-                                                            href={r.arquivo}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="flex items-center justify-center gap-2 py-2.5 px-4 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold hover:bg-slate-700 hover:text-white transition-all duration-200"
-                                                        >
-                                                            <FaDownload size={11} />
-                                                            Baixar
-                                                        </a>
-                                                    </div>
-                                                </motion.div>
-                                            ))}
+                                                );
+                                            })}
                                         </div>
                                     </motion.div>
                                 );
