@@ -8,11 +8,15 @@ export const metadata: Metadata = {
     description: "Relação de UBSs, Hospitais e clínicas da rede municipal de Lajes Pintadas.",
 };
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function UnidadesSaudePage() {
-    const unidades = await prisma.unidadeAtendimento.findMany({
+    const unidadesRaw = await prisma.unidadeAtendimento.findMany({
         where: { ativa: true, tipo: { in: ["Saúde", "saude", "SAÚDE", "SAUDE"] } },
         orderBy: { nome: "asc" }
     });
+    const unidades = JSON.parse(JSON.stringify(unidadesRaw));
 
     return (
         <div className="min-h-screen bg-gray-50 font-['Montserrat',sans-serif]">

@@ -4,16 +4,22 @@ import { FaPrescriptionBottleMedical } from "react-icons/fa6";
 import MedicamentosSUSClient from "@/components/transparencia/MedicamentosSUSClient";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata: Metadata = {
     title: "Lista de Medicamentos SUS (REMUME) | Portal da Transparência",
-    description: "Relação Municipal de Medicamentos Essenciais (REMUME) e orientações do Componente Básico da Assistência Farmacêutica.",
+    description: "Relação Municipal de Medicamentos Essenciais (REMUME) e orientações do Componente Básico e Especializado da Assistência Farmacêutica.",
 };
 
 export default async function MedicamentosSUSPage() {
-    const medicamentos = await prisma.medicamento.findMany({
+    const medicamentosRaw = await prisma.medicamento.findMany({
         where: { ativo: true },
         orderBy: { nome: "asc" }
     });
+
+    // Converter objetos do Prisma (incluindo instancias de Date) em objetos JSON simples antes de enviar ao Client Component
+    const medicamentos = JSON.parse(JSON.stringify(medicamentosRaw));
 
     return (
         <div className="min-h-screen bg-[#f8fafc] font-['Montserrat',sans-serif] pb-24">
