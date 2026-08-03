@@ -631,3 +631,19 @@ model Terceirizado {
   criadoEm        DateTime  @default(now())
   atualizadoEm    DateTime  @updatedAt
 }
+
+model DocumentoSaude {
+  id              String   @id @default(cuid())
+  titulo          String
+  categoria       String   // "pms", "pas", "rag", "rdqa"
+  anoExercicio    Int
+  periodoVigencia String?
+  statusConselho  String?  @default("Aprovado pelo Conselho Municipal de Saúde (CMS)")
+  numeroResolucao String?
+  descricao       String?
+  linkDocumento   String?
+  ativo           Boolean  @default(true)
+  criadoEm        DateTime @default(now())
+  atualizadoEm    DateTime @updatedAt
+}
+
