@@ -82,6 +82,19 @@ export default function PlanoSaudeClientPage() {
         }
     };
 
+    const formatDocumentUrl = (url: string | null) => {
+        if (!url) return "#";
+        let cleanUrl = url.trim();
+        if (cleanUrl.startsWith("/")) return cleanUrl;
+        if (!cleanUrl.startsWith("http://") && !cleanUrl.startsWith("https://")) {
+            cleanUrl = `https://${cleanUrl}`;
+        }
+        if (cleanUrl.includes("drive.google.com") && cleanUrl.includes("/file/d/") && !cleanUrl.includes("usp=")) {
+            cleanUrl = cleanUrl.replace(/\/view.*$/, "/view?usp=sharing");
+        }
+        return cleanUrl;
+    };
+
     return (
         <div className="max-w-[1240px] mx-auto px-6 py-12 space-y-10 font-['Montserrat',sans-serif]">
             {/* Banner Informativo PNTP 2026 */}
@@ -231,7 +244,7 @@ export default function PlanoSaudeClientPage() {
                             <div className="pt-6 border-t border-gray-100 mt-6">
                                 {doc.linkDocumento ? (
                                     <a
-                                        href={doc.linkDocumento}
+                                        href={formatDocumentUrl(doc.linkDocumento)}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="w-full py-4 bg-[#003366] hover:bg-[#01b0ef] text-white font-black rounded-2xl transition-all text-xs uppercase tracking-widest flex items-center justify-center gap-3 shadow-lg shadow-blue-900/10 active:scale-95"

@@ -65,6 +65,19 @@ export default function AdminSaudePage() {
         ativo: true
     });
 
+    const formatDocumentUrl = (url: string | null) => {
+        if (!url) return "#";
+        let cleanUrl = url.trim();
+        if (cleanUrl.startsWith("/")) return cleanUrl;
+        if (!cleanUrl.startsWith("http://") && !cleanUrl.startsWith("https://")) {
+            cleanUrl = `https://${cleanUrl}`;
+        }
+        if (cleanUrl.includes("drive.google.com") && cleanUrl.includes("/file/d/") && !cleanUrl.includes("usp=")) {
+            cleanUrl = cleanUrl.replace(/\/view.*$/, "/view?usp=sharing");
+        }
+        return cleanUrl;
+    };
+
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -409,7 +422,7 @@ export default function AdminSaudePage() {
                                         <td className="p-4">
                                             {doc.linkDocumento ? (
                                                 <a 
-                                                    href={doc.linkDocumento} 
+                                                    href={formatDocumentUrl(doc.linkDocumento)} 
                                                     target="_blank" 
                                                     rel="noopener noreferrer"
                                                     className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 font-bold text-[11px] transition-colors"
@@ -652,12 +665,12 @@ export default function AdminSaudePage() {
                                             <span className="truncate">Arquivo Vinculado: {formData.linkDocumento}</span>
                                         </div>
                                         <a
-                                            href={formData.linkDocumento}
+                                            href={formatDocumentUrl(formData.linkDocumento)}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="px-3 py-1 bg-emerald-600 text-white rounded-lg font-bold text-[11px] hover:bg-emerald-700 transition-colors shrink-0"
+                                            className="px-3 py-1 bg-emerald-600 text-white rounded-lg font-bold text-[11px] hover:bg-emerald-700 transition-colors shrink-0 flex items-center gap-1.5"
                                         >
-                                            Testar Link PDF
+                                            <FaLink /> Testar / Abrir Link
                                         </a>
                                     </div>
                                 )}
