@@ -41,10 +41,15 @@ export default function PlanoSaudeClientPage({ categoriaInicial = "todos" }: { c
                 const res = await fetch("/api/transparencia/saude");
                 if (res.ok) {
                     const data = await res.json();
-                    setDocumentos(data);
+                    if (Array.isArray(data)) {
+                        setDocumentos(data);
+                    } else {
+                        setDocumentos([]);
+                    }
                 }
             } catch (error) {
                 console.error("Erro ao buscar documentos da transparência da saúde:", error);
+                setDocumentos([]);
             } finally {
                 setLoading(false);
             }
@@ -52,16 +57,19 @@ export default function PlanoSaudeClientPage({ categoriaInicial = "todos" }: { c
         fetchDocumentos();
     }, []);
 
+    const docsArray = Array.isArray(documentos) ? documentos : [];
+
     // Anos disponíveis para filtro
     const anosDisponiveis = Array.from(
-        new Set(documentos.map(d => d.anoExercicio))
-    ).sort((a, b) => b - a);
+        new Set(docsArray.map(d => d?.anoExercicio).filter(Boolean))
+    ).sort((a, b) => (b as number) - (a as number));
 
-    const documentosFiltrados = documentos.filter(doc => {
+    const documentosFiltrados = docsArray.filter(doc => {
+        if (!doc) return false;
         const matchCat = categoriaFiltro === "todos" || doc.categoria === categoriaFiltro;
-        const matchAno = anoFiltro === "todos" || doc.anoExercicio.toString() === anoFiltro;
+        const matchAno = anoFiltro === "todos" || doc.anoExercicio?.toString() === anoFiltro;
         const matchBusca = 
-            doc.titulo.toLowerCase().includes(busca.toLowerCase()) ||
+            (doc.titulo || "").toLowerCase().includes(busca.toLowerCase()) ||
             (doc.descricao && doc.descricao.toLowerCase().includes(busca.toLowerCase())) ||
             (doc.numeroResolucao && doc.numeroResolucao.toLowerCase().includes(busca.toLowerCase()));
         return matchCat && matchAno && matchBusca;

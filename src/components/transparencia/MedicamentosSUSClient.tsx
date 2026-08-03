@@ -35,12 +35,15 @@ export default function MedicamentosSUSClient({ medicamentos }: { medicamentos: 
     const [busca, setBusca] = useState("");
     const [categoriaFiltro, setCategoriaFiltro] = useState("todos");
 
-    // Categorias únicas
-    const categorias = Array.from(new Set(medicamentos.map(m => m.categoria))).sort();
+    const medicamentosArray = Array.isArray(medicamentos) ? medicamentos : [];
 
-    const medicamentosFiltrados = medicamentos.filter(item => {
+    // Categorias únicas
+    const categorias = Array.from(new Set(medicamentosArray.map(m => m?.categoria).filter(Boolean))).sort();
+
+    const medicamentosFiltrados = medicamentosArray.filter(item => {
+        if (!item) return false;
         const matchCat = categoriaFiltro === "todos" || item.categoria === categoriaFiltro;
-        const matchBusca = item.nome.toLowerCase().includes(busca.toLowerCase()) || 
+        const matchBusca = (item.nome || "").toLowerCase().includes(busca.toLowerCase()) || 
                            (item.observacao && item.observacao.toLowerCase().includes(busca.toLowerCase()));
         return matchCat && matchBusca;
     });
