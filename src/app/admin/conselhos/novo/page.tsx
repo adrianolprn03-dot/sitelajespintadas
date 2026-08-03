@@ -95,11 +95,10 @@ export default function NovoConselhoPage() {
                         <textarea name="descricao" value={form.descricao} onChange={handleChange} required rows={3}
                             className="input-field resize-none" placeholder="Descreva a função do conselho..." />
                     </div>
-                    <div className="md:col-span-2">
-                        <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-wider">Composição *</label>
-                        <textarea name="composicao" value={form.composicao} onChange={handleChange} required rows={2}
-                            className="input-field resize-none" placeholder="Descreva como o conselho é composto..." />
-                    </div>
+                        <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-wider">Composição dos Membros *</label>
+                        <textarea name="composicao" value={form.composicao} onChange={handleChange} required rows={5}
+                            className="input-field" placeholder="Poder Executivo:&#10;Titular: Nome... Suplente: Nome...&#10;&#10;Segmento de Trabalhadores em Saúde:&#10;Titular: Nome... Suplente: Nome..." />
+                        <p className="text-[11px] text-gray-400 mt-1 font-medium">Você pode estruturar por segmentos (ex: Poder Executivo:) e declarar Titular: e Suplente: para cada membro.</p>
                     <div className="flex items-center gap-3">
                         <input type="checkbox" name="ativo" id="ativo" checked={form.ativo}
                             onChange={handleChange} className="w-5 h-5 accent-blue-600" />

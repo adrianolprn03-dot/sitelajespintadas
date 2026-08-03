@@ -190,9 +190,10 @@ export default function EditarConselhoPage({ params }: { params: { id: string } 
                                 className="input-field resize-none" placeholder="Descreva a função do conselho..." />
                         </div>
                         <div className="md:col-span-2">
-                            <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-wider">Composição *</label>
-                            <textarea value={composicao} onChange={(e) => setComposicao(e.target.value)} required rows={2}
-                                className="input-field resize-none" placeholder="Descreva como o conselho é composto..." />
+                            <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-wider">Composição dos Membros *</label>
+                            <textarea value={composicao} onChange={(e) => setComposicao(e.target.value)} required rows={6}
+                                className="input-field" placeholder="Poder Executivo:&#10;Titular: Nome... Suplente: Nome..." />
+                            <p className="text-[11px] text-gray-400 mt-1 font-medium">Os membros serão organizados automaticamente em cards separados por Segmento, Entidade, Titular e Suplente no portal público.</p>
                         </div>
                         <div className="flex items-center gap-3">
                             <input type="checkbox" id="ativo" checked={ativo}
