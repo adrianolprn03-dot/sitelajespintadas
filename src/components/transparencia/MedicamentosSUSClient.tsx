@@ -10,12 +10,12 @@ import {
     FaBoxOpen, 
     FaClock, 
     FaIdCard, 
-    FaMapMarkerAlt, 
+    FaLocationDot as FaMapMarkerAlt, 
     FaEnvelope, 
     FaFilePrescription, 
     FaHandHoldingHeart, 
     FaFlaskVial, 
-    FaSearch,
+    FaMagnifyingGlass as FaSearch,
     FaBolt,
     FaBuildingColumns
 } from "react-icons/fa6";
