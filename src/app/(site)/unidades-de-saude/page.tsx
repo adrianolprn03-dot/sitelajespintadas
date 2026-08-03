@@ -6,7 +6,8 @@ import {
     HiOutlineMapPin, 
     HiOutlineClock, 
     HiOutlinePhone, 
-    HiOutlineBuildingOffice2 
+    HiOutlineBuildingOffice2,
+    HiOutlineClipboardDocumentList
 } from "react-icons/hi2";
 
 export const metadata: Metadata = {
@@ -107,6 +108,21 @@ export default async function UnidadesSaudePage() {
                                         </div>
                                     </div>
                                 )}
+
+                                {/* Serviços Disponíveis */}
+                                <div className="flex items-start gap-5">
+                                    <div className="w-12 h-12 rounded-2xl bg-gray-50 text-gray-400 flex items-center justify-center shrink-0 border border-gray-100 group-hover:bg-primary-50 group-hover:text-primary-500 transition-colors duration-400">
+                                        <HiOutlineClipboardDocumentList size={22} />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">
+                                            Serviços Disponíveis
+                                        </span>
+                                        <span className="text-[#002241] font-bold text-sm leading-relaxed">
+                                            {unidade.servicos || "Odontológicos, Clínico Geral e Enfermagem"}
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
 
                             {/* Footer/Ações Opcionais (Se necessário no futuro) */}

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
-import { FaHeartbeat, FaMapMarker, FaPhone, FaClock } from "react-icons/fa";
+import { FaHeartbeat, FaMapMarker, FaPhone, FaClock, FaClipboardList } from "react-icons/fa";
 
 import { useState, useEffect } from "react";
 
@@ -12,6 +12,7 @@ type Unidade = {
     endereco: string;
     telefone: string | null;
     horario: string;
+    servicos?: string;
     mapa: string | null;
 };
 
@@ -89,6 +90,13 @@ export default function SaudePage() {
                                         <div>
                                             <p className="text-xs font-bold uppercase text-gray-400 mb-0.5 tracking-widest">Horário de Atendimento</p>
                                             <p className="text-sm font-medium text-gray-700">{unidade.horario}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-start gap-3">
+                                        <FaClipboardList className="text-[#01b0ef] text-lg mt-0.5 shrink-0" />
+                                        <div>
+                                            <p className="text-xs font-bold uppercase text-gray-400 mb-0.5 tracking-widest">Serviços Disponíveis</p>
+                                            <p className="text-sm font-medium text-gray-700">{unidade.servicos || "Odontológicos, Clínico Geral e Enfermagem"}</p>
                                         </div>
                                     </div>
                                 </div>

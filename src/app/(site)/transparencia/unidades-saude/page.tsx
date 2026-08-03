@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import PageHeader from "@/components/PageHeader";
-import { FaHospital, FaMapPin, FaClock, FaPhone } from "react-icons/fa";
+import { FaHospital, FaMapPin, FaClock, FaPhone, FaClipboardList } from "react-icons/fa";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -92,6 +92,16 @@ export default async function UnidadesSaudePage() {
                                             </div>
                                         </div>
                                     )}
+
+                                    <div className="flex items-start gap-4 text-gray-600">
+                                        <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400 shrink-0">
+                                            <FaClipboardList />
+                                        </div>
+                                        <div>
+                                            <span className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Serviços Disponíveis</span>
+                                            <span className="font-bold text-gray-700 text-sm">{item.servicos || "Odontológicos, Clínico Geral e Enfermagem"}</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         ))
