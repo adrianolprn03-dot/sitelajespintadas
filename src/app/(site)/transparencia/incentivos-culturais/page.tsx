@@ -3,6 +3,7 @@ import { FaMusic, FaRunning, FaTheaterMasks, FaBook, FaTrophy, FaStar, FaExterna
 import { Star } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
+import IncentivosCulturaisExportPanel from "@/components/transparencia/IncentivosCulturaisExportPanel";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
@@ -175,6 +176,9 @@ export default async function IncentivosCulturaisPage() {
                         <div className="text-[10px] font-bold text-gray-400 mt-1">Em {exercicioAno}</div>
                     </div>
                 </div>
+
+                {/* Painel PNTP 2026 - Gravação e Download em Formatos Editáveis */}
+                <IncentivosCulturaisExportPanel exercicioAno={exercicioAno} />
 
                 {/* Programas em Execução */}
                 <h2 className="text-2xl font-black text-gray-800 uppercase tracking-tighter mb-8 flex items-center gap-3">
