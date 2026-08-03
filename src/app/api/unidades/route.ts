@@ -13,7 +13,16 @@ export async function GET(request: Request) {
         let where: any = {};
         
         if (tipo) {
-            where.tipo = tipo;
+            const t = tipo.toLowerCase();
+            if (t.includes("saud") || t === "saude") {
+                where.tipo = { in: ["Saúde", "saude", "SAÚDE", "SAUDE"] };
+            } else if (t.includes("educa") || t === "educacao") {
+                where.tipo = { in: ["Educação", "educacao", "EDUCAÇÃO", "Educacao"] };
+            } else if (t.includes("socia") || t === "social") {
+                where.tipo = { in: ["Socioassistencial", "social", "SOCIOASSISTENCIAL", "Social"] };
+            } else {
+                where.tipo = { contains: tipo, mode: "insensitive" };
+            }
         }
 
         where.ativa = true;

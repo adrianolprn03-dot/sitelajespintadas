@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 export default async function UnidadesSaudePage() {
     const unidades = await (prisma as any).unidadeAtendimento.findMany({
-        where: { tipo: "Saúde", ativa: true },
+        where: { tipo: { in: ["Saúde", "saude", "SAÚDE", "SAUDE"] }, ativa: true },
         orderBy: { nome: 'asc' }
     });
 
