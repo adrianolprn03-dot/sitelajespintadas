@@ -1,7 +1,6 @@
 "use client";
 
-import { FaFileCsv, FaFileCode, FaFileExcel, FaDownload, FaCheckCircle, FaLockOpen } from "react-icons/fa";
-import { FaFileXml } from "react-icons/fa6";
+import { FaFileCsv, FaFileCode, FaFileExcel, FaDownload, FaCheckCircle, FaLockOpen, FaCode } from "react-icons/fa";
 
 export default function IncentivosCulturaisExportPanel({ exercicioAno }: { exercicioAno: string }) {
     const handleDownload = (format: string) => {
@@ -65,7 +64,7 @@ export default function IncentivosCulturaisExportPanel({ exercicioAno }: { exerc
                         className="flex items-center gap-2 px-5 py-3.5 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 hover:text-amber-300 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 cursor-pointer shadow-lg shadow-amber-950/30 hover:scale-105"
                         title="Baixar em formato XML dados abertos"
                     >
-                        <FaFileXml size={16} />
+                        <FaCode size={16} />
                         <span>XML Dados</span>
                     </button>
                 </div>
