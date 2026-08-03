@@ -14,7 +14,10 @@ import {
     FaFilter,
     FaCalendarAlt,
     FaFileContract,
-    FaRegHospital
+    FaRegHospital,
+    FaUpload,
+    FaLink,
+    FaSpinner
 } from "react-icons/fa";
 
 type DocumentoSaude = {
@@ -44,6 +47,11 @@ export default function AdminSaudePage() {
     const [deletingId, setDeletingId] = useState<string | null>(null);
     const [feedback, setFeedback] = useState<{ tipo: "sucesso" | "erro"; mensagem: string } | null>(null);
 
+    // Upload state
+    const [uploadModo, setUploadModo] = useState<"upload" | "url">("upload");
+    const [uploading, setUploading] = useState(false);
+    const [uploadError, setUploadError] = useState<string | null>(null);
+
     // Form fields
     const [formData, setFormData] = useState({
         titulo: "",
@@ -56,6 +64,41 @@ export default function AdminSaudePage() {
         linkDocumento: "",
         ativo: true
     });
+
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        if (file.size > 20 * 1024 * 1024) {
+            setUploadError("Arquivo muito grande (máximo 20MB).");
+            return;
+        }
+
+        setUploading(true);
+        setUploadError(null);
+
+        const uploadData = new FormData();
+        uploadData.append("file", file);
+
+        try {
+            const res = await fetch("/api/upload", {
+                method: "POST",
+                body: uploadData
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                setFormData(prev => ({ ...prev, linkDocumento: data.url }));
+            } else {
+                const err = await res.json();
+                setUploadError(err.error || "Erro ao realizar upload do arquivo.");
+            }
+        } catch (err: any) {
+            setUploadError("Falha de conexão com o servidor de uploads.");
+        } finally {
+            setUploading(false);
+        }
+    };
 
     useEffect(() => {
         fetchDocumentos();
@@ -530,17 +573,94 @@ export default function AdminSaudePage() {
                                 />
                             </div>
 
-                            <div>
-                                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
-                                    Link / Caminho do Arquivo PDF Oficial
+                            {/* Seleção de Origem do Documento: Upload de Arquivo ou URL Externa */}
+                            <div className="space-y-3 pt-2 border-t border-gray-100">
+                                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    Documento / Arquivo Oficial (PDF) <span className="text-red-500">*</span>
                                 </label>
-                                <input
-                                    type="text"
-                                    placeholder="Ex: /files/pms_2026_2029.pdf ou https://..."
-                                    value={formData.linkDocumento}
-                                    onChange={(e) => setFormData({ ...formData, linkDocumento: e.target.value })}
-                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:border-[#003366]"
-                                />
+
+                                <div className="grid grid-cols-2 gap-2 bg-gray-100 p-1.5 rounded-2xl">
+                                    <button
+                                        type="button"
+                                        onClick={() => setUploadModo("upload")}
+                                        className={`py-2 px-4 rounded-xl text-xs font-black uppercase transition-all flex items-center justify-center gap-2 ${
+                                            uploadModo === "upload" 
+                                                ? "bg-[#003366] text-white shadow-md" 
+                                                : "text-gray-600 hover:text-gray-900"
+                                        }`}
+                                    >
+                                        <FaUpload className="text-xs" /> Fazer Upload (PDF)
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setUploadModo("url")}
+                                        className={`py-2 px-4 rounded-xl text-xs font-black uppercase transition-all flex items-center justify-center gap-2 ${
+                                            uploadModo === "url" 
+                                                ? "bg-[#003366] text-white shadow-md" 
+                                                : "text-gray-600 hover:text-gray-900"
+                                        }`}
+                                    >
+                                        <FaLink className="text-xs" /> Digitar URL Externa
+                                    </button>
+                                </div>
+
+                                {uploadModo === "upload" ? (
+                                    <div className="space-y-3">
+                                        <div className="border-2 border-dashed border-gray-200 rounded-2xl p-6 text-center hover:border-[#01b0ef] transition-colors bg-gray-50/50">
+                                            <input
+                                                type="file"
+                                                id="fileInputSaude"
+                                                accept=".pdf,.doc,.docx,.xlsx,.csv"
+                                                onChange={handleFileUpload}
+                                                className="hidden"
+                                                disabled={uploading}
+                                            />
+                                            <label htmlFor="fileInputSaude" className="cursor-pointer space-y-2 block">
+                                                <div className="w-12 h-12 bg-blue-50 text-[#003366] rounded-2xl flex items-center justify-center mx-auto text-xl">
+                                                    {uploading ? <FaSpinner className="animate-spin text-blue-600" /> : <FaUpload className="text-blue-600" />}
+                                                </div>
+                                                <div className="text-xs font-bold text-gray-800 uppercase tracking-wider">
+                                                    {uploading ? "Enviando arquivo PDF para o servidor..." : "Clique aqui para selecionar o arquivo PDF do computador"}
+                                                </div>
+                                                <p className="text-[11px] text-gray-400">Suporta arquivos PDF, DOCX, XLSX (Tamanho máximo 20MB)</p>
+                                            </label>
+                                        </div>
+
+                                        {uploadError && (
+                                            <div className="text-xs text-red-600 font-bold bg-red-50 p-3 rounded-xl border border-red-100 flex items-center gap-2">
+                                                <FaExclamationTriangle /> {uploadError}
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div>
+                                        <input
+                                            type="text"
+                                            placeholder="Cole a URL ou caminho: Ex: https://... ou /files/pms_2026.pdf"
+                                            value={formData.linkDocumento}
+                                            onChange={(e) => setFormData({ ...formData, linkDocumento: e.target.value })}
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:border-[#003366]"
+                                        />
+                                    </div>
+                                )}
+
+                                {/* Exibição do Link Atual / Confirmado */}
+                                {formData.linkDocumento && (
+                                    <div className="bg-emerald-50 border border-emerald-200 p-3.5 rounded-2xl flex items-center justify-between gap-3 text-xs">
+                                        <div className="flex items-center gap-2 text-emerald-800 font-bold overflow-hidden">
+                                            <FaCheckCircle className="shrink-0 text-emerald-600" />
+                                            <span className="truncate">Arquivo Vinculado: {formData.linkDocumento}</span>
+                                        </div>
+                                        <a
+                                            href={formData.linkDocumento}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="px-3 py-1 bg-emerald-600 text-white rounded-lg font-bold text-[11px] hover:bg-emerald-700 transition-colors shrink-0"
+                                        >
+                                            Testar Link PDF
+                                        </a>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="flex items-center gap-3 pt-2">
