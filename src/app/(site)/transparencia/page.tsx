@@ -244,7 +244,9 @@ export default function TransparenciaPage() {
                 const res = await fetch("/api/links-externos");
                 if (res.ok) {
                     const data = await res.json();
-                    setLinksExternos(data.filter((l: any) => l.categoria === "transparencia" || l.categoria === "geral"));
+                    if (Array.isArray(data)) {
+                        setLinksExternos(data.filter((l: any) => l?.categoria === "transparencia" || l?.categoria === "geral"));
+                    }
                 }
             } catch (error) {
                 console.error("Erro ao carregar links:", error);
@@ -255,13 +257,15 @@ export default function TransparenciaPage() {
                 const res = await fetch("/api/admin/configuracoes");
                 if (res.ok) {
                     const data = await res.json();
-                    const pntpConfigs: Record<string, string> = {};
-                    data.forEach((c: any) => {
-                        if (c.chave.startsWith("transparencia_pntp_")) {
-                            pntpConfigs[c.chave] = c.valor;
-                        }
-                    });
-                    setConfigs(prev => ({ ...prev, ...pntpConfigs }));
+                    if (Array.isArray(data)) {
+                        const pntpConfigs: Record<string, string> = {};
+                        data.forEach((c: any) => {
+                            if (c?.chave && typeof c.chave === "string" && c.chave.startsWith("transparencia_pntp_")) {
+                                pntpConfigs[c.chave] = c.valor || "";
+                            }
+                        });
+                        setConfigs(prev => ({ ...prev, ...pntpConfigs }));
+                    }
                 }
             } catch (error) {
                 console.error("Erro ao carregar configurações:", error);
@@ -393,7 +397,7 @@ export default function TransparenciaPage() {
                                                 strokeWidth="8"
                                                 fill="transparent"
                                                 strokeDasharray={2 * Math.PI * 52}
-                                                strokeDashoffset={2 * Math.PI * 52 * (1 - parseFloat(configs.transparencia_pntp_indice.replace(",", ".").replace("%", "")) / 100)}
+                                                strokeDashoffset={2 * Math.PI * 52 * (1 - (parseFloat(String(configs?.transparencia_pntp_indice || "0").replace(",", ".").replace("%", "")) || 0) / 100)}
                                                 strokeLinecap="round"
                                             />
                                         </svg>
@@ -699,8 +703,8 @@ export default function TransparenciaPage() {
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                                             {categoria.modulos.map((m) => {
                                                 const identifier = m.href.split("/").pop()?.toLowerCase() || "";
-                                                const override = linksExternos.find((l: any) => 
-                                                    l.moduloAlvo?.toLowerCase() === identifier
+                                                const override = (Array.isArray(linksExternos) ? linksExternos : []).find((l: any) => 
+                                                    l?.moduloAlvo?.toLowerCase() === identifier
                                                 );
                                                 const finalHref = override ? override.url : m.href;
                                                 const isExternal = !!override;
