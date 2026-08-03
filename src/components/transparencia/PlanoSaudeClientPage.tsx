@@ -27,10 +27,10 @@ type DocumentoSaude = {
     criadoEm: string;
 };
 
-export default function PlanoSaudeClientPage() {
+export default function PlanoSaudeClientPage({ categoriaInicial = "todos" }: { categoriaInicial?: string }) {
     const [documentos, setDocumentos] = useState<DocumentoSaude[]>([]);
     const [loading, setLoading] = useState(true);
-    const [categoriaFiltro, setCategoriaFiltro] = useState("todos");
+    const [categoriaFiltro, setCategoriaFiltro] = useState(categoriaInicial);
     const [anoFiltro, setAnoFiltro] = useState("todos");
     const [busca, setBusca] = useState("");
 
