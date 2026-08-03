@@ -3,7 +3,7 @@ import { useState, useMemo } from "react";
 import { 
     FaSearch, FaFilter, FaTimes, FaDownload, 
     FaExternalLinkAlt, FaChevronRight, FaFileInvoiceDollar, 
-    FaCalendar, FaUserTie, FaTags
+    FaCalendar, FaUserTie, FaTags, FaSyncAlt, FaCheckCircle
 } from "react-icons/fa";
 import { FaBuildingColumns } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
@@ -38,6 +38,29 @@ export default function EmendasClientPage({ initialData }: { initialData: Emenda
     const [filtroSituacao, setFiltroSituacao] = useState("");
     const [showFilters, setShowFilters] = useState(false);
     const [detalheId, setDetalheId] = useState<string | null>(null);
+    const [isSyncing, setIsSyncing] = useState(false);
+    const [syncFeedback, setSyncFeedback] = useState<string | null>(null);
+
+    const handleSync = async () => {
+        setIsSyncing(true);
+        setSyncFeedback(null);
+        try {
+            const res = await fetch("/api/transparencia/emendas-parlamentares/sincronizar", { method: "POST" });
+            const json = await res.json();
+            if (json.success) {
+                setSyncFeedback(json.mensagem);
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            } else {
+                setSyncFeedback("Erro ao consultar dados automaticamente.");
+            }
+        } catch {
+            setSyncFeedback("Erro de conexão ao realizar consulta automática.");
+        } finally {
+            setIsSyncing(false);
+        }
+    };
 
     const anos = useMemo(() => Array.from(new Set(initialData.map(i => i.anoEmenda))).sort((a, b) => b - a), [initialData]);
     const autores = useMemo(() => Array.from(new Set(initialData.map(i => i.autorNome))).sort(), [initialData]);
@@ -252,6 +275,16 @@ export default function EmendasClientPage({ initialData }: { initialData: Emenda
                                 <FaFilter className={showFilters ? "rotate-180 transition-transform duration-500" : ""} /> Filtros
                             </button>
 
+                            {/* Consulta Automática RN */}
+                            <button
+                                onClick={handleSync}
+                                disabled={isSyncing}
+                                className="flex items-center gap-3 h-[60px] px-8 rounded-[1.75rem] text-[10px] font-black uppercase tracking-widest bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg shadow-blue-500/25 disabled:opacity-50 font-inter cursor-pointer"
+                            >
+                                <FaSyncAlt className={isSyncing ? "animate-spin text-sm" : "text-sm"} />
+                                {isSyncing ? "Consultando..." : "Consulta Automática RN / União"}
+                            </button>
+
                             {/* Exportar */}
                             <a
                                 href={`/api/transparencia/emendas-parlamentares/export-csv?${new URLSearchParams({
@@ -268,6 +301,14 @@ export default function EmendasClientPage({ initialData }: { initialData: Emenda
                             </a>
                         </div>
                     </div>
+
+                    {/* Feedback da Consulta Automática */}
+                    {syncFeedback && (
+                        <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 flex items-center gap-3 text-blue-900 text-xs font-bold animate-fade-in">
+                            <FaCheckCircle className="text-blue-600 text-base shrink-0" />
+                            <span>{syncFeedback}</span>
+                        </div>
+                    )}
 
                     {/* Filtros Container */}
                     <AnimatePresence>

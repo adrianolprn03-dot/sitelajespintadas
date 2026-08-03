@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import {
     FaMoneyBillWave, FaEdit, FaTrash, FaSpinner, FaSearch,
-    FaUpload, FaDownload, FaFilter, FaTimes
+    FaUpload, FaDownload, FaFilter, FaTimes, FaSyncAlt
 } from "react-icons/fa";
 import toast from "react-hot-toast";
 
@@ -36,6 +36,25 @@ export default function AdminEmendasPage() {
     const [filtroFuncao, setFiltroFuncao] = useState("");
     const [filtroSituacao, setFiltroSituacao] = useState("");
     const [showFilters, setShowFilters] = useState(false);
+    const [isSyncing, setIsSyncing] = useState(false);
+
+    const handleSync = async () => {
+        setIsSyncing(true);
+        try {
+            const res = await fetch("/api/transparencia/emendas-parlamentares/sincronizar", { method: "POST" });
+            const json = await res.json();
+            if (json.success) {
+                toast.success(`Consulta automática concluída: ${json.mensagem}`);
+                fetchData();
+            } else {
+                toast.error("Erro ao executar consulta automática.");
+            }
+        } catch {
+            toast.error("Erro ao conectar à API de sincronização.");
+        } finally {
+            setIsSyncing(false);
+        }
+    };
 
     const fetchData = async () => {
         setLoading(true);
@@ -98,7 +117,15 @@ export default function AdminEmendasPage() {
                         {items.length} emenda{items.length !== 1 ? "s" : ""} cadastrada{items.length !== 1 ? "s" : ""} no sistema.
                     </p>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex flex-wrap gap-3">
+                    <button
+                        onClick={handleSync}
+                        disabled={isSyncing}
+                        className="bg-blue-600 text-white px-5 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] flex items-center gap-2 shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all disabled:opacity-50"
+                    >
+                        <FaSyncAlt className={isSyncing ? "animate-spin" : ""} />
+                        {isSyncing ? "Consultando..." : "Consulta Automática RN / União"}
+                    </button>
                     <a
                         href="/api/transparencia/emendas-parlamentares/export-csv"
                         className="bg-gray-100 text-gray-600 px-5 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] flex items-center gap-2 hover:bg-gray-200 transition-colors"
