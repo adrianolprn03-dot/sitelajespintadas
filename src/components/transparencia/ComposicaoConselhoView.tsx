@@ -1,7 +1,7 @@
 "use client";
 
 import { 
-    HiUserCheck, 
+    HiCheck, 
     HiUserPlus, 
     HiBuildingOffice2, 
     HiAcademicCap, 
@@ -165,7 +165,7 @@ export default function ComposicaoConselhoView({ composicao }: { composicao: str
                                                 <div className="flex items-center gap-2.5 min-w-0">
                                                     {m.role === "Titular" ? (
                                                         <div className="w-7 h-7 rounded-lg bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-sm">
-                                                            <HiUserCheck size={14} />
+                                                            <HiCheck size={14} />
                                                         </div>
                                                     ) : (
                                                         <div className="w-7 h-7 rounded-lg bg-slate-400 text-white flex items-center justify-center shrink-0 shadow-sm">
