@@ -29,74 +29,91 @@ export function parseComposicaoText(rawText: string): SegmentGroup[] {
     if (!rawText) return [];
     let text = rawText.trim().replace(/^"/, '').replace(/"$/, '').trim();
 
-    // Inserir marcadores
-    let prep = text
-        .replace(/(Poder Executivo:)/gi, '\n---SEG:Poder Executivo---\n')
-        .replace(/(Segmento de Trabalhadores em Saúde:)/gi, '\n---SEG:Segmento de Trabalhadores em Saúde---\n')
-        .replace(/(Segmento de Sociedade Civil:)/gi, '\n---SEG:Segmento de Sociedade Civil---\n')
-        .replace(/(Centro Ecumênico de Estudos Bíblicos [–\-]\s*CEBIR:)/gi, '\n---ENT:Centro Ecumênico de Estudos Bíblicos – CEBIR---\n')
-        .replace(/(Conselho Comunitário São Sebastião:)/gi, '\n---ENT:Conselho Comunitário São Sebastião---\n')
-        .replace(/(46º Grupo de Escoteiros José Ferreira de Lima:)/gi, '\n---ENT:46º Grupo de Escoteiros José Ferreira de Lima---\n')
-        .replace(/(Associação Comunitária da Comunidade Riacho Fechado:)/gi, '\n---ENT:Associação Comunitária da Comunidade Riacho Fechado---\n')
-        .replace(/(Associação de Veteranos e Amigos Lajespintadenses:)/gi, '\n---ENT:Associação de Veteranos e Amigos Lajespintadenses---\n')
-        .replace(/(Associação Cultural de Artes:)/gi, '\n---ENT:Associação Cultural de Artes---\n')
-        .replace(/(Titular:|Titulares:)/gi, '\n---ROLE:Titular---\n')
-        .replace(/(Suplente:|Suplentes:)/gi, '\n---ROLE:Suplente---\n');
-
-    // Suporte genérico para qualquer outra entidade terminada em ":"
-    const entityMatches = text.match(/([A-Z0-9ªºáéíóúâêôãõç\s–\-]{4,}:)/g);
-    if (entityMatches) {
-        entityMatches.forEach(em => {
-            if (!/Poder Executivo|Segmento de|Titular|Suplente/i.test(em)) {
-                const entClean = em.replace(/:$/, '').trim();
-                prep = prep.replace(new RegExp(em.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), `\n---ENT:${entClean}---\n`);
-            }
-        });
-    }
-
-    const lines = prep.split('\n').map(l => l.trim()).filter(Boolean);
+    const rawLines = text.split('\n').map(l => l.trim()).filter(Boolean);
 
     const segments: SegmentGroup[] = [];
     let curSeg: SegmentGroup | null = null;
     let curEnt: EntityGroup | null = null;
     let curRole: "Titular" | "Suplente" = "Titular";
 
-    for (const line of lines) {
-        if (line.startsWith('---SEG:')) {
-            const segName = line.replace('---SEG:', '').replace('---', '').trim();
+    const isSegmentHeader = (l: string) => {
+        return /^(Poder Executivo|Segmento de [^:]+|Segmento [^:]+):?$/i.test(l) ||
+               /^---SEG:.*---$/.test(l);
+    };
+
+    const isEntityHeader = (l: string) => {
+        if (/^(Titular|Titulares|Suplente|Suplentes):?$/i.test(l)) return false;
+        if (isSegmentHeader(l)) return false;
+        return /:$/.test(l) && !/^(Titular|Suplente)/i.test(l);
+    };
+
+    for (let line of rawLines) {
+        line = line.trim();
+        if (!line) continue;
+
+        if (isSegmentHeader(line)) {
+            const segName = line.replace(/^---SEG:/, '').replace(/---$/, '').replace(/:$/, '').trim();
             curSeg = { segment: segName, entities: [] };
             segments.push(curSeg);
             curEnt = null;
-        } else if (line.startsWith('---ENT:')) {
-            const entName = line.replace('---ENT:', '').replace('---', '').trim();
+            curRole = "Titular";
+            continue;
+        }
+
+        if (isEntityHeader(line)) {
+            const entName = line.replace(/:$/, '').trim();
             curEnt = { entity: entName, members: [] };
             if (!curSeg) {
                 curSeg = { segment: "Composição dos Membros", entities: [] };
                 segments.push(curSeg);
             }
             curSeg.entities.push(curEnt);
-        } else if (line.startsWith('---ROLE:')) {
-            curRole = line.includes('Suplente') ? 'Suplente' : 'Titular';
+            curRole = "Titular";
+            continue;
+        }
+
+        const standaloneRoleMatch = line.match(/^(Titular|Titulares|Suplente|Suplentes):?$/i);
+        if (standaloneRoleMatch) {
+            curRole = /suplente/i.test(standaloneRoleMatch[1]) ? "Suplente" : "Titular";
+            continue;
+        }
+
+        let role: "Titular" | "Suplente" = curRole;
+        let name = line;
+
+        const prefixMatch = line.match(/^(Titular|Titulares|Suplente|Suplentes|Presidente|Vice-Presidente|Membro)\s*[:\-\t]\s*(.+)$/i);
+        if (prefixMatch) {
+            role = /suplente/i.test(prefixMatch[1]) ? "Suplente" : "Titular";
+            name = prefixMatch[2];
         } else {
-            const cleanName = line.replace(/[\.:]$/, '').trim();
-            if (cleanName) {
-                if (!curSeg) {
-                    curSeg = { segment: "Composição dos Membros", entities: [] };
-                    segments.push(curSeg);
+            const suffixMatch = line.match(/^(.+?)\s*[\t\-\(\:]+\s*(Suplente|Suplentes|Titular|Titulares|Presidente|Vice-Presidente|Vice-Presidenta|Membro)\s*\)?$/i);
+            if (suffixMatch) {
+                role = /suplente/i.test(suffixMatch[2]) ? "Suplente" : "Titular";
+                name = suffixMatch[1];
+            } else {
+                const trailingMatch = line.match(/^(.+?)\s+(Suplente|Suplentes|Titular|Titulares)$/i);
+                if (trailingMatch) {
+                    role = /suplente/i.test(trailingMatch[2]) ? "Suplente" : "Titular";
+                    name = trailingMatch[1];
                 }
-                if (!curEnt) {
-                    curEnt = { entity: "", members: [] };
-                    curSeg.entities.push(curEnt);
-                }
-                curEnt.members.push({
-                    role: curRole,
-                    name: cleanName
-                });
             }
+        }
+
+        name = name.replace(/[\.:;,]+$/, '').trim();
+
+        if (name) {
+            if (!curSeg) {
+                curSeg = { segment: "Composição dos Membros", entities: [] };
+                segments.push(curSeg);
+            }
+            if (!curEnt) {
+                curEnt = { entity: "", members: [] };
+                curSeg.entities.push(curEnt);
+            }
+            curEnt.members.push({ role, name });
         }
     }
 
-    // Filtrar vazios
     return segments.map(s => ({
         segment: s.segment,
         entities: s.entities.map(e => ({
