@@ -6,7 +6,7 @@ import {
     FaNewspaper, FaGavel, FaUsers, FaMoneyBillWave,
     FaBullhorn, FaFileContract, FaChartBar, FaEnvelope, FaHandshake, FaPlane,
     FaHammer, FaQuestionCircle, FaBook, FaBalanceScale, FaBuilding,
-    FaPlus, FaArrowRight
+    FaPlus, FaArrowRight, FaHeartbeat
 } from "react-icons/fa";
 
 export default async function AdminDashboard() {
@@ -14,9 +14,9 @@ export default async function AdminDashboard() {
     const role = (session?.user as any)?.role || "admin";
 
     // Contadores do banco
-    let counts = { noticia: 0, licitacao: 0, contrato: 0, convenio: 0, diaria: 0, servidor: 0, ouvidoria: 0, contato: 0, obra: 0, faq: 0, glossario: 0, legislacao: 0, unidades: 0 };
+    let counts = { noticia: 0, licitacao: 0, contrato: 0, convenio: 0, diaria: 0, servidor: 0, ouvidoria: 0, contato: 0, obra: 0, faq: 0, glossario: 0, legislacao: 0, unidades: 0, regulacao: 0 };
     try {
-        const [noticia, licitacao, contrato, convenio, diaria, servidor, ouvidoria, contato, obra, faq, glossario, legislacao, unidades] = await Promise.all([
+        const [noticia, licitacao, contrato, convenio, diaria, servidor, ouvidoria, contato, obra, faq, glossario, legislacao, unidades, regulacao] = await Promise.all([
             prisma.noticia.count(),
             prisma.licitacao.count(),
             prisma.contrato.count(),
@@ -30,17 +30,18 @@ export default async function AdminDashboard() {
             prisma.glossario.count(),
             prisma.legislacao.count(),
             prisma.unidadeAtendimento.count(),
+            prisma.centralRegulacaoItem.count(),
         ]);
-        counts = { noticia, licitacao, contrato, convenio, diaria, servidor, ouvidoria, contato, obra, faq, glossario, legislacao, unidades };
+        counts = { noticia, licitacao, contrato, convenio, diaria, servidor, ouvidoria, contato, obra, faq, glossario, legislacao, unidades, regulacao };
     } catch { }
 
     const cards = [
         { icon: FaNewspaper, cor: "from-blue-500 to-indigo-600", bgLight: "bg-blue-50", text: "text-blue-600", href: "/admin/noticias", label: "Notícias", value: counts.noticia, roles: ["admin", "editor", "comunicacao"] },
         { icon: FaHammer, cor: "from-orange-500 to-red-600", bgLight: "bg-orange-50", text: "text-orange-600", href: "/admin/obras", label: "Obras", value: counts.obra, roles: ["admin", "editor"] },
         { icon: FaBuilding, cor: "from-emerald-400 to-teal-600", bgLight: "bg-teal-50", text: "text-teal-600", href: "/admin/unidades", label: "Unidades", value: counts.unidades, roles: ["admin", "editor"] },
+        { icon: FaHeartbeat, cor: "from-rose-500 to-red-600", bgLight: "bg-rose-50", text: "text-rose-600", href: "/admin/central-regulacao", label: "Regulação", value: counts.regulacao, roles: ["admin", "editor"] },
         { icon: FaGavel, cor: "from-amber-400 to-amber-600", bgLight: "bg-amber-50", text: "text-amber-600", href: "/admin/licitacoes", label: "Licitações", value: counts.licitacao, roles: ["admin", "editor"] },
         { icon: FaFileContract, cor: "from-rose-400 to-pink-600", bgLight: "bg-pink-50", text: "text-pink-600", href: "/admin/contratos", label: "Contratos", value: counts.contrato, roles: ["admin", "editor"] },
-        { icon: FaUsers, cor: "from-cyan-400 to-blue-500", bgLight: "bg-cyan-50", text: "text-cyan-600", href: "/admin/servidores", label: "Servidores", value: counts.servidor, roles: ["admin", "editor"] },
     ].filter(c => c.roles.includes(role));
 
     const [ultimasNoticias, ultimasObras, ultimasFAQs] = await Promise.all([

@@ -8,7 +8,7 @@ import {
     FaMoneyBillWave, FaChartBar, FaBuilding, FaBullhorn,
     FaSignOutAlt, FaTimes, FaBars, FaCalendar, FaImages, FaEnvelope,
     FaHandshake, FaPlane, FaHammer, FaQuestionCircle, FaBook,
-    FaUserFriends, FaUpload, FaFile, FaExternalLinkAlt, FaUserShield, FaUserGraduate, FaUserTie, FaCog, FaTheaterMasks
+    FaUserFriends, FaUpload, FaFile, FaExternalLinkAlt, FaUserShield, FaUserGraduate, FaUserTie, FaCog, FaTheaterMasks, FaHeartbeat
 } from "react-icons/fa";
 import { useState } from "react";
 
@@ -41,6 +41,7 @@ const menuItems = [
     { label: "Configurações", href: "/admin/configuracoes", icon: FaCog, roles: ["admin", "editor", "comunicacao"] },
     { label: "Usuários", href: "/admin/usuarios", icon: FaUserShield, roles: ["admin"] },
     { label: "Saúde / REMUME", href: "/admin/saude", icon: FaBook, roles: ["admin", "editor"] },
+    { label: "Regulação em Saúde", href: "/admin/central-regulacao", icon: FaHeartbeat, roles: ["admin", "editor"] },
     { label: "Frota Municipal", href: "/admin/frota", icon: FaHome, roles: ["admin", "editor"] },
     { label: "Emendas Parl.", href: "/admin/emendas", icon: FaMoneyBillWave, roles: ["admin", "editor"] },
     { label: "Emendas PIX", href: "/admin/emendas-pix", icon: FaMoneyBillWave, roles: ["admin", "editor"] },

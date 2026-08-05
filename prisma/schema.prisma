@@ -647,3 +647,30 @@ model DocumentoSaude {
   atualizadoEm    DateTime @updatedAt
 }
 
+model CentralRegulacaoItem {
+  id             String   @id @default(cuid())
+  tipo           String
+  totalPacientes Int      @default(0)
+  tempoEspera    String
+  procedimentos  String?
+  icone          String   @default("FaUserMd")
+  cor            String   @default("from-blue-500 to-indigo-600")
+  ordem          Int      @default(0)
+  ativo          Boolean  @default(true)
+  criadoEm       DateTime @default(now())
+  atualizadoEm   DateTime @updatedAt
+}
+
+model CentralRegulacaoConfig {
+  id                   String   @id @default("config")
+  titulo               String   @default("Central de Regulação em Saúde")
+  subtitulo            String?  @default("Acompanhe as filas de espera para consultas especializadas, exames e cirurgias eletivas no SUS municipal.")
+  comoFunciona         String?  @db.Text
+  telefone             String?  @default("(84) 3400-0000")
+  horarioFuncionamento String?  @default("Segunda a Sexta, 07h às 13h")
+  endereco             String?  @default("Secretaria Municipal de Saúde de Lajes Pintadas")
+  linkSistemaExterno   String?
+  documentoRegulamento String?
+  atualizadoEm         DateTime @updatedAt
+}
+
