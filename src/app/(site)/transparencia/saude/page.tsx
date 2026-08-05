@@ -70,7 +70,7 @@ export default async function SaudeTransparencyPage() {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-50">
-                                {medicamentos.map((item) => (
+                                {medicamentos.map((item: any) => (
                                     <tr key={item.id} className="hover:bg-blue-50/30 transition-colors group">
                                         <td className="px-10 py-8">
                                             <div className="flex items-center gap-4">

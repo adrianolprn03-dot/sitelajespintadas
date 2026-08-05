@@ -88,7 +88,7 @@ export default async function SecretariaDetalhesPage({ params }: { params: { slu
                         )}
 
                         <section className="pt-4">
-                            <DataAtualizacao variant="card" dataAtualizacao={new Date(secretaria.atualizadoEm || secretaria.criadoEm).toLocaleDateString("pt-BR")} />
+                            <DataAtualizacao variant="card" dataAtualizacao={new Date((secretaria as any).atualizadoEm || (secretaria as any).criadoEm).toLocaleDateString("pt-BR")} />
                         </section>
                     </div>
 
