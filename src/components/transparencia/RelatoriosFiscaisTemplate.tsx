@@ -5,7 +5,7 @@ import {
     FaFilePdf, FaMagnifyingGlass, FaCalendarDays, FaChartLine, 
     FaDownload, FaFileExcel, FaFileCsv, FaXmark, FaEye, 
     FaArrowDownShortWide, FaArrowUpWideShort, FaFileSignature, 
-    FaBuildingColumns 
+    FaBuildingColumns, FaShieldHalved
 } from "react-icons/fa6";
 import PageHeader from "@/components/PageHeader";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
@@ -23,6 +23,13 @@ type RelatorioFiscal = {
     dataPublicacao: string;
 };
 
+export type DeclaracaoInfo = {
+    exercicios: string;
+    textoInicial?: string;
+    declaracao: string;
+    dataAtualizacao: string;
+};
+
 interface Props {
     title: string;
     subtitle: string;
@@ -30,6 +37,7 @@ interface Props {
     icon: React.ReactNode;
     breadcrumbLabel: string;
     showTabs?: string[];
+    declaracao?: DeclaracaoInfo | React.ReactNode;
 }
 
 // Prioridade dos tipos principais na LRF
@@ -139,7 +147,7 @@ const getTipoMeta = (tipo: string) => {
     };
 };
 
-export default function RelatoriosFiscaisTemplate({ title, subtitle, tipo, icon, breadcrumbLabel, showTabs }: Props) {
+export default function RelatoriosFiscaisTemplate({ title, subtitle, tipo, icon, breadcrumbLabel, showTabs, declaracao }: Props) {
     const [relatorios, setRelatorios] = useState<RelatorioFiscal[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
@@ -282,6 +290,60 @@ export default function RelatoriosFiscaisTemplate({ title, subtitle, tipo, icon,
             />
 
             <div className="w-full px-4 md:px-10 lg:px-20 py-10">
+                
+                {/* ═══════ DECLARAÇÃO OFICIAL PNTP / NOTA DE TRANSPARÊNCIA ═══════ */}
+                {declaracao && (
+                    <motion.div 
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-white rounded-3xl p-6 md:p-8 border border-amber-200/80 shadow-xl shadow-amber-500/5 mb-10 relative overflow-hidden"
+                    >
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+                        
+                        {/* Status / Header */}
+                        <div className="flex flex-wrap items-center justify-between gap-4 mb-6 pb-5 border-b border-amber-100/80">
+                            <div className="flex items-center gap-3">
+                                <div className="p-3 bg-amber-500 text-white rounded-2xl shadow-md shadow-amber-500/20">
+                                    <FaShieldHalved size={22} />
+                                </div>
+                                <div>
+                                    <span className="text-[10px] font-black text-amber-600 uppercase tracking-widest block mb-0.5">
+                                        Declaração de Transparência Pública (PNTP)
+                                    </span>
+                                    <h3 className="text-xl font-black text-slate-800 tracking-tight">
+                                        {typeof declaracao === "object" && "exercicios" in declaracao 
+                                            ? declaracao.exercicios 
+                                            : "Declaração Oficial"}
+                                    </h3>
+                                </div>
+                            </div>
+                            {typeof declaracao === "object" && "dataAtualizacao" in declaracao && (
+                                <div className="flex items-center gap-2 px-4 py-2 bg-amber-50 text-amber-900 rounded-full border border-amber-200 text-xs font-bold shadow-sm">
+                                    <FaCalendarDays size={13} className="text-amber-600" />
+                                    <span>Data de Atualização: <strong className="text-amber-950 font-black">{declaracao.dataAtualizacao}</strong></span>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Text Content */}
+                        {typeof declaracao === "object" && "declaracao" in declaracao ? (
+                            <div className="space-y-4 text-slate-700 text-sm md:text-base leading-relaxed">
+                                {declaracao.textoInicial && (
+                                    <p className="text-slate-600 font-medium">
+                                        {declaracao.textoInicial}
+                                    </p>
+                                )}
+                                <div className="p-6 bg-amber-50/70 rounded-2xl border-l-4 border-amber-500 border border-amber-200/50 shadow-inner">
+                                    <p className="font-semibold text-slate-800 leading-relaxed">
+                                        {declaracao.declaracao}
+                                    </p>
+                                </div>
+                            </div>
+                        ) : (
+                            declaracao
+                        )}
+                    </motion.div>
+                )}
                 
                 {/* Bento Stats */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
