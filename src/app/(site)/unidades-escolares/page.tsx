@@ -5,7 +5,9 @@ import {
     HiOutlineAcademicCap, 
     HiOutlineMapPin, 
     HiOutlineClock, 
-    HiOutlinePhone 
+    HiOutlinePhone,
+    HiOutlineShieldCheck,
+    HiOutlineCalendar
 } from "react-icons/hi2";
 
 export const metadata: Metadata = {
@@ -23,7 +25,7 @@ export default async function UnidadesEscolaresPage() {
         <div className="min-h-screen bg-[#f8fafc]">
             <PageHeader
                 title="Unidades Escolares"
-                subtitle="Consulte a relação completa de escolas e creches municipais, além dos horários e meios de contato."
+                subtitle="Consulte a relação completa de escolas e creches municipais, horários, meios de contato e declarações de vagas."
                 variant="premium"
                 icon={<HiOutlineAcademicCap className="w-8 h-8" />}
                 breadcrumbs={[
@@ -33,7 +35,48 @@ export default async function UnidadesEscolaresPage() {
                 ]}
             />
             
-            <div className="max-w-7xl mx-auto px-6 py-16 mb-20 relative z-10 w-full">
+            <div className="max-w-7xl mx-auto px-6 py-12 mb-20 relative z-10 w-full">
+                
+                {/* ═══════ DECLARAÇÃO EM DESTAQUE - FILA DE ESPERA EM CRECHES (PNTP) ═══════ */}
+                <div className="bg-gradient-to-br from-[#002241] via-[#003670] to-[#01b0ef] text-white rounded-[2.5rem] p-8 md:p-12 mb-12 shadow-2xl shadow-blue-900/20 border border-blue-400/20 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none" />
+                    
+                    <div className="relative z-10">
+                        {/* Header do Destaque */}
+                        <div className="flex flex-wrap items-center justify-between gap-4 mb-6 pb-6 border-b border-white/15">
+                            <div className="flex items-center gap-4">
+                                <div className="p-3.5 bg-amber-400 text-slate-900 rounded-2xl shadow-lg shadow-amber-400/20">
+                                    <HiOutlineShieldCheck size={30} />
+                                </div>
+                                <div>
+                                    <span className="text-[10px] font-black text-amber-300 uppercase tracking-[0.25em] block mb-1">
+                                        Declaração Oficial de Transparência Pública (PNTP)
+                                    </span>
+                                    <h2 className="text-lg md:text-2xl font-black uppercase tracking-tight text-white">
+                                        Vagas e Fila de Espera em Creches Públicas
+                                    </h2>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2 px-4 py-2 bg-white/15 backdrop-blur-md rounded-full border border-white/20 text-xs font-bold text-white shadow-sm">
+                                <HiOutlineCalendar size={15} className="text-amber-300" />
+                                <span>Atualização: <strong className="text-amber-300">01/06/2026</strong></span>
+                            </div>
+                        </div>
+
+                        {/* Conteúdo da Declaração */}
+                        <div className="space-y-4 text-blue-50 text-base md:text-lg leading-relaxed font-medium">
+                            <p className="text-white font-bold text-sm md:text-base">
+                                A Prefeitura Municipal de Lajes Pintadas, por meio da Secretaria de Educação, vem, para os devidos fins, declarar que:
+                            </p>
+                            <div className="p-6 md:p-8 bg-white/10 backdrop-blur-md rounded-3xl border-l-4 border-amber-400 border border-white/15 text-white shadow-2xl">
+                                <p className="font-bold text-base md:text-xl leading-relaxed text-white">
+                                    “Não dispôs de fila de espera para matrícula em creches públicas no âmbito municipal, nos anos de 2023, 2024, 2025 e 2026 (até a presente data), pois todas as vagas disponíveis nas unidades de educação infantil estão sendo atendidas de acordo com a demanda registrada. Logo, não existe lista.”
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {unidades.map((unidade: any) => (
                         <div key={unidade.id} className="group bg-white rounded-[2.5rem] overflow-hidden shadow-2xl shadow-gray-200/50 hover:shadow-primary-900/10 transition-all duration-500 border border-transparent hover:border-primary-100 flex flex-col h-full">

@@ -49,6 +49,24 @@ export default function EducacaoPage() {
 
             <div className="py-16 bg-gray-50 min-h-[400px]">
                 <div className="max-w-[1240px] mx-auto px-6">
+                    {/* ═══════ DECLARAÇÃO EM DESTAQUE - CRECHES ═══════ */}
+                    <div className="bg-gradient-to-br from-[#002241] via-[#003670] to-[#01b0ef] text-white rounded-[2.5rem] p-8 md:p-10 mb-10 shadow-2xl border border-blue-400/20 relative overflow-hidden">
+                        <div className="flex flex-wrap items-center justify-between gap-4 mb-4 pb-4 border-b border-white/15">
+                            <h3 className="text-sm font-black uppercase tracking-widest text-amber-300">
+                                Declaração de Transparência Pública (PNTP 2026) – Vagas em Creches
+                            </h3>
+                            <span className="text-xs font-bold text-white bg-white/15 px-3 py-1 rounded-full border border-white/20">
+                                Atualização: 01/06/2026
+                            </span>
+                        </div>
+                        <p className="text-xs md:text-sm font-semibold text-blue-100 mb-3">
+                            A Prefeitura Municipal de Lajes Pintadas, por meio da Secretaria de Educação, vem, para os devidos fins, declarar que:
+                        </p>
+                        <div className="p-5 md:p-6 bg-white/10 backdrop-blur-md rounded-2xl border-l-4 border-amber-400 text-white font-bold text-sm md:text-base leading-relaxed">
+                            “Não dispôs de fila de espera para matrícula em creches públicas no âmbito municipal, nos anos de 2023, 2024, 2025 e 2026 (até a presente data), pois todas as vagas disponíveis nas unidades de educação infantil estão sendo atendidas de acordo com a demanda registrada. Logo, não existe lista.”
+                        </div>
+                    </div>
+
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 mb-8 bg-blue-50 rounded-3xl border border-blue-100">
                         <div>
                             <h3 className="text-base font-black text-blue-900 uppercase tracking-tight">Relação Completa de Unidades Escolares</h3>
