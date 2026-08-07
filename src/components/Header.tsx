@@ -17,6 +17,8 @@ const navItems = [
             { label: "A Prefeitura", href: "/a-prefeitura" },
             { label: "Secretarias", href: "/secretarias" },
             { label: "História", href: "/a-prefeitura/historia" },
+            { label: "Unidades Escolares", href: "/unidades-escolares" },
+            { label: "Unidades de Saúde", href: "/unidades-de-saude" },
         ]
     },
     {
@@ -46,9 +48,10 @@ const navItems = [
     {
         label: "Serviços", href: "/unidades-de-saude", hasDropdown: true,
         children: [
-            { label: "Saúde", href: "/unidades-de-saude" },
+            { label: "Unidades Escolares", href: "/unidades-escolares" },
+            { label: "Unidades de Saúde", href: "/unidades-de-saude" },
+            { label: "Educação e Escolas", href: "/servicos/educacao" },
             { label: "Assistência Social", href: "/servicos/social" },
-            { label: "Educação", href: "/servicos/educacao" },
             { label: "Cultura e Esporte", href: "/servicos/cultura" },
         ]
     },

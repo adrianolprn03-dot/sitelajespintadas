@@ -49,6 +49,19 @@ export default function EducacaoPage() {
 
             <div className="py-16 bg-gray-50 min-h-[400px]">
                 <div className="max-w-[1240px] mx-auto px-6">
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 mb-8 bg-blue-50 rounded-3xl border border-blue-100">
+                        <div>
+                            <h3 className="text-base font-black text-blue-900 uppercase tracking-tight">Relação Completa de Unidades Escolares</h3>
+                            <p className="text-xs text-blue-700 font-medium mt-1">Acesse a página dedicada com todas as creches e escolas municipais, horários, telefones e mapas de localização.</p>
+                        </div>
+                        <Link 
+                            href="/unidades-escolares"
+                            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-md shrink-0"
+                        >
+                            Ver Unidades Escolares
+                        </Link>
+                    </div>
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {loading ? (
                             <div className="md:col-span-2 flex justify-center py-10">

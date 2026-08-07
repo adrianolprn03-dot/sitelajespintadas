@@ -37,6 +37,7 @@ const footerLinks = [
         links: [
             { label: "Ouvidoria Municipal", href: "/servicos/ouvidoria" },
             { label: "e-SIC (LAI)", href: "/servicos/esic" },
+            { label: "Unidades Escolares", href: "/unidades-escolares" },
             { label: "Unidades de Saúde", href: "/unidades-de-saude" },
             { label: "Assistência Social", href: "/servicos/social" },
             { label: "Educação e Escolas", href: "/servicos/educacao" },
