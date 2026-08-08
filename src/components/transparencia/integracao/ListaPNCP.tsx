@@ -35,7 +35,11 @@ const MODALIDADE_COR: Record<string, string> = {
     "Concorrência - Eletrônica": "bg-teal-50 text-teal-700 border-teal-100",
 };
 
-export default function ListaPNCP() {
+interface ListaPNCPProps {
+    onSwitchToMunicipal?: () => void;
+}
+
+export default function ListaPNCP({ onSwitchToMunicipal }: ListaPNCPProps) {
     const [itens, setItens] = useState<PNCPItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -63,7 +67,7 @@ export default function ListaPNCP() {
             setTotalPaginas(data.totalPaginas || 1);
             setTotalRegistros(data.totalRegistros || 0);
         } catch (err) {
-            setError("Não foi possível carregar as licitações do PNCP no momento.");
+            setError("Servidor do PNCP (Base Federal) inacessível ou indisponível no momento.");
             console.error(err);
         } finally {
             setLoading(false);
@@ -89,16 +93,26 @@ export default function ListaPNCP() {
 
     if (error && itens.length === 0) {
         return (
-            <div className="bg-red-50 border border-red-100 rounded-[2rem] p-10 text-center">
-                <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-                <h3 className="text-red-900 font-black uppercase tracking-tight mb-2">Falha na Conexão Federal</h3>
-                <p className="text-red-600 text-sm font-medium mb-6">{error}</p>
-                <button 
-                    onClick={() => fetchItens()}
-                    className="bg-red-500 text-white px-8 py-3 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-red-600 transition-all flex items-center gap-2 mx-auto"
-                >
-                    <RefreshCw size={14} /> Tentar Novamente
-                </button>
+            <div className="bg-amber-50/50 border border-amber-200 rounded-[2.5rem] p-10 text-center space-y-4">
+                <AlertCircle className="w-12 h-12 text-amber-500 mx-auto" />
+                <h3 className="text-amber-900 font-black uppercase tracking-tight">Instabilidade no PNCP Federal</h3>
+                <p className="text-amber-700 text-sm font-medium max-w-xl mx-auto">{error}</p>
+                <div className="flex flex-wrap gap-4 justify-center pt-2">
+                    <button 
+                        onClick={() => fetchItens()}
+                        className="bg-amber-600 text-white px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-amber-700 transition-all flex items-center gap-2"
+                    >
+                        <RefreshCw size={14} /> Tentar Novamente
+                    </button>
+                    {onSwitchToMunicipal && (
+                        <button 
+                            onClick={onSwitchToMunicipal}
+                            className="bg-slate-900 text-white px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-blue-600 transition-all flex items-center gap-2 shadow-lg"
+                        >
+                            <FileText size={14} /> Ver Licitações na Base Municipal
+                        </button>
+                    )}
+                </div>
             </div>
         );
     }
@@ -106,7 +120,7 @@ export default function ListaPNCP() {
     return (
         <div className="space-y-8">
             {/* Cabeçalho com filtros */}
-            <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white/60 backdrop-blur-xl p-4 rounded-[2rem] border border-white shadow-xl">
+            <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white/60 backdrop-blur-xl p-4 rounded-[2rem] border border-gray-100 shadow-xl">
                 <div className="flex items-center gap-3 w-full md:w-auto">
                     <div className="relative flex-1 md:w-96">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -283,10 +297,20 @@ export default function ListaPNCP() {
             )}
 
             {filteredItems.length === 0 && !loading && (
-                <div className="bg-white rounded-[3rem] p-20 text-center border-2 border-dashed border-gray-100">
-                    <p className="text-gray-300 font-black uppercase tracking-widest text-xs">
-                        Nenhum processo federal encontrado para Lajes Pintadas em {anoFiltro}.
+                <div className="bg-white rounded-[3rem] p-12 text-center border-2 border-dashed border-gray-100 space-y-4">
+                    <p className="text-gray-400 font-bold tracking-tight text-sm">
+                        Nenhum processo federal localizado via PNCP para o exercício {anoFiltro}.
                     </p>
+                    {onSwitchToMunicipal && (
+                        <div>
+                            <button
+                                onClick={onSwitchToMunicipal}
+                                className="bg-slate-900 text-white px-8 py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-blue-600 transition-all shadow-xl inline-flex items-center gap-2"
+                            >
+                                <FileText size={14} /> Consultar Base Municipal de Licitações
+                            </button>
+                        </div>
+                    )}
                 </div>
             )}
         </div>

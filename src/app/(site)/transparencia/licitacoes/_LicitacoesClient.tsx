@@ -54,7 +54,7 @@ export default function LicitacoesClient() {
     const [statusFiltro, setStatusFiltro] = useState("");
     const [modalidadeFiltro, setModalidadeFiltro] = useState("");
     const [anoFiltro, setAnoFiltro] = useState(new Date().getFullYear().toString());
-    const [tab, setTab] = useState<"municipal" | "federal">("federal");
+    const [tab, setTab] = useState<"municipal" | "federal">("municipal");
 
     useEffect(() => {
         const fetchLicitacoes = async () => {
@@ -459,7 +459,7 @@ export default function LicitacoesClient() {
                             </div>
                             <div className="bg-white rounded-[3rem] p-2 border border-slate-100 shadow-2xl shadow-slate-200/50">
                                 <div className="p-8 lg:p-12">
-                                    <ListaPNCP />
+                                    <ListaPNCP onSwitchToMunicipal={() => setTab("municipal")} />
                                 </div>
                             </div>
                         </motion.div>

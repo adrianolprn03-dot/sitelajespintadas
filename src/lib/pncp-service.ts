@@ -101,11 +101,19 @@ function formatDate(date: Date): string {
 }
 
 async function fetchPNCP<T>(url: string): Promise<T | null> {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+
     try {
         const response = await fetch(url, {
             next: { revalidate: 3600 }, // Cache de 1 hora
-            headers: { Accept: "application/json" },
+            headers: { 
+                Accept: "application/json",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            },
+            signal: controller.signal,
         });
+        clearTimeout(timeoutId);
 
         if (!response.ok) {
             console.warn(`[PNCP] Erro ${response.status} em: ${url}`);
@@ -114,6 +122,7 @@ async function fetchPNCP<T>(url: string): Promise<T | null> {
 
         return await response.json() as T;
     } catch (error) {
+        clearTimeout(timeoutId);
         console.error("[PNCP] Falha ao buscar dados:", error);
         return null;
     }
@@ -124,14 +133,13 @@ async function fetchPNCP<T>(url: string): Promise<T | null> {
 // ──────────────────────────────────────────
 
 /**
- * Busca contratações por modalidade.
- * Modalidade 6 = Pregão Eletrônico (mais comum).
- * Use null para buscar todas as modalidades em chamadas paralelas.
+ * Busca contratações no PNCP.
+ * Se modalidade for informada, filtra por ela. Caso contrário, busca todas.
  */
 export async function getLicitacoesPNCP(
     pagina: number = 1,
     tamanhoPagina: number = 10,
-    modalidade: number = 6,
+    modalidade?: number,
     anoInicial?: number,
     anoFinal?: number
 ): Promise<PNCPResponsePage> {
@@ -144,7 +152,10 @@ export async function getLicitacoesPNCP(
 
     const tam = Math.max(tamanhoPagina, 10); // API exige mínimo 10
 
-    const url = `${BASE_URL}/contratacoes/publicacao?dataInicial=${dataInicial}&dataFinal=${dataFinal}&codigoModalidadeContratacao=${modalidade}&cnpj=${CNPJ_LAJES}&pagina=${pagina}&tamanhoPagina=${tam}`;
+    let url = `${BASE_URL}/contratacoes/publicacao?dataInicial=${dataInicial}&dataFinal=${dataFinal}&cnpj=${CNPJ_LAJES}&pagina=${pagina}&tamanhoPagina=${tam}`;
+    if (modalidade) {
+        url += `&codigoModalidadeContratacao=${modalidade}`;
+    }
 
     const data = await fetchPNCP<PNCPResponsePage>(url);
     return data ?? { data: [], totalRegistros: 0, totalPaginas: 0, numeroPagina: 1, paginasRestantes: 0, empty: true };
