@@ -7,12 +7,30 @@ export async function GET(req: NextRequest) {
     const publicada = searchParams.get("publicada");
     const limit = parseInt(searchParams.get("limit") || "10");
     const page = parseInt(searchParams.get("page") || "1");
+    const q = searchParams.get("q");
+    const secretariaId = searchParams.get("secretariaId");
+    const secretariaSlug = searchParams.get("secretariaSlug");
     const skip = (page - 1) * limit;
 
     try {
         const where: any = {};
         if (publicada !== null) {
             where.publicada = publicada === "true";
+        }
+
+        if (secretariaId) {
+            where.secretariaId = secretariaId;
+        } else if (secretariaSlug) {
+            where.secretaria = { slug: secretariaSlug };
+        }
+
+        if (q && q.trim()) {
+            const searchTerm = q.trim();
+            where.OR = [
+                { titulo: { contains: searchTerm, mode: "insensitive" } },
+                { resumo: { contains: searchTerm, mode: "insensitive" } },
+                { conteudo: { contains: searchTerm, mode: "insensitive" } },
+            ];
         }
 
         const [items, total] = await Promise.all([
@@ -24,12 +42,13 @@ export async function GET(req: NextRequest) {
                 ],
                 take: limit,
                 skip,
-                include: { secretaria: { select: { nome: true, slug: true } } },
+                include: { secretaria: { select: { id: true, nome: true, slug: true } } },
             }),
             prisma.noticia.count({ where }),
         ]);
         return NextResponse.json({ items, total, page, limit });
     } catch (error) {
+        console.error("Erro ao buscar notícias:", error);
         return NextResponse.json({ error: "Erro interno" }, { status: 500 });
     }
 }
