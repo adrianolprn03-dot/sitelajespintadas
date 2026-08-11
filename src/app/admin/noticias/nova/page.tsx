@@ -5,6 +5,7 @@ import { FaSave, FaArrowLeft, FaSpinner } from "react-icons/fa";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import ImageUpload from "@/components/admin/ImageUpload";
+import NewsContentEditor from "@/components/admin/NewsContentEditor";
 
 type Secretaria = { id: string; nome: string };
 
@@ -106,14 +107,10 @@ export default function NovaNoticiaPage() {
                     </div>
 
                     <div className="md:col-span-2">
-                        <label className="block text-sm font-semibold text-gray-700 mb-1">Conteúdo Completo (HTML ou Markdown) *</label>
-                        <textarea
-                            required
-                            rows={10}
-                            className="input-field resize-none font-mono text-sm"
-                            placeholder="Digite o conteúdo da notícia aqui..."
+                        <NewsContentEditor
                             value={form.conteudo}
-                            onChange={e => setForm({ ...form, conteudo: e.target.value })}
+                            onChange={(val) => setForm({ ...form, conteudo: val })}
+                            label="Conteúdo Completo da Notícia *"
                         />
                     </div>
 
