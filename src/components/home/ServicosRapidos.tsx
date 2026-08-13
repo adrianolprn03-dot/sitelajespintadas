@@ -101,15 +101,6 @@ export default async function ServicosRapidos() {
                         );
                     })}
                 </div>
-
-                <div className="mt-16 flex justify-center">
-                    <Link
-                        href="/servicos"
-                        className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 hover:text-primary-500 transition-all border-b-2 border-gray-200 hover:border-primary-500 pb-1"
-                    >
-                        Ver todos os serviços municipais
-                    </Link>
-                </div>
             </div>
         </section>
     );
