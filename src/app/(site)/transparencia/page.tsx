@@ -125,9 +125,9 @@ const categoriasDeModulos = [
         ]
     },
     {
-        tituloCategoria: "Saúde, Educação & Legislação",
+        tituloCategoria: "Saúde & Educação",
         icon: HeartPulse,
-        desc: "Transparência finalística da saúde municipal, unidades de atendimento, medicamentos SUS, planos de saúde e educação, leis municipais, decretos, portarias, LGPD, dados abertos e integridade.",
+        desc: "Transparência finalística da saúde municipal, unidades de atendimento, medicamentos SUS, exames, regulação e planos municipais de saúde e educação.",
         modulos: [
             { icon: HeartPulse, titulo: "Recursos da Saúde", desc: "Investimentos, repasses do SUS e execuções financeiras da Saúde.", href: "/transparencia/saude", badge: "SAÚDE", tipoCriterio: "ESSENCIAL", cor: "from-rose-500 to-red-650" },
             { icon: Building, titulo: "Unidades de Saúde", desc: "Informações, contatos e funcionamento da rede municipal de saúde.", href: "/transparencia/unidades-saude", badge: "UNIDADES", tipoCriterio: "OBRIGATÓRIO", cor: "from-blue-500 to-cyan-600" },
@@ -137,14 +137,22 @@ const categoriasDeModulos = [
             { icon: Calendar, titulo: "Programação Anual de Saúde", desc: "Programação anual de ações, metas e alocação de recursos do SUS (PAS).", href: "/transparencia/programacao-anual-saude", badge: "PAS", tipoCriterio: "OBRIGATÓRIO", cor: "from-emerald-600 to-teal-700" },
             { icon: FileCheck, titulo: "Relatório Anual de Gestão", desc: "Relatório de prestação de contas comprovando a execução da PAS e parecer do CMS (RAG).", href: "/transparencia/relatorio-anual-gestao", badge: "RAG", tipoCriterio: "OBRIGATÓRIO", cor: "from-purple-600 to-indigo-700" },
             { icon: GraduationCap, titulo: "Unidades Escolares", desc: "Escolas e creches municipais, contatos, horários e declaração de vagas.", href: "/unidades-escolares", badge: "UNIDADES", tipoCriterio: "OBRIGATÓRIO", cor: "from-blue-600 to-indigo-700" },
-            { icon: GraduationCap, titulo: "Plano de Educação", desc: "Diretrizes e metas do Plano Municipal de Educação.", href: "/transparencia/plano-educacao", badge: "ENSINO", tipoCriterio: "OBRIGATÓRIO", cor: "from-amber-600 to-orange-700" },
-            { icon: Files, titulo: "Leis Municipais", desc: "Legislação completa aprovada pelo legislativo e executivo.", href: "/transparencia/leis", badge: "LEGISLAÇÃO", tipoCriterio: "ESSENCIAL", cor: "from-indigo-600 to-purple-700" },
-            { icon: FileText, titulo: "Decretos Municipais", desc: "Atos normativos assinados pelo poder executivo do município.", href: "/transparencia/decretos", badge: "ATOS", tipoCriterio: "ESSENCIAL", cor: "from-slate-600 to-slate-800" },
-            { icon: ScrollText, titulo: "Portarias Executivas", desc: "Atos administrativos de provimento, nomeações e atribuições.", href: "/transparencia/portarias", badge: "PORTARIAS", tipoCriterio: "ESSENCIAL", cor: "from-blue-600 to-blue-800" },
-            { icon: ShieldCheck, titulo: "LGPD", desc: "Encarregado pelo tratamento de dados e canal de requisições de privacidade.", href: "/transparencia/lgpd", badge: "PRIVACIDADE", tipoCriterio: "ESSENCIAL", cor: "from-emerald-500 to-green-700" },
-            { icon: Presentation, titulo: "Dados Abertos", desc: "Arquivos estruturados (CSV, JSON, XML) para livre importação.", href: "/transparencia/dados-abertos", badge: "FORMATO-ABERTO", tipoCriterio: "RECOMENDADO", cor: "from-orange-500 to-amber-600" },
-            { icon: ShieldCheck, titulo: "Integridade Pública", desc: "Código de conduta ética, conformidade e combate ao desvio de conduta.", href: "/transparencia/integridade", badge: "GOVERNANÇA", tipoCriterio: "OBRIGATÓRIO", cor: "from-emerald-600 to-teal-700" },
-            { icon: Search, titulo: "Radar de Transparência", desc: "Notas de avaliação do município no Radar Nacional da Atricon.", href: "/transparencia/radar", badge: "PNTP", tipoCriterio: "RECOMENDADO", cor: "from-blue-800 to-slate-900" }
+            { icon: GraduationCap, titulo: "Plano de Educação", desc: "Diretrizes e metas do Plano Municipal de Educação.", href: "/transparencia/plano-educacao", badge: "ENSINO", tipoCriterio: "OBRIGATÓRIO", cor: "from-amber-600 to-orange-700" }
+        ]
+    },
+    {
+        tituloCategoria: "Legislação, Atos & Governança",
+        icon: Scale,
+        desc: "Legislação municipal completa, leis ordinárias e complementares, decretos executivos, portarias, LGPD, integridade pública, dados abertos e radar de transparência.",
+        modulos: [
+            { icon: Scale, titulo: "Legislação Municipal", desc: "Portal consolidado de atos normativos, leis orgânicas, leis ordinárias e regulamentações.", href: "/transparencia/legislacao", badge: "LEGISLAÇÃO", tipoCriterio: "ESSENCIAL", cor: "from-indigo-600 to-purple-800" },
+            { icon: Files, titulo: "Leis Municipais", desc: "Legislação completa aprovada pelo legislativo e executivo municipal.", href: "/transparencia/leis", badge: "LEIS", tipoCriterio: "ESSENCIAL", cor: "from-indigo-600 to-purple-700" },
+            { icon: FileText, titulo: "Decretos Municipais", desc: "Atos normativos regulamentares assinados pelo chefe do poder executivo.", href: "/transparencia/decretos", badge: "DECRETOS", tipoCriterio: "ESSENCIAL", cor: "from-slate-600 to-slate-800" },
+            { icon: ScrollText, titulo: "Portarias Executivas", desc: "Atos administrativos de provimento, nomeações, delegações e atribuições.", href: "/transparencia/portarias", badge: "PORTARIAS", tipoCriterio: "ESSENCIAL", cor: "from-blue-600 to-blue-800" },
+            { icon: ShieldCheck, titulo: "LGPD & Privacidade", desc: "Encarregado pelo tratamento de dados pessoais (DPO) e requisições de privacidade.", href: "/transparencia/lgpd", badge: "PRIVACIDADE", tipoCriterio: "ESSENCIAL", cor: "from-emerald-500 to-green-700" },
+            { icon: Shield, titulo: "Integridade Pública", desc: "Código de conduta ética, plano de integridade, conformidade e governança.", href: "/transparencia/integridade", badge: "GOVERNANÇA", tipoCriterio: "OBRIGATÓRIO", cor: "from-emerald-600 to-teal-700" },
+            { icon: Presentation, titulo: "Dados Abertos", desc: "Arquivos e catálogos em formatos abertos e estruturados (CSV, JSON, XML).", href: "/transparencia/dados-abertos", badge: "FORMATO-ABERTO", tipoCriterio: "RECOMENDADO", cor: "from-orange-500 to-amber-600" },
+            { icon: Search, titulo: "Radar de Transparência", desc: "Notas de avaliação do município no Radar Nacional de Transparência Pública (PNTP).", href: "/transparencia/radar", badge: "PNTP", tipoCriterio: "RECOMENDADO", cor: "from-blue-800 to-slate-900" }
         ]
     }
 ];
@@ -221,6 +229,15 @@ const temasCategorias = [
         badgeColor: "bg-rose-100 text-rose-700",
         badgeColorSelected: "bg-white/20 text-white",
         textColor: "text-rose-600"
+    },
+    {
+        bgSelected: "bg-gradient-to-br from-indigo-700 to-purple-900 text-white border-transparent shadow-xl shadow-indigo-500/25",
+        bgUnselected: "bg-gradient-to-br from-indigo-500/[0.02] to-purple-500/[0.04] hover:bg-white border-indigo-100 hover:border-indigo-300 text-slate-800 hover:shadow-lg hover:shadow-indigo-500/10",
+        iconColor: "text-indigo-600 bg-indigo-50",
+        iconColorSelected: "text-white bg-white/20",
+        badgeColor: "bg-indigo-100 text-indigo-700",
+        badgeColorSelected: "bg-white/20 text-white",
+        textColor: "text-indigo-600"
     }
 ];
 
@@ -547,7 +564,7 @@ export default function TransparenciaPage() {
                         </button>
                     </div>
  
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {categoriasDeModulos.map((cat, idx) => {
                             const isSelected = selectedCategory === cat.tituloCategoria;
                             const countItems = cat.modulos.length;
@@ -703,7 +720,7 @@ export default function TransparenciaPage() {
                                         {/* Grid de Cards */}
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                                             {categoria.modulos.map((m) => {
-                                                const identifier = m.href.split("/").pop()?.toLowerCase() || "";
+                                                const identifier = (m.href || "").split("/").pop()?.toLowerCase() || "";
                                                 const override = (Array.isArray(linksExternos) ? linksExternos : []).find((l: any) => 
                                                     l?.moduloAlvo?.toLowerCase() === identifier
                                                 );
