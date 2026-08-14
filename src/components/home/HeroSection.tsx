@@ -121,7 +121,7 @@ export default function HeroSection({ linksExternos = [] }: HeroSectionProps) {
     };
 
     return (
-        <section className="relative w-full min-h-[85vh] md:min-h-[90vh] flex items-center justify-center overflow-hidden">
+        <section className="relative w-full min-h-[88vh] md:min-h-[92vh] flex items-center justify-center overflow-hidden">
             {/* Background Video com fallback para imagem */}
             <div className="absolute inset-0 z-0 overflow-hidden">
                 {!videoError ? (
@@ -132,37 +132,36 @@ export default function HeroSection({ linksExternos = [] }: HeroSectionProps) {
                         loop
                         playsInline
                         onError={() => setVideoError(true)}
-                        className="w-full h-full object-cover brightness-[1.05] contrast-[1.05] scale-105 transition-all duration-700"
+                        className="w-full h-full object-cover brightness-[1.08] contrast-[1.04] scale-105 transition-all duration-700"
                     />
                 ) : (
                     <img
                         src="/images/hero-bg.jpg"
-                        alt={`Vista de ${MUNICIPIO.nome}`}
+                        alt={`Vista aérea de ${MUNICIPIO.nome}`}
                         className="w-full h-full object-cover scale-105"
                     />
                 )}
-                {/* Overlay gradiente escuro para contraste impecável dos elementos */}
-                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/35 to-black/70" />
+                {/* Overlay gradiente suave para contraste e nitidez */}
+                <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/25 to-black/60" />
             </div>
 
             {/* Elementos decorativos de iluminação */}
-            <div className="absolute top-1/4 left-[-6rem] w-96 h-96 rounded-full bg-primary-500/15 blur-[120px] pointer-events-none z-0" />
-            <div className="absolute bottom-1/4 right-[-4rem] w-80 h-80 rounded-full bg-sky-400/15 blur-[100px] pointer-events-none z-0" />
+            <div className="absolute top-1/4 left-[-6rem] w-96 h-96 rounded-full bg-primary-500/10 blur-[100px] pointer-events-none z-0" />
+            <div className="absolute bottom-1/3 right-[-4rem] w-72 h-72 rounded-full bg-secondary-400/10 blur-[80px] pointer-events-none z-0" />
 
             {/* Conteúdo Principal */}
-            <div className="relative z-10 w-full max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col items-center text-center pt-28 pb-20 md:pt-36 md:pb-28">
+            <div className="relative z-10 w-full max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col items-center text-center pt-28 md:pt-32 pb-24 md:pb-36 animate-fade-in-up">
                 
-                {/* Título & Slogan */}
-                <div className="mb-8 md:mb-12 animate-fade-in-up">
-                    <span className="inline-block px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/90 text-xs sm:text-sm font-semibold uppercase tracking-widest mb-4">
-                        Prefeitura Municipal de {MUNICIPIO.nome}
-                    </span>
-                    <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-tight tracking-tight drop-shadow-[0_4px_25px_rgba(0,0,0,0.85)] max-w-4xl mx-auto">
-                        Cuidando da nossa gente e construindo o nosso futuro
-                    </h1>
-                </div>
+                {/* Título e Subtítulo no Design Original */}
+                <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-black text-secondary-400 leading-[1.05] mb-4 tracking-tighter drop-shadow-[0_4px_20px_rgba(0,0,0,0.85)] max-w-3xl mx-auto">
+                    {MUNICIPIO.nome}
+                </h1>
 
-                {/* Card Glassmorphic Flutuante (Modelo solicitado) */}
+                <p className="text-base md:text-xl text-white max-w-xl mb-10 font-bold drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)] leading-relaxed tracking-wide">
+                    Cuidando da nossa gente e Construindo o nosso futuro.
+                </p>
+
+                {/* Card Glassmorphic Flutuante (Modelo Solicitado) */}
                 <div className="w-full max-w-4xl bg-slate-950/40 backdrop-blur-md border border-white/20 rounded-[2rem] sm:rounded-[2.5rem] p-5 sm:p-8 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7)] transition-all duration-300">
                     
                     {/* Campo de Busca "O que você procura?" */}
@@ -217,7 +216,7 @@ export default function HeroSection({ linksExternos = [] }: HeroSectionProps) {
                         )}
                     </div>
 
-                    {/* Botões Rápidos */}
+                    {/* Botões Rápidos (Transparência, e-SIC, Ouvidoria, Secretarias) */}
                     <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 sm:gap-4">
                         {botoes.map((item, idx) => {
                             const Icon = item.icon;
@@ -248,9 +247,10 @@ export default function HeroSection({ linksExternos = [] }: HeroSectionProps) {
             </div>
 
             {/* Bottom Fade suave transição */}
-            <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white via-white/50 to-transparent z-10 pointer-events-none" />
+            <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-white via-white/40 to-transparent z-10 pointer-events-none" />
         </section>
     );
 }
+
 
 
