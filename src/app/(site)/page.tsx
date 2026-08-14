@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 export const dynamic = "force-dynamic";
 import { MUNICIPIO } from "@/config/municipio";
+import { prisma } from "@/lib/prisma";
 import HeroSection from "@/components/home/HeroSection";
-import ServicosRapidos from "@/components/home/ServicosRapidos";
 import TransparenciaHub from "@/components/home/TransparenciaHub";
 import AcessoRapido from "@/components/home/AcessoRapido";
 import UltimasNoticias from "@/components/home/UltimasNoticias";
@@ -23,11 +23,14 @@ export const metadata: Metadata = {
     },
 };
 
-export default function Home() {
+export default async function Home() {
+    const linksExternos = await (prisma as any).linkExterno.findMany({
+        where: { ativo: true, moduloAlvo: { startsWith: "home-" } },
+    });
+
     return (
         <main>
-            <HeroSection />
-            <ServicosRapidos />
+            <HeroSection linksExternos={linksExternos} />
             <UltimasNoticias />
             <TransparenciaHub />
             <AcessoRapido />
@@ -38,3 +41,4 @@ export default function Home() {
         </main>
     );
 }
+
