@@ -28,6 +28,7 @@ const servicosMaisProcurados = [
         desc: "Empenhos, liquidações e pagamentos",
         href: "/transparencia/despesas",
         icon: Receipt,
+        imagem: "/images/transparencia/card-despesas.jpg",
         corBg: "bg-blue-50 text-blue-600 border-blue-100",
         tag: "Gastos",
         tagColor: "bg-blue-100/80 text-blue-700"
@@ -37,6 +38,7 @@ const servicosMaisProcurados = [
         desc: "Arrecadação e repasses constitucionais",
         href: "/transparencia/receitas",
         icon: Coins,
+        imagem: "/images/transparencia/card-despesas.jpg",
         corBg: "bg-emerald-50 text-emerald-600 border-emerald-100",
         tag: "Arrecadação",
         tagColor: "bg-emerald-100/80 text-emerald-700"
@@ -46,6 +48,7 @@ const servicosMaisProcurados = [
         desc: "Processos, atas, editais e julgamentos",
         href: "/transparencia/licitacoes",
         icon: Gavel,
+        imagem: "/images/transparencia/card-licitacoes.jpg",
         corBg: "bg-amber-50 text-amber-600 border-amber-100",
         tag: "Compras",
         tagColor: "bg-amber-100/80 text-amber-700"
@@ -55,6 +58,7 @@ const servicosMaisProcurados = [
         desc: "Cargos, salários e quadro funcional",
         href: "/transparencia/servidores",
         icon: Users,
+        imagem: "/images/transparencia/card-servidores.jpg",
         corBg: "bg-indigo-50 text-indigo-600 border-indigo-100",
         tag: "RH",
         tagColor: "bg-indigo-100/80 text-indigo-700"
@@ -64,6 +68,7 @@ const servicosMaisProcurados = [
         desc: "Valores concedidos a agentes públicos",
         href: "/transparencia/diarias",
         icon: Plane,
+        imagem: "/images/transparencia/card-licitacoes.jpg",
         corBg: "bg-sky-50 text-sky-600 border-sky-100",
         tag: "Diárias",
         tagColor: "bg-sky-100/80 text-sky-700"
@@ -73,6 +78,7 @@ const servicosMaisProcurados = [
         desc: "Contratos firmados, aditivos e valores",
         href: "/transparencia/contratos",
         icon: FileSignature,
+        imagem: "/images/transparencia/card-licitacoes.jpg",
         corBg: "bg-cyan-50 text-cyan-600 border-cyan-100",
         tag: "Contratos",
         tagColor: "bg-cyan-100/80 text-cyan-700"
@@ -82,6 +88,7 @@ const servicosMaisProcurados = [
         desc: "Pedidos de acesso à informação pública",
         href: "/servicos/esic",
         icon: ClipboardList,
+        imagem: "/images/transparencia/card-esic.jpg",
         corBg: "bg-rose-50 text-rose-600 border-rose-100",
         tag: "Cidadão",
         tagColor: "bg-rose-100/80 text-rose-700"
@@ -91,6 +98,7 @@ const servicosMaisProcurados = [
         desc: "Lista de remédios e estoque na rede",
         href: "/transparencia/medicamentos-sus",
         icon: Pill,
+        imagem: "/images/transparencia/card-saude.jpg",
         corBg: "bg-teal-50 text-teal-600 border-teal-100",
         tag: "Saúde",
         tagColor: "bg-teal-100/80 text-teal-700"
@@ -423,11 +431,37 @@ export default function TransparenciaPage() {
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 -mt-14 relative z-40 pb-32">
 
+                {/* BANNER INSTITUCIONAL FOTOGRÁFICO */}
+                <motion.div 
+                    initial={{ y: 15, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ duration: 0.4 }}
+                    className="relative rounded-3xl overflow-hidden mb-8 border border-slate-100 shadow-xl shadow-slate-200/50 h-56 sm:h-64 lg:h-72"
+                >
+                    <img 
+                        src="/images/transparencia/banner-transparencia.jpg" 
+                        alt={`Portal da Transparência de ${MUNICIPIO.nome}`}
+                        className="w-full h-full object-cover object-center"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/75 to-slate-950/20 flex flex-col justify-center p-6 sm:p-10 text-white">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-500/20 backdrop-blur-md border border-primary-400/30 text-primary-300 text-[11px] font-bold uppercase tracking-wider mb-2.5 w-fit">
+                            <ShieldCheck size={14} className="text-primary-400" />
+                            <span>Controle Social e Conformidade Legal</span>
+                        </div>
+                        <h2 className="text-xl sm:text-3xl font-black uppercase tracking-tight text-white max-w-xl leading-tight">
+                            Transparência e Prestação de Contas
+                        </h2>
+                        <p className="text-white/80 text-xs sm:text-sm max-w-xl mt-2 leading-relaxed">
+                            Consulte em tempo real receitas, despesas, contratos, licitações, folha de pagamento e atos da Prefeitura Municipal de {MUNICIPIO.nome}/{MUNICIPIO.uf}.
+                        </p>
+                    </div>
+                </motion.div>
+
                 {/* 1. SEÇÃO EM DESTAQUE: MAIS PROCURADOS PELO CIDADÃO */}
                 <motion.section 
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.4 }}
+                    transition={{ duration: 0.4, delay: 0.1 }}
                     className="bg-white rounded-3xl p-6 sm:p-8 shadow-xl shadow-slate-200/50 border border-slate-100 mb-8"
                 >
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-100">
@@ -448,34 +482,52 @@ export default function TransparenciaPage() {
                         </span>
                     </div>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-5">
                         {servicosMaisProcurados.map((item) => {
                             const IconComponent = item.icon;
                             return (
                                 <Link
                                     key={item.href}
                                     href={item.href}
-                                    className="group relative flex flex-col justify-between p-4 sm:p-5 rounded-2xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:border-primary-200 hover:shadow-lg hover:shadow-primary-500/10 transition-all duration-300 hover:-translate-y-1"
+                                    className="group relative flex flex-col justify-between rounded-2xl border border-slate-100 bg-white hover:border-primary-300 hover:shadow-xl hover:shadow-primary-500/10 transition-all duration-300 hover:-translate-y-1 overflow-hidden"
                                 >
-                                    <div>
-                                        <div className="flex items-center justify-between mb-3">
-                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-transform duration-300 group-hover:scale-110 ${item.corBg}`}>
-                                                <IconComponent size={20} />
+                                    {/* Imagem do Card com Overlay */}
+                                    <div className="relative h-28 sm:h-32 w-full overflow-hidden bg-slate-100">
+                                        <img 
+                                            src={item.imagem} 
+                                            alt={item.titulo} 
+                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/30 to-transparent" />
+                                        
+                                        {/* Ícone no topo */}
+                                        <div className="absolute top-2.5 left-2.5">
+                                            <div className="w-8 h-8 rounded-lg bg-white/95 backdrop-blur-sm text-primary-600 shadow-md flex items-center justify-center">
+                                                <IconComponent size={16} />
                                             </div>
-                                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${item.tagColor}`}>
+                                        </div>
+
+                                        {/* Tag da categoria */}
+                                        <div className="absolute bottom-2.5 left-2.5">
+                                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/90 text-slate-800 backdrop-blur-sm shadow-sm">
                                                 {item.tag}
                                             </span>
                                         </div>
-                                        <h3 className="text-sm font-bold text-slate-900 group-hover:text-primary-600 transition-colors leading-snug">
-                                            {item.titulo}
-                                        </h3>
-                                        <p className="text-xs text-slate-500 line-clamp-2 mt-1 leading-relaxed">
-                                            {item.desc}
-                                        </p>
                                     </div>
-                                    <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-slate-400 group-hover:text-primary-600 transition-colors">
-                                        <span>Consultar</span>
-                                        <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+
+                                    <div className="p-4 flex flex-col justify-between flex-1">
+                                        <div>
+                                            <h3 className="text-sm font-bold text-slate-900 group-hover:text-primary-600 transition-colors leading-snug">
+                                                {item.titulo}
+                                            </h3>
+                                            <p className="text-xs text-slate-500 line-clamp-2 mt-1 leading-relaxed">
+                                                {item.desc}
+                                            </p>
+                                        </div>
+                                        <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-slate-400 group-hover:text-primary-600 transition-colors">
+                                            <span>Consultar</span>
+                                            <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                                        </div>
                                     </div>
                                 </Link>
                             );
