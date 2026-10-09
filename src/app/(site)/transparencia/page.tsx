@@ -21,82 +21,6 @@ import PageHeader from "@/components/PageHeader";
 import { useEffect, useState, useRef, useMemo } from "react";
 import { MUNICIPIO } from "@/config/municipio";
 
-// Módulos mais procurados pelo cidadão (Design fiel aos botões aprovados)
-const servicosMaisProcurados = [
-    {
-        titulo: "Despesas Públicas",
-        desc: "Empenhos, liquidações e pagamentos",
-        href: "/transparencia/despesas",
-        icon: Receipt,
-        corBg: "bg-blue-50 text-blue-600 border-blue-100",
-        tag: "Gastos",
-        tagColor: "bg-blue-100/80 text-blue-700"
-    },
-    {
-        titulo: "Receitas Públicas",
-        desc: "Arrecadação e repasses constitucionais",
-        href: "/transparencia/receitas",
-        icon: Coins,
-        corBg: "bg-emerald-50 text-emerald-600 border-emerald-100",
-        tag: "Arrecadação",
-        tagColor: "bg-emerald-100/80 text-emerald-700"
-    },
-    {
-        titulo: "Licitações & Editais",
-        desc: "Processos, atas, editais e julgamentos",
-        href: "/transparencia/licitacoes",
-        icon: Gavel,
-        corBg: "bg-amber-50 text-amber-600 border-amber-100",
-        tag: "Compras",
-        tagColor: "bg-amber-100/80 text-amber-700"
-    },
-    {
-        titulo: "Servidores & Folha",
-        desc: "Cargos, salários e quadro funcional",
-        href: "/transparencia/servidores",
-        icon: Users,
-        corBg: "bg-indigo-50 text-indigo-600 border-indigo-100",
-        tag: "RH",
-        tagColor: "bg-indigo-100/80 text-indigo-700"
-    },
-    {
-        titulo: "Diárias de Viagem",
-        desc: "Valores concedidos a agentes públicos",
-        href: "/transparencia/diarias",
-        icon: Plane,
-        corBg: "bg-sky-50 text-sky-600 border-sky-100",
-        tag: "Diárias",
-        tagColor: "bg-sky-100/80 text-sky-700"
-    },
-    {
-        titulo: "Contratos Públicos",
-        desc: "Contratos firmados, aditivos e valores",
-        href: "/transparencia/contratos",
-        icon: FileSignature,
-        corBg: "bg-cyan-50 text-cyan-600 border-cyan-100",
-        tag: "Contratos",
-        tagColor: "bg-cyan-100/80 text-cyan-700"
-    },
-    {
-        titulo: "e-SIC / LAI",
-        desc: "Pedidos de acesso à informação pública",
-        href: "/servicos/esic",
-        icon: ClipboardList,
-        corBg: "bg-rose-50 text-rose-600 border-rose-100",
-        tag: "Cidadão",
-        tagColor: "bg-rose-100/80 text-rose-700"
-    },
-    {
-        titulo: "Medicamentos SUS",
-        desc: "Lista de remédios e estoque na rede",
-        href: "/transparencia/medicamentos-sus",
-        icon: Pill,
-        corBg: "bg-teal-50 text-teal-600 border-teal-100",
-        tag: "Saúde",
-        tagColor: "bg-teal-100/80 text-teal-700"
-    }
-];
-
 // Divisão das Áreas Temáticas (Inspirada no modelo de Pau dos Ferros e diretrizes do PNTP)
 const categoriasDeModulos = [
     {
@@ -257,6 +181,27 @@ export default function TransparenciaPage() {
         transparencia_pntp_recomendados: "15 Módulos"
     });
     const modulesGridRef = useRef<HTMLDivElement>(null);
+    const searchInputRef = useRef<HTMLInputElement>(null);
+
+    // Atalho de teclado para focar na busca (pressionar '/' ou 'Ctrl+K'/'Cmd+K')
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (
+                (e.key === "/" || ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k")) &&
+                document.activeElement?.tagName !== "INPUT" &&
+                document.activeElement?.tagName !== "TEXTAREA"
+            ) {
+                e.preventDefault();
+                searchInputRef.current?.focus();
+            }
+            if (e.key === "Escape" && document.activeElement === searchInputRef.current) {
+                setSearchTerm("");
+                searchInputRef.current?.blur();
+            }
+        };
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, []);
 
     useEffect(() => {
         async function loadExternalLinks() {
@@ -379,94 +324,86 @@ export default function TransparenciaPage() {
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 -mt-14 relative z-40 pb-32">
 
-                {/* 1. SEÇÃO EM DESTAQUE: MAIS PROCURADOS PELO CIDADÃO (DESIGN LIMPO ORIGINAL) */}
-                <section className="bg-white rounded-3xl p-6 sm:p-8 shadow-xl shadow-slate-200/50 border border-slate-100 mb-8">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-100">
+                {/* HUB PRINCIPAL DE TRANSPARÊNCIA & BUSCA INTELIGENTE */}
+                <section className="bg-white rounded-3xl p-6 sm:p-8 shadow-xl shadow-slate-200/50 border border-slate-100 mb-8 relative overflow-hidden">
+                    {/* Barra Superior do Hub: Indicadores de Transparência Ativa e Metadados */}
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 mb-6 border-b border-slate-100">
                         <div>
-                            <div className="flex items-center gap-2 text-primary-600 font-bold text-xs uppercase tracking-wider mb-1">
-                                <Sparkles size={16} className="text-amber-500" />
-                                <span>Acesso Direto</span>
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/60 text-emerald-700 text-xs font-bold mb-2">
+                                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                <span>Portal Oficial de Transparência Ativa</span>
                             </div>
                             <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                                Mais Procurados pelo Cidadão
+                                Pesquisa e Acesso aos Módulos Públicos
                             </h2>
-                            <p className="text-slate-500 text-xs mt-0.5">
-                                Atalhos imediatos para os serviços e consultas públicas com maior volume de buscas
+                            <p className="text-slate-500 text-xs sm:text-sm mt-1 max-w-2xl leading-relaxed">
+                                Acesse despesas, receitas, licitações, folha de pagamento, contratos, diárias e serviços de {MUNICIPIO.nome}/{MUNICIPIO.uf}.
                             </p>
                         </div>
-                        <span className="text-xs font-semibold text-slate-400 hidden sm:block">
-                            8 consultas prioritárias
-                        </span>
+
+                        {/* Badges de Destaque / Estatísticas Oficiais */}
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
+                            <div className="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-slate-50 border border-slate-200/70 text-slate-700">
+                                <Database size={16} className="text-primary-600" />
+                                <div className="text-left">
+                                    <span className="block text-[10px] uppercase font-bold text-slate-400">Total</span>
+                                    <span className="block text-xs font-bold text-slate-800">{countTotalModulos} Módulos</span>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-slate-50 border border-slate-200/70 text-slate-700">
+                                <ShieldCheck size={16} className="text-emerald-600" />
+                                <div className="text-left">
+                                    <span className="block text-[10px] uppercase font-bold text-slate-400">Conformidade</span>
+                                    <span className="block text-xs font-bold text-slate-800">LAI & LRF</span>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-slate-50 border border-slate-200/70 text-slate-700">
+                                <Sparkles size={16} className="text-amber-500" />
+                                <div className="text-left">
+                                    <span className="block text-[10px] uppercase font-bold text-slate-400">Avaliação</span>
+                                    <span className="block text-xs font-bold text-slate-800">{configs.transparencia_pntp_selo || "PNTP / ATRICON"}</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-                        {servicosMaisProcurados.map((item) => {
-                            const IconComponent = item.icon;
-                            return (
-                                <Link
-                                    key={item.href}
-                                    href={item.href}
-                                    className="group relative flex flex-col justify-between p-4 sm:p-5 rounded-2xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:border-primary-200 hover:shadow-lg hover:shadow-primary-500/10 transition-all duration-300 hover:-translate-y-1"
-                                >
-                                    <div>
-                                        <div className="flex items-center justify-between mb-3">
-                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-transform duration-300 group-hover:scale-110 ${item.corBg}`}>
-                                                <IconComponent size={20} />
-                                            </div>
-                                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${item.tagColor}`}>
-                                                {item.tag}
-                                            </span>
-                                        </div>
-                                        <h3 className="text-sm font-bold text-slate-900 group-hover:text-primary-600 transition-colors leading-snug">
-                                            {item.titulo}
-                                        </h3>
-                                        <p className="text-xs text-slate-500 line-clamp-2 mt-1 leading-relaxed">
-                                            {item.desc}
-                                        </p>
-                                    </div>
-                                    <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-slate-400 group-hover:text-primary-600 transition-colors">
-                                        <span>Consultar</span>
-                                        <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                                    </div>
-                                </Link>
-                            );
-                        })}
-                    </div>
-                </section>
-
-                {/* 2. BARRA DE PESQUISA E FILTRO UNIFICADO (LIMPO, SEM POLUIÇÃO VISUAL) */}
-                <section className="bg-white rounded-3xl p-5 sm:p-6 shadow-xl shadow-slate-200/40 border border-slate-100 mb-8">
-                    <div className="flex flex-col md:flex-row gap-3 sm:gap-4 items-stretch">
-                        {/* Campo de Busca Principal */}
+                    {/* Campo de Busca & Seletor de Áreas */}
+                    <div className="flex flex-col md:flex-row gap-3 sm:gap-4 items-stretch mb-5">
                         <div className="flex-1 relative group">
                             <div className="absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary-600 transition-colors pointer-events-none">
                                 <Search size={20} />
                             </div>
                             <input 
+                                ref={searchInputRef}
                                 type="text" 
-                                placeholder="Buscar nos módulos da transparência (ex: 'folha', 'diárias', 'licitações', 'obras')..."
+                                placeholder="O que você deseja consultar? (ex: 'folha', 'diárias', 'medicamentos', 'licitações', 'obras')..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full bg-slate-50 hover:bg-slate-100/70 border border-slate-200 focus:bg-white rounded-2xl pl-12 sm:pl-14 pr-11 py-3.5 text-sm font-semibold placeholder:text-slate-400 outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all"
+                                className="w-full bg-slate-50 hover:bg-slate-100/70 border border-slate-200 focus:bg-white rounded-2xl pl-12 sm:pl-14 pr-24 py-4 text-sm font-semibold placeholder:text-slate-400 outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all shadow-inner"
                             />
-                            {searchTerm && (
-                                <button 
-                                    onClick={() => setSearchTerm("")}
-                                    title="Limpar pesquisa"
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 flex items-center justify-center transition-colors"
-                                >
-                                    <X size={13} />
-                                </button>
-                            )}
+                            <div className="absolute right-3.5 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
+                                {searchTerm ? (
+                                    <button 
+                                        onClick={() => setSearchTerm("")}
+                                        title="Limpar pesquisa (Esc)"
+                                        className="w-7 h-7 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 flex items-center justify-center transition-colors cursor-pointer"
+                                    >
+                                        <X size={14} />
+                                    </button>
+                                ) : (
+                                    <kbd className="hidden sm:inline-flex items-center px-2 py-0.5 text-[10px] font-mono text-slate-400 bg-white border border-slate-200 rounded shadow-sm">
+                                        /
+                                    </kbd>
+                                )}
+                            </div>
                         </div>
 
-                        {/* Dropdown Seletor de Áreas Temáticas (Inspirado no modelo compacto) */}
                         <div className="md:w-72">
                             <select
                                 value={selectedCategory}
                                 onChange={(e) => setSelectedCategory(e.target.value)}
                                 aria-label="Filtrar por Área Temática"
-                                className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3.5 text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-primary-500/20 cursor-pointer hover:bg-slate-100 transition-all truncate"
+                                className="w-full h-full min-h-[52px] bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3.5 text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-primary-500/20 cursor-pointer hover:bg-slate-100 transition-all truncate"
                             >
                                 <option value="TODAS">Todas as Áreas ({countTotalModulos} módulos)</option>
                                 {categoriasDeModulos.map(cat => (
@@ -478,19 +415,19 @@ export default function TransparenciaPage() {
                         </div>
                     </div>
 
-                    {/* Navegação Rápida em Linha Única por Áreas Temáticas (Sem quebra de linhas) */}
-                    <div className="mt-4 pt-3 border-t border-slate-100 flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-1 -mx-1 px-1">
+                    {/* Navegação Rápida em Linha Única por Áreas Temáticas (Com rolagem suave e sem quebra em linhas) */}
+                    <div className="pt-2 border-t border-slate-100 flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-1 -mx-1 px-1">
                         <button
                             onClick={() => setSelectedCategory("TODAS")}
-                            className={`flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-200 shrink-0 ${
+                            className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-200 shrink-0 cursor-pointer ${
                                 selectedCategory === "TODAS"
-                                    ? "bg-slate-900 text-white shadow-sm"
-                                    : "bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200/80"
+                                    ? "bg-slate-900 text-white shadow-md shadow-slate-900/15 scale-[1.02]"
+                                    : "bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200/80 hover:border-slate-300"
                             }`}
                         >
                             <span>Todas as Áreas</span>
-                            <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-                                selectedCategory === "TODAS" ? "bg-white/20 text-white" : "bg-slate-200 text-slate-600"
+                            <span className={`text-[10px] px-2 py-0.5 rounded-full ${
+                                selectedCategory === "TODAS" ? "bg-white/20 text-white font-extrabold" : "bg-slate-200 text-slate-600 font-semibold"
                             }`}>
                                 {countTotalModulos}
                             </span>
@@ -503,16 +440,16 @@ export default function TransparenciaPage() {
                                 <button
                                     key={cat.tituloCategoria}
                                     onClick={() => setSelectedCategory(cat.tituloCategoria)}
-                                    className={`flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-200 shrink-0 ${
+                                    className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-200 shrink-0 cursor-pointer ${
                                         isSelected
-                                            ? "bg-slate-900 text-white shadow-sm"
-                                            : "bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200/80"
+                                            ? "bg-slate-900 text-white shadow-md shadow-slate-900/15 scale-[1.02]"
+                                            : "bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200/80 hover:border-slate-300"
                                     }`}
                                 >
                                     <CatIcon size={14} className={isSelected ? "text-primary-300" : "text-slate-400"} />
                                     <span>{cat.tituloCategoria}</span>
-                                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-                                        isSelected ? "bg-white/20 text-white" : "bg-slate-200 text-slate-600"
+                                    <span className={`text-[10px] px-2 py-0.5 rounded-full ${
+                                        isSelected ? "bg-white/20 text-white font-extrabold" : "bg-slate-200 text-slate-600 font-semibold"
                                     }`}>
                                         {cat.modulos.length}
                                     </span>
@@ -523,31 +460,86 @@ export default function TransparenciaPage() {
 
                     {/* Feedback quando algum filtro estiver ativo */}
                     {(searchTerm || selectedCategory !== "TODAS") && (
-                        <div className="mt-3 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs">
+                        <div className="mt-4 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs">
                             <div className="flex flex-wrap items-center gap-2">
                                 <span className="font-semibold text-slate-400">Filtrando por:</span>
                                 {selectedCategory !== "TODAS" && (
-                                    <span className="inline-flex items-center gap-1 bg-primary-50 border border-primary-200 text-primary-800 px-2.5 py-0.5 rounded-full font-medium">
+                                    <span className="inline-flex items-center gap-1.5 bg-primary-50 border border-primary-200 text-primary-800 px-3 py-1 rounded-full font-bold">
                                         Área: {selectedCategory}
                                     </span>
                                 )}
                                 {searchTerm && (
-                                    <span className="inline-flex items-center gap-1 bg-amber-50 border border-amber-200 text-amber-800 px-2.5 py-0.5 rounded-full font-medium">
+                                    <span className="inline-flex items-center gap-1.5 bg-amber-50 border border-amber-200 text-amber-800 px-3 py-1 rounded-full font-bold">
                                         Busca: "{searchTerm}"
                                     </span>
                                 )}
+                                <span className="text-slate-400 font-medium">({totalResultados} {totalResultados === 1 ? 'módulo encontrado' : 'módulos encontrados'})</span>
                             </div>
                             <button
                                 onClick={() => {
                                     setSearchTerm("");
                                     setSelectedCategory("TODAS");
                                 }}
-                                className="text-rose-600 hover:text-rose-700 font-bold hover:underline"
+                                className="text-rose-600 hover:text-rose-700 font-bold hover:underline cursor-pointer"
                             >
                                 Limpar filtros
                             </button>
                         </div>
                     )}
+                </section>
+
+                {/* CANAIS PRIORITÁRIOS DE DIREITOS DO CIDADÃO (LAI, OUVIDORIA E RADAR) */}
+                <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+                    <Link 
+                        href="/servicos/esic" 
+                        className="group relative flex items-center gap-4 p-5 rounded-2xl bg-white border border-slate-200/80 hover:border-blue-400 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300 hover:-translate-y-0.5"
+                    >
+                        <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                            <ClipboardList size={22} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700 bg-blue-50 px-2 py-0.5 rounded">Lei 12.527</span>
+                                <ArrowRight size={14} className="text-slate-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" />
+                            </div>
+                            <h3 className="text-sm font-bold text-slate-900 group-hover:text-blue-600 transition-colors mt-1">e-SIC - Acesso à Informação</h3>
+                            <p className="text-xs text-slate-500 truncate mt-0.5">Abertura e consulta de pedidos de informação pública</p>
+                        </div>
+                    </Link>
+
+                    <Link 
+                        href="/servicos/ouvidoria" 
+                        className="group relative flex items-center gap-4 p-5 rounded-2xl bg-white border border-slate-200/80 hover:border-emerald-400 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 hover:-translate-y-0.5"
+                    >
+                        <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                            <Headset size={22} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">Lei 13.460</span>
+                                <ArrowRight size={14} className="text-slate-400 group-hover:text-emerald-600 group-hover:translate-x-1 transition-all" />
+                            </div>
+                            <h3 className="text-sm font-bold text-slate-900 group-hover:text-emerald-600 transition-colors mt-1">Ouvidoria Municipal</h3>
+                            <p className="text-xs text-slate-500 truncate mt-0.5">Denúncias, elogios, sugestões e reclamações</p>
+                        </div>
+                    </Link>
+
+                    <Link 
+                        href="/transparencia/radar" 
+                        className="group relative flex items-center gap-4 p-5 rounded-2xl bg-white border border-slate-200/80 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/10 transition-all duration-300 hover:-translate-y-0.5"
+                    >
+                        <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 border border-amber-100 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                            <ShieldCheck size={22} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 px-2 py-0.5 rounded">ATRICON / PNTP</span>
+                                <ArrowRight size={14} className="text-slate-400 group-hover:text-amber-600 group-hover:translate-x-1 transition-all" />
+                            </div>
+                            <h3 className="text-sm font-bold text-slate-900 group-hover:text-amber-600 transition-colors mt-1">Radar da Transparência</h3>
+                            <p className="text-xs text-slate-500 truncate mt-0.5">Critérios, índices e prestação de contas pública</p>
+                        </div>
+                    </Link>
                 </section>
 
                 {/* 3. DIVISÃO DAS ÁREAS TEMÁTICAS (MODELO ESTRUTURADO DE PAU DOS FERROS) */}
@@ -675,17 +667,32 @@ export default function TransparenciaPage() {
                                 Nenhum módulo encontrado
                             </h3>
                             <p className="text-slate-500 text-xs max-w-md mx-auto mb-6">
-                                Não encontramos dados para o termo <span className="font-semibold text-slate-800">"{searchTerm}"</span> com os filtros selecionados.
+                                Não encontramos nenhum módulo correspondente a <span className="font-semibold text-slate-800">"{searchTerm}"</span> com os filtros selecionados.
                             </p>
+                            <div className="flex flex-wrap items-center justify-center gap-2 mb-6 max-w-lg mx-auto">
+                                <span className="text-xs text-slate-400 font-semibold mr-1">Tente buscar por:</span>
+                                {["Despesas", "Receitas", "Licitações", "Servidores", "Diárias", "Remédios", "Contratos", "Obras"].map(sug => (
+                                    <button
+                                        key={sug}
+                                        onClick={() => {
+                                            setSearchTerm(sug);
+                                            setSelectedCategory("TODAS");
+                                        }}
+                                        className="text-xs font-semibold px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer"
+                                    >
+                                        {sug}
+                                    </button>
+                                ))}
+                            </div>
                             <button
                                 onClick={() => {
                                     setSearchTerm("");
                                     setSelectedCategory("TODAS");
                                     setSelectedCriterio("TODOS");
                                 }}
-                                className="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-xl font-bold text-xs transition-all shadow-md active:scale-95"
+                                className="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-xl font-bold text-xs transition-all shadow-md active:scale-95 cursor-pointer"
                             >
-                                Limpar Filtros
+                                Limpar Todos os Filtros
                             </button>
                         </div>
                     )}
