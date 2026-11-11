@@ -1,25 +1,31 @@
 export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { requireServerAuth } from "@/lib/rbac";
+import { registrarHistoricoAlteracao } from "@/lib/audit";
 
-async function checkAdminStatus() {
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user || (session.user as any).role !== "admin") {
-        return false;
+function parseSecList(raw: unknown): string[] {
+    if (Array.isArray(raw)) return raw.map(String).filter(Boolean);
+    if (typeof raw === "string") {
+        try {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) return parsed.map(String).filter(Boolean);
+        } catch {
+            return raw
+                .split(",")
+                .map((s) => s.trim())
+                .filter(Boolean);
+        }
     }
-    return true;
+    return [];
 }
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
-    try {
-        const isAdmin = await checkAdminStatus();
-        if (!isAdmin) {
-            return NextResponse.json({ error: "Acesso negado." }, { status: 403 });
-        }
+    const auth = await requireServerAuth(["admin", "controladoria"]);
+    if (!auth.authorized) return auth.response;
 
+    try {
         const usuario = await prisma.usuario.findUnique({
             where: { id: params.id },
             select: {
@@ -27,33 +33,34 @@ export async function GET(request: Request, { params }: { params: { id: string }
                 nome: true,
                 email: true,
                 perfil: true,
+                secretariasAutorizadas: true,
                 ativo: true,
-            }
+            },
         });
 
         if (!usuario) {
             return NextResponse.json({ error: "Usuário não encontrado" }, { status: 404 });
         }
 
-        return NextResponse.json(usuario);
-    } catch (error) {
+        return NextResponse.json({
+            ...usuario,
+            secretariasAutorizadas: parseSecList(usuario.secretariasAutorizadas),
+        });
+    } catch {
         return NextResponse.json({ error: "Erro ao buscar usuário" }, { status: 500 });
     }
 }
 
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
-    try {
-        const isAdmin = await checkAdminStatus();
-        if (!isAdmin) {
-            return NextResponse.json({ error: "Acesso negado." }, { status: 403 });
-        }
+    const auth = await requireServerAuth(["admin"]);
+    if (!auth.authorized) return auth.response;
 
+    try {
         const data = await request.json();
-        
-        // Se e-mail foi enviado, validar se já não existe em outro usuário
+
         if (data.email) {
             const existingUser = await prisma.usuario.findUnique({
-                where: { email: data.email }
+                where: { email: data.email },
             });
 
             if (existingUser && existingUser.id !== params.id) {
@@ -61,14 +68,19 @@ export async function PUT(request: Request, { params }: { params: { id: string }
             }
         }
 
-        const updateData: any = {
+        const secList =
+            data.secretariasAutorizadas !== undefined ? parseSecList(data.secretariasAutorizadas) : undefined;
+
+        const updateData: Record<string, unknown> = {
             nome: data.nome,
             email: data.email,
             perfil: data.perfil,
             ativo: data.ativo,
         };
+        if (secList !== undefined) {
+            updateData.secretariasAutorizadas = JSON.stringify(secList);
+        }
 
-        // Se uma nova senha for fornecida, faz o hash e atualiza
         if (data.senha && data.senha.trim() !== "") {
             updateData.senha = await bcrypt.hash(data.senha, 12);
         }
@@ -81,11 +93,28 @@ export async function PUT(request: Request, { params }: { params: { id: string }
                 nome: true,
                 email: true,
                 perfil: true,
+                secretariasAutorizadas: true,
                 ativo: true,
-            }
+            },
         });
 
-        return NextResponse.json(usuario);
+        await registrarHistoricoAlteracao({
+            entidade: "Usuario",
+            entidadeId: usuario.id,
+            acao: "edicao",
+            resumoAlteracao: `Atualização de usuário ${usuario.nome} (${usuario.perfil})`,
+            dadosNovos: {
+                perfil: usuario.perfil,
+                secretariasAutorizadas: parseSecList(usuario.secretariasAutorizadas),
+                ativo: usuario.ativo,
+            },
+            user: auth.user,
+        });
+
+        return NextResponse.json({
+            ...usuario,
+            secretariasAutorizadas: parseSecList(usuario.secretariasAutorizadas),
+        });
     } catch (error) {
         console.error("Erro ao atualizar usuário:", error);
         return NextResponse.json({ error: "Erro ao atualizar usuário" }, { status: 500 });
@@ -93,23 +122,27 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 }
 
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+    const auth = await requireServerAuth(["admin"]);
+    if (!auth.authorized) return auth.response;
+
     try {
-        const session = await getServerSession(authOptions);
-        const isAdmin = session?.user && (session.user as any).role === "admin";
-        
-        if (!isAdmin) {
-            return NextResponse.json({ error: "Acesso negado." }, { status: 403 });
+        if (auth.user.id === params.id) {
+            return NextResponse.json(
+                { error: "Você não pode excluir seu próprio usuário. Peça a outro administrador para fazê-lo." },
+                { status: 400 }
+            );
         }
 
-        // Prevenir que o usuário exclua a si mesmo
-        const currentUserId = (session.user as any).id;
-        if (currentUserId === params.id) {
-            return NextResponse.json({ error: "Você não pode excluir seu próprio usuário. Peça a outro administrador para fazê-lo." }, { status: 400 });
-        }
-
-        // Para evitar apagar o último admin ou algo do tipo, podemos fazer apenas deleção lógica ou hard delete se tiver mais admins.
         await prisma.usuario.delete({
-            where: { id: params.id }
+            where: { id: params.id },
+        });
+
+        await registrarHistoricoAlteracao({
+            entidade: "Usuario",
+            entidadeId: params.id,
+            acao: "exclusao",
+            resumoAlteracao: `Exclusão do usuário ID ${params.id}`,
+            user: auth.user,
         });
 
         return NextResponse.json({ success: true });

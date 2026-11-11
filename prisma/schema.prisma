@@ -10,33 +10,40 @@ datasource db {
 }
 
 model Usuario {
-  id           String   @id @default(cuid())
-  nome         String
-  email        String   @unique
-  senha        String
-  perfil       String   @default("editor")
-  ativo        Boolean  @default(true)
-  criadoEm     DateTime @default(now())
-  atualizadoEm DateTime @updatedAt
+  id                     String   @id @default(cuid())
+  nome                   String
+  email                  String   @unique
+  senha                  String
+  perfil                 String   @default("editor") // admin, controladoria, editor, integracao, esic, comunicacao
+  secretariasAutorizadas String   @default("[]")     // JSON array de nomes/slugs das secretarias autorizadas para o editor
+  cargo                  String?
+  ativo                  Boolean  @default(true)
+  criadoEm               DateTime @default(now())
+  atualizadoEm           DateTime @updatedAt
 }
 
 model Secretaria {
-  id                   String    @id @default(cuid())
-  nome                 String
-  slug                 String    @unique
-  descricao            String
-  servicos             String    @default("[]")
-  contato              String?
-  telefone             String?
-  email                String?
-  endereco             String?
-  secretario           String?
-  imagem               String?
-  horarioFuncionamento String?
-  ativa                Boolean   @default(true)
-  ordem                Int       @default(0)
-  criadoEm             DateTime  @default(now())
-  noticias             Noticia[]
+  id                     String    @id @default(cuid())
+  nome                   String
+  slug                   String    @unique
+  descricao              String
+  servicos               String    @default("[]")
+  contato                String?
+  telefone               String?
+  email                  String?
+  endereco               String?
+  secretario             String?
+  imagem                 String?
+  horarioFuncionamento   String?
+  normaCriacao           String?
+  atoNomeacaoSecretario  String?
+  dataUltimaConferencia  DateTime?
+  conferidoPor           String?
+  situacaoPublicacao     String    @default("publicado")
+  ativa                  Boolean   @default(true)
+  ordem                  Int       @default(0)
+  criadoEm               DateTime  @default(now())
+  noticias               Noticia[]
 }
 
 model Noticia {
@@ -57,122 +64,254 @@ model Noticia {
 }
 
 model Licitacao {
-  id               String     @id @default(cuid())
-  numero           String
-  ano              Int
-  modalidade       String
-  objeto           String
-  valor            Float?
-  status           String     @default("aberta")
-  dataAbertura     DateTime?
-  dataEncerramento DateTime?
-  secretaria       String
-  documentos       String     @default("[]")
-  resultado        String?
-  criadoEm         DateTime   @default(now())
-  contratos        Contrato[]
+  id                     String     @id @default(cuid())
+  codigoPermanente       String?
+  numero                 String
+  numeroProcesso         String?
+  ano                    Int
+  modalidade             String
+  objeto                 String
+  valor                  Float?
+  valorEstimado          Float?
+  valorHomologado        Float?
+  status                 String     @default("aberta")
+  dataAbertura           DateTime?
+  dataEncerramento       DateTime?
+  dataPublicacao         DateTime?
+  dataHomologacao        DateTime?
+  secretaria             String
+  unidadeResponsavel     String?
+  amparoLegal            String?
+  editalUrl              String?
+  fasesDocumentos        String     @default("[]") // JSON com fase (interna/externa), tipo, titulo, url, versao
+  ataRegistroPreco       Boolean    @default(false)
+  adesaoArp              Boolean    @default(false)
+  documentos             String     @default("[]")
+  resultado              String?
+  fonteOrigem            String?    @default("Sistema de Compras Municipal / PNCP")
+  responsavelCadastro    String?
+  responsavelRevisao     String?
+  dataAtualizacaoEfetiva DateTime   @default(now())
+  dataUltimaConferencia  DateTime?
+  situacaoPublicacao     String     @default("publicado")
+  criterioPntp           String?    @default("8.1")
+  versao                 Int        @default(1)
+  criadoEm               DateTime   @default(now())
+  contratos              Contrato[]
 }
 
 model Contrato {
-  id             String     @id @default(cuid())
-  numero         String
-  objeto         String
-  fornecedor     String
-  cnpjFornecedor String?
-  valor          Float
-  dataInicio     DateTime
-  dataFim        DateTime
-  secretaria     String
-  status         String     @default("vigente")
-  documentos     String     @default("[]")
-  licitacaoId    String?
-  criadoEm       DateTime   @default(now())
-  licitacao      Licitacao? @relation(fields: [licitacaoId], references: [id])
+  id                            String     @id @default(cuid())
+  codigoPermanente       String?
+  numero                        String
+  ano                           Int?
+  modalidadeOrigem              String?
+  objeto                        String
+  fornecedor                    String
+  cnpjFornecedor                String?
+  valor                         Float
+  dataAssinatura                DateTime?
+  dataInicio                    DateTime
+  dataFim                       DateTime
+  secretaria                    String
+  unidadeResponsavel            String?
+  status                        String     @default("vigente")
+  instrumentoIntegralUrl        String?
+  aditivos                      String     @default("[]") // JSON histórico de termos aditivos
+  fiscais                       String     @default("[]") // JSON histórico de fiscais e portarias de designação
+  justificativaOrdemCronologica String?
+  documentos                    String     @default("[]")
+  licitacaoId                   String?
+  fonteOrigem                   String?    @default("Gestão de Contratos / PNCP")
+  responsavelCadastro           String?
+  responsavelRevisao            String?
+  dataAtualizacaoEfetiva        DateTime   @default(now())
+  dataUltimaConferencia         DateTime?
+  situacaoPublicacao            String     @default("publicado")
+  criterioPntp                  String?    @default("9.1")
+  versao                        Int        @default(1)
+  criadoEm                      DateTime   @default(now())
+  licitacao                     Licitacao? @relation(fields: [licitacaoId], references: [id])
 }
 
 model Convenio {
-  id            String   @id @default(cuid())
-  numero        String
-  objeto        String
-  concedente    String
-  valor         Float
-  contrapartida Float    @default(0)
-  dataInicio    DateTime
-  dataFim       DateTime
-  secretaria    String
-  status        String   @default("vigente")
-  documentos    String   @default("[]")
-  criadoEm      DateTime @default(now())
+  id                     String    @id @default(cuid())
+  codigoPermanente       String?
+  numero                 String
+  ano                    Int?
+  tipoConvenio           String    @default("recebido") // recebido, realizado, acordo_sem_transferencia
+  objeto                 String
+  concedente             String
+  beneficiario           String?
+  cnpjParticipe          String?
+  valor                  Float
+  contrapartida          Float     @default(0)
+  valorLiberado          Float?    @default(0)
+  dataInicio             DateTime
+  dataFim                DateTime
+  secretaria             String
+  obrigacoes             String?
+  arquivoInteiroTeor     String?
+  status                 String    @default("vigente")
+  documentos             String    @default("[]")
+  fonteOrigem            String?   @default("Transferegov / SICONV / Controle Municipal")
+  responsavelCadastro    String?
+  responsavelRevisao     String?
+  dataAtualizacaoEfetiva DateTime  @default(now())
+  dataUltimaConferencia  DateTime?
+  situacaoPublicacao     String    @default("publicado")
+  criterioPntp           String?   @default("5.1")
+  criadoEm               DateTime  @default(now())
 }
 
 model Diaria {
-  id             String   @id @default(cuid())
-  servidor       String
-  cargo          String
-  destino        String
-  motivo         String
-  dataInicio     DateTime
-  dataFim        DateTime
-  valor          Float
-  valorUnitario  Float    @default(0)
-  quantidadeDias Float    @default(1)
-  secretaria     String
-  mes            Int
-  ano            Int
-  portariaUrl    String?
-  criadoEm       DateTime @default(now())
+  id                     String    @id @default(cuid())
+  codigoPermanente       String?
+  servidor               String
+  matricula              String?
+  cargo                  String
+  destino                String
+  tipoDestino            String?   @default("estadual") // estadual, nacional, internacional
+  motivo                 String
+  dataInicio             DateTime
+  dataFim                DateTime
+  valor                  Float
+  valorUnitario          Float     @default(0)
+  quantidadeDias         Float     @default(1)
+  secretaria             String
+  mes                    Int
+  ano                    Int
+  numeroPortaria         String?
+  portariaUrl            String?
+  relatorioViagemUrl     String?
+  fonteOrigem            String?   @default("Sistema de Recursos Humanos / Contabilidade")
+  responsavelCadastro    String?
+  responsavelRevisao     String?
+  dataAtualizacaoEfetiva DateTime  @default(now())
+  dataUltimaConferencia  DateTime?
+  situacaoPublicacao     String    @default("publicado")
+  criterioPntp           String?   @default("7.1")
+  criadoEm               DateTime  @default(now())
 }
 
 model Servidor {
-  id           String   @id @default(cuid())
-  nome         String
-  matricula    String?  @unique
-  cargo        String
-  vinculo      String   @default("efetivo")
-  secretaria   String
-  salarioBase  Float
-  totalBruto   Float
-  totalLiquido Float
-  ativo        Boolean  @default(true)
-  mes          Int
-  ano          Int
-  criadoEm     DateTime @default(now())
+  id                     String    @id @default(cuid())
+  nome                   String
+  cpfAnonimizado         String?
+  matricula              String?   @unique
+  cargo                  String
+  vinculo                String    @default("efetivo")
+  secretaria             String
+  lotacao                String?
+  cargaHorariaSemanal    Int?      @default(40)
+  dataAdmissao           DateTime?
+  padraoRemuneratorio    String?
+  salarioBase            Float
+  vantagens              Float?    @default(0)
+  descontos              Float?    @default(0)
+  totalBruto             Float
+  totalLiquido           Float
+  ativo                  Boolean   @default(true)
+  mes                    Int
+  ano                    Int
+  fonteOrigem            String?   @default("Sistema de Folha de Pagamento")
+  dataAtualizacaoEfetiva DateTime  @default(now())
+  dataUltimaConferencia  DateTime?
+  situacaoPublicacao     String    @default("publicado")
+  criadoEm               DateTime  @default(now())
 }
 
 model Receita {
-  id        String   @id @default(cuid())
-  descricao String
-  categoria String
-  fonte     String?
-  valor     Float
-  mes       Int
-  ano       Int
-  criadoEm  DateTime @default(now())
+  id                     String    @id @default(cuid())
+  codigoPermanente       String?
+  descricao              String
+  categoria              String
+  naturezaCodigo         String?
+  orgao                  String?   @default("Prefeitura Municipal de Lajes Pintadas")
+  unidade                String?
+  fonte                  String?
+  valor                  Float
+  valorPrevisto          Float?
+  valorAtualizado        Float?
+  valorLancado           Float?
+  valorArrecadado        Float?
+  mes                    Int
+  ano                    Int
+  fonteOrigem            String?   @default("Sistema Contábil / SICONFI")
+  responsavelCadastro    String?
+  responsavelRevisao     String?
+  dataAtualizacaoEfetiva DateTime  @default(now())
+  dataUltimaConferencia  DateTime?
+  situacaoPublicacao     String    @default("publicado")
+  criterioPntp           String?   @default("3.1")
+  criadoEm               DateTime  @default(now())
 }
 
 model Despesa {
-  id         String   @id @default(cuid())
-  descricao  String
-  categoria  String
-  secretaria String
-  fornecedor String?
-  valor      Float
-  mes        Int
-  ano        Int
-  criadoEm   DateTime @default(now())
+  id                         String    @id @default(cuid())
+  codigoPermanente       String?
+  numeroEmpenho              String?
+  dataEmpenho                DateTime?
+  descricao                  String
+  categoria                  String
+  secretaria                 String
+  orgao                      String?   @default("Prefeitura Municipal de Lajes Pintadas")
+  unidade                    String?
+  fornecedor                 String?
+  credorCpfCnpj              String?
+  classificacaoOrcamentaria  String?
+  funcao                     String?
+  subfuncao                  String?
+  programa                   String?
+  elementoDespesa            String?
+  fonteRecurso               String?
+  valor                      Float
+  valorEmpenhado             Float?
+  valorLiquidado             Float?
+  valorPago                  Float?
+  modalidadeLicitacao        String?
+  numeroProcessoLicitatorio  String?
+  licitacaoId                String?
+  contratoId                 String?
+  mes                        Int
+  ano                        Int
+  fonteOrigem                String?   @default("Sistema Contábil / SICONFI")
+  responsavelCadastro        String?
+  responsavelRevisao         String?
+  dataAtualizacaoEfetiva     DateTime  @default(now())
+  dataUltimaConferencia      DateTime?
+  situacaoPublicacao         String    @default("publicado")
+  criterioPntp               String?   @default("4.1")
+  criadoEm                   DateTime  @default(now())
 }
 
 model Documento {
-  id          String   @id @default(cuid())
-  titulo      String
-  tipo        String
-  arquivo     String?
-  documentUrl String?
-  tamanho     Int?
-  ano         Int?
-  ativo       Boolean  @default(true)
-  criadoEm    DateTime @default(now())
-  atualizadoEm DateTime @default(now()) @updatedAt
+  id                     String    @id @default(cuid())
+  codigoPermanente       String?
+  titulo                 String
+  descricao              String?
+  tipo                   String
+  orgaoResponsavel       String?
+  secretaria             String?
+  arquivo                String?
+  documentUrl            String?
+  arquivoEditavelUrl     String?
+  tamanho                Int?
+  ano                    Int?
+  competencia            String?
+  pesquisavelOcr         Boolean   @default(true)
+  acessoRestrito         Boolean   @default(false)
+  versao                 Int       @default(1)
+  documentoAnteriorId    String?
+  criterioPntp           String?
+  situacaoPublicacao     String    @default("publicado")
+  responsavelCadastro    String?
+  responsavelRevisao     String?
+  dataAtualizacaoEfetiva DateTime  @default(now())
+  dataUltimaConferencia  DateTime?
+  ativo                  Boolean   @default(true)
+  criadoEm               DateTime  @default(now())
+  atualizadoEm           DateTime  @default(now()) @updatedAt
 }
 
 model Evento {
@@ -200,47 +339,62 @@ model Contato {
 model Ouvidoria {
   id                  String    @id @default(cuid())
   protocolo           String    @unique @default(cuid())
+  codigoVerificacao   String?
   tipo                String
   assunto             String
   descricao           String
   nome                String?
   email               String?
   anonimo             Boolean   @default(false)
+  orgaoDestino        String?
   status              String    @default("aberto")
   resposta            String?
   respondidoEm        DateTime?
   prazo               DateTime?
   prorrogado          Boolean   @default(false)
+  justificativaPrazo  String?
   anexoResposta       String?
   recurso             String?
   dataRecurso         DateTime?
   respostaRecurso     String?
   dataRespostaRecurso DateTime?
+  historicoTramitacao String    @default("[]")
   criadoEm            DateTime  @default(now())
 }
 
 model Esic {
-  id                  String       @id @default(cuid())
-  protocolo           String       @unique @default(cuid())
-  orgao               String
-  pedido              String
-  nome                String?
-  email               String?
-  formaRetorno        String       @default("sistema")
-  status              String       @default("aberto")
-  grauSigilo          String       @default("Sem Sigilo")
-  resposta            String?
-  respondidoEm        DateTime?
-  prazo               DateTime?
-  prorrogado          Boolean      @default(false)
-  anexoResposta       String?
-  recurso             String?
-  dataRecurso         DateTime?
-  respostaRecurso     String?
-  dataRespostaRecurso DateTime?
-  criadoEm            DateTime     @default(now())
-  cidadaoId           String?
-  cidadao             CidadaoEsic? @relation(fields: [cidadaoId], references: [id])
+  id                        String       @id @default(cuid())
+  protocolo                 String       @unique @default(cuid())
+  codigoVerificacao         String?
+  orgao                     String
+  pedido                    String
+  nome                      String?
+  email                     String?
+  formaRetorno              String       @default("sistema")
+  status                    String       @default("aberto")
+  grauSigilo                String       @default("Sem Sigilo")
+  fundamentoSigilo          String?
+  autoridadeClassificadora  String?
+  dataClassificacao         DateTime?
+  dataDesclassificacao      DateTime?
+  resposta                  String?
+  respondidoEm              DateTime?
+  prazo                     DateTime?
+  prorrogado                Boolean      @default(false)
+  justificativaProrrogacao  String?
+  anexoResposta             String?
+  recurso                   String?
+  dataRecurso               DateTime?
+  respostaRecurso           String?
+  dataRespostaRecurso       DateTime?
+  recursoSegundaInstancia   String?
+  dataRecursoSegunda        DateTime?
+  respostaRecursoSegunda    String?
+  dataRespostaSegunda       DateTime?
+  historicoTramitacao       String       @default("[]")
+  criadoEm                  DateTime     @default(now())
+  cidadaoId                 String?
+  cidadao                   CidadaoEsic? @relation(fields: [cidadaoId], references: [id])
 }
 
 model CidadaoEsic {
@@ -284,28 +438,47 @@ model GaleriaFoto {
 }
 
 model Obra {
-  id              String    @id @default(cuid())
-  titulo          String
-  descricao       String
-  local           String
-  valor           Float
-  status          String    @default("em-andamento")
-  dataInicio      DateTime?
-  previsaoTermino DateTime?
-  empresa         String?
-  percentual      Int       @default(0)
-  imagem          String?
-  documentos      String    @default("[]")
-  criadoEm        DateTime  @default(now())
+  id                       String    @id @default(cuid())
+  codigoPermanente       String?
+  titulo                   String
+  descricao                String
+  local                    String
+  secretaria               String?   @default("Secretaria de Obras e Infraestrutura")
+  numeroContrato           String?
+  contratoId               String?
+  valor                    Float
+  valorPago                Float?    @default(0)
+  status                   String    @default("em-andamento")
+  dataInicio               DateTime?
+  previsaoTermino          DateTime?
+  empresa                  String?
+  cnpjEmpresa              String?
+  percentual               Int       @default(0)
+  quantitativosContratados String    @default("[]") // JSON com itens, quantidades e preços contratados
+  medicoes                 String    @default("[]") // JSON com medições, quantitativos executados e valores
+  motivoParalisacao        String?
+  responsavelParalisacao   String?
+  previsaoReinicio         DateTime?
+  imagem                   String?
+  documentos               String    @default("[]")
+  fonteOrigem              String?   @default("Secretaria de Obras / Engenharia")
+  responsavelCadastro      String?
+  responsavelRevisao       String?
+  dataAtualizacaoEfetiva   DateTime  @default(now())
+  dataUltimaConferencia    DateTime?
+  situacaoPublicacao       String    @default("publicado")
+  criterioPntp             String?   @default("10.1")
+  criadoEm                 DateTime  @default(now())
 }
 
 model FAQ {
-  id        String   @id @default(cuid())
-  pergunta  String
-  resposta  String
-  categoria String?
-  ordem     Int      @default(0)
-  criadoEm  DateTime @default(now())
+  id                    String    @id @default(cuid())
+  pergunta              String
+  resposta              String
+  categoria             String?
+  ordem                 Int       @default(0)
+  dataUltimaConferencia DateTime?
+  criadoEm              DateTime  @default(now())
 }
 
 model Glossario {
@@ -316,17 +489,29 @@ model Glossario {
 }
 
 model Legislacao {
-  id           String   @id @default(cuid())
-  tipo         String
-  categoria    String?
-  numero       String
-  ano          Int
-  ementa       String
-  arquivo      String?
-  documentUrl  String?
-  ativo        Boolean  @default(true)
-  criadoEm     DateTime @default(now())
-  atualizadoEm DateTime @default(now()) @updatedAt
+  id                     String    @id @default(cuid())
+  codigoPermanente       String?
+  tipo                   String
+  categoria              String?
+  numero                 String
+  ano                    Int
+  dataAto                DateTime?
+  ementa                 String
+  arquivo                String?
+  documentUrl            String?
+  arquivoEditavelUrl     String?
+  situacaoVigencia       String    @default("vigente") // vigente, revogado, alterado
+  atoRelacionado         String?
+  orgaoResponsavel       String?   @default("Gabinete do Prefeito")
+  situacaoPublicacao     String    @default("publicado")
+  responsavelCadastro    String?
+  responsavelRevisao     String?
+  dataAtualizacaoEfetiva DateTime  @default(now())
+  dataUltimaConferencia  DateTime?
+  versao                 Int       @default(1)
+  ativo                  Boolean   @default(true)
+  criadoEm               DateTime  @default(now())
+  atualizadoEm           DateTime  @default(now()) @updatedAt
 }
 
 model UnidadeAtendimento {
@@ -344,17 +529,23 @@ model UnidadeAtendimento {
 }
 
 model Conselho {
-  id         String        @id @default(cuid())
-  nome       String
-  sigla      String?
-  tipo       String
-  descricao  String
-  composicao String
-  presidente String?
-  email      String?
-  ativo      Boolean       @default(true)
-  criadoEm   DateTime      @default(now())
-  atas       ConselhoAta[]
+  id                    String        @id @default(cuid())
+  nome                  String
+  sigla                 String?
+  tipo                  String
+  descricao             String
+  composicao            String
+  presidente            String?
+  email                 String?
+  mandatoVigencia       String?
+  atoNomeacao           String?
+  regimentoInternoUrl   String?
+  calendarioReunioes    String?
+  dataUltimaConferencia DateTime?
+  situacaoPublicacao    String        @default("publicado")
+  ativo                 Boolean       @default(true)
+  criadoEm              DateTime      @default(now())
+  atas                  ConselhoAta[]
 }
 
 model ConselhoAta {
@@ -368,14 +559,19 @@ model ConselhoAta {
 }
 
 model ImportacaoCSV {
-  id       String   @id @default(cuid())
-  modulo   String
-  arquivo  String
-  total    Int      @default(0)
-  sucesso  Int      @default(0)
-  erros    Int      @default(0)
-  status   String   @default("pendente")
-  criadoEm DateTime @default(now())
+  id                   String   @id @default(cuid())
+  modulo               String
+  arquivo              String
+  origemSistema        String?  @default("Planilha CSV")
+  identificadorUnico   String?
+  total                Int      @default(0)
+  sucesso              Int      @default(0)
+  ignoradosDuplicados  Int      @default(0)
+  erros                Int      @default(0)
+  detalhesErros        String?  @default("[]")
+  executadoPor         String?
+  status               String   @default("pendente")
+  criadoEm             DateTime @default(now())
 }
 
 model LinkExterno {
@@ -402,14 +598,24 @@ model Configuracao {
 }
 
 model Medicamento {
-  id           String   @id @default(cuid())
-  nome         String
-  categoria    String
-  status       String   @default("disponivel")
-  observacao   String?
-  ativo        Boolean  @default(true)
-  criadoEm     DateTime @default(now())
-  atualizadoEm DateTime @default(now()) @updatedAt
+  id                    String    @id @default(cuid())
+  nome                  String
+  principioAtivo        String?
+  apresentacao          String?   @default("Comprimido / Frasco")
+  unidadeMedida         String?   @default("Unidade")
+  categoria             String
+  tipoComponente        String?   @default("Básico (CBAF)")
+  quantidadeEstoque     Int?      @default(0)
+  estoqueMinimo         Int?      @default(10)
+  unidadeSaude          String?   @default("CAF / Farmácia Básica Municipal")
+  loteValidade          String?
+  dataReferenciaEstoque DateTime  @default(now())
+  status                String    @default("disponivel")
+  observacao            String?
+  situacaoPublicacao    String    @default("publicado")
+  ativo                 Boolean   @default(true)
+  criadoEm              DateTime  @default(now())
+  atualizadoEm          DateTime  @default(now()) @updatedAt
 }
 
 model Veiculo {
@@ -426,33 +632,41 @@ model Veiculo {
 }
 
 model EmendaParlamentar {
-  id                String   @id @default(cuid())
-  objeto            String?
-  criadoEm          DateTime @default(now())
-  anoEmenda         Int
-  atualizadoEm      DateTime @updatedAt
-  autorNome         String
-  codigoEmenda      String   @unique
-  convenioNumero    String?
-  dataImportacao    DateTime @default(now())
-  favorecidoCnpjCpf String?
-  favorecidoNome    String?
-  fonteDado         String?
-  funcaoGoverno     String?
-  instrumentoNumero String?
-  localidade        String?
-  numeroEmenda      String?
-  orgaoConcedente   String?
-  planoAcaoNumero   String?
-  situacaoExecucao  String?
-  subfuncaoGoverno  String?
-  tipoEmenda        String?
-  uf                String?
-  urlFonteOficial   String?
-  valorEmpenhado    Float?   @default(0)
-  valorLiquidado    Float?   @default(0)
-  valorPago         Float?   @default(0)
-  valorPrevisto     Float?   @default(0)
+  id                    String    @id @default(cuid())
+  objeto                String?
+  criadoEm              DateTime  @default(now())
+  anoEmenda             Int
+  esfera                String?   @default("Federal") // Federal ou Estadual
+  formaRepasse          String?   @default("Transferência Especial / Convênio")
+  atualizadoEm          DateTime  @updatedAt
+  autorNome             String
+  codigoEmenda          String    @unique
+  convenioNumero        String?
+  dataImportacao        DateTime  @default(now())
+  favorecidoCnpjCpf     String?
+  favorecidoNome        String?
+  fonteDado             String?
+  funcaoGoverno         String?
+  instrumentoNumero     String?
+  localidade            String?
+  numeroEmenda          String?
+  orgaoConcedente       String?
+  planoAcaoNumero       String?
+  situacaoExecucao      String?
+  subfuncaoGoverno      String?
+  tipoEmenda            String?
+  uf                    String?
+  urlFonteOficial       String?
+  valorEmpenhado        Float?    @default(0)
+  valorLiquidado        Float?    @default(0)
+  valorPago             Float?    @default(0)
+  valorPrevisto         Float?    @default(0)
+  valorRecebido         Float?    @default(0)
+  despesaVinculada      String?
+  contratoVinculado     String?
+  obraVinculada         String?
+  dataUltimaConferencia DateTime?
+  situacaoPublicacao    String    @default("publicado")
 }
 
 model Concurso {
@@ -464,6 +678,7 @@ model Concurso {
   vagas          String?
   dataPublicacao DateTime @default(now())
   linkEdital     String?
+  fasesAtos      String   @default("[]")
   ativo          Boolean  @default(true)
   criadoEm       DateTime @default(now())
   descricao      String?
@@ -501,58 +716,78 @@ model AvaliacaoServico {
 }
 
 model RelatorioFiscal {
-  id             String   @id @default(cuid())
-  titulo         String
-  tipo           String
-  periodo        String
-  ano            Int
-  arquivo        String
-  dataPublicacao DateTime @default(now())
-  criadoEm       DateTime @default(now())
-  atualizadoEm   DateTime @updatedAt
+  id                    String    @id @default(cuid())
+  codigoPermanente       String?
+  titulo                String
+  tipo                  String
+  periodicidade         String?   @default("Bimestral") // Bimestral, Quadrimestral, Semestral, Anual
+  periodo               String
+  ano                   Int
+  arquivo               String
+  arquivoEditavelUrl    String?
+  versao                Int       @default(1)
+  orgaoResponsavel      String?   @default("Secretaria de Finanças e Tributação")
+  situacaoPublicacao    String    @default("publicado")
+  responsavelCadastro   String?
+  responsavelRevisao    String?
+  dataUltimaConferencia DateTime?
+  dataPublicacao        DateTime  @default(now())
+  criadoEm              DateTime  @default(now())
+  atualizadoEm          DateTime  @updatedAt
 }
 
 model Pagamento {
-  id             String    @id @default(cuid())
-  ordem          Int
-  fornecedor     String
-  cnpj           String
-  descricao      String
-  valor          Float
-  dataEmpenho    DateTime
-  dataLiquidacao DateTime
-  dataPagamento  DateTime?
-  secretaria     String
-  status         String    @default("pendente")
-  criadoEm       DateTime  @default(now())
-  atualizadoEm   DateTime  @updatedAt
+  id                     String    @id @default(cuid())
+  ordem                  Int
+  numeroEmpenho          String?
+  fornecedor             String
+  cnpj                   String
+  descricao              String
+  valor                  Float
+  dataEmpenho            DateTime
+  dataLiquidacao         DateTime
+  dataPagamento          DateTime?
+  secretaria             String
+  fonteRecurso           String?
+  justificativaQuebra    String?
+  status                 String    @default("pendente")
+  criadoEm               DateTime  @default(now())
+  atualizadoEm           DateTime  @updatedAt
 }
 
 model RenunciaFiscal {
-  id            String   @id @default(cuid())
-  descricao     String
-  categoria     String
-  baseLegal     String
-  valorEstimado Float
-  beneficiarios String?
-  vigencia      String?
-  ano           Int
-  ativo         Boolean  @default(true)
-  criadoEm      DateTime @default(now())
-  atualizadoEm  DateTime @updatedAt
+  id                    String    @id @default(cuid())
+  descricao             String
+  categoria             String
+  modalidadeIncentivo   String?   @default("Tributário") // Tributário, Cultural, Esportivo
+  baseLegal             String
+  valorEstimado         Float
+  valorRealizado        Float?    @default(0)
+  beneficiarios         String?
+  cnpjBeneficiario      String?
+  projetoIncentivado    String?
+  vigencia              String?
+  ano                   Int
+  situacaoPublicacao    String    @default("publicado")
+  dataUltimaConferencia DateTime?
+  ativo                 Boolean   @default(true)
+  criadoEm              DateTime  @default(now())
+  atualizadoEm          DateTime  @updatedAt
 }
 
 model QuadroServidor {
-  id           String   @id @default(cuid())
-  cargo        String
-  vinculo      String   @default("efetivo")
-  leiCriacao   String?
-  vagasLei     Int
-  vagasOcupadas Int
-  vagasLivres  Int      @default(0)
-  ativo        Boolean  @default(true)
-  criadoEm     DateTime @default(now())
-  atualizadoEm DateTime @default(now()) @updatedAt
+  id             String   @id @default(cuid())
+  cargo          String
+  vinculo        String   @default("efetivo")
+  leiCriacao     String?
+  padraoSalarial String?
+  cargaHoraria   String?  @default("40h")
+  vagasLei       Int
+  vagasOcupadas  Int
+  vagasLivres    Int      @default(0)
+  ativo          Boolean  @default(true)
+  criadoEm       DateTime @default(now())
+  atualizadoEm   DateTime @updatedAt
 }
 
 model EmendaPix {
@@ -623,6 +858,8 @@ model Terceirizado {
   id              String    @id @default(cuid())
   nome            String
   empresa         String
+  cnpjEmpresa     String?
+  contratoNumero  String?
   funcao          String
   unidadeLotacao  String
   dataInicio      DateTime
@@ -673,4 +910,103 @@ model CentralRegulacaoConfig {
   documentoRegulamento String?
   atualizadoEm         DateTime @updatedAt
 }
+
+model TabelaDiaria {
+  id                  String    @id @default(cuid())
+  cargo               String
+  valorEstadual       Float
+  valorDemaisCidades  Float
+  valorOutrosEstados  Float
+  valorCapitalFederal Float
+  valorInternacional  Float?
+  normaLegal          String
+  vigenciaInicio      DateTime  @default(now())
+  vigenciaFim         DateTime?
+  versao              Int       @default(1)
+  ativo               Boolean   @default(true)
+  criadoEm            DateTime  @default(now())
+  atualizadoEm        DateTime  @updatedAt
+}
+
+model FilaEsperaCreche {
+  id                   String   @id @default(cuid())
+  protocoloAnonimizado String   @unique
+  iniciaisCrianca      String
+  dataNascimentoMesAno String
+  unidadeEscolar       String
+  turmaEtapa           String
+  criterioPrioridade   String
+  posicaoFila          Int
+  dataInscricao        DateTime @default(now())
+  status               String   @default("aguardando") // aguardando, convocado, matriculado
+  ano                  Int
+  criadoEm             DateTime @default(now())
+  atualizadoEm         DateTime @updatedAt
+}
+
+model DeclaracaoTransparencia {
+  id                  String    @id @default(cuid())
+  modulo              String
+  criterioPntp        String?
+  orgaoResponsavel    String
+  exercicio           Int
+  competencia         String?
+  tipoSituacao        String    @default("nao_ocorrencia_declarada") // nao_ocorrencia_declarada, nao_aplicavel
+  textoDeclaracao     String    @db.Text
+  fundamentoLegal     String?
+  responsavelNome     String
+  responsavelCargo    String?
+  arquivoAssinadoUrl  String?
+  dataEmissao         DateTime  @default(now())
+  dataConferencia     DateTime  @default(now())
+  situacaoPublicacao  String    @default("publicado")
+  ativa               Boolean   @default(true)
+  criadoEm            DateTime  @default(now())
+  atualizadoEm        DateTime  @updatedAt
+}
+
+model HistoricoAlteracao {
+  id                        String   @id @default(cuid())
+  entidade                  String
+  entidadeId                String
+  acao                      String   // criacao, edicao, revisao, aprovacao, publicacao, conferencia_sem_alteracao, exclusao, importacao
+  dadosAnteriores           String?  @db.Text
+  dadosNovos                String?  @db.Text
+  resumoAlteracao           String
+  isConferenciaSemAlteracao Boolean  @default(false)
+  usuarioId                 String?
+  usuarioNome               String
+  usuarioPerfil             String
+  secretaria                String?
+  criadoEm                  DateTime @default(now())
+}
+
+model CriterioPNTP {
+  id                        String    @id @default(cuid())
+  codigo                    String    @unique
+  dimensao                  String
+  titulo                    String
+  textoIntegral             String    @db.Text
+  classificacao             String    // ESSENCIAL, OBRIGATORIO, RECOMENDADO
+  peso                      Float     @default(1.0)
+  periodicidadeDias         Int       @default(30)
+  exigenciasCartilha        String    @db.Text // JSON array: disponibilidade, atualidade, serie_historica, gravacao_relatorios, filtro_pesquisa
+  referenciaCartilha        String?
+  paginaPublica             String
+  telaAdministrativa        String
+  secretariaResponsavel     String
+  statusFuncionalidade      String    @default("implementada")     // implementada, parcial, pendente
+  statusConteudo            String    @default("publicado")        // publicado, aguardando_revisao, desatualizado, nao_ocorrencia_declarada, pendente
+  statusEvidencia           String    @default("conferida")        // conferida, pendente
+  statusValidacao           String    @default("validado")         // validado, em_revisao, com_pendencia
+  resultadoAvaliacaoExterna String?   @default("Atendido na Ficha Histórica")
+  pendenciasTecnicas        String?
+  pendenciasConteudo        String?
+  evidenciaUrl              String?
+  dataUltimaVerificacao     DateTime  @default(now())
+  verificadoPor             String?   @default("Controladoria Geral do Município")
+  criadoEm                  DateTime  @default(now())
+  atualizadoEm              DateTime  @updatedAt
+}
+
 

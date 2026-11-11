@@ -66,7 +66,7 @@ export default function ListaDocumentosClient({
     );
 
     return (
-        <div className="max-w-7xl mx-auto px-6 py-12 font-['Montserrat',sans-serif]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 text-[#12304A]">
             {/* Seção de Filtros */}
             <div className="flex flex-col lg:flex-row gap-8 mb-16 -mt-24 relative z-30">
                 {/* Painel de Filtros */}

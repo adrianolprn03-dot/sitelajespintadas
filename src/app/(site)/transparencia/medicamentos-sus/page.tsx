@@ -8,30 +8,34 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export const metadata: Metadata = {
-    title: "Lista de Medicamentos SUS (REMUME) | Portal da Transparência",
-    description: "Relação Municipal de Medicamentos Essenciais (REMUME) e orientações do Componente Básico e Especializado da Assistência Farmacêutica.",
+    title: "Lista e Estoque de Medicamentos SUS (REMUME) | Portal da Transparência",
+    description:
+        "Relação Municipal de Medicamentos Essenciais (REMUME), controle de estoque atualizado a cada 15 dias e orientações da Assistência Farmacêutica.",
 };
 
 export default async function MedicamentosSUSPage() {
-    const medicamentosRaw = await prisma.medicamento.findMany({
-        where: { ativo: true },
-        orderBy: { nome: "asc" }
-    });
-
-    // Converter objetos do Prisma (incluindo instancias de Date) em objetos JSON simples antes de enviar ao Client Component
-    const medicamentos = JSON.parse(JSON.stringify(medicamentosRaw));
+    let medicamentos: any[] = [];
+    try {
+        const medicamentosRaw = await prisma.medicamento.findMany({
+            where: { ativo: true },
+            orderBy: { nome: "asc" },
+        });
+        medicamentos = JSON.parse(JSON.stringify(medicamentosRaw));
+    } catch {
+        medicamentos = [];
+    }
 
     return (
         <div className="min-h-screen bg-[#f8fafc] font-['Montserrat',sans-serif] pb-24">
             <PageHeader
-                title="Lista de Medicamentos SUS"
-                subtitle="Consulte a Relação Municipal de Medicamentos Essenciais (REMUME) e orientações de dispensação da Assistência Farmacêutica."
+                title="Medicamentos SUS e Estoque (REMUME)"
+                subtitle="Relação Municipal de Medicamentos Essenciais, estoque por unidade de saúde (atualização máxima a cada 15 dias - Critério PNTP 13.4) e orientações de acesso."
                 variant="premium"
                 icon={<FaPrescriptionBottleMedical />}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
                     { label: "Transparência", href: "/transparencia" },
-                    { label: "Medicamentos SUS" }
+                    { label: "Medicamentos SUS" },
                 ]}
             />
 

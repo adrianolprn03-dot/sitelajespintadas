@@ -15,7 +15,8 @@ export default function AdminEditarUsuarioPage({ params }: { params: { id: strin
         senha: "",
         confirmarSenha: "",
         perfil: "editor",
-        ativo: true
+        secretariasAutorizadas: "",
+        ativo: true,
     });
 
     useEffect(() => {
@@ -26,21 +27,24 @@ export default function AdminEditarUsuarioPage({ params }: { params: { id: strin
         try {
             const res = await fetch(`/api/usuarios/${params.id}`);
             const data = await res.json();
-            
+
             if (res.ok) {
                 setFormData({
                     nome: data.nome,
                     email: data.email,
-                    senha: "", // Não retornamos a senha, e o campo fica vazio
+                    senha: "",
                     confirmarSenha: "",
                     perfil: data.perfil,
-                    ativo: data.ativo
+                    secretariasAutorizadas: Array.isArray(data.secretariasAutorizadas)
+                        ? data.secretariasAutorizadas.join(", ")
+                        : "",
+                    ativo: data.ativo,
                 });
             } else {
                 toast.error(data.error || "Usuário não encontrado.");
                 router.push("/admin/usuarios");
             }
-        } catch (error) {
+        } catch {
             toast.error("Erro ao carregar usuário.");
         } finally {
             setLoading(false);
@@ -55,7 +59,6 @@ export default function AdminEditarUsuarioPage({ params }: { params: { id: strin
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Se o usuário digitou uma nova senha, verificar confirmação e tamanho
         if (formData.senha || formData.confirmarSenha) {
             if (formData.senha !== formData.confirmarSenha) {
                 toast.error("As senhas não coincidem.");
@@ -75,9 +78,13 @@ export default function AdminEditarUsuarioPage({ params }: { params: { id: strin
                 body: JSON.stringify({
                     nome: formData.nome,
                     email: formData.email,
-                    senha: formData.senha, // Enviado vazio se não quiser alterar
+                    senha: formData.senha,
                     perfil: formData.perfil,
-                    ativo: formData.ativo
+                    secretariasAutorizadas: formData.secretariasAutorizadas
+                        .split(",")
+                        .map((s) => s.trim())
+                        .filter(Boolean),
+                    ativo: formData.ativo,
                 }),
             });
 
@@ -90,7 +97,7 @@ export default function AdminEditarUsuarioPage({ params }: { params: { id: strin
             } else {
                 toast.error(data.error || "Erro ao atualizar usuário.");
             }
-        } catch (error) {
+        } catch {
             toast.error("Erro de conexão.");
         } finally {
             setSaving(false);
@@ -108,12 +115,15 @@ export default function AdminEditarUsuarioPage({ params }: { params: { id: strin
     return (
         <div className="max-w-3xl mx-auto space-y-6">
             <div className="flex items-center gap-4">
-                <Link href="/admin/usuarios" className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-500 hover:text-primary-600 hover:bg-primary-50 transition-all shadow-sm">
+                <Link
+                    href="/admin/usuarios"
+                    className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-500 hover:text-primary-600 hover:bg-primary-50 transition-all shadow-sm"
+                >
                     <FaArrowLeft />
                 </Link>
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-800">Editar Usuário</h1>
-                    <p className="text-gray-500 text-sm">Atualize os dados ou a senha do membro da equipe</p>
+                    <h1 className="text-2xl font-bold text-gray-800">Editar Responsável / Usuário</h1>
+                    <p className="text-gray-500 text-sm">Atualize perfil RBAC, secretarias autorizadas ou credenciais</p>
                 </div>
             </div>
 
@@ -173,7 +183,7 @@ export default function AdminEditarUsuarioPage({ params }: { params: { id: strin
                     </div>
 
                     <div className="col-span-1 md:col-span-2 mt-4">
-                        <h3 className="text-sm font-bold text-gray-800 mb-1 border-b border-gray-100 pb-2">Permissões e Acesso</h3>
+                        <h3 className="text-sm font-bold text-gray-800 mb-1 border-b border-gray-100 pb-2">Permissões e Acesso (RBAC)</h3>
                     </div>
 
                     <div>
@@ -184,7 +194,10 @@ export default function AdminEditarUsuarioPage({ params }: { params: { id: strin
                             value={formData.perfil}
                             onChange={handleChange}
                         >
-                            <option value="editor">Editor (Conteúdo Geral)</option>
+                            <option value="editor">Editor de Secretaria</option>
+                            <option value="controladoria">Controladoria / Revisor</option>
+                            <option value="integracao">Operador de Integração</option>
+                            <option value="esic">Operador de e-SIC / Ouvidoria</option>
                             <option value="comunicacao">Comunicação (Notícias e Mídia)</option>
                             <option value="admin">Administrador (Acesso Total)</option>
                         </select>
@@ -200,25 +213,38 @@ export default function AdminEditarUsuarioPage({ params }: { params: { id: strin
                                     checked={formData.ativo}
                                     onChange={handleChange}
                                 />
-                                <div className={`block w-10 h-6 rounded-full transition-colors ${formData.ativo ? 'bg-primary-500' : 'bg-gray-300'}`}></div>
-                                <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${formData.ativo ? 'translate-x-4' : ''}`}></div>
+                                <div className={`block w-10 h-6 rounded-full transition-colors ${formData.ativo ? "bg-primary-500" : "bg-gray-300"}`}></div>
+                                <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${formData.ativo ? "translate-x-4" : ""}`}></div>
                             </div>
-                            <div className="ml-3 font-medium text-gray-700 text-sm">
-                                Usuário Ativo (pode fazer login)
-                            </div>
+                            <div className="ml-3 font-medium text-gray-700 text-sm">Usuário Ativo (pode fazer login)</div>
                         </label>
                     </div>
+
+                    {formData.perfil === "editor" && (
+                        <div className="col-span-1 md:col-span-2">
+                            <label className="block text-sm font-semibold text-gray-700 mb-1">
+                                Secretarias / Unidades Autorizadas (separadas por vírgula)
+                            </label>
+                            <p className="text-xs text-gray-500 mb-2">
+                                Deixe em branco para autorizar todas as secretarias ou informe as unidades específicas.
+                            </p>
+                            <input
+                                type="text"
+                                name="secretariasAutorizadas"
+                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
+                                value={formData.secretariasAutorizadas}
+                                onChange={handleChange}
+                                placeholder="Ex: Secretaria de Saúde, Secretaria de Educação"
+                            />
+                        </div>
+                    )}
                 </div>
 
                 <div className="pt-6 border-t border-gray-100 flex justify-end gap-3">
                     <Link href="/admin/usuarios" className="btn-secondary">
                         Cancelar
                     </Link>
-                    <button
-                        type="submit"
-                        disabled={saving}
-                        className="btn-primary flex items-center gap-2"
-                    >
+                    <button type="submit" disabled={saving} className="btn-primary flex items-center gap-2">
                         {saving ? "Salvando..." : <><FaSave /> Salvar Alterações</>}
                     </button>
                 </div>
