@@ -8,6 +8,7 @@ import {
     FaHandshake,
     FaScaleBalanced,
     FaDatabase,
+    FaChartPie,
     FaHeartPulse,
     FaGraduationCap,
     FaTrowelBricks,
@@ -160,23 +161,23 @@ export default async function Home() {
             <HeroPanoramicoModelo3 />
 
             {/* =====================================================================
-                3. ACONTECE EM LAJES PINTADAS (GRID EDITORIAL EM AZUL E AMARELO)
+                3. ACONTECE EM LAJES PINTADAS (MURAL OFICIAL DE NOTÍCIAS)
                ===================================================================== */}
             <section className="max-w-[1280px] mx-auto px-4 sm:px-6">
                 <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-7">
                     <div>
-                        <span className="inline-block text-xs font-extrabold uppercase tracking-wider text-[#0072CE] mb-1">
+                        <span className="inline-block text-xs font-extrabold uppercase tracking-wider text-[#1254A3] mb-1">
                             MURAL OFICIAL DA GESTÃO
                         </span>
-                        <h2 className="text-2xl sm:text-3xl font-black text-[#0F2942] font-heading tracking-tight leading-tight">
+                        <h2 className="text-2xl sm:text-3xl font-black text-[#12304A] font-heading tracking-tight leading-tight">
                             Acontece em {MUNICIPIO.nome}
                         </h2>
-                        <div className="h-1.5 w-20 heraldic-stripe rounded-full mt-2" />
+                        <div className="h-1.5 w-20 bg-[#F39A32] rounded-full mt-2" />
                     </div>
 
                     <Link
                         href="/noticias"
-                        className="inline-flex items-center gap-2 text-xs font-extrabold text-[#0072CE] bg-white hover:bg-[#0072CE] hover:text-white px-4 py-2.5 rounded-full border border-[#DCE4EE] shadow-sm transition-all w-fit"
+                        className="inline-flex items-center gap-2 text-xs font-bold text-[#1254A3] hover:text-[#0d4282] bg-blue-50/70 hover:bg-blue-100/70 px-4 py-2 rounded-full border border-blue-200/70 transition-colors w-fit"
                     >
                         <span>Ver todas as notícias</span>
                         <FaArrowRight size={11} />
@@ -187,7 +188,7 @@ export default async function Home() {
                     {noticias.map((item) => (
                         <article
                             key={item.id}
-                            className="bg-white rounded-[22px] border border-[#DCE4EE] border-b-4 border-b-[#0072CE] hover:border-b-[#FACC15] overflow-hidden shadow-gov hover:shadow-gov-hover transition-all duration-300 group flex flex-col hover:-translate-y-1"
+                            className="bg-white rounded-2xl border border-[#DDE3EA] hover:border-[#1254A3] overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 group flex flex-col hover:-translate-y-0.5"
                         >
                             <Link
                                 href={`/noticias/${item.slug}`}
@@ -199,7 +200,7 @@ export default async function Home() {
                                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                 />
                                 <div className="absolute top-3 left-3">
-                                    <span className="inline-block bg-[#0072CE] text-white border border-[#FACC15]/80 text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-md">
+                                    <span className="inline-block bg-[#1254A3] text-white text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
                                         {item.categoria}
                                     </span>
                                 </div>
@@ -207,19 +208,19 @@ export default async function Home() {
 
                             <div className="p-5 sm:p-6 space-y-2.5 flex-1 flex flex-col justify-between">
                                 <div className="space-y-2">
-                                    <span className="block text-[11px] font-semibold text-[#526B84]">
+                                    <span className="block text-[11px] font-semibold text-[#5B738B]">
                                         {item.dataFormatada}
                                     </span>
-                                    <h3 className="text-base sm:text-lg font-extrabold text-[#0F2942] font-heading leading-snug group-hover:text-[#0072CE] transition-colors line-clamp-2">
+                                    <h3 className="text-base sm:text-lg font-extrabold text-[#12304A] font-heading leading-snug group-hover:text-[#1254A3] transition-colors line-clamp-2">
                                         <Link href={`/noticias/${item.slug}`}>{item.titulo}</Link>
                                     </h3>
-                                    <p className="text-xs text-[#526B84] leading-relaxed line-clamp-2">
+                                    <p className="text-xs text-[#5B738B] leading-relaxed line-clamp-2">
                                         {item.resumo}
                                     </p>
                                 </div>
 
-                                <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-[#0072CE]">
-                                    <Link href={`/noticias/${item.slug}`} className="flex items-center gap-1.5">
+                                <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-[#1254A3]">
+                                    <Link href={`/noticias/${item.slug}`} className="flex items-center gap-1.5 hover:underline">
                                         <span>Ler matéria completa</span>
                                         <FaArrowRight
                                             size={11}
@@ -234,111 +235,149 @@ export default async function Home() {
             </section>
 
             {/* =====================================================================
-                4. PUBLICAÇÕES OFICIAIS & ATOS DA GESTÃO (AZUL & AMARELO)
+                4. PUBLICAÇÕES OFICIAIS (DESIGN SYSTEM CONFORME PRANCHA APROVADA)
                ===================================================================== */}
             <section className="max-w-[1280px] mx-auto px-4 sm:px-6">
-                <div className="rounded-[26px] bg-gradient-to-r from-[#002654] via-[#003B73] to-[#005bb5] p-6 sm:p-8 lg:p-10 text-white shadow-xl relative overflow-hidden">
-                    <div className="absolute top-0 left-0 right-0 h-1.5 heraldic-stripe" />
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-7">
+                    <div>
+                        <span className="inline-block text-xs font-extrabold uppercase tracking-wider text-[#1254A3] mb-1">
+                            PUBLICIDADE E TRANSPARÊNCIA ATIVA
+                        </span>
+                        <h2 className="text-2xl sm:text-3xl font-black text-[#12304A] font-heading tracking-tight">
+                            Publicações Oficiais
+                        </h2>
+                        <div className="h-1.5 w-20 bg-[#F39A32] rounded-full mt-2" />
+                    </div>
 
-                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-7">
+                    <Link
+                        href="/transparencia"
+                        className="inline-flex items-center gap-2 text-xs font-bold text-[#1254A3] hover:text-[#0d4282] bg-blue-50/70 hover:bg-blue-100/70 px-4 py-2 rounded-full border border-blue-200/70 transition-colors w-fit"
+                    >
+                        <span>Acessar Portal da Transparência</span>
+                        <FaArrowRight size={11} />
+                    </Link>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                    {/* 1. Licitações */}
+                    <Link
+                        href="/transparencia/licitacoes"
+                        className="bg-white p-6 rounded-2xl border border-[#DDE3EA] hover:border-[#1254A3] shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col justify-between group text-left"
+                    >
                         <div>
-                            <span className="inline-block text-[11px] font-extrabold uppercase tracking-widest text-[#FACC15] mb-1">
-                                PUBLICIDADE E TRANSPARÊNCIA ATIVA
-                            </span>
-                            <h2 className="text-2xl sm:text-3xl font-black text-white font-heading tracking-tight">
-                                Publicações Oficiais e Controle Social
-                            </h2>
-                            <p className="text-xs sm:text-sm text-sky-100/85 mt-1">
-                                Acesso rápido aos editais de licitação, contratos firmados, legislação municipal e demonstrativos da LRF.
+                            <div className="flex items-start justify-between mb-4">
+                                <div className="w-12 h-12 rounded-xl bg-blue-50 text-[#1254A3] flex items-center justify-center text-xl group-hover:bg-[#1254A3] group-hover:text-white transition-colors">
+                                    <HiOutlineDocumentText />
+                                </div>
+                                <span className="text-[10px] font-bold text-[#1254A3] bg-blue-50 px-2.5 py-1 rounded-full uppercase tracking-wider border border-blue-200/60">
+                                    PNCP Integrado
+                                </span>
+                            </div>
+
+                            <h3 className="text-base font-extrabold text-[#12304A] font-heading leading-tight mb-2 group-hover:text-[#1254A3] transition-colors">
+                                Licitações Públicas
+                            </h3>
+
+                            <p className="text-xs text-[#5B738B] leading-relaxed mb-4">
+                                Editais, atas de registro de preços, dispensas e fases em tempo real.
                             </p>
                         </div>
 
-                        <Link
-                            href="/transparencia"
-                            className="inline-flex items-center gap-2 bg-[#FACC15] hover:bg-amber-300 text-[#0F2942] font-extrabold text-xs sm:text-sm px-5 py-3 rounded-full shadow-md transition-all w-fit shrink-0"
-                        >
-                            <span>Acessar Portal da Transparência</span>
-                            <FaArrowRight size={12} />
-                        </Link>
-                    </div>
+                        <div className="flex items-center gap-1.5 text-xs font-bold text-[#1254A3] pt-3 border-t border-slate-100 group-hover:translate-x-1 transition-transform">
+                            <span>Acessar licitações</span>
+                            <FaArrowRight size={10} />
+                        </div>
+                    </Link>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        {/* 1. Licitações */}
-                        <Link
-                            href="/transparencia/licitacoes"
-                            className="bg-white/10 hover:bg-white text-white hover:text-[#0F2942] backdrop-blur-md rounded-2xl p-5 border border-white/20 transition-all duration-200 flex items-center justify-between group"
-                        >
-                            <div className="flex items-center gap-3.5">
-                                <div className="w-11 h-11 rounded-xl bg-white/15 border border-[#FACC15]/60 text-[#FACC15] group-hover:bg-[#0072CE] group-hover:text-white flex items-center justify-center text-xl shrink-0 transition-colors">
-                                    <HiOutlineDocumentText />
-                                </div>
-                                <div>
-                                    <span className="block text-sm sm:text-base font-extrabold font-heading">
-                                        Licitações
-                                    </span>
-                                    <span className="block text-[11px] opacity-75">Editais e PNCP</span>
-                                </div>
-                            </div>
-                            <FaArrowRight className="text-sm group-hover:translate-x-1 transition-transform" />
-                        </Link>
-
-                        {/* 2. Contratos */}
-                        <Link
-                            href="/transparencia/contratos"
-                            className="bg-white/10 hover:bg-white text-white hover:text-[#0F2942] backdrop-blur-md rounded-2xl p-5 border border-white/20 transition-all duration-200 flex items-center justify-between group"
-                        >
-                            <div className="flex items-center gap-3.5">
-                                <div className="w-11 h-11 rounded-xl bg-white/15 border border-[#FACC15]/60 text-[#FACC15] group-hover:bg-[#0072CE] group-hover:text-white flex items-center justify-center text-xl shrink-0 transition-colors">
+                    {/* 2. Contratos */}
+                    <Link
+                        href="/transparencia/contratos"
+                        className="bg-white p-6 rounded-2xl border border-[#DDE3EA] hover:border-[#1254A3] shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col justify-between group text-left"
+                    >
+                        <div>
+                            <div className="flex items-start justify-between mb-4">
+                                <div className="w-12 h-12 rounded-xl bg-blue-50 text-[#1254A3] flex items-center justify-center text-xl group-hover:bg-[#1254A3] group-hover:text-white transition-colors">
                                     <FaHandshake />
                                 </div>
-                                <div>
-                                    <span className="block text-sm sm:text-base font-extrabold font-heading">
-                                        Contratos
-                                    </span>
-                                    <span className="block text-[11px] opacity-75">Vigentes e Aditivos</span>
-                                </div>
+                                <span className="text-[10px] font-bold text-[#1254A3] bg-blue-50 px-2.5 py-1 rounded-full uppercase tracking-wider border border-blue-200/60">
+                                    Atualizado
+                                </span>
                             </div>
-                            <FaArrowRight className="text-sm group-hover:translate-x-1 transition-transform" />
-                        </Link>
 
-                        {/* 3. Leis e Decretos */}
-                        <Link
-                            href="/transparencia/legislacao"
-                            className="bg-white/10 hover:bg-white text-white hover:text-[#0F2942] backdrop-blur-md rounded-2xl p-5 border border-white/20 transition-all duration-200 flex items-center justify-between group"
-                        >
-                            <div className="flex items-center gap-3.5">
-                                <div className="w-11 h-11 rounded-xl bg-white/15 border border-[#FACC15]/60 text-[#FACC15] group-hover:bg-[#0072CE] group-hover:text-white flex items-center justify-center text-xl shrink-0 transition-colors">
+                            <h3 className="text-base font-extrabold text-[#12304A] font-heading leading-tight mb-2 group-hover:text-[#1254A3] transition-colors">
+                                Contratos Administrativos
+                            </h3>
+
+                            <p className="text-xs text-[#5B738B] leading-relaxed mb-4">
+                                Instrumentos contratuais integrais, termos aditivos e fiscais.
+                            </p>
+                        </div>
+
+                        <div className="flex items-center gap-1.5 text-xs font-bold text-[#1254A3] pt-3 border-t border-slate-100 group-hover:translate-x-1 transition-transform">
+                            <span>Acessar contratos</span>
+                            <FaArrowRight size={10} />
+                        </div>
+                    </Link>
+
+                    {/* 3. Leis e Decretos */}
+                    <Link
+                        href="/transparencia/legislacao"
+                        className="bg-white p-6 rounded-2xl border border-[#DDE3EA] hover:border-[#1254A3] shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col justify-between group text-left"
+                    >
+                        <div>
+                            <div className="flex items-start justify-between mb-4">
+                                <div className="w-12 h-12 rounded-xl bg-blue-50 text-[#1254A3] flex items-center justify-center text-xl group-hover:bg-[#1254A3] group-hover:text-white transition-colors">
                                     <FaScaleBalanced />
                                 </div>
-                                <div>
-                                    <span className="block text-sm sm:text-base font-extrabold font-heading">
-                                        Leis e Decretos
-                                    </span>
-                                    <span className="block text-[11px] opacity-75">Atos Normativos</span>
-                                </div>
+                                <span className="text-[10px] font-bold text-[#1254A3] bg-blue-50 px-2.5 py-1 rounded-full uppercase tracking-wider border border-blue-200/60">
+                                    Pesquisável
+                                </span>
                             </div>
-                            <FaArrowRight className="text-sm group-hover:translate-x-1 transition-transform" />
-                        </Link>
 
-                        {/* 4. Prestação de Contas */}
-                        <Link
-                            href="/transparencia/lrf"
-                            className="bg-white/10 hover:bg-white text-white hover:text-[#0F2942] backdrop-blur-md rounded-2xl p-5 border border-white/20 transition-all duration-200 flex items-center justify-between group"
-                        >
-                            <div className="flex items-center gap-3.5">
-                                <div className="w-11 h-11 rounded-xl bg-white/15 border border-[#FACC15]/60 text-[#FACC15] group-hover:bg-[#0072CE] group-hover:text-white flex items-center justify-center text-xl shrink-0 transition-colors">
-                                    <FaDatabase />
+                            <h3 className="text-base font-extrabold text-[#12304A] font-heading leading-tight mb-2 group-hover:text-[#1254A3] transition-colors">
+                                Leis e Decretos
+                            </h3>
+
+                            <p className="text-xs text-[#5B738B] leading-relaxed mb-4">
+                                Legislação municipal consolidada, decretos e portarias normativas.
+                            </p>
+                        </div>
+
+                        <div className="flex items-center gap-1.5 text-xs font-bold text-[#1254A3] pt-3 border-t border-slate-100 group-hover:translate-x-1 transition-transform">
+                            <span>Acessar legislação</span>
+                            <FaArrowRight size={10} />
+                        </div>
+                    </Link>
+
+                    {/* 4. Prestação de Contas */}
+                    <Link
+                        href="/transparencia/lrf"
+                        className="bg-white p-6 rounded-2xl border border-[#DDE3EA] hover:border-[#1254A3] shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col justify-between group text-left"
+                    >
+                        <div>
+                            <div className="flex items-start justify-between mb-4">
+                                <div className="w-12 h-12 rounded-xl bg-blue-50 text-[#1254A3] flex items-center justify-center text-xl group-hover:bg-[#1254A3] group-hover:text-white transition-colors">
+                                    <FaChartPie />
                                 </div>
-                                <div>
-                                    <span className="block text-sm sm:text-base font-extrabold font-heading">
-                                        Contas Públicas
-                                    </span>
-                                    <span className="block text-[11px] opacity-75">RREO, RGF e Balanços</span>
-                                </div>
+                                <span className="text-[10px] font-bold text-[#1254A3] bg-blue-50 px-2.5 py-1 rounded-full uppercase tracking-wider border border-blue-200/60">
+                                    LRF / SICONFI
+                                </span>
                             </div>
-                            <FaArrowRight className="text-sm group-hover:translate-x-1 transition-transform" />
-                        </Link>
-                    </div>
+
+                            <h3 className="text-base font-extrabold text-[#12304A] font-heading leading-tight mb-2 group-hover:text-[#1254A3] transition-colors">
+                                Prestação de Contas (LRF)
+                            </h3>
+
+                            <p className="text-xs text-[#5B738B] leading-relaxed mb-4">
+                                Relatórios RGF, RREO, Balanço Geral, PPA, LDO e LOA abertos.
+                            </p>
+                        </div>
+
+                        <div className="flex items-center gap-1.5 text-xs font-bold text-[#1254A3] pt-3 border-t border-slate-100 group-hover:translate-x-1 transition-transform">
+                            <span>Acessar demonstrativos</span>
+                            <FaArrowRight size={10} />
+                        </div>
+                    </Link>
                 </div>
             </section>
 
