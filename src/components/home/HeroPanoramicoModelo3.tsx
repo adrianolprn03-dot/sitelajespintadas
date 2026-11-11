@@ -77,8 +77,8 @@ export default function HeroPanoramicoModelo3() {
 
                             <div className="space-y-3">
                                 <h1 className="text-3xl sm:text-5xl lg:text-[54px] font-black text-[#12304A] font-heading tracking-tight leading-[1.08]">
-                                    Sua cidade. <br />
-                                    <span className="text-[#1254A3]">Mais perto de você.</span>
+                                    Lajes Pintadas, <br />
+                                    <span className="text-[#1254A3]">mais perto de você.</span>
                                 </h1>
 
                                 <div className="h-1.5 w-20 bg-[#F39A32] rounded-full" />

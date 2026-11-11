@@ -130,7 +130,7 @@ export default async function AdminDashboard() {
             prisma.esic.count({ where: { status: { in: ["aberto", "em_analise", "prorrogado"] } } }),
             prisma.esic.count({ where: { status: { in: ["recurso", "recurso_1", "recurso_2"] } } }),
             prisma.importacaoCSV.count({ where: { status: { in: ["erro", "parcial"] } } }),
-            prisma.documento.count({ where: { OR: [{ statusLink: "erro" }, { arquivo: "" }] } }),
+            prisma.documento.count({ where: { OR: [{ arquivo: null }, { arquivo: "" }] } }),
             prisma.relatorioFiscal.count(),
             prisma.criterioPNTP.findMany(),
             prisma.receita.groupBy({ by: ["ano"] }),
@@ -148,7 +148,7 @@ export default async function AdminDashboard() {
             prisma.importacaoCSV.findMany({
                 take: 4,
                 orderBy: { criadoEm: "desc" },
-                select: { id: true, tipo: true, nomeArquivo: true, status: true, registros: true, criadoEm: true },
+                select: { id: true, modulo: true, arquivo: true, status: true, total: true, criadoEm: true },
             }),
         ]);
 
@@ -198,7 +198,7 @@ export default async function AdminDashboard() {
 
             if (stVal === "aguardando_revisao") rev++;
 
-            const refDate = saved?.ultimaConferenciaEm || saved?.ultimaAtualizacaoConteudo;
+            const refDate = saved?.dataUltimaVerificacao || saved?.atualizadoEm;
             const dias = refDate
                 ? Math.floor((now - new Date(refDate).getTime()) / (1000 * 60 * 60 * 24))
                 : null;
@@ -225,7 +225,14 @@ export default async function AdminDashboard() {
 
         ultimasNoticias = noticiasRecentes;
         ultimasObras = obrasRecentes;
-        ultimasImportacoes = importacoesRecentes;
+        ultimasImportacoes = importacoesRecentes.map((imp) => ({
+            id: imp.id,
+            tipo: imp.modulo,
+            nomeArquivo: imp.arquivo,
+            status: imp.status,
+            registros: imp.total,
+            criadoEm: imp.criadoEm,
+        }));
     } catch {
         // Fallback seguro quando o banco está offline no ambiente de teste
         const secMap = new Map<string, number>();

@@ -39,11 +39,28 @@ const tipoInfo: Record<string, { label: string; icon: any }> = {
     "resolucao": { label: "Resolução", icon: FaFileLines },
 };
 
+const MESES = [
+    { v: "", l: "Todos os meses" },
+    { v: "1", l: "Janeiro" },
+    { v: "2", l: "Fevereiro" },
+    { v: "3", l: "Março" },
+    { v: "4", l: "Abril" },
+    { v: "5", l: "Maio" },
+    { v: "6", l: "Junho" },
+    { v: "7", l: "Julho" },
+    { v: "8", l: "Agosto" },
+    { v: "9", l: "Setembro" },
+    { v: "10", l: "Outubro" },
+    { v: "11", l: "Novembro" },
+    { v: "12", l: "Dezembro" },
+];
+
 export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = false }: { initialTipo?: string, hideTipoFilter?: boolean }) {
     const [leis, setLeis] = useState<Legislacao[]>([]);
     const [loading, setLoading] = useState(true);
     const [tipoFiltro, setTipoFiltro] = useState(initialTipo || "TODOS");
     const [anoFiltro, setAnoFiltro] = useState<number | null>(null);
+    const [mesFiltro, setMesFiltro] = useState<number | null>(null);
     const [buscaFiltro, setBuscaFiltro] = useState("");
     const [ordemNumero, setOrdemNumero] = useState<"desc" | "asc">("desc");
     const [pdfViewer, setPdfViewer] = useState<{ url: string; titulo: string } | null>(null);
@@ -76,7 +93,8 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
         const matchesSearch = l.ementa.toLowerCase().includes(buscaFiltro.toLowerCase()) || 
                              l.numero.toLowerCase().includes(buscaFiltro.toLowerCase());
         const matchesAno = anoFiltro === null || l.ano === anoFiltro;
-        return matchesSearch && matchesAno;
+        const matchesMes = mesFiltro === null || (l.criadoEm && (new Date(l.criadoEm).getMonth() + 1) === mesFiltro);
+        return matchesSearch && matchesAno && matchesMes;
     });
 
     const todosOsAnos = Array.from(new Set(leis.map(l => l.ano))).sort((a, b) => b - a);
@@ -85,6 +103,7 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
     const handleClearFilters = () => {
         setBuscaFiltro("");
         setAnoFiltro(null);
+        setMesFiltro(null);
         setTipoFiltro(initialTipo || "TODOS");
         setOrdemNumero("desc");
     };
@@ -113,51 +132,51 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
         comArquivo: filtered.filter(l => !!l.arquivo).length,
     };
 
-    const hasActiveFilters = buscaFiltro || anoFiltro || (tipoFiltro !== "TODOS" && !hideTipoFilter);
+    const hasActiveFilters = buscaFiltro || anoFiltro || mesFiltro !== null || (tipoFiltro !== "TODOS" && !hideTipoFilter);
 
     return (
-        <div className="max-w-[1240px] mx-auto px-4 md:px-6 pt-6 pb-20 font-['Montserrat',sans-serif]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-20 font-['Montserrat',sans-serif]">
             
-            {/* Bento Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                <div className="bg-white p-8 rounded-[2.5rem] shadow-xl shadow-blue-500/5 border border-slate-100 flex items-center gap-6 transition-all hover:scale-[1.02]">
-                    <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center shadow-inner">
-                        <FaScaleBalanced size={24} />
-                    </div>
+            {/* Stats Cards - Padrão Novo */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-[#DDE3EA] flex items-center justify-between">
                     <div>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Total de Atos Registrados</p>
-                        <p className="text-3xl font-black text-slate-900 tracking-tighter">{stats.total}</p>
+                        <p className="text-xs font-bold text-[#5B738B] uppercase tracking-wider mb-1">Total de Atos Registrados</p>
+                        <p className="text-3xl font-black text-[#12304A] tracking-tight">{stats.total}</p>
+                    </div>
+                    <div className="w-12 h-12 bg-blue-50 text-[#1254A3] rounded-xl flex items-center justify-center">
+                        <FaScaleBalanced size={20} />
                     </div>
                 </div>
 
-                <div className="bg-white p-8 rounded-[2.5rem] shadow-xl shadow-blue-500/5 border border-slate-100 flex items-center gap-6 transition-all hover:scale-[1.02]">
-                    <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-3xl flex items-center justify-center shadow-inner">
-                        <FaCalendarDays size={24} />
-                    </div>
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-[#DDE3EA] flex items-center justify-between">
                     <div>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Publicados em {new Date().getFullYear()}</p>
-                        <p className="text-3xl font-black text-emerald-600 tracking-tighter">{stats.esteAno}</p>
+                        <p className="text-xs font-bold text-[#5B738B] uppercase tracking-wider mb-1">Publicados em {new Date().getFullYear()}</p>
+                        <p className="text-3xl font-black text-emerald-600 tracking-tight">{stats.esteAno}</p>
+                    </div>
+                    <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center">
+                        <FaCalendarDays size={20} />
                     </div>
                 </div>
 
-                <div className="bg-white p-8 rounded-[2.5rem] shadow-xl shadow-blue-500/5 border border-slate-100 flex items-center gap-6 transition-all hover:scale-[1.02]">
-                    <div className="w-16 h-16 bg-amber-50 text-amber-600 rounded-3xl flex items-center justify-center shadow-inner">
-                        <FaFilePdf size={24} />
-                    </div>
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-[#DDE3EA] flex items-center justify-between">
                     <div>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Arquivos Disponíveis</p>
-                        <p className="text-3xl font-black text-amber-600 tracking-tighter">{stats.comArquivo}</p>
+                        <p className="text-xs font-bold text-[#5B738B] uppercase tracking-wider mb-1">Arquivos Disponíveis</p>
+                        <p className="text-3xl font-black text-[#F39A32] tracking-tight">{stats.comArquivo}</p>
+                    </div>
+                    <div className="w-12 h-12 bg-amber-50 text-[#F39A32] rounded-xl flex items-center justify-center">
+                        <FaFilePdf size={20} />
                     </div>
                 </div>
             </div>
 
             {/* ═══════ FILTROS ═══════ */}
-            <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm mb-8">
+            <div className="bg-white rounded-2xl border border-[#DDE3EA] shadow-sm mb-8">
                 
                 {/* Abas de Tipo (se não estiver escondido) */}
                 {!hideTipoFilter && (
                     <div className="px-5 pt-5 pb-0">
-                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2.5 block">Tipo de Ato Legislação</label>
+                        <label className="text-xs font-bold text-[#5B738B] uppercase tracking-wider mb-2.5 block">Tipo de Ato / Legislação</label>
                         <div className="flex flex-wrap gap-2">
                             {[
                                 { id: "TODOS", label: "Todos" },
@@ -170,10 +189,10 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                                 <button
                                     key={tab.id}
                                     onClick={() => setTipoFiltro(tab.id)}
-                                    className={`px-5 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                                         tipoFiltro === tab.id
-                                        ? "bg-primary-600 text-white shadow-md shadow-primary-600/20"
-                                        : "bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-700"
+                                        ? "bg-[#1254A3] text-white shadow-sm"
+                                        : "bg-[#F5F7FA] text-[#5B738B] hover:bg-slate-200 hover:text-[#12304A]"
                                     }`}
                                 >
                                     {tab.label}
@@ -183,25 +202,26 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                     </div>
                 )}
 
-                {/* Busca + Ano + Alternar Ordem + Exportação */}
+                {/* Busca + Ano + Mês + Alternar Ordem + Exportação */}
                 <div className="p-5 flex flex-col md:flex-row gap-3 items-stretch md:items-center">
                     <div className="relative flex-1">
                         <FaMagnifyingGlass className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-300" size={13} />
                         <input
                             type="text"
                             placeholder="Pesquisar por número ou ementa..."
-                            className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 placeholder:text-slate-300 focus:bg-white focus:ring-2 focus:ring-primary-500/20 focus:border-primary-400 transition-all outline-none"
+                            className="w-full pl-10 pr-4 py-2.5 bg-[#F5F7FA] border border-[#DDE3EA] rounded-xl text-xs font-medium text-[#12304A] placeholder:text-slate-400 focus:bg-white focus:ring-2 focus:ring-[#1254A3]/20 focus:border-[#1254A3] transition-all outline-none"
                             value={buscaFiltro}
                             onChange={(e) => setBuscaFiltro(e.target.value)}
                         />
                     </div>
 
-                    <div className="relative w-full md:w-48">
+                    {/* Filtro de Ano */}
+                    <div className="relative w-full md:w-36">
                         <FaCalendarDays className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none" size={13} />
                         <select
                             value={anoFiltro ?? ""}
                             onChange={(e) => setAnoFiltro(e.target.value ? Number(e.target.value) : null)}
-                            className="w-full pl-10 pr-8 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-600 focus:bg-white focus:ring-2 focus:ring-primary-500/20 focus:border-primary-400 transition-all outline-none cursor-pointer appearance-none"
+                            className="w-full pl-10 pr-8 py-2.5 bg-[#F5F7FA] border border-[#DDE3EA] rounded-xl text-xs font-bold text-[#12304A] focus:bg-white focus:ring-2 focus:ring-[#1254A3]/20 focus:border-[#1254A3] transition-all outline-none cursor-pointer appearance-none"
                         >
                             <option value="">Todos os anos</option>
                             {todosOsAnos.map(ano => (
@@ -215,29 +235,48 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                         </div>
                     </div>
 
-                    {/* Botão de Alternar Ordem Numérica (Maior -> Menor vs Menor -> Maior) */}
+                    {/* Filtro de Mês */}
+                    <div className="relative w-full md:w-40">
+                        <FaCalendarDays className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none" size={13} />
+                        <select
+                            value={mesFiltro ?? ""}
+                            onChange={(e) => setMesFiltro(e.target.value ? Number(e.target.value) : null)}
+                            className="w-full pl-10 pr-8 py-2.5 bg-[#F5F7FA] border border-[#DDE3EA] rounded-xl text-xs font-bold text-[#12304A] focus:bg-white focus:ring-2 focus:ring-[#1254A3]/20 focus:border-[#1254A3] transition-all outline-none cursor-pointer appearance-none"
+                        >
+                            {MESES.map(m => (
+                                <option key={m.v} value={m.v}>{m.l}</option>
+                            ))}
+                        </select>
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    {/* Botão de Alternar Ordem Numérica */}
                     <button
                         onClick={() => setOrdemNumero(prev => prev === "desc" ? "asc" : "desc")}
                         title="Alternar ordem de exibição pelo número do ato"
-                        className="flex items-center justify-center gap-2 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:border-slate-300 transition-all cursor-pointer shadow-sm"
+                        className="flex items-center justify-center gap-2 px-3 py-2.5 bg-[#F5F7FA] border border-[#DDE3EA] rounded-xl text-xs font-bold text-[#12304A] hover:bg-slate-200 transition-all cursor-pointer shadow-sm"
                     >
                         {ordemNumero === "desc" ? (
                             <>
-                                <FaArrowDownShortWide className="text-primary-600" size={14} />
-                                <span>Nº Maior para o Menor</span>
+                                <FaArrowDownShortWide className="text-[#1254A3]" size={14} />
+                                <span className="hidden sm:inline">Nº Maior para Menor</span>
                             </>
                         ) : (
                             <>
-                                <FaArrowUpWideShort className="text-primary-600" size={14} />
-                                <span>Nº Menor para o Maior</span>
+                                <FaArrowUpWideShort className="text-[#1254A3]" size={14} />
+                                <span className="hidden sm:inline">Nº Menor para Maior</span>
                             </>
                         )}
                     </button>
 
-                    <div className="hidden md:block w-px h-8 bg-slate-200" />
+                    <div className="hidden md:block w-px h-8 bg-[#DDE3EA]" />
 
                     <div className="flex items-center gap-1.5">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mr-1 hidden lg:block">Exportar:</span>
+                        <span className="text-[10px] font-bold text-[#5B738B] uppercase tracking-wider mr-1 hidden lg:block">Exportar:</span>
                         {[
                             { id: 'pdf' as const, icon: <FaFilePdf size={13} />, label: 'PDF', color: 'text-red-500 hover:bg-red-50' },
                             { id: 'xlsx' as const, icon: <FaFileExcel size={13} />, label: 'Excel', color: 'text-emerald-500 hover:bg-emerald-50' },
@@ -247,7 +286,7 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                                 key={tool.id}
                                 onClick={() => handleExport(tool.id)}
                                 title={`Exportar como ${tool.label}`}
-                                className={`p-2.5 rounded-lg transition-all ${tool.color} border border-transparent hover:border-current/10 cursor-pointer`}
+                                className={`p-2 rounded-lg transition-all ${tool.color} border border-transparent hover:border-current/10 cursor-pointer`}
                             >
                                 {tool.icon}
                             </button>
@@ -257,29 +296,35 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
 
                 {/* Filtros ativos */}
                 {hasActiveFilters && (
-                    <div className="px-5 pb-4 flex items-center gap-2 flex-wrap border-t border-slate-50 pt-4">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Filtros:</span>
+                    <div className="px-5 pb-4 flex items-center gap-2 flex-wrap border-t border-[#DDE3EA] pt-3">
+                        <span className="text-[10px] font-bold text-[#5B738B] uppercase">Filtros:</span>
                         {tipoFiltro !== "TODOS" && !hideTipoFilter && (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-primary-50 text-primary-700 rounded-md text-[11px] font-semibold border border-primary-100">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-50 text-[#1254A3] rounded-md text-[11px] font-semibold border border-blue-200">
                                 {tipoInfo[tipoFiltro]?.label || tipoFiltro}
-                                <button onClick={() => setTipoFiltro("TODOS")} className="ml-0.5 hover:text-primary-900"><FaXmark size={8} /></button>
+                                <button onClick={() => setTipoFiltro("TODOS")} className="ml-0.5 hover:text-blue-900"><FaXmark size={8} /></button>
                             </span>
                         )}
                         {anoFiltro && (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 text-amber-700 rounded-md text-[11px] font-semibold border border-amber-100">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 text-amber-800 rounded-md text-[11px] font-semibold border border-amber-200">
                                 Ano: {anoFiltro}
                                 <button onClick={() => setAnoFiltro(null)} className="ml-0.5 hover:text-amber-900"><FaXmark size={8} /></button>
                             </span>
                         )}
+                        {mesFiltro && (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-800 rounded-md text-[11px] font-semibold border border-emerald-200">
+                                Mês: {MESES.find(m => m.v === mesFiltro.toString())?.l}
+                                <button onClick={() => setMesFiltro(null)} className="ml-0.5 hover:text-emerald-900"><FaXmark size={8} /></button>
+                            </span>
+                        )}
                         {buscaFiltro && (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-sky-50 text-sky-700 rounded-md text-[11px] font-semibold border border-sky-100">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-sky-50 text-sky-800 rounded-md text-[11px] font-semibold border border-sky-200">
                                 &quot;{buscaFiltro}&quot;
                                 <button onClick={() => setBuscaFiltro("")} className="ml-0.5 hover:text-sky-900"><FaXmark size={8} /></button>
                             </span>
                         )}
                         <button
                             onClick={handleClearFilters}
-                            className="text-[10px] font-bold text-slate-400 hover:text-red-500 uppercase transition-colors ml-1 cursor-pointer"
+                            className="text-[10px] font-bold text-[#5B738B] hover:text-red-600 uppercase transition-colors ml-1 cursor-pointer"
                         >
                             Limpar tudo
                         </button>
@@ -342,13 +387,13 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                                     {/* Divisor de Ano */}
                                     <div className="flex items-center gap-4">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 bg-primary-600 text-white rounded-xl flex items-center justify-center font-black text-sm shadow-lg shadow-primary-600/20">
+                                            <div className="w-10 h-10 bg-[#1254A3] text-white rounded-xl flex items-center justify-center font-black text-sm shadow-sm">
                                                 <FaCalendarDays size={14} />
                                             </div>
-                                            <h3 className="text-2xl font-black text-slate-800">Exercício {ano}</h3>
+                                            <h3 className="text-2xl font-black text-[#12304A]">Exercício {ano}</h3>
                                         </div>
-                                        <div className="flex-1 h-px bg-slate-200" />
-                                        <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-3 py-1.5 rounded-lg uppercase tracking-wider">
+                                        <div className="flex-1 h-px bg-[#DDE3EA]" />
+                                        <span className="text-xs font-bold text-[#5B738B] bg-[#F5F7FA] border border-[#DDE3EA] px-3 py-1.5 rounded-lg">
                                             {itensDoAno.length} {itensDoAno.length === 1 ? "Ato" : "Atos"} (Nº {ordemNumero === "desc" ? "Maior ao Menor" : "Menor ao Maior"})
                                         </span>
                                     </div>
@@ -363,31 +408,31 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                                                     initial={{ opacity: 0, y: 16 }}
                                                     animate={{ opacity: 1, y: 0 }}
                                                     transition={{ delay: idx * 0.03 }}
-                                                    className="group bg-white rounded-2xl border border-slate-200 hover:border-primary-400 shadow-sm hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300 flex flex-col justify-between overflow-hidden"
+                                                    className="group bg-white rounded-2xl border border-[#DDE3EA] hover:border-[#1254A3]/50 shadow-sm transition-all duration-200 flex flex-col justify-between overflow-hidden"
                                                 >
                                                     {/* Card body */}
                                                     <div className="p-6 flex-1">
                                                         <div className="flex justify-between items-start mb-4">
                                                             <div className="flex flex-col">
-                                                                <span className="text-[10px] font-black text-primary-600 bg-primary-50 px-2.5 py-1 rounded-md border border-primary-100 uppercase tracking-widest mb-2 w-fit">
+                                                                <span className="text-[10px] font-bold text-[#1254A3] bg-blue-50 px-2.5 py-1 rounded-md border border-blue-200 uppercase tracking-wider mb-2 w-fit">
                                                                     {info.label}
                                                                 </span>
-                                                                <h4 className="text-2xl font-black text-slate-900 group-hover:text-primary-600 transition-colors duration-300">
+                                                                <h4 className="text-xl font-black text-[#12304A] group-hover:text-[#1254A3] transition-colors duration-200">
                                                                     Nº {l.numero}
                                                                 </h4>
                                                             </div>
-                                                            <div className="w-10 h-10 bg-red-50 text-red-500 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-red-500 group-hover:text-white transition-all duration-300 shadow-sm">
+                                                            <div className="w-10 h-10 bg-red-50 text-red-500 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-red-500 group-hover:text-white transition-all duration-200 shadow-sm">
                                                                 <FaFilePdf size={16} />
                                                             </div>
                                                         </div>
                                                         
-                                                        <p className="text-[13px] font-medium text-slate-600 leading-relaxed mb-4 line-clamp-4 group-hover:text-slate-800 transition-colors" title={l.ementa}>
+                                                        <p className="text-xs font-medium text-[#5B738B] leading-relaxed mb-4 line-clamp-4 group-hover:text-[#12304A] transition-colors" title={l.ementa}>
                                                             {l.ementa}
                                                         </p>
 
                                                         <div className="flex items-center gap-2 mt-auto pt-2">
-                                                            <FaCalendarDays size={12} className="text-slate-300" />
-                                                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-tight">
+                                                            <FaCalendarDays size={12} className="text-slate-400" />
+                                                            <span className="text-xs font-semibold text-[#5B738B]">
                                                                 Publicado em {new Date(l.criadoEm).toLocaleDateString("pt-BR")}
                                                             </span>
                                                         </div>
@@ -402,7 +447,7 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                                                                         const exibirNumero = l.numero.endsWith(`/${l.ano}`) ? l.numero : `${l.numero}/${l.ano}`;
                                                                         setPdfViewer({ url: l.arquivo!, titulo: `${info.label} Nº ${exibirNumero}` });
                                                                     }}
-                                                                    className="flex-1 flex items-center justify-center gap-2 py-2 bg-white text-primary-700 border border-primary-200 rounded-xl text-xs font-bold hover:bg-primary-600 hover:text-white hover:border-primary-600 transition-all duration-200 shadow-sm cursor-pointer"
+                                                                    className="flex-1 flex items-center justify-center gap-2 py-2 bg-white text-[#1254A3] border border-[#DDE3EA] rounded-xl text-xs font-bold hover:bg-[#1254A3] hover:text-white hover:border-[#1254A3] transition-all duration-150 shadow-sm cursor-pointer"
                                                                 >
                                                                     <FaEye size={12} />
                                                                     Visualizar
@@ -411,7 +456,7 @@ export default function LegislacaoClient({ initialTipo = "", hideTipoFilter = fa
                                                                     href={l.arquivo}
                                                                     target="_blank"
                                                                     rel="noopener noreferrer"
-                                                                    className="flex items-center justify-center gap-2 py-2 px-3.5 bg-slate-200/80 text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-800 hover:text-white transition-all duration-200 cursor-pointer"
+                                                                    className="flex items-center justify-center gap-2 py-2 px-3.5 bg-white text-[#12304A] border border-[#DDE3EA] rounded-xl text-xs font-bold hover:bg-[#12304A] hover:text-white transition-all duration-150 cursor-pointer"
                                                                 >
                                                                     <FaDownload size={11} />
                                                                     Baixar
