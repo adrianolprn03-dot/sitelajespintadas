@@ -24,9 +24,9 @@ export default function PageHeader({
 }: PageHeaderProps) {
     return (
         <div className="bg-white border-b border-[#DCE4EE] pt-8 pb-10 sm:pt-10 sm:pb-12 relative overflow-hidden">
-            {/* Ambient Heraldic Glows (Cores do Brasão: Azul Safira, Verde Agave e Amarelo Ouro) */}
+            {/* Ambient Institutional Glows (Azul e Amarelo) */}
             <div className="absolute top-0 right-0 w-96 h-96 bg-[#0072CE]/8 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/3" />
-            <div className="absolute bottom-0 left-1/4 w-72 h-72 bg-[#15803D]/6 rounded-full blur-3xl pointer-events-none translate-y-1/2" />
+            <div className="absolute bottom-0 left-1/4 w-72 h-72 bg-[#FACC15]/10 rounded-full blur-3xl pointer-events-none translate-y-1/2" />
 
             <div className="max-w-[1280px] mx-auto px-4 sm:px-6 relative z-10 flex flex-col items-start text-left">
                 {/* Breadcrumbs */}

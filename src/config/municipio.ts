@@ -11,11 +11,10 @@ export const MUNICIPIO = {
     email: "ouvidoria@lajespintadas.rn.gov.br",
     horario: "07:00 às 13:00",
     cores: {
-        primaria: "#0072CE", // Azul Safira do Brasão
-        secundaria: "#EA580C", // Laranja Terracota do Brasão
-        verde: "#15803D", // Verde Agave do Brasão e Bandeira
-        ouro: "#FACC15", // Amarelo Ouro do Brasão e Bandeira
-        destaque: "#EA580C",
+        primaria: "#0072CE", // Azul Institucional Principal
+        secundaria: "#FACC15", // Amarelo Ouro Secundário
+        ouro: "#FACC15",
+        destaque: "#FACC15",
         texto: "#0F2942",
         fundo: "#F4F7FB",
     },

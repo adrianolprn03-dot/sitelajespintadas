@@ -26,60 +26,42 @@ export const metadata: Metadata = {
     description: `Site oficial da ${MUNICIPIO.nomeCompleto} – ${MUNICIPIO.uf}. Transparência, serviços ao cidadão, notícias e informações institucionais.`,
 };
 
-const badgeThemes = [
-    { bg: "bg-[#0072CE]", text: "text-white", borderBottom: "border-b-[#0072CE]" },
-    { bg: "bg-[#15803D]", text: "text-white", borderBottom: "border-b-[#15803D]" },
-    { bg: "bg-[#EA580C]", text: "text-white", borderBottom: "border-b-[#EA580C]" },
-];
-
 const secretariasHighlight = [
     {
-        nome: "Saúde Pública",
+        nome: "Saúde",
         desc: "UBS, Farmácia Básica SUS, vigilância em saúde e regulação.",
         href: "/secretarias/saude",
         icon: FaHeartPulse,
-        iconBg: "bg-emerald-50 text-[#15803D] border-emerald-200",
-        bottomBar: "border-b-[#15803D]",
     },
     {
         nome: "Educação e Cultura",
         desc: "Rede municipal de ensino, creches, transporte escolar e cultura.",
-        href: "/secretarias/educacao",
+        href: "/secretarias/educacao-cultura",
         icon: FaGraduationCap,
-        iconBg: "bg-amber-50 text-[#D97706] border-amber-200",
-        bottomBar: "border-b-[#EAB308]",
     },
     {
-        nome: "Obras e Infraestrutura",
-        desc: "Pavimentação, urbanismo, iluminação pública e obras municipais.",
-        href: "/secretarias/obras",
+        nome: "Obras e Serviços Urbanos",
+        desc: "Pavimentação, urbanismo, iluminação pública e limpeza urbana.",
+        href: "/secretarias/obras-servicos-urbanos",
         icon: FaTrowelBricks,
-        iconBg: "bg-orange-50 text-[#EA580C] border-orange-200",
-        bottomBar: "border-b-[#EA580C]",
     },
     {
         nome: "Assistência Social",
         desc: "CRAS, programas socioassistenciais, Cadastro Único e proteção.",
-        href: "/secretarias/social",
+        href: "/secretarias/assistencia-social",
         icon: FaUsers,
-        iconBg: "bg-sky-50 text-[#0072CE] border-sky-200",
-        bottomBar: "border-b-[#0072CE]",
     },
     {
         nome: "Agricultura e Meio Ambiente",
         desc: "Apoio ao produtor rural, recursos hídricos e sustentabilidade.",
-        href: "/secretarias/agricultura",
+        href: "/secretarias/agricultura-meio-ambiente",
         icon: FaSeedling,
-        iconBg: "bg-emerald-50 text-[#15803D] border-emerald-200",
-        bottomBar: "border-b-[#15803D]",
     },
     {
-        nome: "Administração e Finanças",
-        desc: "Gestão administrativa, planejamento orçamentário e tributação.",
-        href: "/secretarias/administracao",
+        nome: "Administração e Planejamento",
+        desc: "Gestão administrativa, atendimento ao servidor e planejamento.",
+        href: "/secretarias/administracao-geral-planejamento",
         icon: FaBuildingColumns,
-        iconBg: "bg-sky-50 text-[#0072CE] border-sky-200",
-        bottomBar: "border-b-[#0072CE]",
     },
 ];
 
@@ -112,10 +94,10 @@ export default async function Home() {
                 categoria: n.secretaria?.nome
                     ? n.secretaria.nome.split(" ")[0].toUpperCase()
                     : idx === 0
-                    ? "INFRAESTRUTURA"
+                    ? "GESTÃO MUNICIPAL"
                     : idx === 1
                     ? "EDUCAÇÃO"
-                    : "SAÚDE & CIDADE",
+                    : "CIDADE",
                 imagem:
                     n.imagem ||
                     (idx === 0
@@ -144,7 +126,7 @@ export default async function Home() {
                 titulo: "Serviços públicos digitais mais perto da população de Lajes Pintadas",
                 resumo:
                     "Portal institucional modernizado amplia o acesso rápido à Ouvidoria, e-SIC, Carta de Serviços e Transparência Ativa.",
-                categoria: "SERVIÇOS DIGITAIS",
+                categoria: "GOVERNO DIGITAL",
                 imagem: "/images/historia-panoramica.jpg",
                 slug: "servicos-mais-perto-da-populacao",
                 dataFormatada: "Portal Oficial",
@@ -164,7 +146,7 @@ export default async function Home() {
                 titulo: "Cuidado permanente com a saúde, infraestrutura e bem-estar na cidade",
                 resumo:
                     "Equipes municipais atuam de forma integrada no atendimento básico, manutenção urbana e apoio ao homem do campo.",
-                categoria: "SAÚDE & CIDADE",
+                categoria: "GESTÃO MUNICIPAL",
                 imagem: "/images/hero-bg.jpg",
                 slug: "cuidado-com-a-nossa-cidade",
                 dataFormatada: "Gestão Municipal",
@@ -173,12 +155,12 @@ export default async function Home() {
     }
 
     return (
-        <div className="space-y-14 sm:space-y-16 pb-20">
-            {/* SEÇÕES 1, 2 e 3: Hero Panorâmico com Vídeo Oficial + Bento Dock + Carta de Serviços */}
+        <div className="space-y-12 sm:space-y-16 pb-20">
+            {/* 1 e 2: Banner Panorâmico com Vídeo Oficial + Acesso Rápido Unificado em Azul e Amarelo */}
             <HeroPanoramicoModelo3 />
 
             {/* =====================================================================
-                4. ACONTECE EM LAJES PINTADAS (GRID EDITORIAL MODELO 3)
+                3. ACONTECE EM LAJES PINTADAS (GRID EDITORIAL EM AZUL E AMARELO)
                ===================================================================== */}
             <section className="max-w-[1280px] mx-auto px-4 sm:px-6">
                 <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-7">
@@ -194,73 +176,68 @@ export default async function Home() {
 
                     <Link
                         href="/noticias"
-                        className="inline-flex items-center gap-2 text-xs sm:text-sm font-extrabold text-[#0072CE] bg-white hover:bg-[#0072CE] hover:text-white px-4 py-2.5 rounded-full border border-[#DCE4EE] shadow-sm transition-all w-fit"
+                        className="inline-flex items-center gap-2 text-xs font-extrabold text-[#0072CE] bg-white hover:bg-[#0072CE] hover:text-white px-4 py-2.5 rounded-full border border-[#DCE4EE] shadow-sm transition-all w-fit"
                     >
                         <span>Ver todas as notícias</span>
-                        <FaArrowRight size={12} />
+                        <FaArrowRight size={11} />
                     </Link>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {noticias.map((item, idx) => {
-                        const theme = badgeThemes[idx % badgeThemes.length];
-                        return (
-                            <article
-                                key={item.id}
-                                className={`bg-white rounded-[22px] border border-[#DCE4EE] border-b-4 ${theme.borderBottom} overflow-hidden shadow-gov hover:shadow-gov-hover transition-all duration-300 group flex flex-col hover:-translate-y-1`}
+                    {noticias.map((item) => (
+                        <article
+                            key={item.id}
+                            className="bg-white rounded-[22px] border border-[#DCE4EE] border-b-4 border-b-[#0072CE] hover:border-b-[#FACC15] overflow-hidden shadow-gov hover:shadow-gov-hover transition-all duration-300 group flex flex-col hover:-translate-y-1"
+                        >
+                            <Link
+                                href={`/noticias/${item.slug}`}
+                                className="block relative overflow-hidden aspect-[16/10] bg-slate-100"
                             >
-                                <Link
-                                    href={`/noticias/${item.slug}`}
-                                    className="block relative overflow-hidden aspect-[16/10] bg-slate-100"
-                                >
-                                    <img
-                                        src={item.imagem}
-                                        alt={item.titulo}
-                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                    />
-                                    <div className="absolute top-3 left-3">
-                                        <span
-                                            className={`inline-block ${theme.bg} ${theme.text} text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-md`}
-                                        >
-                                            {item.categoria}
-                                        </span>
-                                    </div>
-                                </Link>
-
-                                <div className="p-5 sm:p-6 space-y-2.5 flex-1 flex flex-col justify-between">
-                                    <div className="space-y-2">
-                                        <span className="block text-[11px] font-semibold text-[#526B84]">
-                                            {item.dataFormatada}
-                                        </span>
-                                        <h3 className="text-base sm:text-lg font-extrabold text-[#0F2942] font-heading leading-snug group-hover:text-[#0072CE] transition-colors line-clamp-2">
-                                            <Link href={`/noticias/${item.slug}`}>{item.titulo}</Link>
-                                        </h3>
-                                        <p className="text-xs text-[#526B84] leading-relaxed line-clamp-2">
-                                            {item.resumo}
-                                        </p>
-                                    </div>
-
-                                    <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-[#0072CE]">
-                                        <Link href={`/noticias/${item.slug}`} className="flex items-center gap-1.5">
-                                            <span>Ler matéria completa</span>
-                                            <FaArrowRight
-                                                size={11}
-                                                className="group-hover:translate-x-1 transition-transform"
-                                            />
-                                        </Link>
-                                    </div>
+                                <img
+                                    src={item.imagem}
+                                    alt={item.titulo}
+                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                />
+                                <div className="absolute top-3 left-3">
+                                    <span className="inline-block bg-[#0072CE] text-white border border-[#FACC15]/80 text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-md">
+                                        {item.categoria}
+                                    </span>
                                 </div>
-                            </article>
-                        );
-                    })}
+                            </Link>
+
+                            <div className="p-5 sm:p-6 space-y-2.5 flex-1 flex flex-col justify-between">
+                                <div className="space-y-2">
+                                    <span className="block text-[11px] font-semibold text-[#526B84]">
+                                        {item.dataFormatada}
+                                    </span>
+                                    <h3 className="text-base sm:text-lg font-extrabold text-[#0F2942] font-heading leading-snug group-hover:text-[#0072CE] transition-colors line-clamp-2">
+                                        <Link href={`/noticias/${item.slug}`}>{item.titulo}</Link>
+                                    </h3>
+                                    <p className="text-xs text-[#526B84] leading-relaxed line-clamp-2">
+                                        {item.resumo}
+                                    </p>
+                                </div>
+
+                                <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-[#0072CE]">
+                                    <Link href={`/noticias/${item.slug}`} className="flex items-center gap-1.5">
+                                        <span>Ler matéria completa</span>
+                                        <FaArrowRight
+                                            size={11}
+                                            className="group-hover:translate-x-1 transition-transform"
+                                        />
+                                    </Link>
+                                </div>
+                            </div>
+                        </article>
+                    ))}
                 </div>
             </section>
 
             {/* =====================================================================
-                5. PUBLICAÇÕES OFICIAIS & ATOS DA GESTÃO (CORES DO BRASÃO)
+                4. PUBLICAÇÕES OFICIAIS & ATOS DA GESTÃO (AZUL & AMARELO)
                ===================================================================== */}
             <section className="max-w-[1280px] mx-auto px-4 sm:px-6">
-                <div className="rounded-[28px] bg-gradient-to-r from-[#002B5C] via-[#003B73] to-[#064E3B] p-6 sm:p-8 lg:p-10 text-white shadow-xl relative overflow-hidden">
+                <div className="rounded-[26px] bg-gradient-to-r from-[#002654] via-[#003B73] to-[#005bb5] p-6 sm:p-8 lg:p-10 text-white shadow-xl relative overflow-hidden">
                     <div className="absolute top-0 left-0 right-0 h-1.5 heraldic-stripe" />
 
                     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-7">
@@ -292,7 +269,7 @@ export default async function Home() {
                             className="bg-white/10 hover:bg-white text-white hover:text-[#0F2942] backdrop-blur-md rounded-2xl p-5 border border-white/20 transition-all duration-200 flex items-center justify-between group"
                         >
                             <div className="flex items-center gap-3.5">
-                                <div className="w-11 h-11 rounded-xl bg-[#EA580C] text-white flex items-center justify-center text-xl shrink-0 shadow">
+                                <div className="w-11 h-11 rounded-xl bg-white/15 border border-[#FACC15]/60 text-[#FACC15] group-hover:bg-[#0072CE] group-hover:text-white flex items-center justify-center text-xl shrink-0 transition-colors">
                                     <HiOutlineDocumentText />
                                 </div>
                                 <div>
@@ -311,7 +288,7 @@ export default async function Home() {
                             className="bg-white/10 hover:bg-white text-white hover:text-[#0F2942] backdrop-blur-md rounded-2xl p-5 border border-white/20 transition-all duration-200 flex items-center justify-between group"
                         >
                             <div className="flex items-center gap-3.5">
-                                <div className="w-11 h-11 rounded-xl bg-[#0072CE] text-white flex items-center justify-center text-xl shrink-0 shadow">
+                                <div className="w-11 h-11 rounded-xl bg-white/15 border border-[#FACC15]/60 text-[#FACC15] group-hover:bg-[#0072CE] group-hover:text-white flex items-center justify-center text-xl shrink-0 transition-colors">
                                     <FaHandshake />
                                 </div>
                                 <div>
@@ -330,7 +307,7 @@ export default async function Home() {
                             className="bg-white/10 hover:bg-white text-white hover:text-[#0F2942] backdrop-blur-md rounded-2xl p-5 border border-white/20 transition-all duration-200 flex items-center justify-between group"
                         >
                             <div className="flex items-center gap-3.5">
-                                <div className="w-11 h-11 rounded-xl bg-[#EAB308] text-[#0F2942] flex items-center justify-center text-xl shrink-0 shadow">
+                                <div className="w-11 h-11 rounded-xl bg-white/15 border border-[#FACC15]/60 text-[#FACC15] group-hover:bg-[#0072CE] group-hover:text-white flex items-center justify-center text-xl shrink-0 transition-colors">
                                     <FaScaleBalanced />
                                 </div>
                                 <div>
@@ -349,7 +326,7 @@ export default async function Home() {
                             className="bg-white/10 hover:bg-white text-white hover:text-[#0F2942] backdrop-blur-md rounded-2xl p-5 border border-white/20 transition-all duration-200 flex items-center justify-between group"
                         >
                             <div className="flex items-center gap-3.5">
-                                <div className="w-11 h-11 rounded-xl bg-[#15803D] text-white flex items-center justify-center text-xl shrink-0 shadow">
+                                <div className="w-11 h-11 rounded-xl bg-white/15 border border-[#FACC15]/60 text-[#FACC15] group-hover:bg-[#0072CE] group-hover:text-white flex items-center justify-center text-xl shrink-0 transition-colors">
                                     <FaDatabase />
                                 </div>
                                 <div>
@@ -366,16 +343,16 @@ export default async function Home() {
             </section>
 
             {/* =====================================================================
-                6. NOSSA TERRA, SÍMBOLOS OFICIAIS & SECRETARIAS MUNICIPAIS (MODELO 3)
+                5. NOSSA TERRA, SÍMBOLOS OFICIAIS & SECRETARIAS MUNICIPAIS (AZUL E AMARELO)
                ===================================================================== */}
             <section className="max-w-[1280px] mx-auto px-4 sm:px-6">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-                    {/* Card Esquerdo (5 colunas): Identidade Heráldica e Símbolos de Lajes Pintadas */}
+                    {/* Card Esquerdo (5 colunas): Identidade e Símbolos de Lajes Pintadas */}
                     <div className="lg:col-span-5 bg-white rounded-[26px] border border-[#DCE4EE] p-6 sm:p-8 shadow-gov flex flex-col justify-between relative overflow-hidden">
                         <div className="absolute top-0 left-0 right-0 h-1.5 heraldic-stripe" />
 
                         <div className="space-y-5">
-                            <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-[#15803D] bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
+                            <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-[#0072CE] bg-[#F0F7FF] border border-[#DCE4EE] px-3 py-1 rounded-full">
                                 <FaFlag size={12} />
                                 <span>Identidade Laje-Pintadense</span>
                             </div>
@@ -385,7 +362,7 @@ export default async function Home() {
                             </h2>
 
                             <p className="text-xs sm:text-sm text-[#526B84] leading-relaxed">
-                                Batizada pelas históricas inscrições rupestres em suas lajes de pedra e marcada pela força da serra verde e da sua gente, {MUNICIPIO.nome}/{MUNICIPIO.uf} celebra sua história desde {MUNICIPIO.estatisticas.fundacao}.
+                                Batizada pelas históricas inscrições rupestres em suas lajes de pedra e marcada pela força da serra e da sua gente, {MUNICIPIO.nome}/{MUNICIPIO.uf} celebra sua história desde {MUNICIPIO.estatisticas.fundacao}.
                             </p>
 
                             {/* Brasão e Bandeira Lado a Lado */}
@@ -407,13 +384,13 @@ export default async function Home() {
                                         className="h-20 w-auto object-contain rounded shadow-sm mb-2"
                                     />
                                     <span className="text-xs font-extrabold text-[#0F2942]">Bandeira Oficial</span>
-                                    <span className="text-[10px] text-[#526B84]">Verde, Ouro e Azul</span>
+                                    <span className="text-[10px] text-[#526B84]">Símbolo Cívico</span>
                                 </div>
                             </div>
 
-                            {/* Estatísticas Rápidas */}
+                            {/* Estatísticas Rápidas em Azul e Amarelo */}
                             <div className="grid grid-cols-3 gap-2.5 pt-1 text-center">
-                                <div className="bg-slate-50 rounded-xl p-2.5 border border-slate-200/80">
+                                <div className="bg-[#F8FAFC] rounded-xl p-2.5 border border-[#DCE4EE]">
                                     <span className="block text-sm sm:text-base font-black text-[#0072CE]">
                                         {MUNICIPIO.estatisticas.fundacao}
                                     </span>
@@ -421,16 +398,16 @@ export default async function Home() {
                                         Emancipação
                                     </span>
                                 </div>
-                                <div className="bg-slate-50 rounded-xl p-2.5 border border-slate-200/80">
-                                    <span className="block text-sm sm:text-base font-black text-[#15803D]">
+                                <div className="bg-[#F8FAFC] rounded-xl p-2.5 border border-[#DCE4EE]">
+                                    <span className="block text-sm sm:text-base font-black text-[#0072CE]">
                                         {MUNICIPIO.estatisticas.area}
                                     </span>
                                     <span className="block text-[10px] font-bold text-[#526B84] uppercase">
                                         Território
                                     </span>
                                 </div>
-                                <div className="bg-slate-50 rounded-xl p-2.5 border border-slate-200/80">
-                                    <span className="block text-sm sm:text-base font-black text-[#EA580C]">
+                                <div className="bg-[#F8FAFC] rounded-xl p-2.5 border border-[#DCE4EE]">
+                                    <span className="block text-sm sm:text-base font-black text-[#0072CE]">
                                         {MUNICIPIO.uf}
                                     </span>
                                     <span className="block text-[10px] font-bold text-[#526B84] uppercase">
@@ -450,19 +427,19 @@ export default async function Home() {
                             </Link>
                             <Link
                                 href="/municipio/simbolos"
-                                className="text-xs font-extrabold text-[#15803D] hover:underline flex items-center gap-1.5"
+                                className="text-xs font-extrabold text-[#0072CE] hover:underline flex items-center gap-1.5"
                             >
                                 <span>Ver Símbolos e Hino →</span>
                             </Link>
                         </div>
                     </div>
 
-                    {/* Coluna Direita (7 colunas): Secretarias Municipais nas Cores do Brasão */}
+                    {/* Coluna Direita (7 colunas): Secretarias Municipais Unificadas em Azul e Amarelo */}
                     <div className="lg:col-span-7 bg-white rounded-[26px] border border-[#DCE4EE] p-6 sm:p-8 shadow-gov flex flex-col justify-between">
                         <div>
                             <div className="flex items-center justify-between gap-4 mb-6">
                                 <div>
-                                    <span className="block text-xs font-extrabold uppercase tracking-wider text-[#EA580C]">
+                                    <span className="block text-xs font-extrabold uppercase tracking-wider text-[#0072CE]">
                                         ESTRUTURA ADMINISTRATIVA
                                     </span>
                                     <h2 className="text-2xl font-black text-[#0F2942] font-heading tracking-tight">
@@ -485,11 +462,9 @@ export default async function Home() {
                                         <Link
                                             key={idx}
                                             href={sec.href}
-                                            className={`group bg-[#F8FAFC] hover:bg-white rounded-2xl p-4 border border-[#DCE4EE] border-b-4 ${sec.bottomBar} hover:shadow-md transition-all flex items-start gap-3.5`}
+                                            className="group bg-[#F8FAFC] hover:bg-white rounded-2xl p-4 border border-[#DCE4EE] border-b-4 border-b-[#0072CE] hover:border-b-[#FACC15] hover:shadow-md transition-all flex items-start gap-3.5"
                                         >
-                                            <div
-                                                className={`w-11 h-11 rounded-xl border ${sec.iconBg} flex items-center justify-center text-lg shrink-0 group-hover:scale-105 transition-transform`}
-                                            >
+                                            <div className="w-11 h-11 rounded-xl bg-[#F0F7FF] text-[#0072CE] border border-[#DCE4EE] group-hover:bg-[#0072CE] group-hover:text-[#FACC15] group-hover:border-[#0072CE] flex items-center justify-center text-lg shrink-0 transition-all">
                                                 <Icon />
                                             </div>
                                             <div className="min-w-0 flex-1">

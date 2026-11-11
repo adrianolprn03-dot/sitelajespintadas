@@ -8,13 +8,11 @@
   --primary: #0072CE;
   --primary-light: #36AAF5;
   --primary-dark: #003B73;
-  --secondary: #EA580C;
-  --secondary-light: #FB923C;
-  --agave: #15803D;
-  --agave-dark: #064E3B;
+  --secondary: #FACC15;
+  --secondary-light: #FDE047;
   --ouro: #FACC15;
   --accent: #FACC15;
-  --gov-navy: #003B73;
+  --gov-navy: #002B5C;
   --gov-text: #0F2942;
   --gov-bg: #F4F7FB;
   --gov-border: #DCE4EE;
@@ -73,7 +71,7 @@ html.font-xlarge {
   position: absolute;
   top: -48px;
   left: 12px;
-  background: var(--agave-dark);
+  background: #002B5C;
   color: #FACC15;
   padding: 10px 18px;
   text-decoration: none;
@@ -114,17 +112,13 @@ html.font-xlarge {
   scrollbar-width: none;
 }
 
-/* === FILETE HERÁLDICO DO BRASÃO === */
+/* === FILETE INSTITUCIONAL AZUL & AMARELO === */
 .heraldic-stripe {
   background: linear-gradient(
     90deg,
-    #15803D 0%,
-    #15803D 25%,
-    #FACC15 25%,
-    #FACC15 50%,
-    #EA580C 50%,
-    #EA580C 75%,
-    #0072CE 75%,
+    #002B5C 0%,
+    #0072CE 40%,
+    #FACC15 70%,
     #0072CE 100%
   );
 }
@@ -136,7 +130,7 @@ html.font-xlarge {
   }
 
   .btn-secondary {
-    @apply bg-[#EA580C] hover:bg-[#c2410c] text-white font-bold px-6 py-3 rounded-[12px] transition-all duration-200 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#EA580C] focus:ring-offset-2;
+    @apply bg-[#FACC15] hover:bg-[#EAB308] text-[#0F2942] font-bold px-6 py-3 rounded-[12px] transition-all duration-200 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#FACC15] focus:ring-offset-2;
   }
 
   .btn-outline {
@@ -202,13 +196,13 @@ html.font-xlarge {
   animation: fadeIn 0.4s ease forwards;
 }
 
-/* === HERO GRADIENT MODELO 3 === */
+/* === HERO GRADIENT AZUL & AMARELO === */
 .hero-gradient {
   background: linear-gradient(
-    125deg,
-    rgba(0, 43, 92, 0.90) 0%,
-    rgba(0, 114, 206, 0.72) 52%,
-    rgba(234, 88, 12, 0.48) 100%
+    115deg,
+    rgba(0, 43, 92, 0.85) 0%,
+    rgba(0, 114, 206, 0.55) 60%,
+    rgba(0, 43, 92, 0.30) 100%
   );
 }
 
@@ -216,9 +210,9 @@ html.font-xlarge {
   background: linear-gradient(to bottom, rgba(0, 43, 92, 0.75) 0%, rgba(0, 114, 206, 0.35) 60%, rgba(244, 247, 251, 1) 100%);
 }
 
-/* === BARRA GOV MODELO 3 (Verde Agave do Brasão/Bandeira) === */
+/* === BARRA GOV AZUL INSTITUCIONAL === */
 .barra-gov {
-  background: #064E3B;
+  background: #002B5C;
 }
 
 /* === NOTÍCIAS === */
