@@ -40,6 +40,7 @@ const navItems = [
         href: "/secretarias",
         hasDropdown: true,
         children: [
+            { label: "Gabinete", href: "/secretarias/gabinete" },
             { label: "Administração e Planejamento", href: "/secretarias/administracao-geral-planejamento" },
             { label: "Saúde", href: "/secretarias/saude" },
             { label: "Educação e Cultura", href: "/secretarias/educacao-cultura" },

@@ -38,6 +38,15 @@ export default async function SecretariasPage() {
 
     if (secretarias.length === 0) {
         secretarias = SECRETARIAS_OFICIAIS;
+    } else {
+        // Assegurar que pastas institucionais fixas (ex: Gabinete) estejam visíveis mesmo se ausentes no banco
+        const existingSlugs = new Set(secretarias.map((s) => s.slug));
+        for (const oficial of SECRETARIAS_OFICIAIS) {
+            if (!existingSlugs.has(oficial.slug) && !oficial.aliases.some((a) => existingSlugs.has(a))) {
+                secretarias.push(oficial);
+            }
+        }
+        secretarias.sort((a, b) => (a.ordem ?? 99) - (b.ordem ?? 99));
     }
 
     return (

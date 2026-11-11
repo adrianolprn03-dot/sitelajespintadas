@@ -16,6 +16,28 @@ export interface SecretariaOficial {
 
 export const SECRETARIAS_OFICIAIS: SecretariaOficial[] = [
     {
+        id: "sec-gabinete",
+        nome: "Gabinete",
+        slug: "gabinete",
+        aliases: ["gabinete-do-prefeito", "gabinete-civil", "chefia-de-gabinete"],
+        descricao:
+            "Órgão de assessoramento direto e imediato ao Chefe do Poder Executivo Municipal, responsável pela assistência nas funções políticas, administrativas e sociais, atendimento e recepção de cidadãos, gestão da agenda do executivo e articulação institucional.",
+        secretario: "Luciano da Cunha",
+        cargo: "Prefeito Municipal / Gabinete do Executivo",
+        email: "gabinete@lajespintadas.rn.gov.br",
+        telefone: "(84) 9 8748-0287",
+        endereco: "Rua São Francisco, 275, Centro, Lajes Pintadas/RN, CEP: 59.235-000",
+        horarioFuncionamento: "Segunda a Sexta-feira, das 07h às 13h",
+        ordem: 0,
+        servicos: [
+            "Atendimento ao Cidadão e Relações com a Comunidade",
+            "Gestão da Agenda e Audiências Oficiais do Chefe do Executivo",
+            "Coordenação de Atos Oficiais, Decretos e Expedientes",
+            "Articulação Institucional entre as Secretarias Municipais",
+            "Relações Institucionais com os Poderes Legislativo e Judiciário",
+        ],
+    },
+    {
         id: "sec-administracao",
         nome: "Secretaria Municipal de Administração Geral e Planejamento",
         slug: "administracao-geral-planejamento",
@@ -216,7 +238,7 @@ export const SECRETARIAS_OFICIAIS: SecretariaOficial[] = [
         id: "sec-controladoria",
         nome: "Controladoria Geral do Município",
         slug: "controladoria-municipal",
-        aliases: ["controladoria", "gabinete", "controle-interno"],
+        aliases: ["controladoria", "controle-interno"],
         descricao:
             "Conferência e acompanhamento das demonstrações contábeis, orientação técnica às unidades administrativas em processos licitatórios e convênios, fiscalização do cumprimento das normas do TCE/RN, Ouvidoria e Transparência Pública.",
         secretario: "Francisco Adriano Bezerra da Silva",
