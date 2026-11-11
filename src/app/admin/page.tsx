@@ -78,10 +78,10 @@ export default async function AdminDashboard() {
     let ultimasObras: Array<{ id: string; titulo: string; criadoEm: Date; status: string }> = [];
     let ultimasImportacoes: Array<{
         id: string;
-        modulo: string;
-        arquivo: string;
+        tipo: string;
+        nomeArquivo: string;
         status: string;
-        sucesso: number;
+        registros: number;
         criadoEm: Date;
     }> = [];
 
@@ -130,7 +130,7 @@ export default async function AdminDashboard() {
             prisma.esic.count({ where: { status: { in: ["aberto", "em_analise", "prorrogado"] } } }),
             prisma.esic.count({ where: { status: { in: ["recurso", "recurso_1", "recurso_2"] } } }),
             prisma.importacaoCSV.count({ where: { status: { in: ["erro", "parcial"] } } }),
-            prisma.documento.count({ where: { OR: [{ arquivo: null }, { arquivo: "" }] } }),
+            prisma.documento.count({ where: { OR: [{ statusLink: "erro" }, { arquivo: "" }] } }),
             prisma.relatorioFiscal.count(),
             prisma.criterioPNTP.findMany(),
             prisma.receita.groupBy({ by: ["ano"] }),
@@ -148,7 +148,7 @@ export default async function AdminDashboard() {
             prisma.importacaoCSV.findMany({
                 take: 4,
                 orderBy: { criadoEm: "desc" },
-                select: { id: true, modulo: true, arquivo: true, status: true, sucesso: true, criadoEm: true },
+                select: { id: true, tipo: true, nomeArquivo: true, status: true, registros: true, criadoEm: true },
             }),
         ]);
 
@@ -198,7 +198,7 @@ export default async function AdminDashboard() {
 
             if (stVal === "aguardando_revisao") rev++;
 
-            const refDate = saved?.dataUltimaVerificacao || saved?.atualizadoEm;
+            const refDate = saved?.ultimaConferenciaEm || saved?.ultimaAtualizacaoConteudo;
             const dias = refDate
                 ? Math.floor((now - new Date(refDate).getTime()) / (1000 * 60 * 60 * 24))
                 : null;
@@ -207,7 +207,7 @@ export default async function AdminDashboard() {
             }
 
             const validado =
-                ["publicado", "atualizado", "nao_ocorrencia_declarada", "nao_ocorrencia", "nao_aplicavel"].includes(stCont) &&
+                ["atualizado", "nao_ocorrencia", "nao_aplicavel"].includes(stCont) &&
                 stVal === "validado";
 
             if (!validado) {
@@ -503,11 +503,10 @@ export default async function AdminDashboard() {
                                         </span>
                                     </div>
                                     <span
-                                        className={`px-2 py-0.5 text-[9px] font-black uppercase rounded-md shrink-0 ${
-                                            n.publicada
-                                                ? "bg-emerald-100 text-emerald-800"
-                                                : "bg-amber-100 text-amber-800"
-                                        }`}
+                                        className={`px-2 py-0.5 text-[9px] font-black uppercase rounded-md shrink-0 ${n.publicada
+                                            ? "bg-emerald-100 text-emerald-800"
+                                            : "bg-amber-100 text-amber-800"
+                                            }`}
                                     >
                                         {n.publicada ? "Publicada" : "Rascunho"}
                                     </span>
@@ -578,18 +577,17 @@ export default async function AdminDashboard() {
                                 >
                                     <div className="space-y-1 min-w-0">
                                         <p className="text-xs font-bold text-slate-700 line-clamp-1 group-hover:text-primary-700">
-                                            {imp.modulo.toUpperCase()} — {imp.arquivo}
+                                            {imp.tipo.toUpperCase()} — {imp.nomeArquivo}
                                         </p>
                                         <span className="text-[10px] font-medium text-slate-400 block">
-                                            {imp.sucesso} registros · {new Date(imp.criadoEm).toLocaleDateString("pt-BR")}
+                                            {imp.registros} registros · {new Date(imp.criadoEm).toLocaleDateString("pt-BR")}
                                         </span>
                                     </div>
                                     <span
-                                        className={`px-2 py-0.5 text-[9px] font-black uppercase rounded-md shrink-0 ${
-                                            imp.status === "concluido"
-                                                ? "bg-emerald-100 text-emerald-800"
-                                                : "bg-rose-100 text-rose-800"
-                                        }`}
+                                        className={`px-2 py-0.5 text-[9px] font-black uppercase rounded-md shrink-0 ${imp.status === "concluido"
+                                            ? "bg-emerald-100 text-emerald-800"
+                                            : "bg-rose-100 text-rose-800"
+                                            }`}
                                     >
                                         {imp.status}
                                     </span>

@@ -1,20 +1,35 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { 
     FaSpinner, FaMoneyCheck, FaBuilding, FaUserTie, 
     FaWallet, FaSearch, FaArrowRight,
-    FaFilter, FaDownload, FaCheckCircle
+    FaFilter, FaDownload, FaCheckCircle, FaChartPie, FaTable
 } from "react-icons/fa";
 import {
     FaArrowTrendUp, FaShieldHalved, FaClockRotateLeft,
     FaCircleCheck, FaBuildingColumns, FaUserGroup, FaCoins, FaMagnifyingGlass
 } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+    ResponsiveContainer,
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    Tooltip,
+    CartesianGrid,
+    Cell,
+    PieChart,
+    Pie,
+    Legend
+} from "recharts";
 import { exportToCSV, exportToJSON, exportToPDF, exportToXLSX } from "@/lib/exportUtils";
 import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
 import PageHeader from "@/components/PageHeader";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
+
+const CHART_COLORS = ["#1254A3", "#F39A32", "#10B981", "#0284C7", "#8B5CF6", "#EC4899", "#F59E0B"];
 
 type Servidor = {
     id: string;
@@ -71,6 +86,7 @@ export default function FolhaPagamentoPage() {
     const [busca, setBusca] = useState("");
     const [vinculoFiltro, setVinculoFiltro] = useState("");
     const [secretariaFiltro, setSecretariaFiltro] = useState("");
+    const [abaVisual, setAbaVisual] = useState<"lista" | "graficos">("lista");
 
     useEffect(() => {
         const fetchServidores = async () => {
@@ -123,15 +139,43 @@ export default function FolhaPagamentoPage() {
         else exportToPDF(payload, filename, title);
     };
 
-    const totalBrutoValue = servidores.reduce((acc, curr) => acc + curr.totalBruto, 0);
-    const totalLiquidoValue = servidores.reduce((acc, curr) => acc + curr.totalLiquido, 0);
+    const totalBrutoValue = useMemo(() => servidores.reduce((acc, curr) => acc + (curr.totalBruto || 0), 0), [servidores]);
+    const totalLiquidoValue = useMemo(() => servidores.reduce((acc, curr) => acc + (curr.totalLiquido || 0), 0), [servidores]);
+
+    // Dados agregados por Secretaria para os gráficos
+    const dadosPorSecretaria = useMemo(() => {
+        const map: Record<string, { secretaria: string; bruto: number; liquido: number; count: number }> = {};
+        servidores.forEach((s) => {
+            const sec = s.secretaria || "Outras";
+            if (!map[sec]) {
+                map[sec] = { secretaria: sec, bruto: 0, liquido: 0, count: 0 };
+            }
+            map[sec].bruto += s.totalBruto || 0;
+            map[sec].liquido += s.totalLiquido || 0;
+            map[sec].count += 1;
+        });
+        return Object.values(map).sort((a, b) => b.bruto - a.bruto);
+    }, [servidores]);
+
+    // Dados agregados por Vínculo
+    const dadosPorVinculo = useMemo(() => {
+        const map: Record<string, { vinculo: string; quantidade: number; valor: number }> = {};
+        servidores.forEach((s) => {
+            const v = s.vinculo ? s.vinculo.charAt(0).toUpperCase() + s.vinculo.slice(1).toLowerCase() : "Não informado";
+            if (!map[v]) {
+                map[v] = { vinculo: v, quantidade: 0, valor: 0 };
+            }
+            map[v].quantidade += 1;
+            map[v].valor += s.totalBruto || 0;
+        });
+        return Object.values(map);
+    }, [servidores]);
 
     return (
-        <div className="min-h-screen bg-[#f8fafc] font-['Montserrat',sans-serif]">
+        <div className="min-h-screen bg-[#F5F7FA]">
             <PageHeader
                 title="Folha de Pagamento"
-                subtitle="Consulta pública de remunerações, proventos e descontos dos agentes públicos municipais."
-                variant="premium"
+                subtitle="Consulta pública de remunerações, proventos e dados funcionais dos agentes públicos municipais."
                 icon={<FaMoneyCheck />}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
@@ -145,106 +189,105 @@ export default function FolhaPagamentoPage() {
                 initial="hidden"
                 animate="visible"
                 variants={containerVariants}
-                className="max-width-[1240px] mx-auto px-6 py-12 -mt-16 relative z-30"
+                className="max-w-7xl mx-auto px-4 sm:px-6 py-8"
             >
-                {/* Metrics Highlight - Diamond Standard Bento */}
-                <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-16 items-stretch">
-                    
-                    {/* Primary Highlight Card - Total Bruto */}
-                    <div className="lg:col-span-2 bg-slate-900 rounded-[3rem] p-10 shadow-2xl shadow-slate-900/20 text-white relative overflow-hidden group border border-slate-800">
-                        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] -mr-40 -mt-40 group-hover:bg-blue-600/20 transition-all duration-700" />
-                        <div className="relative z-10 flex flex-col justify-between h-full">
-                            <div>
-                                <div className="flex items-center gap-4 mb-10">
-                                    <div className="px-4 py-2 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-md">
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
-                                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50">Folha Auditada</span>
-                                        </div>
-                                    </div>
-                                    <div className="px-4 py-2 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-md">
-                                        <div className="flex items-center gap-2">
-                                            <FaCircleCheck className="text-emerald-400" size={12} />
-                                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50">LAI 12.527</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <h3 className="text-[11px] font-bold uppercase tracking-[0.5em] text-white/30 mb-3 ml-1 text-balance">Volume Bruto Consolidado</h3>
-                                <div className="flex items-baseline gap-4">
-                                    <span className="text-6xl font-black tracking-tighter tabular-nums text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-white/40">
-                                        {loading ? <FaSpinner className="animate-spin text-4xl" /> : fmt(totalBrutoValue).split(',')[0]}
-                                    </span>
-                                    <span className="text-2xl font-black text-white/20">,{fmt(totalBrutoValue).split(',')[1]}</span>
-                                </div>
-                            </div>
-                            
-                            <div className="mt-16 flex flex-wrap gap-12 items-center border-t border-white/5 pt-10">
-                                <div className="flex flex-col">
-                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/20 mb-2">Exercício</span>
-                                    <span className="text-2xl font-black tracking-tight">{mesesAbrev[Number(mes)-1]} / {ano}</span>
-                                </div>
-                                <div className="w-px h-12 bg-white/5 hidden md:block" />
-                                <div className="flex flex-col">
-                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/20 mb-2">Servidores Na Base</span>
-                                    <span className="text-2xl font-black tracking-tight text-white italic">{servidores.length} <span className="text-white/20 font-bold uppercase">Agentes</span></span>
-                                </div>
-                            </div>
+                {/* Visual Switcher */}
+                <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-2 bg-white p-1 rounded-xl border border-[#DDE3EA] shadow-sm">
+                        <button
+                            onClick={() => setAbaVisual("lista")}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+                                abaVisual === "lista"
+                                    ? "bg-[#1254A3] text-white shadow-sm"
+                                    : "text-[#5B738B] hover:text-[#12304A]"
+                            }`}
+                        >
+                            <FaTable size={13} /> Relação Nominal
+                        </button>
+                        <button
+                            onClick={() => setAbaVisual("graficos")}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+                                abaVisual === "graficos"
+                                    ? "bg-[#1254A3] text-white shadow-sm"
+                                    : "text-[#5B738B] hover:text-[#12304A]"
+                            }`}
+                        >
+                            <FaChartPie size={13} /> Gráficos nos Resultados
+                        </button>
+                    </div>
+
+                    <div className="hidden sm:flex items-center gap-3">
+                        <button
+                            onClick={() => handleExport("pdf")}
+                            className="flex items-center gap-2 px-3 py-1.5 bg-white border border-[#DDE3EA] text-[#12304A] rounded-lg text-xs font-semibold hover:border-[#1254A3] hover:text-[#1254A3] transition-all shadow-sm"
+                        >
+                            <FaDownload size={11} /> PDF
+                        </button>
+                        <button
+                            onClick={() => handleExport("xlsx")}
+                            className="flex items-center gap-2 px-3 py-1.5 bg-white border border-[#DDE3EA] text-[#12304A] rounded-lg text-xs font-semibold hover:border-[#1254A3] hover:text-[#1254A3] transition-all shadow-sm"
+                        >
+                            <FaDownload size={11} /> Excel
+                        </button>
+                    </div>
+                </div>
+
+                {/* Cards de Métricas Consolidadas - Padrão Novo */}
+                <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    {/* Card Total Bruto */}
+                    <div className="bg-white rounded-2xl border border-[#DDE3EA] p-6 shadow-sm">
+                        <div className="flex items-center justify-between mb-3">
+                            <span className="text-xs font-bold text-[#5B738B] uppercase tracking-wider">Volume Bruto Consolidado</span>
+                            <span className="p-2 bg-blue-50 text-[#1254A3] rounded-xl">
+                                <FaCoins size={16} />
+                            </span>
+                        </div>
+                        <div className="text-3xl font-black text-[#12304A] tracking-tight">
+                            {loading ? <FaSpinner className="animate-spin text-2xl text-[#1254A3]" /> : fmt(totalBrutoValue)}
+                        </div>
+                        <div className="mt-3 flex items-center justify-between text-xs text-[#5B738B] pt-3 border-t border-[#DDE3EA]">
+                            <span>Competência: {mesesAbrev[Number(mes)-1]} / {ano}</span>
+                            <span className="text-[#1254A3] font-semibold">{servidores.length} servidores</span>
                         </div>
                     </div>
 
-                    {/* Secondary Metrics - Liquido */}
-                    <div className="bg-white rounded-[3rem] p-10 shadow-2xl shadow-slate-200/50 border border-slate-100/50 flex flex-col justify-between relative overflow-hidden group">
-                         <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-emerald-50/50 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                         <div className="relative">
-                            <div className="w-20 h-20 bg-slate-50 rounded-[2rem] flex items-center justify-center mb-8 group-hover:bg-emerald-600 transition-all duration-500 group-hover:rotate-6 group-hover:scale-110 shadow-inner group-hover:shadow-emerald-600/40">
-                                <FaCoins className="text-emerald-400 group-hover:text-white transition-colors" size={36} />
-                            </div>
-                            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-relaxed opacity-80 mb-2">
-                                Total Líquido Pago
-                            </h4>
-                            <div className="text-3xl font-black text-slate-900 tracking-tighter mb-4 italic text-balance">
-                                {fmt(totalLiquidoValue)}
-                            </div>
-                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-relaxed">
-                                Recursos efetivamente creditados <br/> aos servidores municipais.
-                            </p>
-                         </div>
-                         <div className="pt-8 border-t border-slate-50">
-                             <div className="flex items-center gap-2">
-                                 <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                                 <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest italic">Folha Liquidada</span>
-                             </div>
-                         </div>
+                    {/* Card Total Líquido */}
+                    <div className="bg-white rounded-2xl border border-[#DDE3EA] p-6 shadow-sm">
+                        <div className="flex items-center justify-between mb-3">
+                            <span className="text-xs font-bold text-[#5B738B] uppercase tracking-wider">Total Líquido Pago</span>
+                            <span className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
+                                <FaMoneyCheck size={16} />
+                            </span>
+                        </div>
+                        <div className="text-3xl font-black text-emerald-600 tracking-tight">
+                            {loading ? <FaSpinner className="animate-spin text-2xl text-emerald-600" /> : fmt(totalLiquidoValue)}
+                        </div>
+                        <div className="mt-3 flex items-center justify-between text-xs text-[#5B738B] pt-3 border-t border-[#DDE3EA]">
+                            <span>Crédito em conta</span>
+                            <span className="text-emerald-600 font-semibold">Folha Quitada</span>
+                        </div>
                     </div>
 
-                    {/* Secondary Metrics - Context */}
-                    <div className="bg-white rounded-[3rem] p-10 shadow-2xl shadow-slate-200/50 border border-slate-100/50 flex flex-col justify-between relative overflow-hidden group">
-                         <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-blue-50/50 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                         <div className="relative">
-                            <div className="w-20 h-20 bg-slate-50 rounded-[2rem] flex items-center justify-center mb-8 group-hover:bg-blue-600 transition-all duration-500 group-hover:rotate-6 group-hover:scale-110 shadow-inner group-hover:shadow-blue-600/40">
-                                <FaBuildingColumns className="text-blue-300 group-hover:text-white transition-colors" size={36} />
-                            </div>
-                            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-relaxed opacity-80 mb-2">
-                                Transparência RH
-                            </h4>
-                            <div className="text-2xl font-black text-slate-900 tracking-tighter mb-4 uppercase leading-none">
-                                Consulta <br/> Direta
-                            </div>
-                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-relaxed">
-                                Acesso individualizado <br/> e nominal dos vencimentos.
-                            </p>
-                         </div>
-                         <div className="pt-8 border-t border-slate-50">
-                             <div className="flex items-center gap-2">
-                                 <FaShieldHalved className="text-blue-200" size={14} />
-                                 <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest italic">Dados Auditados</span>
-                             </div>
-                         </div>
+                    {/* Card Quadro de Agentes */}
+                    <div className="bg-white rounded-2xl border border-[#DDE3EA] p-6 shadow-sm">
+                        <div className="flex items-center justify-between mb-3">
+                            <span className="text-xs font-bold text-[#5B738B] uppercase tracking-wider">Servidores na Base</span>
+                            <span className="p-2 bg-amber-50 text-[#F39A32] rounded-xl">
+                                <FaUserGroup size={16} />
+                            </span>
+                        </div>
+                        <div className="text-3xl font-black text-[#12304A] tracking-tight">
+                            {loading ? "..." : `${servidores.length} Agentes`}
+                        </div>
+                        <div className="mt-3 flex items-center justify-between text-xs text-[#5B738B] pt-3 border-t border-[#DDE3EA]">
+                            <span>Transparência Ativa</span>
+                            <span className="text-[#F39A32] font-semibold">LAI 12.527 / PNTP</span>
+                        </div>
                     </div>
                 </motion.div>
 
                 {/* Filters Section */}
-                <motion.div variants={itemVariants} className="bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl shadow-slate-200/50 p-2 mb-12">
+                <motion.div variants={itemVariants} className="bg-white rounded-2xl border border-[#DDE3EA] shadow-sm p-5 mb-8">
                     <TransparencyFilters
                         searchValue={busca}
                         onSearch={setBusca}
@@ -256,15 +299,12 @@ export default function FolhaPagamentoPage() {
                         onExport={handleExport}
                         placeholder="Pesquisar servidor por nome ou cargo funcional..."
                     >
-                        <div className="flex flex-wrap gap-4 items-center">
-                            <div className="relative group">
-                                <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none group-focus-within:text-blue-600 transition-colors z-10">
-                                    <FaFilter size={14} />
-                                </div>
+                        <div className="flex flex-wrap gap-3 items-center">
+                            <div className="relative">
                                 <select 
                                     value={vinculoFiltro} 
                                     onChange={(e) => setVinculoFiltro(e.target.value)}
-                                    className="pl-12 pr-10 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-700 outline-none focus:ring-4 focus:ring-blue-600/5 focus:bg-white transition-all appearance-none cursor-pointer hover:border-blue-400 min-w-[200px] shadow-inner"
+                                    className="pl-4 pr-8 py-2.5 bg-[#F5F7FA] border border-[#DDE3EA] rounded-xl text-xs font-bold text-[#12304A] outline-none focus:ring-2 focus:ring-[#1254A3] transition-all cursor-pointer min-w-[180px]"
                                 >
                                     <option value="">TODOS OS VÍNCULOS</option>
                                     <option value="efetivo">EFETIVO</option>
@@ -274,14 +314,11 @@ export default function FolhaPagamentoPage() {
                                     <option value="agente politico">AGENTE POLÍTICO</option>
                                 </select>
                             </div>
-                            <div className="relative group">
-                                <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none group-focus-within:text-indigo-600 transition-colors z-10">
-                                    <FaBuilding size={14} />
-                                </div>
+                            <div className="relative">
                                 <select 
                                     value={secretariaFiltro} 
                                     onChange={(e) => setSecretariaFiltro(e.target.value)}
-                                    className="pl-12 pr-10 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-700 outline-none focus:ring-4 focus:ring-indigo-600/5 focus:bg-white transition-all appearance-none cursor-pointer hover:border-indigo-400 min-w-[240px] shadow-inner"
+                                    className="pl-4 pr-8 py-2.5 bg-[#F5F7FA] border border-[#DDE3EA] rounded-xl text-xs font-bold text-[#12304A] outline-none focus:ring-2 focus:ring-[#1254A3] transition-all cursor-pointer min-w-[200px]"
                                 >
                                     <option value="">TODAS AS SECRETARIAS</option>
                                     <option value="educacao">EDUCAÇÃO</option>
@@ -295,167 +332,231 @@ export default function FolhaPagamentoPage() {
                     </TransparencyFilters>
                 </motion.div>
 
-                {/* Table Section */}
-                <motion.div variants={itemVariants} className="bg-white rounded-[3rem] border border-slate-100 shadow-2xl overflow-hidden mb-12 relative min-h-[500px]">
-                    <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-600 via-indigo-900 to-slate-900" />
-                    
-                    <div className="p-10 border-b border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-6 bg-slate-50/50">
-                        <div>
-                            <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter flex items-center gap-4">
-                                <span className="w-1.5 h-8 bg-blue-600 rounded-full" />
-                                Relação Nomimal de Vencimentos
-                            </h3>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mt-2 ml-6">
-                                Folha Atualizada • {mesesLabels[Number(mes)-1]} de {ano}
-                            </p>
-                        </div>
-                        <div className="flex bg-white/80 backdrop-blur p-2 rounded-2xl border border-slate-200/50 shadow-sm">
-                            <div className="px-6 py-3 text-[10px] font-black text-slate-400 uppercase tracking-widest border-r border-slate-100">Exibindo {servidores.length} Agentes</div>
-                            <div className="px-6 py-3 text-[10px] font-black text-emerald-600 uppercase tracking-widest">Base Consolidada</div>
-                        </div>
-                    </div>
-
-                    <div className="overflow-x-auto scrollbar-thin">
-                        <AnimatePresence>
-                            {loading && (
-                                <motion.div 
-                                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                                    className="absolute inset-0 bg-white/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center"
-                                >
-                                    <div className="relative mb-8">
-                                        <div className="w-24 h-24 border-8 border-slate-100 rounded-full" />
-                                        <div className="absolute inset-0 border-8 border-blue-600 border-t-transparent rounded-full animate-spin" />
-                                        <FaUserTie className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-blue-100" size={40} />
-                                    </div>
-                                    <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] animate-pulse">Sincronizando Dados Funcionais</p>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-
-                        <table className="w-full border-collapse text-left">
-                            <thead>
-                                <tr className="bg-slate-50/50 border-b border-slate-100">
-                                    <th className="px-10 py-8 text-[11px] font-black text-slate-400 uppercase tracking-[0.3em]">Agente Público / Cargo</th>
-                                    <th className="px-10 py-8 text-[11px] font-black text-slate-400 uppercase tracking-[0.3em]">Secretaria / Lotação</th>
-                                    <th className="px-10 py-8 text-center text-[11px] font-black text-slate-400 uppercase tracking-[0.3em]">Vínculo</th>
-                                    <th className="px-10 py-8 text-right text-[11px] font-black text-slate-400 uppercase tracking-[0.3em]">Bruto</th>
-                                    <th className="px-10 py-8 text-right text-[11px] font-black text-slate-400 uppercase tracking-[0.3em]">Líquido (Base)</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-50/50">
-                                {servidores.length === 0 && !loading ? (
-                                    <tr>
-                                        <td colSpan={5} className="px-10 py-32 text-center">
-                                            <div className="w-24 h-24 bg-slate-50 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 shadow-inner group-hover:scale-110 transition-all">
-                                                <FaMagnifyingGlass className="text-slate-200 text-4xl" />
-                                            </div>
-                                            <h4 className="text-3xl font-black text-slate-800 uppercase tracking-tighter mb-4">Nenhum registro localizado</h4>
-                                            <p className="text-slate-400 text-sm font-bold uppercase tracking-widest opacity-60 italic mb-10 text-balance">Verifique o período consultado ou refine os critérios de filtragem.</p>
-                                            <button onClick={handleClearFilters} className="px-10 py-5 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-blue-600 transition-all shadow-xl active:scale-95">Resetar Filtros</button>
-                                        </td>
-                                    </tr>
+                {/* Dashboard Gráfico nos Resultados */}
+                {abaVisual === "graficos" && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 15 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8"
+                    >
+                        {/* Gráfico 1: Volume Bruto por Secretaria */}
+                        <div className="bg-white rounded-2xl border border-[#DDE3EA] p-6 shadow-sm">
+                            <div className="flex items-center justify-between mb-6">
+                                <div>
+                                    <h3 className="text-base font-bold text-[#12304A]">Folha por Secretaria / Órgão</h3>
+                                    <p className="text-xs text-[#5B738B]">Total bruto acumulado na competência selecionada</p>
+                                </div>
+                                <span className="p-2 bg-blue-50 text-[#1254A3] rounded-xl text-xs font-bold">
+                                    {dadosPorSecretaria.length} Órgãos
+                                </span>
+                            </div>
+                            <div className="h-[320px] w-full">
+                                {dadosPorSecretaria.length > 0 ? (
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <BarChart data={dadosPorSecretaria} layout="vertical" margin={{ top: 10, right: 20, left: 20, bottom: 10 }}>
+                                            <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" horizontal={false} />
+                                            <XAxis type="number" tickFormatter={(v) => `R$ ${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 11, fill: '#5B738B' }} />
+                                            <YAxis type="category" dataKey="secretaria" tick={{ fontSize: 11, fill: '#12304A', fontWeight: 600 }} width={120} />
+                                            <Tooltip formatter={(value: number) => [fmt(value), "Total Bruto"]} />
+                                            <Bar dataKey="bruto" radius={[0, 6, 6, 0]}>
+                                                {dadosPorSecretaria.map((_, index) => (
+                                                    <Cell key={`cell-sec-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                                                ))}
+                                            </Bar>
+                                        </BarChart>
+                                    </ResponsiveContainer>
                                 ) : (
-                                    servidores.map((s, idx) => (
-                                        <motion.tr 
-                                            key={s.id}
-                                            initial={{ opacity: 0, y: 10 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{ delay: idx * 0.03 }}
-                                            className="group hover:bg-blue-50/30 transition-all duration-300 pointer-events-auto"
-                                        >
-                                            <td className="px-10 py-8">
-                                                <div className="flex items-center gap-5">
-                                                    <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-300 group-hover:bg-blue-600 group-hover:text-white group-hover:rotate-6 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-blue-600/30 transition-all duration-500">
-                                                        <FaUserTie size={16} />
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-[14px] font-black text-slate-900 uppercase tracking-tight group-hover:text-blue-700 transition-colors leading-none mb-1.5">{s.nome}</p>
-                                                        <span className="text-[9px] font-extrabold text-slate-300 uppercase tracking-widest">{s.cargo}</span>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-10 py-8">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-8 h-8 rounded-xl bg-slate-100/50 flex items-center justify-center text-slate-400 group-hover:text-indigo-600 transition-colors">
-                                                        <FaBuilding size={12} />
-                                                    </div>
-                                                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{s.secretaria}</span>
-                                                </div>
-                                            </td>
-                                            <td className="px-10 py-8 text-center">
-                                                <span className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${vinculoCores[s.vinculo.toLowerCase()] || "bg-slate-50 text-slate-400 border-slate-100"}`}>
-                                                    {s.vinculo}
-                                                </span>
-                                            </td>
-                                            <td className="px-10 py-8 text-right">
-                                                <span className="text-[12px] font-black text-slate-400 line-through opacity-40 italic tracking-tighter">
-                                                    {fmt(s.totalBruto)}
-                                                </span>
-                                            </td>
-                                            <td className="px-10 py-8 text-right">
-                                                <div className="flex flex-col items-end">
-                                                    <p className="text-2xl font-black text-slate-950 tracking-tighter tabular-nums group-hover:text-emerald-600 transition-all duration-300 group-hover:scale-105">{fmt(s.totalLiquido)}</p>
-                                                    <div className="flex items-center gap-2 mt-1 px-3 py-0.5 bg-emerald-50 rounded-lg border border-emerald-100 opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0">
-                                                        <FaCircleCheck className="text-emerald-500" size={10} />
-                                                        <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest">Quitado</span>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </motion.tr>
-                                    ))
+                                    <div className="h-full flex items-center justify-center text-sm text-[#5B738B]">
+                                        Nenhum dado para exibir no período
+                                    </div>
                                 )}
-                            </tbody>
-                            {!loading && servidores.length > 0 && (
-                                <tfoot>
-                                    <tr className="bg-slate-900 border-t border-slate-800 text-white">
-                                        <td colSpan={3} className="px-10 py-10 text-[12px] font-black uppercase tracking-[0.4em] text-white/40 italic">Consolidado Mensal de Folha</td>
-                                        <td className="px-10 py-10 text-right opacity-30 text-[11px] font-black line-through italic">{fmt(totalBrutoValue)}</td>
-                                        <td className="px-10 py-10 text-right">
-                                            <div className="flex flex-col items-end">
-                                                <span className="text-4xl font-black text-emerald-400 tracking-tighter tabular-nums mb-1">{fmt(totalLiquidoValue)}</span>
-                                                <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em]">Lajes Pintadas • Recursos Próprios</span>
-                                            </div>
-                                        </td>
+                            </div>
+                        </div>
+
+                        {/* Gráfico 2: Distribuição por Vínculo */}
+                        <div className="bg-white rounded-2xl border border-[#DDE3EA] p-6 shadow-sm">
+                            <div className="flex items-center justify-between mb-6">
+                                <div>
+                                    <h3 className="text-base font-bold text-[#12304A]">Distribuição por Vínculo Funcional</h3>
+                                    <p className="text-xs text-[#5B738B]">Quantidade de agentes por regime de contratação</p>
+                                </div>
+                                <span className="p-2 bg-amber-50 text-[#F39A32] rounded-xl text-xs font-bold">
+                                    {dadosPorVinculo.length} Vínculos
+                                </span>
+                            </div>
+                            <div className="h-[320px] w-full">
+                                {dadosPorVinculo.length > 0 ? (
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <PieChart>
+                                            <Pie
+                                                data={dadosPorVinculo}
+                                                dataKey="quantidade"
+                                                nameKey="vinculo"
+                                                cx="50%"
+                                                cy="50%"
+                                                outerRadius={100}
+                                                innerRadius={55}
+                                                paddingAngle={4}
+                                                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                                            >
+                                                {dadosPorVinculo.map((_, index) => (
+                                                    <Cell key={`cell-vinculo-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                                                ))}
+                                            </Pie>
+                                            <Tooltip formatter={(val: number) => [`${val} servidores`, "Quantidade"]} />
+                                            <Legend />
+                                        </PieChart>
+                                    </ResponsiveContainer>
+                                ) : (
+                                    <div className="h-full flex items-center justify-center text-sm text-[#5B738B]">
+                                        Nenhum dado para exibir no período
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+
+                {/* Table Section */}
+                {abaVisual === "lista" && (
+                    <motion.div variants={itemVariants} className="bg-white rounded-2xl border border-[#DDE3EA] shadow-sm overflow-hidden mb-12 relative min-h-[400px]">
+                        <div className="p-6 border-b border-[#DDE3EA] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-[#F5F7FA]">
+                            <div>
+                                <h3 className="text-lg font-bold text-[#12304A] flex items-center gap-2">
+                                    <span className="w-2 h-6 bg-[#1254A3] rounded-full" />
+                                    Relação Nominal de Vencimentos
+                                </h3>
+                                <p className="text-xs text-[#5B738B] mt-1 ml-4">
+                                    Folha Atualizada • {mesesLabels[Number(mes)-1]} de {ano}
+                                </p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="px-3 py-1 bg-white border border-[#DDE3EA] rounded-lg text-xs font-semibold text-[#12304A]">
+                                    {servidores.length} Agentes listados
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="overflow-x-auto">
+                            <AnimatePresence>
+                                {loading && (
+                                    <motion.div 
+                                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                                        className="absolute inset-0 bg-white/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center"
+                                    >
+                                        <FaSpinner className="animate-spin text-4xl text-[#1254A3] mb-3" />
+                                        <p className="text-xs font-bold text-[#5B738B] uppercase tracking-wider">Sincronizando Dados Funcionais...</p>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+
+                            <table className="w-full border-collapse text-left">
+                                <thead>
+                                    <tr className="bg-[#F5F7FA] border-b border-[#DDE3EA]">
+                                        <th className="px-6 py-4 text-xs font-bold text-[#5B738B] uppercase tracking-wider">Agente Público / Cargo</th>
+                                        <th className="px-6 py-4 text-xs font-bold text-[#5B738B] uppercase tracking-wider">Secretaria / Lotação</th>
+                                        <th className="px-6 py-4 text-center text-xs font-bold text-[#5B738B] uppercase tracking-wider">Vínculo</th>
+                                        <th className="px-6 py-4 text-right text-xs font-bold text-[#5B738B] uppercase tracking-wider">Bruto</th>
+                                        <th className="px-6 py-4 text-right text-xs font-bold text-[#5B738B] uppercase tracking-wider">Líquido</th>
                                     </tr>
-                                </tfoot>
-                            )}
-                        </table>
-                    </div>
-                </motion.div>
+                                </thead>
+                                <tbody>
+                                    {servidores.length === 0 && !loading ? (
+                                        <tr>
+                                            <td colSpan={5} className="px-6 py-16 text-center">
+                                                <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
+                                                    <FaMagnifyingGlass className="text-slate-400 text-2xl" />
+                                                </div>
+                                                <h4 className="text-lg font-bold text-[#12304A] mb-1">Nenhum registro localizado</h4>
+                                                <p className="text-xs text-[#5B738B] mb-4">Verifique o período consultado ou refine os filtros.</p>
+                                                <button onClick={handleClearFilters} className="px-5 py-2 bg-[#1254A3] text-white rounded-xl text-xs font-bold hover:bg-[#0d3f7c] transition-all shadow-sm">Resetar Filtros</button>
+                                            </td>
+                                        </tr>
+                                    ) : (
+                                        servidores.map((s) => (
+                                            <tr 
+                                                key={s.id}
+                                                className="hover:bg-[#EEF4FB] transition-all duration-150 border-b border-[#DDE3EA] last:border-0"
+                                            >
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 shrink-0">
+                                                            <FaUserTie size={15} />
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-sm font-bold text-[#12304A] leading-tight">{s.nome}</p>
+                                                            <span className="text-xs text-[#5B738B]">{s.cargo}</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-2">
+                                                        <FaBuilding className="text-slate-400" size={13} />
+                                                        <span className="text-xs font-medium text-[#12304A]">{s.secretaria}</span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 text-center">
+                                                    <span className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${vinculoCores[s.vinculo.toLowerCase()] || "bg-slate-50 text-slate-500 border-slate-200"}`}>
+                                                        {s.vinculo}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4 text-right">
+                                                    <span className="text-xs font-semibold text-[#5B738B]">
+                                                        {fmt(s.totalBruto)}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4 text-right">
+                                                    <span className="text-sm font-black text-emerald-600">
+                                                        {fmt(s.totalLiquido)}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    )}
+                                </tbody>
+                                {!loading && servidores.length > 0 && (
+                                    <tfoot>
+                                        <tr className="bg-[#12304A] text-white">
+                                            <td colSpan={3} className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-200">Total Consolidado da Folha</td>
+                                            <td className="px-6 py-4 text-right text-xs font-bold text-slate-300">{fmt(totalBrutoValue)}</td>
+                                            <td className="px-6 py-4 text-right text-base font-black text-emerald-400">{fmt(totalLiquidoValue)}</td>
+                                        </tr>
+                                    </tfoot>
+                                )}
+                            </table>
+                        </div>
+                    </motion.div>
+                )}
 
                 {/* Footer Guide Section */}
-                <motion.div variants={itemVariants} className="mt-20 flex flex-col md:flex-row justify-between items-center bg-white rounded-[2.5rem] p-10 border border-slate-100 shadow-xl shadow-slate-200/40 gap-8">
-                    <div className="flex items-center gap-6 text-center md:text-left">
-                         <div className="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center shadow-inner group transition-all hover:bg-blue-600 relative overflow-hidden shrink-0">
-                            <div className="absolute inset-0 bg-blue-600 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-                            <FaClockRotateLeft className="text-slate-300 group-hover:text-white relative z-10 transition-colors" size={32} />
+                <motion.div variants={itemVariants} className="mt-12 flex flex-col md:flex-row justify-between items-center bg-white rounded-2xl p-6 border border-[#DDE3EA] shadow-sm gap-6">
+                    <div className="flex items-center gap-4 text-center md:text-left">
+                         <div className="w-12 h-12 bg-blue-50 text-[#1254A3] rounded-xl flex items-center justify-center shrink-0">
+                            <FaClockRotateLeft size={20} />
                          </div>
-                         <div className="flex flex-col">
-                            <span className="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] mb-2">Ciclo de Atualização Mensal</span>
-                            <span className="text-xl font-black text-slate-900 uppercase tracking-tighter leading-none mb-1">Folha de Pagamento</span>
-                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest italic">{new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}</span>
+                         <div>
+                            <span className="text-xs font-bold text-[#1254A3] uppercase tracking-wider">Ciclo Mensal de Atualização</span>
+                            <h4 className="text-base font-bold text-[#12304A]">Folha de Pagamento Municipal</h4>
+                            <p className="text-xs text-[#5B738B]">{new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
                          </div>
                     </div>
                     
-                    <div className="flex flex-col items-center md:items-end gap-3 text-center md:text-right">
-                        <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em]">Relatórios Analíticos de Vencimentos</span>
-                        <div className="flex flex-wrap gap-3 justify-center md:justify-end">
-                            <button onClick={() => handleExport("pdf")} className="group flex items-center gap-4 px-8 py-4 bg-slate-950 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:bg-blue-600 shadow-lg shadow-slate-950/20 active:scale-95">
-                                Exportar PDF <FaDownload size={12} className="group-hover:translate-y-1 transition-transform" />
-                            </button>
-                            <button onClick={() => handleExport("xlsx")} className="group flex items-center gap-4 px-8 py-4 bg-white text-slate-900 border border-slate-200 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:bg-blue-50 hover:border-blue-200 shadow-sm active:scale-95">
-                                Tabela Excel <FaDownload size={12} className="group-hover:translate-y-1 transition-transform" />
-                            </button>
-                        </div>
+                    <div className="flex items-center gap-3">
+                        <button onClick={() => handleExport("pdf")} className="flex items-center gap-2 px-5 py-2.5 bg-[#1254A3] text-white rounded-xl text-xs font-bold transition-all hover:bg-[#0d3f7c] shadow-sm active:scale-95">
+                            <FaDownload size={11} /> Exportar PDF
+                        </button>
+                        <button onClick={() => handleExport("xlsx")} className="flex items-center gap-2 px-5 py-2.5 bg-white text-[#12304A] border border-[#DDE3EA] rounded-xl text-xs font-bold transition-all hover:bg-slate-50 shadow-sm active:scale-95">
+                            <FaDownload size={11} /> Tabela Excel
+                        </button>
                     </div>
                 </motion.div>
 
-                <motion.div variants={itemVariants} className="mt-24">
+                <motion.div variants={itemVariants} className="mt-12">
                     <BannerPNTP />
-                    <div className="mt-20 text-center">
-                        <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em] leading-[2] max-w-2xl mx-auto">
+                    <div className="mt-8 text-center">
+                        <p className="text-xs text-[#5B738B]">
                             GESTÃO DE RECURSOS HUMANOS • PREFEITURA DE LAJES PINTADAS/RN <br/>
-                            <span className="opacity-40 font-bold italic">Base de dados sincronizada conforme as diretrizes do Tribunal de Contas do Estado.</span>
+                            <span className="italic">Base de dados sincronizada conforme as diretrizes do Tribunal de Contas do Estado e Lei 12.527/2011.</span>
                         </p>
                     </div>
                 </motion.div>

@@ -1,22 +1,35 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
     FaPlaneDeparture, FaSpinner, FaUserTie, FaMapMarker,
     FaCalendar, FaMoneyBillWave, FaBuilding, FaArrowRight,
-    FaInfoCircle, FaDownload
+    FaInfoCircle, FaDownload, FaTable
 } from "react-icons/fa";
 import {
     FaMagnifyingGlass, FaSuitcaseRolling,
     FaCircleCheck, FaFilter, FaBuildingColumns,
-    FaFileSignature
+    FaFileSignature, FaChartLine
 } from "react-icons/fa6";
+import {
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    ResponsiveContainer,
+    Cell,
+    Legend
+} from "recharts";
 import { motion, AnimatePresence } from "framer-motion";
 import PageHeader from "@/components/PageHeader";
 import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
 import { exportToCSV, exportToJSON, exportToPDF, exportToXLSX } from "@/lib/exportUtils";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
 import LegislacaoClient from "../legislacao/_LegislacaoClient";
+
+const CHART_COLORS = ["#1254A3", "#F39A32", "#10B981", "#0284C7", "#8B5CF6", "#EC4899", "#F59E0B", "#64748B"];
 
 type Diaria = {
     id: string;
@@ -87,6 +100,7 @@ export default function DiariasPage() {
     const [mes, setMes] = useState(""); // vazio = todos os meses
     const [secretaria, setSecretaria] = useState("");
     const [pagina, setPagina] = useState(1);
+    const [abaVisual, setAbaVisual] = useState<"lista" | "graficos">("lista");
 
     useEffect(() => {
         setPagina(1); // resetar paginação ao mudar filtros
@@ -148,8 +162,36 @@ export default function DiariasPage() {
 
     const totalValor = diarias.reduce((acc, curr) => acc + curr.valor, 0);
 
+    // Agrupamento para gráficos
+    const dadosPorMes = useMemo(() => {
+        const mesesArr = Array.from({ length: 12 }, (_, i) => ({
+            name: mesesAbrev[i],
+            valor: 0,
+            quantidade: 0,
+        }));
+        diarias.forEach((d) => {
+            if (d.mes >= 1 && d.mes <= 12) {
+                mesesArr[d.mes - 1].valor += d.valor || 0;
+                mesesArr[d.mes - 1].quantidade += 1;
+            }
+        });
+        return mesesArr;
+    }, [diarias]);
+
+    const dadosPorSecretaria = useMemo(() => {
+        const map: Record<string, number> = {};
+        diarias.forEach((d) => {
+            const sec = d.secretaria || "Geral";
+            map[sec] = (map[sec] || 0) + (d.valor || 0);
+        });
+        return Object.entries(map)
+            .map(([name, valor]) => ({ name, valor }))
+            .sort((a, b) => b.valor - a.valor)
+            .slice(0, 6);
+    }, [diarias]);
+
     return (
-        <div className="min-h-screen bg-[#f8fafc] font-['Montserrat',sans-serif]">
+        <div className="min-h-screen bg-[#F5F7FA] font-['Montserrat',sans-serif]">
             <PageHeader
                 title="Diárias de Viagem"
                 subtitle="Transparência sobre valores pagos para cobertura de despesas em missões oficiais."
@@ -166,143 +208,124 @@ export default function DiariasPage() {
                 initial="hidden"
                 animate="visible"
                 variants={containerVariants}
-                className="max-width-[1240px] mx-auto px-6 py-12 -mt-16 relative z-30"
+                className="max-w-[1240px] mx-auto px-6 py-10 relative z-30"
             >
-                {/* Highlight Section - Diamond Standard Bento */}
-                <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16 items-stretch">
+                {/* Summary Section - Padrão Novo Modelo */}
+                <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10 items-stretch">
 
-                    {/* Primary Highlight Card - Total Investido */}
-                    <div className="lg:col-span-2 bg-slate-900 rounded-[3rem] p-10 shadow-2xl shadow-slate-900/20 text-white relative overflow-hidden group border border-slate-800">
-                        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] -mr-40 -mt-40 group-hover:bg-blue-600/20 transition-all duration-700" />
-                        <div className="relative z-10 flex flex-col justify-between h-full">
-                            <div>
-                                <div className="flex items-center gap-4 mb-10">
-                                    <div className="px-4 py-2 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-md">
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
-                                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50">Missões Autorizadas</span>
-                                        </div>
-                                    </div>
-                                    <div className="px-4 py-2 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-md">
-                                        <div className="flex items-center gap-2">
-                                            <FaCircleCheck className="text-emerald-400" size={12} />
-                                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50">LAI · PNTP 7.1</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <h3 className="text-[11px] font-bold uppercase tracking-[0.5em] text-white/30 mb-3 ml-1">Volume de Desembolso</h3>
-                                <div className="flex items-baseline gap-4">
-                                    <span className="text-7xl font-black tracking-tighter tabular-nums text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-white/40">
-                                        {loading ? <FaSpinner className="animate-spin text-4xl" /> : fmt(totalValor).split(',')[0]}
-                                    </span>
-                                    <span className="text-2xl font-black text-white/20">,{fmt(totalValor).split(',')[1]}</span>
-                                </div>
+                    {/* Primary Highlight Card */}
+                    <div className="lg:col-span-2 bg-white rounded-2xl p-7 sm:p-8 shadow-sm border border-[#DDE3EA] relative overflow-hidden flex flex-col justify-between">
+                        <div>
+                            <div className="flex flex-wrap items-center gap-3 mb-6">
+                                <span className="flex items-center gap-1.5 px-3 py-1 bg-[#EEF4FB] text-[#1254A3] rounded-lg text-[11px] font-black uppercase tracking-wider border border-[#DDE3EA]">
+                                    <div className="w-2 h-2 rounded-full bg-[#1254A3] animate-pulse" />
+                                    Missões Autorizadas
+                                </span>
+                                <span className="flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[11px] font-black uppercase tracking-wider border border-emerald-100">
+                                    <FaCircleCheck size={11} /> LAI · PNTP 7.1
+                                </span>
                             </div>
 
-                            <div className="mt-16 flex flex-wrap gap-12 items-center border-t border-white/5 pt-10">
-                                <div className="flex flex-col">
-                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/20 mb-2">Ano base</span>
-                                    <span className="text-2xl font-black tracking-tight">{mes ? `${mesesAbrev[Number(mes) - 1]} / ` : ''}{ano}</span>
-                                </div>
-                                <div className="w-px h-12 bg-white/5 hidden md:block" />
-                                <div className="flex flex-col">
-                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/20 mb-2">Concessões Ativas</span>
-                                    <span className="text-2xl font-black tracking-tight uppercase italic text-blue-400">{diarias.length} <span className="text-white/40 font-bold tracking-tighter">Diárias</span></span>
-                                </div>
+                            <p className="text-xs font-bold uppercase tracking-widest text-[#5B738B] mb-1">
+                                Volume de Desembolso com Diárias
+                            </p>
+                            <div className="text-4xl sm:text-5xl font-black text-[#12304A] tracking-tight">
+                                {loading ? <FaSpinner className="animate-spin text-3xl text-[#1254A3]" /> : fmt(totalValor)}
+                            </div>
+                        </div>
+
+                        <div className="mt-8 flex flex-wrap gap-8 items-center border-t border-[#DDE3EA] pt-6">
+                            <div className="flex flex-col">
+                                <span className="text-[11px] font-bold uppercase text-[#5B738B] mb-0.5">Ano base</span>
+                                <span className="text-xl font-black text-[#12304A]">{mes ? `${mesesAbrev[Number(mes) - 1]} / ` : ''}{ano}</span>
+                            </div>
+                            <div className="w-px h-8 bg-[#DDE3EA] hidden md:block" />
+                            <div className="flex flex-col">
+                                <span className="text-[11px] font-bold uppercase text-[#5B738B] mb-0.5">Concessões no Período</span>
+                                <span className="text-xl font-black text-[#1254A3]">{diarias.length} <span className="text-sm font-bold text-[#5B738B]">diárias</span></span>
                             </div>
                         </div>
                     </div>
 
                     {/* Secondary Context Card */}
-                    <div className="bg-white rounded-[3rem] p-10 shadow-2xl shadow-slate-200/50 border border-slate-100/50 flex flex-col justify-between relative overflow-hidden group">
-                        <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-blue-50/50 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                        <div className="relative">
-                            <div className="w-20 h-20 bg-slate-50 rounded-[2rem] flex items-center justify-center mb-8 group-hover:bg-blue-600 transition-all duration-500 group-hover:rotate-6 group-hover:scale-110 shadow-inner group-hover:shadow-blue-600/40">
-                                <FaSuitcaseRolling className="text-blue-300 group-hover:text-white transition-colors" size={36} />
+                    <div className="bg-white rounded-2xl p-7 sm:p-8 shadow-sm border border-[#DDE3EA] flex flex-col justify-between">
+                        <div>
+                            <div className="w-14 h-14 bg-[#EEF4FB] text-[#1254A3] rounded-xl flex items-center justify-center text-2xl mb-5 border border-[#DDE3EA]">
+                                <FaSuitcaseRolling />
                             </div>
-                            <h4 className="text-3xl font-black text-slate-900 tracking-tighter leading-[0.9] mb-4 uppercase">
-                                Missões <br /> <span className="text-blue-600">Oficiais</span>
+                            <h4 className="text-lg font-black text-[#12304A] tracking-tight mb-2">
+                                Missões Oficiais
                             </h4>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-relaxed opacity-80">
-                                Controle de diárias pagas para serviço público externo.
+                            <p className="text-xs text-[#5B738B] leading-relaxed">
+                                Controle de diárias pagas para cobertura de alimentação e hospedagem em deslocamentos a serviço do município.
                             </p>
                         </div>
-                        <div className="pt-10 border-t border-slate-50">
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Base de Dados</span>
-                                </div>
-                                <FaCircleCheck className="text-emerald-500" />
+                        <div className="pt-5 border-t border-[#DDE3EA] flex items-center justify-between text-xs font-bold text-[#5B738B]">
+                            <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-[#1254A3] animate-pulse" />
+                                <span>Base Integrada SIAFIC</span>
                             </div>
+                            <FaCircleCheck className="text-emerald-500" />
                         </div>
                     </div>
                 </motion.div>
 
                 {/* PNTP Requirements Section - Regulation & Values Table */}
-                <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     {/* Regulation Card */}
                     <a
                         href="/uploads/diarias/regulamentacao.pdf"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group relative bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-xl shadow-slate-200/40 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 overflow-hidden"
+                        className="bg-white rounded-2xl p-6 border border-[#DDE3EA] shadow-sm hover:shadow-md transition-all flex items-center justify-between group"
                     >
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-[5rem] -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700 opacity-50" />
-                        <div className="relative z-10 flex items-center gap-6">
-                            <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-600/30 group-hover:rotate-6 transition-transform">
-                                <FaFileSignature className="text-white text-2xl" />
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 bg-[#EEF4FB] text-[#1254A3] rounded-xl flex items-center justify-center text-xl border border-[#DDE3EA]">
+                                <FaBuildingColumns />
                             </div>
                             <div>
-                                <h4 className="text-xl font-black text-slate-900 uppercase tracking-tighter italic">Regulamentação <span className="text-blue-600 not-italic">Municipal</span></h4>
-                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Normativa e Decretos de Concessão</p>
+                                <h4 className="text-sm font-black text-[#12304A]">Regulamentação Municipal</h4>
+                                <p className="text-xs text-[#5B738B]">Normativa e Decretos de Concessão</p>
                             </div>
                         </div>
-                        <div className="mt-8 flex items-center justify-between">
-                            <span className="text-[9px] font-black text-blue-600 uppercase tracking-[0.3em]">Acessar Documento</span>
-                            <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                                <FaArrowRight size={10} />
-                            </div>
-                        </div>
+                        <span className="text-xs font-bold text-[#1254A3] group-hover:underline flex items-center gap-1">
+                            Acessar <FaArrowRight size={10} />
+                        </span>
                     </a>
 
                     {/* Values Table Card */}
                     <a
                         href="/transparencia/tabela-diarias"
-                        className="group relative bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-xl shadow-slate-200/40 hover:shadow-2xl hover:shadow-emerald-500/10 transition-all duration-500 overflow-hidden"
+                        className="bg-white rounded-2xl p-6 border border-[#DDE3EA] shadow-sm hover:shadow-md transition-all flex items-center justify-between group"
                     >
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-bl-[5rem] -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700 opacity-50" />
-                        <div className="relative z-10 flex items-center gap-6">
-                            <div className="w-16 h-16 bg-emerald-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/30 group-hover:-rotate-6 transition-transform">
-                                <FaMoneyBillWave className="text-white text-2xl" />
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-xl border border-emerald-100">
+                                <FaMoneyBillWave />
                             </div>
                             <div>
-                                <h4 className="text-xl font-black text-slate-900 uppercase tracking-tighter italic">Tabela de <span className="text-emerald-600 not-italic">Valores</span></h4>
-                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Valores por Cargo e Destino</p>
+                                <h4 className="text-sm font-black text-[#12304A]">Tabela de Valores</h4>
+                                <p className="text-xs text-[#5B738B]">Valores por Cargo e Destino</p>
                             </div>
                         </div>
-                        <div className="mt-8 flex items-center justify-between">
-                            <span className="text-[9px] font-black text-emerald-600 uppercase tracking-[0.3em]">Acessar Tabela</span>
-                            <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition-colors">
-                                <FaArrowRight size={10} />
-                            </div>
-                        </div>
+                        <span className="text-xs font-bold text-emerald-600 group-hover:underline flex items-center gap-1">
+                            Acessar <FaArrowRight size={10} />
+                        </span>
                     </a>
                 </motion.div>
 
                 {/* Declaração Oficial Banner */}
-                <motion.div variants={itemVariants} className="bg-red-50 border-l-8 border-red-500 rounded-r-3xl p-8 flex flex-col md:flex-row items-center justify-center md:justify-start gap-6 shadow-xl shadow-red-500/10 mb-12 transition-all hover:bg-red-100">
-                    <FaInfoCircle className="text-red-500 text-5xl shrink-0 drop-shadow-md" />
-                    <div className="text-center md:text-left">
-                        <h3 className="text-red-900 font-black text-xl uppercase tracking-tight mb-2">Declaração Oficial</h3>
-                        <p className="text-red-700 font-bold text-lg md:text-xl">
-                            Declaração que não existe regulamentação para Diárias Internacionais até o período de 01/06/2026.
+                <motion.div variants={itemVariants} className="bg-amber-50 border-l-4 border-[#F39A32] rounded-xl p-5 flex items-center gap-4 mb-8">
+                    <FaInfoCircle className="text-[#F39A32] text-2xl shrink-0" />
+                    <div>
+                        <h4 className="text-xs font-black uppercase text-[#12304A] tracking-wider mb-0.5">Declaração Oficial de Não Ocorrência</h4>
+                        <p className="text-xs text-[#5B738B]">
+                            Declaração de inexistência de regulamentação ou realização de despesas com Diárias Internacionais no exercício.
                         </p>
                     </div>
                 </motion.div>
 
                 {/* Filters Section */}
-                <motion.div variants={itemVariants} className="bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl shadow-slate-200/50 p-2 mb-12">
+                <motion.div variants={itemVariants} className="mb-8">
                     <TransparencyFilters
                         searchValue={busca}
                         onSearch={setBusca}
@@ -314,25 +337,102 @@ export default function DiariasPage() {
                         onExport={handleExport}
                         placeholder="Pesquisar por servidor, destino ou motivo da missão..."
                     >
-                        <div className="flex flex-wrap gap-4 items-center">
-                            <div className="relative group">
-                                <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none group-focus-within:text-blue-600 transition-colors z-10">
-                                    <FaFilter size={14} />
-                                </div>
+                        <div className="flex flex-wrap gap-3 items-center">
+                            <div className="relative">
                                 <select
                                     value={secretaria}
                                     onChange={(e) => setSecretaria(e.target.value)}
-                                    className="pl-12 pr-10 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-700 outline-none focus:ring-4 focus:ring-blue-600/5 focus:bg-white transition-all appearance-none cursor-pointer hover:border-blue-400 min-w-[240px] shadow-inner"
+                                    className="px-4 py-2.5 bg-[#F5F7FA] border border-[#DDE3EA] rounded-xl text-xs font-bold text-[#12304A] outline-none focus:border-[#1254A3]"
                                 >
-                                    <option value="">TODAS AS SECRETARIAS</option>
+                                    <option value="">Todas as Secretarias</option>
                                     {SECRETARIAS.map(s => (
-                                        <option key={s} value={s}>{s.toUpperCase()}</option>
+                                        <option key={s} value={s}>{s}</option>
                                     ))}
                                 </select>
                             </div>
                         </div>
                     </TransparencyFilters>
                 </motion.div>
+
+                {/* View Switcher: Lista vs Gráficos */}
+                <div className="flex bg-white p-1 rounded-xl border border-[#DDE3EA] w-fit mb-8 shadow-sm">
+                    <button
+                        onClick={() => setAbaVisual("lista")}
+                        className={`flex items-center gap-2 px-5 py-2 rounded-lg text-xs font-bold transition-all ${
+                            abaVisual === "lista"
+                                ? "bg-[#1254A3] text-white shadow-sm"
+                                : "text-[#5B738B] hover:text-[#1254A3]"
+                        }`}
+                    >
+                        <FaTable size={13} /> Lista de Concessões ({diarias.length})
+                    </button>
+                    <button
+                        onClick={() => setAbaVisual("graficos")}
+                        className={`flex items-center gap-2 px-5 py-2 rounded-lg text-xs font-bold transition-all ${
+                            abaVisual === "graficos"
+                                ? "bg-[#1254A3] text-white shadow-sm"
+                                : "text-[#5B738B] hover:text-[#1254A3]"
+                        }`}
+                    >
+                        <FaChartLine size={13} /> Gráficos nos Resultados
+                    </button>
+                </div>
+
+                {abaVisual === "graficos" && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12"
+                    >
+                        <div className="bg-white rounded-2xl p-6 sm:p-7 border border-[#DDE3EA] shadow-sm">
+                            <h3 className="text-base font-black text-[#12304A] mb-1">
+                                Evolução Mensal do Pagamento de Diárias
+                            </h3>
+                            <p className="text-xs text-[#5B738B] mb-4">
+                                Desembolsos autorizados mês a mês no exercício de {ano}.
+                            </p>
+                            <div className="h-[300px] w-full">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={dadosPorMes}>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
+                                        <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#5B738B" }} />
+                                        <YAxis tick={{ fontSize: 11, fill: "#5B738B" }} tickFormatter={(v) => `R$ ${(v / 1000).toFixed(0)}k`} />
+                                        <Tooltip formatter={(v: number) => [fmt(v), "Total em Diárias"]} />
+                                        <Bar dataKey="valor" fill="#1254A3" radius={[6, 6, 0, 0]}>
+                                            {dadosPorMes.map((_, i) => (
+                                                <Cell key={`cell-dmes-${i}`} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                                            ))}
+                                        </Bar>
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
+
+                        <div className="bg-white rounded-2xl p-6 sm:p-7 border border-[#DDE3EA] shadow-sm">
+                            <h3 className="text-base font-black text-[#12304A] mb-1">
+                                Diárias por Secretaria / Órgão
+                            </h3>
+                            <p className="text-xs text-[#5B738B] mb-4">
+                                Maiores volumes de diárias concedidas por secretaria.
+                            </p>
+                            <div className="h-[300px] w-full">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={dadosPorSecretaria} layout="vertical">
+                                        <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E2E8F0" />
+                                        <XAxis type="number" tick={{ fontSize: 10, fill: "#5B738B" }} tickFormatter={(v) => `R$ ${(v / 1000).toFixed(0)}k`} />
+                                        <YAxis dataKey="name" type="category" width={150} tick={{ fontSize: 10, fill: "#12304A" }} />
+                                        <Tooltip formatter={(v: number) => [fmt(v), "Total Gasto"]} />
+                                        <Bar dataKey="valor" fill="#F39A32" radius={[0, 6, 6, 0]}>
+                                            {dadosPorSecretaria.map((_, i) => (
+                                                <Cell key={`cell-dsec-${i}`} fill={CHART_COLORS[(i + 1) % CHART_COLORS.length]} />
+                                            ))}
+                                        </Bar>
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
 
                 {/* Main Content Area */}
                 <div className="space-y-12">
@@ -355,31 +455,31 @@ export default function DiariasPage() {
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.98 }}
                                 animate={{ opacity: 1, scale: 1 }}
-                                className="bg-white rounded-[3rem] p-32 text-center border-4 border-dashed border-slate-50 group hover:border-slate-100 transition-colors"
+                                className="bg-white rounded-2xl p-16 text-center border border-[#DDE3EA] shadow-sm"
                             >
-                                <div className="w-24 h-24 bg-slate-50 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 shadow-inner group-hover:scale-110 transition-all duration-500">
-                                    <FaMagnifyingGlass className="text-slate-200 text-4xl" />
+                                <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm">
+                                    <FaMagnifyingGlass className="text-slate-400 text-2xl" />
                                 </div>
-                                <h4 className="text-3xl font-black text-slate-800 uppercase tracking-tighter mb-4">Nenhuma diária localizada</h4>
-                                <p className="text-slate-400 text-sm font-bold uppercase tracking-widest opacity-60 italic mb-10 text-balance">Verifique os filtros aplicados ou consulte outro período fiscal.</p>
-                                <button onClick={handleClearFilters} className="px-12 py-5 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-blue-600 transition-all shadow-xl active:scale-95">Resetar Filtros</button>
+                                <h4 className="text-xl font-bold text-[#12304A] mb-2">Nenhuma diária localizada</h4>
+                                <p className="text-[#5B738B] text-sm mb-6">Verifique os filtros aplicados ou consulte outro período fiscal.</p>
+                                <button onClick={handleClearFilters} className="px-6 py-2.5 bg-[#1254A3] text-white rounded-xl text-xs font-bold hover:bg-[#0d3f7c] transition-all shadow-sm active:scale-95">Resetar Filtros</button>
                             </motion.div>
                         ) : (
                             <motion.div
                                 variants={containerVariants}
-                                className="bg-white rounded-[3rem] border border-slate-100 shadow-2xl shadow-slate-200/40 overflow-hidden"
+                                className="bg-white rounded-2xl border border-[#DDE3EA] shadow-sm overflow-hidden"
                             >
                                 {/* Cabeçalho da Tabela */}
                                 <div className="overflow-x-auto">
                                     <table className="w-full text-left border-collapse">
                                         <thead>
-                                            <tr className="bg-slate-50 border-b border-slate-100">
-                                                <th className="px-8 py-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Servidor / Cargo / Unidade</th>
-                                                <th className="px-8 py-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Destino / Motivo</th>
-                                                <th className="px-8 py-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Período</th>
-                                                <th className="px-8 py-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">Qtd</th>
-                                                <th className="px-8 py-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-right">Vlr. Unitário</th>
-                                                <th className="px-8 py-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-right">Total</th>
+                                            <tr className="bg-[#F5F7FA] border-b border-[#DDE3EA]">
+                                                <th className="px-6 py-4 text-xs font-bold text-[#5B738B] uppercase tracking-wider">Servidor / Cargo / Unidade</th>
+                                                <th className="px-6 py-4 text-xs font-bold text-[#5B738B] uppercase tracking-wider">Destino / Motivo</th>
+                                                <th className="px-6 py-4 text-xs font-bold text-[#5B738B] uppercase tracking-wider">Período</th>
+                                                <th className="px-6 py-4 text-xs font-bold text-[#5B738B] uppercase tracking-wider text-center">Qtd</th>
+                                                <th className="px-6 py-4 text-xs font-bold text-[#5B738B] uppercase tracking-wider text-right">Vlr. Unitário</th>
+                                                <th className="px-6 py-4 text-xs font-bold text-[#5B738B] uppercase tracking-wider text-right">Total</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -387,7 +487,7 @@ export default function DiariasPage() {
                                                 <motion.tr
                                                     key={d.id}
                                                     variants={itemVariants}
-                                                    className="group hover:bg-blue-50/30 transition-all duration-300 border-b border-slate-50 last:border-0"
+                                                    className="group hover:bg-[#EEF4FB] transition-all duration-200 border-b border-[#DDE3EA] last:border-0"
                                                 >
                                                     <td className="px-8 py-8">
                                                         <div className="flex items-center gap-4">
@@ -490,20 +590,20 @@ export default function DiariasPage() {
                 </div>
 
                 {/* Regulation Section */}
-                <motion.div variants={itemVariants} className="mt-32 pt-24 border-t border-slate-100">
-                    <div className="flex flex-col md:flex-row md:items-center gap-8 mb-16">
-                        <div className="w-20 h-20 bg-gradient-to-br from-blue-600 to-indigo-900 text-white rounded-[2rem] flex items-center justify-center shadow-2xl shadow-blue-500/20 shrink-0">
-                            <FaCalendar size={32} />
+                <motion.div variants={itemVariants} className="mt-16 pt-12 border-t border-[#DDE3EA]">
+                    <div className="flex flex-col md:flex-row md:items-center gap-6 mb-8">
+                        <div className="w-14 h-14 bg-[#1254A3] text-white rounded-xl flex items-center justify-center shadow-sm shrink-0">
+                            <FaCalendar size={24} />
                         </div>
                         <div>
-                            <h2 className="text-4xl font-black text-slate-950 uppercase tracking-tighter leading-none mb-3 italic">Atos Oficiais <span className="text-blue-600 font-bold not-italic">de Concessão</span></h2>
-                            <p className="text-[11px] text-slate-400 font-black uppercase tracking-[0.4em] flex items-center gap-3">
-                                <span className="w-3 h-1 bg-blue-600 rounded-full" /> Base Legal e Normativas de Missões Oficiais
+                            <h2 className="text-2xl font-black text-[#12304A]">Atos Oficiais <span className="text-[#1254A3]">de Concessão</span></h2>
+                            <p className="text-xs text-[#5B738B] font-bold uppercase tracking-wider flex items-center gap-2 mt-1">
+                                <span className="w-6 h-1 bg-[#F39A32] rounded-full" /> Base Legal e Normativas de Missões Oficiais
                             </p>
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-[4rem] p-4 lg:p-6 border border-slate-100 shadow-2xl shadow-slate-200/50">
+                    <div className="bg-white rounded-2xl p-6 border border-[#DDE3EA] shadow-sm">
                         <LegislacaoClient initialTipo="portaria_diaria" hideTipoFilter={true} />
                     </div>
                 </motion.div>

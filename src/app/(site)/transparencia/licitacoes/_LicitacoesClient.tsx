@@ -1,23 +1,38 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { 
     FaChartBar, FaSpinner, FaExternalLinkAlt, FaBuilding, 
     FaGavel, FaRegCalendar, FaBriefcase,
     FaArrowRight, FaCheckCircle, FaClock, FaBan,
-    FaFileContract, FaBolt, FaInfoCircle
+    FaFileContract, FaBolt, FaInfoCircle, FaTable
 } from "react-icons/fa";
 import { 
     FaMagnifyingGlass, FaRotate,
     FaCircleExclamation, FaBuildingColumns,
-    FaShieldHalved, FaArrowTrendUp, FaFileLines
+    FaShieldHalved, FaArrowTrendUp, FaFileLines, FaChartLine, FaChartPie
 } from "react-icons/fa6";
+import {
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    ResponsiveContainer,
+    Cell,
+    PieChart,
+    Pie,
+    Legend
+} from "recharts";
 import { exportToCSV, exportToJSON, exportToPDF, exportToXLSX } from "@/lib/exportUtils";
 import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
 import PageHeader from "@/components/PageHeader";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
 import ListaPNCP from "@/components/transparencia/integracao/ListaPNCP";
 import { motion, AnimatePresence } from "framer-motion";
+
+const CHART_COLORS = ["#1254A3", "#F39A32", "#10B981", "#0284C7", "#8B5CF6", "#EC4899", "#F59E0B", "#64748B"];
 
 type Licitacao = {
     id: string;
@@ -68,6 +83,7 @@ export default function LicitacoesClient() {
     const [modalidadeFiltro, setModalidadeFiltro] = useState("");
     const [anoFiltro, setAnoFiltro] = useState(new Date().getFullYear().toString());
     const [tab, setTab] = useState<"municipal" | "federal">("municipal");
+    const [abaVisual, setAbaVisual] = useState<"processos" | "graficos">("processos");
     const [selectedLicitacao, setSelectedLicitacao] = useState<Licitacao | null>(null);
 
     useEffect(() => {
@@ -134,6 +150,34 @@ export default function LicitacoesClient() {
 
     const totalEstimado = filtrados.reduce((acc, curr) => acc + (curr.valor || 0), 0);
 
+    // Agrupamento para gráficos
+    const dadosPorModalidade = useMemo(() => {
+        const map: Record<string, { count: number; valor: number }> = {};
+        filtrados.forEach((l) => {
+            const m = modalidadeLabel[l.modalidade] || l.modalidade || "Outras";
+            if (!map[m]) map[m] = { count: 0, valor: 0 };
+            map[m].count += 1;
+            map[m].valor += l.valor || 0;
+        });
+        return Object.entries(map).map(([name, data]) => ({
+            name,
+            quantidade: data.count,
+            valor: data.valor,
+        })).sort((a, b) => b.quantidade - a.quantidade);
+    }, [filtrados]);
+
+    const dadosPorStatus = useMemo(() => {
+        const map: Record<string, number> = {};
+        filtrados.forEach((l) => {
+            const st = statusConfig[l.status]?.label || l.status || "Outros";
+            map[st] = (map[st] || 0) + 1;
+        });
+        return Object.entries(map).map(([name, valor]) => ({
+            name,
+            valor,
+        }));
+    }, [filtrados]);
+
     return (
         <div className="min-h-screen bg-[#F5F7FA] text-[#12304A]">
             <PageHeader 
@@ -191,79 +235,67 @@ export default function LicitacoesClient() {
                             exit={{ opacity: 0, y: -30 }}
                             transition={{ duration: 0.5 }}
                         >
-                            {/* Highlight Section - Diamond Standard Bento */}
-                            <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16 items-stretch">
+                            {/* Highlight Section - Padrão Novo Modelo */}
+                            <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10 items-stretch">
                                 
-                                {/* Primary Highlight Card - Estimativa Total */}
-                                <div className="lg:col-span-2 bg-slate-900 rounded-[3rem] p-10 shadow-2xl shadow-slate-900/20 text-white relative overflow-hidden group border border-slate-800">
-                                    <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] -mr-40 -mt-40 group-hover:bg-blue-600/20 transition-all duration-700" />
-                                    <div className="relative z-10 flex flex-col justify-between h-full">
-                                        <div>
-                                            <div className="flex items-center gap-4 mb-10">
-                                                <div className="px-4 py-2 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-md">
-                                                    <div className="flex items-center gap-2">
-                                                        <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
-                                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50">Fiscalização Pública</span>
-                                                    </div>
-                                                </div>
-                                                <div className="px-4 py-2 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-md">
-                                                    <div className="flex items-center gap-2">
-                                                        <FaShieldHalved className="text-emerald-400" size={12} />
-                                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50">Base Transparente</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <h3 className="text-[11px] font-bold uppercase tracking-[0.5em] text-white/30 mb-3 ml-1">Volume Estimado (Exercício)</h3>
-                                            <div className="flex items-baseline gap-4">
-                                                <span className="text-7xl font-black tracking-tighter tabular-nums text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-white/40">
-                                                    {loading ? <FaSpinner className="animate-spin text-4xl" /> : formatarMoeda(totalEstimado).split(',')[0]}
-                                                </span>
-                                                <span className="text-2xl font-black text-white/20">,{formatarMoeda(totalEstimado).split(',')[1]}</span>
-                                            </div>
+                                {/* Primary Highlight Card */}
+                                <div className="lg:col-span-2 bg-white rounded-2xl p-7 sm:p-8 shadow-sm border border-[#DDE3EA] relative overflow-hidden flex flex-col justify-between">
+                                    <div>
+                                        <div className="flex flex-wrap items-center gap-3 mb-6">
+                                            <span className="flex items-center gap-1.5 px-3 py-1 bg-[#EEF4FB] text-[#1254A3] rounded-lg text-[11px] font-black uppercase tracking-wider border border-[#DDE3EA]">
+                                                <div className="w-2 h-2 rounded-full bg-[#1254A3] animate-pulse" />
+                                                Fiscalização Pública
+                                            </span>
+                                            <span className="flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[11px] font-black uppercase tracking-wider border border-emerald-100">
+                                                <FaShieldHalved size={11} /> Base Transparente
+                                            </span>
                                         </div>
-                                        
-                                        <div className="mt-16 flex flex-wrap gap-12 items-center border-t border-white/5 pt-10">
-                                            <div className="flex flex-col">
-                                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/20 mb-2">Ano Base</span>
-                                                <span className="text-2xl font-black tracking-tight tracking-tighter italic">{anoFiltro}</span>
-                                            </div>
-                                            <div className="w-px h-12 bg-white/5 hidden md:block" />
-                                            <div className="flex flex-col">
-                                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/20 mb-2">Processos Localizados</span>
-                                                <span className="text-2xl font-black tracking-tight uppercase italic text-blue-400">{filtrados.length} <span className="text-white/40 font-bold tracking-tighter">Editais</span></span>
-                                            </div>
+                                        <p className="text-xs font-bold uppercase tracking-widest text-[#5B738B] mb-1">
+                                            Volume Estimado no Exercício
+                                        </p>
+                                        <div className="text-4xl sm:text-5xl font-black text-[#12304A] tracking-tight">
+                                            {loading ? <FaSpinner className="animate-spin text-3xl text-[#1254A3]" /> : formatarMoeda(totalEstimado)}
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="mt-8 flex flex-wrap gap-8 items-center border-t border-[#DDE3EA] pt-6">
+                                        <div className="flex flex-col">
+                                            <span className="text-[11px] font-bold uppercase text-[#5B738B] mb-0.5">Ano Base</span>
+                                            <span className="text-xl font-black text-[#12304A]">{anoFiltro}</span>
+                                        </div>
+                                        <div className="w-px h-8 bg-[#DDE3EA] hidden md:block" />
+                                        <div className="flex flex-col">
+                                            <span className="text-[11px] font-bold uppercase text-[#5B738B] mb-0.5">Processos Localizados</span>
+                                            <span className="text-xl font-black text-[#1254A3]">{filtrados.length} <span className="text-sm font-bold text-[#5B738B]">editais</span></span>
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Secondary Context Card */}
-                                <div className="bg-white rounded-[3rem] p-10 shadow-2xl shadow-slate-200/50 border border-slate-100/50 flex flex-col justify-between relative overflow-hidden group">
-                                     <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-blue-50/50 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                                     <div className="relative">
-                                        <div className="w-20 h-20 bg-slate-50 rounded-[2rem] flex items-center justify-center mb-8 group-hover:bg-blue-600 transition-all duration-500 group-hover:rotate-6 group-hover:scale-110 shadow-inner group-hover:shadow-blue-600/40">
-                                            <FaGavel className="text-blue-400 group-hover:text-white transition-colors" size={36} />
+                                <div className="bg-white rounded-2xl p-7 sm:p-8 shadow-sm border border-[#DDE3EA] flex flex-col justify-between">
+                                     <div>
+                                        <div className="w-14 h-14 bg-[#EEF4FB] text-[#1254A3] rounded-xl flex items-center justify-center text-2xl mb-5 border border-[#DDE3EA]">
+                                            <FaGavel />
                                         </div>
-                                        <h4 className="text-3xl font-black text-slate-900 tracking-tighter leading-[0.9] mb-4 uppercase">
-                                            Licitações <br/> <span className="text-blue-600">Municipais</span>
+                                        <h4 className="text-lg font-black text-[#12304A] tracking-tight mb-2">
+                                            Licitações Municipais
                                         </h4>
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-relaxed opacity-80">
-                                            Controle social das aquisições e editais.
+                                        <p className="text-xs text-[#5B738B] leading-relaxed">
+                                            Controle social das aquisições, editais públicos, compras diretas e dispensas com transparência integral.
                                         </p>
                                      </div>
-                                     <div className="pt-10 border-t border-slate-50">
-                                         <div className="flex items-center justify-between">
-                                             <div className="flex items-center gap-2">
-                                                 <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                                                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Base de Dados</span>
-                                             </div>
-                                             <FaCheckCircle className="text-emerald-500" />
+                                     <div className="pt-5 border-t border-[#DDE3EA] flex items-center justify-between text-xs font-bold text-[#5B738B]">
+                                         <div className="flex items-center gap-2">
+                                             <div className="w-2 h-2 rounded-full bg-[#1254A3] animate-pulse" />
+                                             <span>Lei 14.133/2021</span>
                                          </div>
+                                         <FaCheckCircle className="text-emerald-500" />
                                      </div>
                                 </div>
                             </motion.div>
 
                             {/* Filters Section */}
-                            <motion.div variants={itemVariants} className="bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl shadow-slate-200/50 p-2 mb-12">
+                            <motion.div variants={itemVariants} className="mb-8">
                                 <TransparencyFilters
                                     searchValue={busca}
                                     onSearch={setBusca}
@@ -275,36 +307,117 @@ export default function LicitacoesClient() {
                                     onExport={handleExport}
                                     placeholder="Pesquisar por número do processo, objeto ou secretaria responsável..."
                                 >
-                                    <div className="flex flex-wrap gap-4 items-center">
-                                        <div className="relative group">
-                                            <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none group-focus-within:text-blue-600 transition-colors z-10">
-                                                <FaBolt size={14} />
-                                            </div>
+                                    <div className="flex flex-wrap gap-3 items-center">
+                                        <div className="relative">
                                             <select 
                                                 value={modalidadeFiltro} 
                                                 onChange={(e) => setModalidadeFiltro(e.target.value)}
-                                                className="pl-12 pr-10 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-700 outline-none focus:ring-4 focus:ring-blue-600/5 focus:bg-white transition-all appearance-none cursor-pointer hover:border-blue-400 min-w-[200px] shadow-inner"
+                                                className="px-4 py-2.5 bg-[#F5F7FA] border border-[#DDE3EA] rounded-xl text-xs font-bold text-[#12304A] outline-none focus:border-[#1254A3]"
                                             >
-                                                <option value="">TODAS AS MODALIDADES</option>
-                                                {Object.entries(modalidadeLabel).map(([v, l]) => <option key={v} value={v}>{l.toUpperCase()}</option>)}
+                                                <option value="">Todas as Modalidades</option>
+                                                {Object.entries(modalidadeLabel).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
                                             </select>
                                         </div>
-                                        <div className="relative group">
-                                            <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none group-focus-within:text-blue-600 transition-colors z-10">
-                                                <FaInfoCircle size={14} />
-                                            </div>
+                                        <div className="relative">
                                             <select 
                                                 value={statusFiltro} 
                                                 onChange={(e) => setStatusFiltro(e.target.value)}
-                                                className="pl-12 pr-10 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-700 outline-none focus:ring-4 focus:ring-blue-600/5 focus:bg-white transition-all appearance-none cursor-pointer hover:border-blue-400 min-w-[200px] shadow-inner"
+                                                className="px-4 py-2.5 bg-[#F5F7FA] border border-[#DDE3EA] rounded-xl text-xs font-bold text-[#12304A] outline-none focus:border-[#1254A3]"
                                             >
-                                                <option value="">TODOS OS STATUS</option>
-                                                {Object.entries(statusConfig).map(([v, c]) => <option key={v} value={v}>{c.label.toUpperCase()}</option>)}
+                                                <option value="">Todos os Status</option>
+                                                {Object.entries(statusConfig).map(([v, c]) => <option key={v} value={v}>{c.label}</option>)}
                                             </select>
                                         </div>
                                     </div>
                                 </TransparencyFilters>
                             </motion.div>
+
+                            {/* View Mode Switcher: Editais vs Gráficos */}
+                            <div className="flex bg-white p-1 rounded-xl border border-[#DDE3EA] w-fit mb-8 shadow-sm">
+                                <button
+                                    onClick={() => setAbaVisual("processos")}
+                                    className={`flex items-center gap-2 px-5 py-2 rounded-lg text-xs font-bold transition-all ${
+                                        abaVisual === "processos"
+                                            ? "bg-[#1254A3] text-white shadow-sm"
+                                            : "text-[#5B738B] hover:text-[#1254A3]"
+                                    }`}
+                                >
+                                    <FaFileLines size={13} /> Lista de Editais ({filtrados.length})
+                                </button>
+                                <button
+                                    onClick={() => setAbaVisual("graficos")}
+                                    className={`flex items-center gap-2 px-5 py-2 rounded-lg text-xs font-bold transition-all ${
+                                        abaVisual === "graficos"
+                                            ? "bg-[#1254A3] text-white shadow-sm"
+                                            : "text-[#5B738B] hover:text-[#1254A3]"
+                                    }`}
+                                >
+                                    <FaChartLine size={13} /> Gráficos nos Resultados
+                                </button>
+                            </div>
+
+                            {abaVisual === "graficos" && (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12"
+                                >
+                                    <div className="bg-white rounded-2xl p-6 sm:p-7 border border-[#DDE3EA] shadow-sm">
+                                        <h3 className="text-base font-black text-[#12304A] mb-1">
+                                            Processos por Modalidade de Contratação
+                                        </h3>
+                                        <p className="text-xs text-[#5B738B] mb-4">
+                                            Quantidade de licitações e dispensas registradas em {anoFiltro}.
+                                        </p>
+                                        <div className="h-[300px] w-full">
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <BarChart data={dadosPorModalidade}>
+                                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
+                                                    <XAxis dataKey="name" tick={{ fontSize: 10, fill: "#5B738B" }} />
+                                                    <YAxis tick={{ fontSize: 11, fill: "#5B738B" }} allowDecimals={false} />
+                                                    <Tooltip formatter={(v: number) => [`${v} editais`, "Quantidade"]} />
+                                                    <Bar dataKey="quantidade" fill="#1254A3" radius={[6, 6, 0, 0]}>
+                                                        {dadosPorModalidade.map((_, i) => (
+                                                            <Cell key={`cell-lic-${i}`} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                                                        ))}
+                                                    </Bar>
+                                                </BarChart>
+                                            </ResponsiveContainer>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-white rounded-2xl p-6 sm:p-7 border border-[#DDE3EA] shadow-sm">
+                                        <h3 className="text-base font-black text-[#12304A] mb-1">
+                                            Situação / Status dos Processos
+                                        </h3>
+                                        <p className="text-xs text-[#5B738B] mb-4">
+                                            Distribuição de processos abertos, em execução e concluídos.
+                                        </p>
+                                        <div className="h-[300px] w-full">
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <PieChart>
+                                                    <Pie
+                                                        data={dadosPorStatus}
+                                                        dataKey="valor"
+                                                        nameKey="name"
+                                                        cx="50%"
+                                                        cy="50%"
+                                                        outerRadius={95}
+                                                        label={({ name, percent }: { name?: string; percent?: number }) => `${name ?? ""}: ${((percent ?? 0) * 100).toFixed(0)}%`}
+                                                        labelLine={false}
+                                                    >
+                                                        {dadosPorStatus.map((_, i) => (
+                                                            <Cell key={`cell-st-${i}`} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                                                        ))}
+                                                    </Pie>
+                                                    <Tooltip formatter={(v: number) => [`${v} processos`, "Total"]} />
+                                                    <Legend wrapperStyle={{ fontSize: 11, paddingTop: 10 }} />
+                                                </PieChart>
+                                            </ResponsiveContainer>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )}
 
                             {/* Main Content Area */}
                             <div className="space-y-10">
@@ -337,27 +450,23 @@ export default function LicitacoesClient() {
                                             <button onClick={handleClearFilters} className="px-12 py-5 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-blue-600 transition-all shadow-xl active:scale-95">Resetar Filtros</button>
                                         </motion.div>
                                     ) : (
-                                        <motion.div variants={containerVariants} className="grid grid-cols-1 gap-10">
+                                        <motion.div variants={containerVariants} className="grid grid-cols-1 gap-6">
                                             {filtrados.map((l, i) => (
                                                 <motion.div 
                                                     key={l.id} 
                                                     variants={itemVariants}
-                                                    className="bg-white rounded-[3rem] border border-slate-100 shadow-2xl shadow-slate-200/40 overflow-hidden group hover:shadow-blue-500/10 transition-all duration-700 hover:border-blue-200 relative p-1 lg:p-1.5"
+                                                    className="bg-white rounded-2xl border border-[#DDE3EA] shadow-sm hover:shadow-md transition-all overflow-hidden relative p-1"
                                                 >
-                                                    <div className="absolute top-10 right-10 opacity-[0.02] pointer-events-none group-hover:opacity-[0.05] transition-opacity duration-700">
-                                                        <FaGavel size={200} />
-                                                    </div>
-
-                                                    <div className="p-10 lg:p-14">
-                                                        <div className="flex flex-col lg:flex-row justify-between gap-12 mb-12">
+                                                    <div className="p-6 lg:p-8">
+                                                        <div className="flex flex-col lg:flex-row justify-between gap-8 mb-6">
                                                             {/* Licitacao Info */}
-                                                            <div className="flex items-center gap-8">
-                                                                <div className="w-24 h-24 bg-slate-50 text-slate-300 rounded-[2.25rem] flex items-center justify-center shrink-0 border border-slate-100 group-hover:bg-blue-600 group-hover:text-white group-hover:rotate-6 group-hover:scale-110 transition-all duration-700 shadow-inner">
-                                                                    <FaFileContract size={36} />
+                                                            <div className="flex items-center gap-5">
+                                                                <div className="w-16 h-16 bg-[#EEF4FB] text-[#1254A3] rounded-2xl flex items-center justify-center shrink-0 border border-[#DDE3EA] shadow-sm">
+                                                                    <FaFileContract size={26} />
                                                                 </div>
                                                                 <div>
-                                                                    <div className="flex flex-wrap items-center gap-4 mb-3">
-                                                                        <h3 className="text-3xl font-black text-slate-900 uppercase tracking-tighter group-hover:text-blue-700 transition-colors leading-none">{l.numero}</h3>
+                                                                    <div className="flex flex-wrap items-center gap-3 mb-2">
+                                                                        <h3 className="text-2xl font-black text-[#12304A] tracking-tight">{l.numero}</h3>
                                                                         <div className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 border shadow-sm ${statusConfig[l.status]?.cor || "bg-slate-50 text-slate-400"}`}>
                                                                             {statusConfig[l.status]?.icon && (
                                                                                 <div className={l.status === 'aberta' ? 'animate-pulse' : ''}>
