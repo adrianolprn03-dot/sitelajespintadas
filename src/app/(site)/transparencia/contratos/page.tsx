@@ -20,22 +20,13 @@ import BannerPNTP from "@/components/transparencia/BannerPNTP";
 type Contrato = {
     id: string;
     numero: string;
-    ano?: number | null;
-    modalidadeOrigem?: string | null;
     objeto: string;
     valor: number;
     fornecedor: string;
-    contratado?: string;
-    cnpjCpf?: string | null;
     dataInicio: string;
     dataFim: string;
     status: string;
     secretaria: string;
-    instrumentoIntegralUrl?: string | null;
-    arquivo?: string | null;
-    aditivos?: Array<{ numero?: string; data?: string; valor?: number; objeto?: string; url?: string }> | null;
-    fiscais?: Array<{ nome?: string; cargo?: string; portaria?: string; dataDesignacao?: string }> | null;
-    justificativaOrdemCronologica?: string | null;
 };
 
 function fmt(v: number) {
@@ -67,7 +58,6 @@ export default function ContratosPage() {
     const [busca, setBusca] = useState("");
     const [ano, setAno] = useState(new Date().getFullYear().toString());
     const [status, setStatus] = useState("");
-    const [selectedContrato, setSelectedContrato] = useState<Contrato | null>(null);
 
     useEffect(() => {
         const fetchContratos = async () => {
@@ -359,35 +349,14 @@ export default function ContratosPage() {
 
                                             {/* Action Bar */}
                                             <div className="mt-10 flex flex-wrap justify-end gap-5">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setSelectedContrato(c)}
-                                                    className="h-14 flex items-center gap-4 px-8 bg-white text-slate-700 border border-slate-200 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all active:scale-95"
-                                                >
-                                                    Termos Aditivos & Fiscais
+                                                <button className="h-14 flex items-center gap-4 px-8 bg-white text-slate-500 border border-slate-100 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all active:scale-95">
+                                                    Termos Aditivos
                                                 </button>
-                                                {(c.instrumentoIntegralUrl || c.arquivo) ? (
-                                                    <a
-                                                        href={c.instrumentoIntegralUrl || c.arquivo || "#"}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="h-14 flex items-center gap-4 px-10 bg-slate-950 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-orange-600 transition-all shadow-2xl shadow-slate-900/20 group/btn active:scale-95"
-                                                    >
-                                                        <FaFileLines size={14} />
-                                                        Íntegra do Contrato (PDF)
-                                                        <FaArrowRight size={10} />
-                                                    </a>
-                                                ) : (
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setSelectedContrato(c)}
-                                                        className="h-14 flex items-center gap-4 px-10 bg-slate-950 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-orange-600 transition-all shadow-2xl shadow-slate-900/20 group/btn active:scale-95"
-                                                    >
-                                                        <FaFileLines size={14} />
-                                                        Ficha Integral do Contrato
-                                                        <FaArrowRight size={10} />
-                                                    </button>
-                                                )}
+                                                <button className="h-14 flex items-center gap-4 px-10 bg-slate-950 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-orange-600 transition-all shadow-2xl shadow-slate-900/20 group/btn active:scale-95">
+                                                    <FaFileLines size={14} className="opacity-50 group-hover:opacity-100 group-hover:rotate-12 transition-all" />
+                                                    Íntegra do Contrato 
+                                                    <FaArrowRight size={10} className="group-hover/btn:translate-x-2 transition-transform" />
+                                                </button>
                                             </div>
                                         </div>
                                     </motion.div>
@@ -406,104 +375,6 @@ export default function ContratosPage() {
                         </p>
                     </div>
                 </motion.div>
-
-                {selectedContrato && (
-                    <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-                        <div className="bg-white rounded-3xl max-w-2xl w-full p-8 space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto">
-                            <div className="flex items-start justify-between border-b border-slate-100 pb-4">
-                                <div>
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-orange-600 block mb-1">
-                                        Instrumento Contratual • PNTP 9.1 / 9.2 / 9.3
-                                    </span>
-                                    <h3 className="text-2xl font-black text-slate-900">
-                                        Contrato Nº {selectedContrato.numero}
-                                    </h3>
-                                </div>
-                                <button
-                                    type="button"
-                                    onClick={() => setSelectedContrato(null)}
-                                    className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700"
-                                >
-                                    Fechar
-                                </button>
-                            </div>
-
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                                <div className="p-4 rounded-2xl bg-slate-50">
-                                    <span className="text-[10px] font-bold text-slate-400 uppercase block">Contratado</span>
-                                    <span className="font-black text-slate-800">{selectedContrato.fornecedor || selectedContrato.contratado}</span>
-                                    {selectedContrato.cnpjCpf && (
-                                        <span className="block font-mono text-[11px] text-slate-500 mt-0.5">{selectedContrato.cnpjCpf}</span>
-                                    )}
-                                </div>
-                                <div className="p-4 rounded-2xl bg-slate-50">
-                                    <span className="text-[10px] font-bold text-slate-400 uppercase block">Valor Global</span>
-                                    <span className="font-black text-orange-600 text-base">{fmt(selectedContrato.valor)}</span>
-                                </div>
-                                <div className="p-4 rounded-2xl bg-slate-50">
-                                    <span className="text-[10px] font-bold text-slate-400 uppercase block">Vigência</span>
-                                    <span className="font-bold text-slate-800">
-                                        {new Date(selectedContrato.dataInicio).toLocaleDateString("pt-BR")} a{" "}
-                                        {new Date(selectedContrato.dataFim).toLocaleDateString("pt-BR")}
-                                    </span>
-                                </div>
-                                <div className="p-4 rounded-2xl bg-slate-50">
-                                    <span className="text-[10px] font-bold text-slate-400 uppercase block">Unidade Gestora</span>
-                                    <span className="font-bold text-slate-800">{selectedContrato.secretaria}</span>
-                                </div>
-                            </div>
-
-                            <div>
-                                <h4 className="text-xs font-black text-slate-500 uppercase mb-2">Objeto do Contrato</h4>
-                                <p className="text-sm text-slate-700 bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                                    {selectedContrato.objeto}
-                                </p>
-                            </div>
-
-                            <div>
-                                <h4 className="text-xs font-black text-slate-500 uppercase mb-2">Fiscais Designados (Critério 9.3)</h4>
-                                {Array.isArray(selectedContrato.fiscais) && selectedContrato.fiscais.length > 0 ? (
-                                    <div className="space-y-2">
-                                        {selectedContrato.fiscais.map((f, idx) => (
-                                            <div key={idx} className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs flex justify-between">
-                                                <div>
-                                                    <span className="font-bold text-slate-800">{f.nome}</span>
-                                                    {f.cargo && <span className="text-slate-500 ml-2">({f.cargo})</span>}
-                                                </div>
-                                                {f.portaria && <span className="font-mono text-slate-600">Portaria: {f.portaria}</span>}
-                                            </div>
-                                        ))}
-                                    </div>
-                                ) : (
-                                    <p className="text-xs text-slate-500 italic">
-                                        Fiscalização acompanhada pela Secretaria de {selectedContrato.secretaria}.
-                                    </p>
-                                )}
-                            </div>
-
-                            <div>
-                                <h4 className="text-xs font-black text-slate-500 uppercase mb-2">Termos Aditivos e Apostilamentos (Critério 9.2)</h4>
-                                {Array.isArray(selectedContrato.aditivos) && selectedContrato.aditivos.length > 0 ? (
-                                    <div className="space-y-2">
-                                        {selectedContrato.aditivos.map((ad, idx) => (
-                                            <div key={idx} className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs flex justify-between items-center">
-                                                <div>
-                                                    <span className="font-bold text-slate-800">{ad.numero || `${idx + 1}º Termo Aditivo`}</span>
-                                                    {ad.objeto && <p className="text-slate-600 mt-0.5">{ad.objeto}</p>}
-                                                </div>
-                                                {ad.valor !== undefined && <span className="font-bold text-orange-600">{fmt(Number(ad.valor))}</span>}
-                                            </div>
-                                        ))}
-                                    </div>
-                                ) : (
-                                    <p className="text-xs text-slate-500 italic">
-                                        Não constam termos aditivos registrados para este instrumento até a presente data.
-                                    </p>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                )}
             </motion.main>
         </div>
     );

@@ -20,21 +20,8 @@ import ListaPNCP from "@/components/transparencia/integracao/ListaPNCP";
 import { motion, AnimatePresence } from "framer-motion";
 
 type Licitacao = {
-    id: string;
-    numero: string;
-    numeroProcesso?: string | null;
-    objeto: string;
-    modalidade: string;
-    valor: number | null;
-    valorEstimado?: number | null;
-    valorHomologado?: number | null;
-    status: string;
-    secretaria: string;
-    ano: number;
-    dataAbertura?: string;
-    editalUrl?: string | null;
-    arquivo?: string | null;
-    fasesDocumentos?: Array<{ fase?: string; tipo?: string; titulo?: string; url?: string }> | null;
+    id: string; numero: string; objeto: string; modalidade: string;
+    valor: number | null; status: string; secretaria: string; ano: number; dataAbertura?: string;
 };
 
 const modalidadeLabel: Record<string, string> = {
@@ -68,7 +55,6 @@ export default function LicitacoesClient() {
     const [modalidadeFiltro, setModalidadeFiltro] = useState("");
     const [anoFiltro, setAnoFiltro] = useState(new Date().getFullYear().toString());
     const [tab, setTab] = useState<"municipal" | "federal">("municipal");
-    const [selectedLicitacao, setSelectedLicitacao] = useState<Licitacao | null>(null);
 
     useEffect(() => {
         const fetchLicitacoes = async () => {
@@ -135,7 +121,7 @@ export default function LicitacoesClient() {
     const totalEstimado = filtrados.reduce((acc, curr) => acc + (curr.valor || 0), 0);
 
     return (
-        <div className="min-h-screen bg-[#F5F7FA] text-[#12304A]">
+        <div className="min-h-screen bg-[#f8fafc] font-['Montserrat',sans-serif]">
             <PageHeader 
                 title="Compras & Licitações"
                 subtitle="Portal de transparência para processos de aquisição, alienação e contratação de serviços."
@@ -429,35 +415,14 @@ export default function LicitacoesClient() {
 
                                                         {/* Action Bar */}
                                                         <div className="mt-10 flex flex-wrap justify-end gap-5">
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => setSelectedLicitacao(l)}
-                                                                className="h-14 flex items-center gap-4 px-8 bg-white text-slate-700 border border-slate-200 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all active:scale-95"
-                                                            >
-                                                                Detalhes e Fases do Processo
+                                                            <button className="h-14 flex items-center gap-4 px-8 bg-white text-slate-500 border border-slate-100 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all active:scale-95">
+                                                                Acompanhar Sessão
                                                             </button>
-                                                            {(l.editalUrl || l.arquivo) ? (
-                                                                <a
-                                                                    href={l.editalUrl || l.arquivo || "#"}
-                                                                    target="_blank"
-                                                                    rel="noopener noreferrer"
-                                                                    className="h-14 flex items-center gap-4 px-10 bg-slate-950 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-blue-600 transition-all shadow-2xl shadow-slate-900/20 group/btn active:scale-95"
-                                                                >
-                                                                    <FaFileLines size={14} />
-                                                                    Baixar Edital Oficial
-                                                                    <FaExternalLinkAlt size={10} />
-                                                                </a>
-                                                            ) : (
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={() => setSelectedLicitacao(l)}
-                                                                    className="h-14 flex items-center gap-4 px-10 bg-slate-950 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-blue-600 transition-all shadow-2xl shadow-slate-900/20 group/btn active:scale-95"
-                                                                >
-                                                                    <FaFileLines size={14} />
-                                                                    Visualizar Edital e Anexos
-                                                                    <FaArrowRight size={10} />
-                                                                </button>
-                                                            )}
+                                                            <button className="h-14 flex items-center gap-4 px-10 bg-slate-950 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-blue-600 transition-all shadow-2xl shadow-slate-900/20 group/btn active:scale-95">
+                                                                <FaFileLines size={14} className="opacity-50 group-hover:opacity-100 group-hover:rotate-12 transition-all" />
+                                                                Visualizar Edital 
+                                                                <FaArrowRight size={10} className="group-hover/btn:translate-x-2 transition-transform" />
+                                                            </button>
                                                         </div>
                                                     </div>
                                                 </motion.div>
@@ -510,93 +475,6 @@ export default function LicitacoesClient() {
                         </p>
                     </div>
                 </motion.div>
-
-                {selectedLicitacao && (
-                    <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-                        <div className="bg-white rounded-3xl max-w-2xl w-full p-8 space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto">
-                            <div className="flex items-start justify-between border-b border-slate-100 pb-4">
-                                <div>
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-blue-600 block mb-1">
-                                        Processo Licitatório • Lei 14.133/2021
-                                    </span>
-                                    <h3 className="text-2xl font-black text-slate-900">
-                                        {selectedLicitacao.numero} ({modalidadeLabel[selectedLicitacao.modalidade] || selectedLicitacao.modalidade})
-                                    </h3>
-                                </div>
-                                <button
-                                    type="button"
-                                    onClick={() => setSelectedLicitacao(null)}
-                                    className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700"
-                                >
-                                    Fechar
-                                </button>
-                            </div>
-
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                                <div className="p-4 rounded-2xl bg-slate-50">
-                                    <span className="text-[10px] font-bold text-slate-400 uppercase block">Nº Processo Administrativo</span>
-                                    <span className="font-black text-slate-800">{selectedLicitacao.numeroProcesso || selectedLicitacao.numero}</span>
-                                </div>
-                                <div className="p-4 rounded-2xl bg-slate-50">
-                                    <span className="text-[10px] font-bold text-slate-400 uppercase block">Órgão / Secretaria</span>
-                                    <span className="font-black text-slate-800">{selectedLicitacao.secretaria}</span>
-                                </div>
-                                <div className="p-4 rounded-2xl bg-slate-50">
-                                    <span className="text-[10px] font-bold text-slate-400 uppercase block">Valor Estimado</span>
-                                    <span className="font-black text-slate-800">{formatarMoeda(selectedLicitacao.valorEstimado ?? selectedLicitacao.valor)}</span>
-                                </div>
-                                <div className="p-4 rounded-2xl bg-slate-50">
-                                    <span className="text-[10px] font-bold text-slate-400 uppercase block">Valor Homologado</span>
-                                    <span className="font-black text-emerald-700">
-                                        {selectedLicitacao.valorHomologado ? formatarMoeda(selectedLicitacao.valorHomologado) : "Em apuração / Não homologado"}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div>
-                                <h4 className="text-xs font-black text-slate-500 uppercase mb-2">Objeto Detalhado</h4>
-                                <p className="text-sm text-slate-700 bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                                    {selectedLicitacao.objeto}
-                                </p>
-                            </div>
-
-                            <div>
-                                <h4 className="text-xs font-black text-slate-500 uppercase mb-2">Documentos das Fases Interna e Externa</h4>
-                                {(selectedLicitacao.editalUrl || selectedLicitacao.arquivo) && (
-                                    <a
-                                        href={selectedLicitacao.editalUrl || selectedLicitacao.arquivo || "#"}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 text-white text-xs font-bold mb-3"
-                                    >
-                                        <FaFileLines /> Abrir Íntegra do Edital <FaExternalLinkAlt size={10} />
-                                    </a>
-                                )}
-                                {Array.isArray(selectedLicitacao.fasesDocumentos) && selectedLicitacao.fasesDocumentos.length > 0 ? (
-                                    <div className="space-y-2">
-                                        {selectedLicitacao.fasesDocumentos.map((doc, idx) => (
-                                            <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs">
-                                                <div>
-                                                    <span className="font-bold text-slate-800">{doc.titulo || doc.tipo || "Documento"}</span>
-                                                    {doc.fase && <span className="ml-2 text-[10px] uppercase px-2 py-0.5 bg-blue-100 text-blue-800 rounded">{doc.fase}</span>}
-                                                </div>
-                                                {doc.url && (
-                                                    <a href={doc.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 font-bold hover:underline">
-                                                        Baixar PDF
-                                                    </a>
-                                                )}
-                                            </div>
-                                        ))}
-                                    </div>
-                                ) : (
-                                    <p className="text-xs text-slate-500 italic">
-                                        Os demais anexos das fases interna e externa encontram-se vinculados ao processo administrativo ou sincronizados na aba PNCP Federal.
-                                    </p>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                )}
             </motion.main>
         </div>
     );

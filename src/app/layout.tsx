@@ -30,9 +30,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <head>
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-                <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
+                <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
             </head>
-            <body className="font-sans antialiased bg-[#F5F7FA] text-[#12304A]">
+            <body className="font-sans antialiased bg-white text-gray-900" style={{ fontFamily: "'Montserrat', sans-serif" }}>
                 <Providers>
                     <a href="#conteudo-principal" className="skip-link">
                         Ir para o conteúdo principal

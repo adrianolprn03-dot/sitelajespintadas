@@ -174,8 +174,8 @@ export default function TransparenciaPage() {
     const [selectedCriterio, setSelectedCriterio] = useState<string>("TODOS");
     const [configs, setConfigs] = useState<Record<string, string>>({
         transparencia_pntp_ativo: "false",
-        transparencia_pntp_indice: "Meta: 100%",
-        transparencia_pntp_selo: "DIRETRIZES PNTP 2026",
+        transparencia_pntp_indice: "98.5%",
+        transparencia_pntp_selo: "SELO DIAMANTE",
         transparencia_pntp_essenciais: "28 Módulos",
         transparencia_pntp_obrigatorios: "23 Módulos",
         transparencia_pntp_recomendados: "15 Módulos"
@@ -309,7 +309,7 @@ export default function TransparenciaPage() {
     };
 
     return (
-        <div className="bg-[#f8fafc] min-h-screen text-[#12304A]">
+        <div className="bg-[#f8fafc] min-h-screen font-['Montserrat',sans-serif] text-slate-800">
             {/* Header da Página */}
             <PageHeader
                 title="Portal da Transparência"

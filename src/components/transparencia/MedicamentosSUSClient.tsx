@@ -24,18 +24,8 @@ import ExportButtons from "@/components/transparencia/ExportButtons";
 type Medicamento = {
     id: string;
     nome: string;
-    principioAtivo?: string | null;
-    apresentacao?: string | null;
-    concentracao?: string | null;
-    formaFarmaceutica?: string | null;
-    unidadeMedida?: string | null;
-    quantidadeEstoque?: number | null;
-    estoqueStatus?: string | null;
-    unidadeSaude?: string | null;
-    dataReferenciaEstoque?: string | null;
-    atualizadoEm?: string | null;
-    categoria?: string;
-    status?: string;
+    categoria: string;
+    status: string;
     observacao?: string | null;
     ativo: boolean;
 };
@@ -48,7 +38,7 @@ export default function MedicamentosSUSClient({ medicamentos }: { medicamentos: 
     const medicamentosArray = Array.isArray(medicamentos) ? medicamentos : [];
 
     // Categorias únicas
-    const categorias = Array.from(new Set(medicamentosArray.map(m => m?.categoria).filter((c): c is string => Boolean(c)))).sort();
+    const categorias = Array.from(new Set(medicamentosArray.map(m => m?.categoria).filter(Boolean))).sort();
 
     const medicamentosFiltrados = medicamentosArray.filter(item => {
         if (!item) return false;
@@ -167,25 +157,22 @@ export default function MedicamentosSUSClient({ medicamentos }: { medicamentos: 
                             </div>
                         ) : (
                             medicamentosFiltrados.map((item) => {
-                                const rawStatus = (item.estoqueStatus || item.status || "Disponível").toLowerCase();
                                 let StatusIcon = FaCheck;
                                 let statusColor = "bg-emerald-50 text-emerald-700 border-emerald-200";
-                                let statusLabel = item.estoqueStatus || "Disponível";
+                                let statusLabel = "Disponível";
 
-                                if (rawStatus.includes("falta") || rawStatus.includes("indispon")) {
+                                if (item.status === "em-falta") {
                                     StatusIcon = FaTriangleExclamation;
                                     statusColor = "bg-rose-50 text-rose-700 border-rose-200";
                                     statusLabel = "Em Falta";
-                                } else if (rawStatus.includes("baixo") || rawStatus.includes("parcial")) {
+                                } else if (item.status === "estoque-baixo") {
                                     StatusIcon = FaBoxOpen;
                                     statusColor = "bg-amber-50 text-amber-700 border-amber-200";
                                     statusLabel = "Baixo Estoque";
                                 }
 
-                                const refEstoque = item.dataReferenciaEstoque || item.atualizadoEm;
-
                                 return (
-                                    <div
+                                    <div 
                                         key={item.id}
                                         className="group relative bg-white rounded-[2.5rem] p-8 shadow-xl shadow-gray-200/40 border border-slate-100 hover:shadow-2xl hover:border-rose-200 transition-all duration-300 flex flex-col justify-between"
                                     >
@@ -195,49 +182,18 @@ export default function MedicamentosSUSClient({ medicamentos }: { medicamentos: 
                                                     <FaPills size={20} />
                                                 </div>
                                                 <span className="text-[10px] font-black text-rose-600 uppercase tracking-widest bg-rose-50 px-3.5 py-1.5 rounded-full border border-rose-100">
-                                                    {item.categoria || item.formaFarmaceutica || "REMUME"}
+                                                    {item.categoria}
                                                 </span>
                                             </div>
 
-                                            <h4 className="text-lg font-black text-slate-800 uppercase tracking-tight mb-2 group-hover:text-[#003366] transition-colors leading-tight">
+                                            <h4 className="text-lg font-black text-slate-800 uppercase tracking-tight mb-3 group-hover:text-[#003366] transition-colors leading-tight">
                                                 {item.nome}
                                             </h4>
 
-                                            {(item.principioAtivo || item.apresentacao || item.concentracao) && (
-                                                <p className="text-xs text-slate-600 font-semibold mb-3">
-                                                    {[item.principioAtivo, item.apresentacao || item.concentracao]
-                                                        .filter(Boolean)
-                                                        .join(" • ")}
-                                                </p>
-                                            )}
-
-                                            <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100 mb-4 space-y-1 text-xs">
-                                                <div className="flex justify-between">
-                                                    <span className="text-slate-400 font-bold uppercase text-[10px]">Unidade:</span>
-                                                    <span className="text-slate-700 font-bold">{item.unidadeSaude || "Farmácia Básica Central"}</span>
-                                                </div>
-                                                {item.quantidadeEstoque !== null && item.quantidadeEstoque !== undefined && (
-                                                    <div className="flex justify-between">
-                                                        <span className="text-slate-400 font-bold uppercase text-[10px]">Quantidade:</span>
-                                                        <span className="text-slate-800 font-black">
-                                                            {item.quantidadeEstoque} {item.unidadeMedida || "un."}
-                                                        </span>
-                                                    </div>
-                                                )}
-                                                {refEstoque && (
-                                                    <div className="flex justify-between">
-                                                        <span className="text-slate-400 font-bold uppercase text-[10px]">Ref. Estoque:</span>
-                                                        <span className="text-slate-600 font-medium">
-                                                            {new Date(refEstoque).toLocaleDateString("pt-BR")}
-                                                        </span>
-                                                    </div>
-                                                )}
-                                            </div>
-
                                             {item.observacao && (
-                                                <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 mb-4">
+                                                <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 mb-6">
                                                     <p className="text-xs text-slate-500 font-medium leading-relaxed italic">
-                                                        &ldquo;{item.observacao}&rdquo;
+                                                        "{item.observacao}"
                                                     </p>
                                                 </div>
                                             )}
@@ -247,7 +203,7 @@ export default function MedicamentosSUSClient({ medicamentos }: { medicamentos: 
                                             <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider border shadow-sm ${statusColor}`}>
                                                 <StatusIcon size={12} /> {statusLabel}
                                             </div>
-                                            <span className="text-[10px] font-bold text-gray-400 uppercase">SUS • Regra 15d</span>
+                                            <span className="text-[10px] font-bold text-gray-400 uppercase">SUS • Gratuito</span>
                                         </div>
                                     </div>
                                 );

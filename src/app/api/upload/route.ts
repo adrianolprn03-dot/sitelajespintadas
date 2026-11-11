@@ -3,35 +3,21 @@ import { NextRequest, NextResponse } from "next/server";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { r2Client } from "@/lib/r2";
 import sharp from "sharp";
-import { requireServerAuth } from "@/lib/rbac";
 
 // Tipos de imagem que serão comprimidos para WebP
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/bmp", "image/tiff"];
-const ALLOWED_MIME_PREFIXES = ["image/", "application/pdf", "text/csv", "application/vnd.", "application/msword", "application/json", "application/zip"];
-const MAX_UPLOAD_SIZE_BYTES = 50 * 1024 * 1024; // 50 MB
 
 // Largura máxima para redimensionamento (preserva aspecto)
 const MAX_WIDTH = 1920;
 const WEBP_QUALITY = 82; // Qualidade WebP (0-100) — 82 é um excelente balanço entre tamanho e qualidade visual
 
 export async function POST(req: NextRequest) {
-    const auth = await requireServerAuth();
-    if (!auth.authorized) return auth.response;
-
     try {
         const formData = await req.formData();
         const file = formData.get("file") as File;
 
         if (!file) {
             return NextResponse.json({ error: "Nenhum arquivo enviado" }, { status: 400 });
-        }
-
-        if (file.size > MAX_UPLOAD_SIZE_BYTES) {
-            return NextResponse.json({ error: "Arquivo excede o limite máximo permitido de 50 MB." }, { status: 400 });
-        }
-
-        if (file.type && !ALLOWED_MIME_PREFIXES.some((prefix) => file.type.startsWith(prefix))) {
-            return NextResponse.json({ error: `Tipo de arquivo não permitido (${file.type}). Envie PDF, Planilha, Documento ou Imagem.` }, { status: 400 });
         }
 
         // Converte para Buffer
@@ -86,9 +72,9 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ url: publicUrl });
     } catch (error: any) {
         console.error("❌ Erro crítico no upload:", error);
-        return NextResponse.json({
-            error: "Erro no servidor ao realizar upload (R2)",
-            details: error.message
+        return NextResponse.json({ 
+            error: "Erro no servidor ao realizar upload (R2)", 
+            details: error.message 
         }, { status: 500 });
     }
 }

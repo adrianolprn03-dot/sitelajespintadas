@@ -1,77 +1,88 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { useAccessibility } from "./AccessibilityProvider";
 import { usePathname } from "next/navigation";
-import { HiOutlineBars3, HiOutlineXMark, HiMagnifyingGlass, HiArrowTopRightOnSquare } from "react-icons/hi2";
-import { FaUserLock } from "react-icons/fa6";
+import { HiOutlineCloud, HiOutlineBars3, HiOutlineXMark, HiMagnifyingGlass } from "react-icons/hi2";
 import BuscaGlobal from "./BuscaGlobal";
-import AccessibilityToolbar from "./AccessibilityToolbar";
 import { MUNICIPIO } from "@/config/municipio";
 
+
 const navItems = [
+    { label: "Início", href: "/", hasDropdown: false },
     {
-        label: "O Município", 
-        href: "/a-prefeitura", 
-        hasDropdown: true,
+        label: "O Município", href: "/a-prefeitura", hasDropdown: true,
         children: [
             { label: "A Prefeitura", href: "/a-prefeitura" },
-            { label: "Prefeito e Vice", href: "/a-prefeitura/prefeito" },
+            { label: "Secretarias", href: "/secretarias" },
             { label: "História", href: "/a-prefeitura/historia" },
-            { label: "Estrutura Administrativa", href: "/a-prefeitura/estrutura" },
             { label: "Unidades Escolares", href: "/unidades-escolares" },
             { label: "Unidades de Saúde", href: "/unidades-de-saude" },
         ]
     },
     {
-        label: "Secretarias", 
-        href: "/secretarias", 
-        hasDropdown: true,
+        label: "Transparência", href: "/transparencia", hasDropdown: true,
         children: [
-            { label: "Gabinete do Prefeito", href: "/secretarias/gabinete" },
-            { label: "Administração e Planejamento", href: "/secretarias/administracao" },
-            { label: "Finanças e Tributação", href: "/secretarias/financas" },
-            { label: "Educação e Cultura", href: "/secretarias/educacao" },
-            { label: "Saúde Pública", href: "/secretarias/saude" },
-            { label: "Obras e Infraestrutura", href: "/secretarias/obras" },
-            { label: "Assistência Social", href: "/secretarias/social" },
-            { label: "Agricultura e Meio Ambiente", href: "/secretarias/agricultura" },
-            { label: "Todas as Secretarias", href: "/secretarias" },
+            { label: "Portal da Transparência", href: "/transparencia" },
+            { label: "Obras Públicas", href: "/transparencia/obras" },
+            { label: "Licitações", href: "/transparencia/licitacoes" },
+            { label: "Contratos", href: "/transparencia/contratos" },
+            { label: "Legislação Municipal", href: "/transparencia/legislacao" },
+            { label: "Dados Abertos", href: "/transparencia/dados-abertos" },
+            { label: "Transferências Const.", href: "/transparencia/transferencias" },
+            { label: "Dívida Ativa", href: "/transparencia/divida-ativa" },
+            { label: "Conselhos Municipais", href: "/transparencia/conselhos" },
+            { label: "Emendas PIX", href: "/transparencia/emendas-pix" },
+            { label: "Transparência Passiva (e-SIC)", href: "/transparencia/passiva" },
         ]
     },
     {
-        label: "Serviços", 
-        href: "/servicos/ouvidoria", 
-        hasDropdown: true,
+        label: "Informativos", href: "/noticias", hasDropdown: true,
+        children: [
+            { label: "Notícias", href: "/noticias" },
+            { label: "Agenda de Eventos", href: "/agenda" },
+            { label: "Galeria de Fotos", href: "/galeria" },
+        ]
+    },
+    {
+        label: "Serviços", href: "/unidades-de-saude", hasDropdown: true,
+        children: [
+            { label: "Unidades Escolares", href: "/unidades-escolares" },
+            { label: "Unidades de Saúde", href: "/unidades-de-saude" },
+            { label: "Educação e Escolas", href: "/servicos/educacao" },
+            { label: "Assistência Social", href: "/servicos/social" },
+            { label: "Cultura e Esporte", href: "/servicos/cultura" },
+        ]
+    },
+    {
+        label: "Cidadão", href: "/servicos/ouvidoria", hasDropdown: true,
         children: [
             { label: "Ouvidoria Municipal", href: "/servicos/ouvidoria" },
             { label: "e-SIC (LAI)", href: "/servicos/esic" },
-            { label: "Carta de Serviços", href: "/transparencia/carta-servicos" },
-            { label: "Tributos e IPTU", href: "/servicos/tributario" },
-            { label: "Contracheque Online", href: "/servicos/contracheque" },
-            { label: "Medicamentos SUS", href: "/transparencia/medicamentos-sus" },
-            { label: "Central de Regulação", href: "/transparencia/central-regulacao" },
-            { label: "Fila de Creches", href: "/transparencia/educacao" },
+            { label: "FAQ - Perguntas", href: "/transparencia/faq" },
+            { label: "Glossário", href: "/transparencia/glossario" },
+            { label: "Política de Privacidade", href: "/privacidade" },
         ]
-    },
-    {
-        label: "Notícias", 
-        href: "/noticias", 
-        hasDropdown: false,
     },
 ];
 
 const ChevronDown = () => (
-    <svg width="10" height="6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="inline ml-1 opacity-70">
+    <svg width="10" height="6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="inline ml-1.5 opacity-60">
         <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
     </svg>
 );
 
+import AccessibilityToolbar from "./AccessibilityToolbar";
+
 export default function Header() {
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
     const [openDropdown, setOpenDropdown] = useState<number | null>(null);
     const pathname = usePathname();
-    const [logo, setLogo] = useState("/images/logo-lajes-pintadas-new.png");
+    const [logo, setLogo] = useState("/logo_v2.png");
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+
 
     useEffect(() => {
         const fetchLogo = async () => {
@@ -89,34 +100,33 @@ export default function Header() {
         fetchLogo();
     }, []);
 
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 20);
+        };
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
     return (
-        <header className="w-full z-50 fixed top-0 left-0 right-0 bg-white border-b border-[#DDE3EA] shadow-none">
+        <header className="w-full z-50 fixed top-0 left-0 right-0 transition-all duration-500">
             <AccessibilityToolbar />
 
-            {/* BARRA PRINCIPAL */}
-            <div className="max-w-[1240px] mx-auto h-20 px-4 sm:px-6 flex items-center justify-between gap-6">
-                {/* LOGO OFICIAL CONFORME A IMAGEM */}
-                <Link href="/" className="flex items-center gap-3.5 group focus:outline-none focus:ring-2 focus:ring-[#1254A3] rounded-lg">
-                    <img
-                        src={logo}
-                        alt={`Prefeitura de ${MUNICIPIO.nome}`}
-                        className="h-12 sm:h-14 w-auto object-contain transition-transform group-hover:scale-105"
-                    />
-                    <div className="hidden sm:block border-l border-slate-300 pl-3.5">
-                        <span className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider leading-tight">
-                            PREFEITURA DE
-                        </span>
-                        <span className="block text-base sm:text-lg font-black text-[#12304A] font-heading leading-tight tracking-tight">
-                            LAJES PINTADAS
-                        </span>
-                        <span className="block text-[10px] font-medium text-slate-500 leading-tight">
-                            Rio Grande do Norte
-                        </span>
-                    </div>
-                </Link>
+            {/* MAIN NAVBAR */}
+            <div className={`w-full transition-all duration-500 flex items-center justify-between gap-8 px-4 md:px-10 lg:px-16 shadow-xl ${scrolled ? 'h-14 bg-white/90 backdrop-blur-2xl border-b border-primary-100 shadow-primary-900/5' : 'h-20 md:h-24 bg-white/80 backdrop-blur-xl border-b border-white/50 shadow-none'} relative`}>
+                {/* Logo */}
+                <div className="flex-shrink-0">
+                    <Link href="/" className="flex items-center group">
+                        <img
+                            src={logo}
+                            alt={`Prefeitura de ${MUNICIPIO.nome}`}
+                            className="object-contain h-10 w-auto md:h-12 group-hover:scale-105 transition-transform duration-500"
+                        />
+                    </Link>
+                </div>
 
-                {/* MENU DE NAVEGAÇÃO DESKTOP */}
-                <nav id="menu-principal" className="hidden lg:flex items-center gap-2">
+                {/* Desktop Menu */}
+                <nav className="hidden lg:flex items-center gap-1">
                     {navItems.map((item, index) => {
                         const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
                         const isDropdownOpen = openDropdown === index;
@@ -124,34 +134,34 @@ export default function Header() {
                         return (
                             <div 
                                 key={index} 
-                                className="relative py-2"
+                                className="relative py-4"
                                 onMouseEnter={() => setOpenDropdown(index)}
                                 onMouseLeave={() => setOpenDropdown(null)}
                             >
                                 <Link
                                     href={item.href}
-                                    className={`px-3.5 py-2 text-sm font-semibold rounded-[8px] transition-colors flex items-center gap-1 ${
+                                    className={`h-10 px-5 flex items-center text-[10.5px] font-black uppercase tracking-[0.15em] rounded-full transition-all duration-300 ${
                                         isActive 
-                                            ? "text-[#1254A3] font-bold" 
-                                            : "text-[#12304A] hover:text-[#1254A3]"
+                                        ? "text-primary-600 bg-primary-50" 
+                                        : "text-primary-900 hover:text-primary-500 hover:bg-gray-50"
                                     }`}
                                 >
-                                    <span>{item.label}</span>
+                                    {item.label}
                                     {item.children && <ChevronDown />}
                                 </Link>
 
                                 {/* Dropdown Menu */}
                                 {item.children && isDropdownOpen && (
-                                    <div className="absolute top-full left-0 pt-1 w-64 animate-in fade-in duration-150">
-                                        <div className="bg-white rounded-[10px] p-2 shadow-xl border border-[#DDE3EA] overflow-hidden space-y-1">
+                                    <div className="absolute top-full left-0 pt-2 w-64 animate-dropdown-fade">
+                                        <div className="bg-white/95 backdrop-blur-xl rounded-[2rem] p-4 shadow-2xl shadow-primary-900/10 border border-primary-50 overflow-hidden">
                                             {item.children.map((sub, sIndex) => (
                                                 <Link
                                                     key={sIndex}
                                                     href={sub.href}
-                                                    className="flex items-center gap-2.5 px-3 py-2 rounded-[6px] text-xs font-semibold text-[#12304A] hover:text-[#1254A3] hover:bg-[#F0F6FD] transition-colors"
+                                                    className="flex items-center gap-3 px-4 py-3 rounded-2xl text-[10px] font-bold text-gray-600 hover:text-primary-600 hover:bg-primary-50 transition-all group/sub"
                                                 >
-                                                    <span className="w-1.5 h-1.5 rounded-full bg-[#1254A3]" />
-                                                    <span>{sub.label}</span>
+                                                    <div className="w-1.5 h-1.5 rounded-full bg-primary-200 group-hover/sub:bg-primary-500 transition-colors" />
+                                                    <span className="uppercase tracking-widest">{sub.label}</span>
                                                 </Link>
                                             ))}
                                         </div>
@@ -160,89 +170,90 @@ export default function Header() {
                             </div>
                         );
                     })}
+                    <Link
+                        href="/contato"
+                        className="h-10 px-5 flex items-center text-[10.5px] font-black uppercase tracking-[0.2em] text-primary-900 hover:text-primary-500 hover:bg-gray-50 rounded-full transition-all"
+                    >
+                        Contato
+                    </Link>
                 </nav>
 
-                {/* BOTÃO EM DESTAQUE: PORTAL DA TRANSPARÊNCIA */}
-                <div className="flex items-center gap-3">
-                    <Link
-                        href="/transparencia"
-                        className="inline-flex items-center gap-2 bg-[#1254A3] hover:bg-[#0d4282] text-white text-xs sm:text-sm font-bold px-4 sm:px-5 py-2.5 rounded-[8px] shadow-sm transition-all hover:shadow focus:outline-none focus:ring-2 focus:ring-[#1254A3] focus:ring-offset-2"
-                    >
-                        <span>Portal da Transparência</span>
-                        <HiArrowTopRightOnSquare size={16} />
-                    </Link>
-
+                <div className="flex items-center gap-4">
                     <button 
                         onClick={() => setIsSearchOpen(true)}
-                        className="w-9 h-9 flex items-center justify-center rounded-[8px] bg-slate-50 text-slate-500 hover:bg-[#1254A3] hover:text-white transition-colors border border-slate-200"
+                        className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-50 text-gray-400 hover:bg-primary-500 hover:text-white transition-all shadow-inner border border-gray-100"
                         title="Buscar no portal"
-                        aria-label="Buscar no portal"
                     >
-                        <HiMagnifyingGlass size={18} />
+                        <HiMagnifyingGlass size={20} />
                     </button>
 
-                    <Link 
-                        href="/admin" 
-                        className="hidden sm:flex w-9 h-9 items-center justify-center rounded-[8px] bg-slate-50 text-slate-500 hover:bg-[#1254A3] hover:text-white transition-colors border border-slate-200"
-                        title="Painel Administrativo"
-                        aria-label="Painel Administrativo"
-                    >
-                        <FaUserLock size={14} />
+                    <Link href="/admin" className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-50 text-gray-400 hover:bg-primary-500 hover:text-white transition-all shadow-inner border border-gray-100">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                     </Link>
 
-                    {/* Botão Hambúrguer Mobile */}
+                    
                     <button 
                         onClick={() => setMobileOpen(!mobileOpen)} 
-                        className="lg:hidden w-9 h-9 flex items-center justify-center rounded-[8px] bg-[#1254A3] text-white hover:bg-[#0d4282] transition-colors"
-                        aria-label="Menu de navegação"
+                        className="lg:hidden w-10 h-10 flex items-center justify-center rounded-full bg-primary-500 text-white hover:bg-primary-600 transition-all shadow-lg"
                     >
-                        {mobileOpen ? <HiOutlineXMark size={20} /> : <HiOutlineBars3 size={20} />}
+                        {mobileOpen ? <HiOutlineXMark size={24} /> : <HiOutlineBars3 size={24} />}
                     </button>
                 </div>
             </div>
 
-            {/* MENU MOBILE COMPACTO */}
+            {/* Mobile Menu */}
             {mobileOpen && (
-                <div className="lg:hidden bg-white border-b border-[#DDE3EA] px-4 py-4 space-y-3 shadow-xl max-h-[80vh] overflow-y-auto">
-                    {navItems.map((item, index) => (
-                        <div key={index} className="space-y-1">
-                            <Link
-                                href={item.href}
-                                onClick={() => !item.children && setMobileOpen(false)}
-                                className="block font-bold text-sm text-[#12304A] py-2 px-2 hover:bg-[#F0F6FD] rounded-[6px]"
-                            >
-                                {item.label}
-                            </Link>
-                            {item.children && (
-                                <div className="pl-4 space-y-1 border-l-2 border-slate-100 ml-2">
-                                    {item.children.map((sub, sIndex) => (
+                <div className={`lg:hidden fixed inset-0 ${scrolled ? 'top-[104px]' : 'top-[128px]'} bg-white/95 backdrop-blur-xl z-40 overflow-y-auto animate-fade-in px-6 py-10 transition-all duration-300`}>
+                    <div className="flex flex-col gap-8">
+                        {navItems.map((item, index) => (
+                            <div key={index} className="flex flex-col gap-4">
+                                <div className="text-[9px] font-black uppercase tracking-[0.3em] text-primary-300 px-2">{item.label}</div>
+                                <div className="grid grid-cols-1 gap-2">
+                                    {(item.children || [{ label: item.label, href: item.href }]).map((sub, sIdx) => (
                                         <Link
-                                            key={sIndex}
+                                            key={sIdx}
                                             href={sub.href}
                                             onClick={() => setMobileOpen(false)}
-                                            className="block text-xs font-medium text-slate-600 py-1.5 px-2 hover:text-[#1254A3]"
+                                            className="flex items-center justify-between p-5 text-primary-900 font-black uppercase tracking-[0.25em] text-[10px] bg-white border border-primary-50 rounded-3xl shadow-sm hover:border-primary-400 transition-all underline-offset-4"
                                         >
                                             {sub.label}
+                                            <span className="text-primary-500">→</span>
                                         </Link>
                                     ))}
                                 </div>
-                            )}
-                        </div>
-                    ))}
-                    <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
+                            </div>
+                        ))}
                         <Link
-                            href="/admin"
+                            href="/contato"
                             onClick={() => setMobileOpen(false)}
-                            className="text-xs font-bold text-slate-600 hover:text-[#1254A3] flex items-center gap-1.5 py-2"
+                            className="bg-primary-600 text-white text-center p-6 rounded-[2.5rem] font-black uppercase tracking-widest text-xs shadow-xl shadow-primary-500/20"
                         >
-                            <FaUserLock size={12} />
-                            <span>Área Restrita / Painel</span>
+                            Falar com a Prefeitura
                         </Link>
                     </div>
                 </div>
             )}
-
-            {isSearchOpen && <BuscaGlobal onClose={() => setIsSearchOpen(false)} />}
+            {/* Search Overlay */}
+            {isSearchOpen && (
+                <div className="fixed inset-0 z-[100] flex items-start justify-center pt-20 px-4 md:pt-32">
+                    <div 
+                        className="absolute inset-0 bg-primary-950/40 backdrop-blur-md animate-fade-in" 
+                        onClick={() => setIsSearchOpen(false)}
+                    />
+                    <div className="relative w-full max-w-2xl animate-fade-in-up">
+                        <div className="flex justify-end mb-4">
+                            <button 
+                                onClick={() => setIsSearchOpen(false)}
+                                className="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-all border border-white/20"
+                            >
+                                <HiOutlineXMark size={24} />
+                            </button>
+                        </div>
+                        <BuscaGlobal onClose={() => setIsSearchOpen(false)} />
+                    </div>
+                </div>
+            )}
         </header>
     );
 }
+
