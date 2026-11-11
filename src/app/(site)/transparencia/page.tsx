@@ -309,7 +309,7 @@ export default function TransparenciaPage() {
     };
 
     return (
-        <div className="bg-[#f8fafc] min-h-screen font-['Montserrat',sans-serif] text-slate-800">
+        <div className="bg-[#f8fafc] min-h-screen text-[#12304A]">
             {/* Header da Página */}
             <PageHeader
                 title="Portal da Transparência"

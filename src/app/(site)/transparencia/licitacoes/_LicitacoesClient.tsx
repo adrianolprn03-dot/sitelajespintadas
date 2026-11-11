@@ -135,7 +135,7 @@ export default function LicitacoesClient() {
     const totalEstimado = filtrados.reduce((acc, curr) => acc + (curr.valor || 0), 0);
 
     return (
-        <div className="min-h-screen bg-[#f8fafc] font-['Montserrat',sans-serif]">
+        <div className="min-h-screen bg-[#F5F7FA] text-[#12304A]">
             <PageHeader 
                 title="Compras & Licitações"
                 subtitle="Portal de transparência para processos de aquisição, alienação e contratação de serviços."

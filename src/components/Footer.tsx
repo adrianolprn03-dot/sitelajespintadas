@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FaFacebook, FaInstagram, FaYoutube, FaWhatsapp, FaLocationDot, FaPhone, FaEnvelope, FaClock, FaShieldHalved } from "react-icons/fa6";
+import { FaFacebook, FaInstagram, FaYoutube, FaWhatsapp, FaLocationDot, FaPhone, FaEnvelope, FaClock } from "react-icons/fa6";
 import { prisma } from "@/lib/prisma";
 import { MUNICIPIO } from "@/config/municipio";
 
@@ -75,38 +75,9 @@ export default async function Footer() {
 
     return (
         <footer className="bg-[#0B2545] text-slate-300 border-t-4 border-[#F39A32]" role="contentinfo">
-            {/* Faixa de Atendimento Rápido */}
-            <div className="bg-[#1254A3] text-white py-8 border-b border-blue-900/40">
-                <div className="max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-6">
-                    <div>
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-amber-300 block mb-1">
-                            Atendimento ao Cidadão
-                        </span>
-                        <h3 className="text-xl sm:text-2xl font-extrabold font-heading">
-                            Prefeitura Municipal de {MUNICIPIO.nome} – {MUNICIPIO.uf}
-                        </h3>
-                    </div>
-
-                    <div className="flex flex-wrap items-center gap-3">
-                        <Link
-                            href="/servicos/ouvidoria"
-                            className="bg-[#F39A32] hover:bg-[#d97706] text-white text-xs font-bold px-5 py-2.5 rounded-[8px] transition-colors shadow-sm"
-                        >
-                            Fale com a Ouvidoria
-                        </Link>
-                        <Link
-                            href="/transparencia"
-                            className="bg-white/10 hover:bg-white hover:text-[#1254A3] text-white text-xs font-bold px-5 py-2.5 rounded-[8px] border border-white/20 transition-all shadow-sm"
-                        >
-                            Portal da Transparência
-                        </Link>
-                    </div>
-                </div>
-            </div>
-
             {/* Links e Informações Institucionais */}
             <div className="max-w-[1240px] mx-auto px-4 sm:px-6 pt-12 pb-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-10">
                     {/* Coluna Institucional */}
                     <div className="lg:col-span-2 space-y-4">
                         <div className="flex items-center gap-3">
@@ -128,7 +99,7 @@ export default async function Footer() {
                         </div>
 
                         <p className="text-xs text-slate-300 leading-relaxed max-w-sm">
-                            Compromisso com a legalidade, publicidade, integridade e transparência na gestão dos recursos públicos de Lajes Pintadas.
+                            Compromisso com a legalidade, publicidade, integridade e transparência na gestão dos recursos públicos de Lajes Pintadas/RN.
                         </p>
 
                         <div className="text-xs space-y-2 pt-2 text-slate-300">
@@ -195,7 +166,7 @@ export default async function Footer() {
                 </div>
 
                 {/* Linha de Direitos e Normas */}
-                <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-400">
+                <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-400">
                     <p>
                         © {new Date().getFullYear()} {razaoSocial} – Todos os direitos reservados.
                     </p>
@@ -205,6 +176,26 @@ export default async function Footer() {
                         <span>WCAG 2.2 AA / e-MAG</span>
                         <span>·</span>
                         <span className="text-amber-300 font-bold">Critérios PNTP 2026</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* FAIXA INFERIOR EXATA DA IMAGEM DE REFERÊNCIA */}
+            <div className="bg-[#07192F] py-3.5 px-4 sm:px-6 border-t border-white/10">
+                <div className="max-w-[1240px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/70">
+                    <div className="flex items-center gap-3">
+                        <img 
+                            src="/images/logo-lajes-pintadas-new.png" 
+                            alt="Prefeitura de Lajes Pintadas" 
+                            className="h-7 w-auto object-contain brightness-0 invert opacity-90" 
+                        />
+                        <div className="border-l border-white/20 pl-3">
+                            <span className="block text-[9px] uppercase tracking-wider text-white/60 leading-tight">PREFEITURA DE</span>
+                            <span className="block text-xs font-black text-white font-heading leading-tight">LAJES PINTADAS/RN</span>
+                        </div>
+                    </div>
+                    <div className="text-[11px] text-white/60 italic font-medium">
+                        Prévia de design • imagens ilustrativas
                     </div>
                 </div>
             </div>

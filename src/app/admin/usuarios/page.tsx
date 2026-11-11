@@ -187,9 +187,8 @@ export default function AdminUsuariosPage() {
                                         </td>
                                         <td className="px-6 py-4">
                                             <span
-                                                className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase ${
-                                                    u.ativo ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
-                                                }`}
+                                                className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase ${u.ativo ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+                                                    }`}
                                             >
                                                 {u.ativo ? "Ativo" : "Inativo"}
                                             </span>
