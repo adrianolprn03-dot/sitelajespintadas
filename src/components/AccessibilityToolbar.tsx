@@ -1,71 +1,89 @@
 "use client";
 import { useAccessibility } from "./AccessibilityProvider";
-import { FaAdjust, FaSearchPlus, FaSearchMinus, FaRedo, FaSitemap, FaInfoCircle } from "react-icons/fa";
-import Link from "next/link";
+import { FaCircleHalfStroke, FaRegClock, FaLandmark } from "react-icons/fa6";
+import { IoAccessibilityOutline } from "react-icons/io5";
+import { MUNICIPIO } from "@/config/municipio";
 
 export default function AccessibilityToolbar() {
-    const { toggleHighContrast, increaseFontSize, decreaseFontSize, resetFontSize } = useAccessibility();
+    const { toggleHighContrast, increaseFontSize, decreaseFontSize } = useAccessibility();
 
     return (
-        <div className="bg-white/90 backdrop-blur-md py-1.5 w-full border-b border-gray-100 flex items-center justify-between text-primary-900 overflow-x-auto no-scrollbar relative z-[100] px-4 md:px-10 lg:px-16 shadow-sm shadow-blue-900/5">
-            <div className="flex items-center gap-8 shrink-0">
-                <div className="flex items-center gap-5 text-[8px] font-black uppercase tracking-[0.25em] border-r border-gray-200 pr-8 hidden xl:flex text-primary-900/40">
-                    <a href="#conteudo-principal" className="hover:text-primary-500 transition-colors">Conteúdo [1]</a>
-                    <a href="#menu-principal" className="hover:text-primary-500 transition-colors">Menu [2]</a>
-                    <a href="#busca" className="hover:text-primary-500 transition-colors">Busca [3]</a>
+        <div className="bg-gradient-to-r from-[#064E3B] via-[#0F5E43] to-[#064E3B] text-white py-1.5 w-full border-b border-emerald-900/60 text-xs relative z-[100] px-4 sm:px-6 shadow-sm">
+            <div className="max-w-[1280px] mx-auto flex items-center justify-between gap-4">
+                {/* Identidade Institucional & Expediente (Modelo 3 Top Utility Bar) */}
+                <div className="flex items-center gap-4 text-[11px] font-medium text-emerald-50/90">
+                    <div className="flex items-center gap-1.5">
+                        <FaLandmark className="text-[#FACC15] shrink-0" size={12} />
+                        <span className="font-semibold tracking-tight truncate max-w-[200px] sm:max-w-none">
+                            {MUNICIPIO.nomeCompleto}/{MUNICIPIO.uf}
+                        </span>
+                    </div>
+
+                    <div className="hidden lg:flex items-center gap-1.5 pl-4 border-l border-white/20 text-emerald-100/90">
+                        <FaRegClock className="text-[#FACC15] shrink-0" size={12} />
+                        <span>Atendimento: {MUNICIPIO.horario.replace("07:00 às 13:00", "07h às 13h")}</span>
+                    </div>
+
+                    {/* Atalhos para leitor de tela / teclado (WCAG 2.2 / e-MAG) */}
+                    <div className="hidden xl:flex items-center gap-2.5 pl-4 border-l border-white/20 text-[10px] font-semibold text-emerald-100/80">
+                        <a href="#conteudo-principal" className="hover:text-[#FACC15] transition-colors">
+                            Conteúdo <span className="text-[#FACC15] font-bold">[1]</span>
+                        </a>
+                        <span className="text-white/25">·</span>
+                        <a href="#menu-principal" className="hover:text-[#FACC15] transition-colors">
+                            Menu <span className="text-[#FACC15] font-bold">[2]</span>
+                        </a>
+                        <span className="text-white/25">·</span>
+                        <a href="#busca" className="hover:text-[#FACC15] transition-colors">
+                            Busca <span className="text-[#FACC15] font-bold">[3]</span>
+                        </a>
+                    </div>
                 </div>
-                
-                <div className="flex items-center gap-4">
-                    <button 
-                        onClick={toggleHighContrast}
-                        className="flex items-center gap-2.5 px-4 py-2 rounded-xl hover:bg-primary-50 transition-all text-[9.5px] font-black uppercase tracking-widest group border border-transparent hover:border-primary-100"
-                        title="Alt + C (Alto Contraste)"
+
+                {/* Controles de Acessibilidade (Modelo 3) */}
+                <div className="flex items-center gap-3 sm:gap-4 ml-auto text-[11px] font-semibold text-white">
+                    <a
+                        href="/transparencia/acessibilidade"
+                        className="flex items-center gap-1.5 hover:text-[#FACC15] transition-colors focus:outline-none focus:ring-1 focus:ring-[#FACC15] rounded px-1"
+                        title="Diretrizes de Acessibilidade do Portal"
                     >
-                        <FaAdjust className="text-primary-500 group-hover:rotate-180 transition-transform duration-500" />
-                        <span className="hidden sm:inline">Contraste</span>
+                        <IoAccessibilityOutline className="text-[#FACC15]" size={15} />
+                        <span className="hidden sm:inline">Acessibilidade</span>
+                    </a>
+
+                    <span className="text-white/25">|</span>
+
+                    <button
+                        onClick={toggleHighContrast}
+                        className="flex items-center gap-1.5 hover:text-[#FACC15] transition-colors focus:outline-none focus:ring-1 focus:ring-[#FACC15] rounded px-1 cursor-pointer"
+                        title="Alt + C (Alto Contraste)"
+                        aria-label="Alternar Alto Contraste"
+                    >
+                        <FaCircleHalfStroke className="text-[#FACC15]" size={12} />
+                        <span className="hidden md:inline">Alto Contraste</span>
                     </button>
 
-                    <div className="flex items-center gap-1.5 bg-gray-50/50 p-1 rounded-2xl border border-gray-100">
-                        <button 
+                    <span className="text-white/25">|</span>
+
+                    <div className="flex items-center gap-1.5">
+                        <button
                             onClick={decreaseFontSize}
-                            className="w-8 h-8 flex items-center justify-center hover:bg-white rounded-xl transition-all text-xs text-primary-900/60 hover:text-primary-500"
-                            title="Diminuir Fonte"
+                            className="hover:text-[#FACC15] transition-colors px-1.5 py-0.5 rounded bg-white/10 hover:bg-white/20 font-bold focus:outline-none focus:ring-1 focus:ring-[#FACC15] cursor-pointer"
+                            title="Diminuir Fonte (A-)"
+                            aria-label="Diminuir Fonte"
                         >
-                            <FaSearchMinus />
+                            A-
                         </button>
-                        <button 
-                            onClick={resetFontSize}
-                            className="px-3 h-8 flex items-center justify-center hover:bg-white rounded-xl transition-all text-[9px] font-black text-primary-900/30 hover:text-primary-500"
-                            title="Resetar Fonte"
-                        >
-                            <FaRedo size={9} />
-                        </button>
-                        <button 
+                        <button
                             onClick={increaseFontSize}
-                            className="w-8 h-8 flex items-center justify-center hover:bg-white rounded-xl transition-all text-sm text-primary-900/60 hover:text-primary-500"
-                            title="Aumentar Fonte"
+                            className="hover:text-[#FACC15] transition-colors px-1.5 py-0.5 rounded bg-white/10 hover:bg-white/20 font-bold focus:outline-none focus:ring-1 focus:ring-[#FACC15] cursor-pointer"
+                            title="Aumentar Fonte (A+)"
+                            aria-label="Aumentar Fonte"
                         >
-                            <FaSearchPlus />
+                            A+
                         </button>
                     </div>
                 </div>
-            </div>
-
-            <div className="flex items-center gap-6 shrink-0 ml-6">
-                <Link 
-                    href="/mapa-do-site" 
-                    className="flex items-center gap-2.5 text-[9.5px] font-black uppercase tracking-widest text-primary-900/60 hover:text-primary-500 transition-all group"
-                >
-                    <FaSitemap className="text-primary-500 group-hover:scale-110 transition-transform" />
-                    <span className="hidden md:inline">Mapa do Site</span>
-                </Link>
-                <Link 
-                    href="/transparencia/acessibilidade" 
-                    className="flex items-center gap-2.5 text-[9.5px] font-black uppercase tracking-widest text-primary-900/60 hover:text-primary-500 transition-all group"
-                >
-                    <FaInfoCircle className="text-primary-500 group-hover:scale-110 transition-transform" />
-                    <span className="hidden md:inline">Acessibilidade</span>
-                </Link>
             </div>
         </div>
     );

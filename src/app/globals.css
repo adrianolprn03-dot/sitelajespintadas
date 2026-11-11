@@ -1,24 +1,32 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Manrope:wght@600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --primary: #01b0ef;
-  --primary-light: #34c0f2;
-  --primary-dark: #0088b9;
-  --secondary: #FDB913;
-  --secondary-light: #fadb6f;
-  --accent: #FDB913;
-  --font-size-base: 15px; /* Reduzindo levemente o tamanho base */
+  --primary: #0072CE;
+  --primary-light: #36AAF5;
+  --primary-dark: #003B73;
+  --secondary: #EA580C;
+  --secondary-light: #FB923C;
+  --agave: #15803D;
+  --agave-dark: #064E3B;
+  --ouro: #FACC15;
+  --accent: #FACC15;
+  --gov-navy: #003B73;
+  --gov-text: #0F2942;
+  --gov-bg: #F4F7FB;
+  --gov-border: #DCE4EE;
+  --gov-radius: 14px;
+  --font-size-base: 15px;
 }
 
-/* === ACESSIBILIDADE === */
+/* === ACESSIBILIDADE (WCAG 2.2 AA / e-MAG 3.1) === */
 .high-contrast {
   --bg-main: #000 !important;
   --text-main: #fff !important;
-  filter: contrast(1.5);
+  filter: contrast(1.35);
 }
 
 html.high-contrast body {
@@ -27,53 +35,52 @@ html.high-contrast body {
 }
 
 html.high-contrast a {
-  color: #ffff00 !important;
+  color: #FFD700 !important;
 }
 
 html.high-contrast .bg-white {
-  background: #111 !important;
+  background: #0a0a0a !important;
+  border-color: #FFD700 !important;
 }
 
 html.high-contrast .text-gray-600,
-html.high-contrast .text-gray-500 {
-  color: #ddd !important;
-}
-
-html.high-contrast .bg-primary-500,
-html.high-contrast .bg-primary-600 {
-  background: #000080 !important;
-  border: 2px solid #fff;
+html.high-contrast .text-gray-500,
+html.high-contrast .text-slate-600,
+html.high-contrast .text-slate-500 {
+  color: #f1f5f9 !important;
 }
 
 html.high-contrast header {
-  background: #111 !important;
-  border-bottom: 2px solid #fff;
+  background: #000 !important;
+  border-bottom: 2px solid #FFD700 !important;
 }
 
 html.high-contrast footer {
   background: #000 !important;
-  border-top: 2px solid #fff;
+  border-top: 2px solid #FFD700 !important;
 }
 
 html.font-large {
-  font-size: 20px !important;
+  font-size: 18px !important;
 }
 
 html.font-xlarge {
-  font-size: 24px !important;
+  font-size: 20px !important;
 }
 
-/* === SKIP LINK (Acessibilidade) === */
+/* === SKIP LINK (Acessibilidade e-MAG) === */
 .skip-link {
   position: absolute;
-  top: -40px;
-  left: 0;
-  background: var(--primary);
-  color: white;
-  padding: 8px;
+  top: -48px;
+  left: 12px;
+  background: var(--agave-dark);
+  color: #FACC15;
+  padding: 10px 18px;
   text-decoration: none;
   z-index: 9999;
-  font-weight: bold;
+  font-weight: 800;
+  border-radius: 0 0 10px 10px;
+  border: 2px solid #FACC15;
 }
 
 .skip-link:focus {
@@ -91,54 +98,78 @@ html.font-xlarge {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1a5276;
+  background: #0072CE;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #0f3050;
+  background: #003B73;
 }
 
-/* === UTILITÁRIOS === */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* === FILETE HERÁLDICO DO BRASÃO === */
+.heraldic-stripe {
+  background: linear-gradient(
+    90deg,
+    #15803D 0%,
+    #15803D 25%,
+    #FACC15 25%,
+    #FACC15 50%,
+    #EA580C 50%,
+    #EA580C 75%,
+    #0072CE 75%,
+    #0072CE 100%
+  );
+}
+
+/* === UTILITÁRIOS E COMPONENTES === */
 @layer components {
   .btn-primary {
-    @apply bg-primary-500 hover:bg-primary-600 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2;
+    @apply bg-[#0072CE] hover:bg-[#005bb5] text-white font-bold px-6 py-3 rounded-[12px] transition-all duration-200 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#FACC15] focus:ring-offset-2;
   }
 
   .btn-secondary {
-    @apply bg-secondary-500 hover:bg-secondary-600 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-secondary-400 focus:ring-offset-2;
+    @apply bg-[#EA580C] hover:bg-[#c2410c] text-white font-bold px-6 py-3 rounded-[12px] transition-all duration-200 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#EA580C] focus:ring-offset-2;
   }
 
   .btn-outline {
-    @apply border-2 border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2;
+    @apply border-2 border-[#0072CE] text-[#0072CE] hover:bg-[#0072CE] hover:text-white font-bold px-6 py-3 rounded-[12px] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#0072CE] focus:ring-offset-2;
   }
 
   .card {
-    @apply bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100;
+    @apply bg-white rounded-[16px] shadow-gov hover:shadow-gov-hover transition-all duration-300 overflow-hidden border border-[#DCE4EE];
   }
 
   .section-title {
-    @apply text-3xl font-extrabold text-[#003362] mb-4 uppercase tracking-tight;
+    @apply text-2xl sm:text-3xl font-extrabold text-[#0F2942] mb-3 tracking-tight;
+    font-family: 'Plus Jakarta Sans', 'Manrope', sans-serif;
   }
 
   .section-subtitle {
-    @apply text-gray-500 text-base mb-8 uppercase tracking-widest font-semibold;
+    @apply text-[#526B84] text-sm sm:text-base mb-8 font-normal leading-relaxed;
   }
 
   .badge {
-    @apply inline-flex items-center px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest;
+    @apply inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold tracking-wider;
   }
 
   .input-field {
-    @apply w-full px-5 py-3.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-colors bg-gray-50 hover:bg-white;
+    @apply w-full px-4 py-2.5 border border-[#DCE4EE] rounded-[10px] focus:outline-none focus:ring-2 focus:ring-[#0072CE]/20 focus:border-[#0072CE] transition-colors bg-[#F4F7FB] hover:bg-white text-xs font-medium text-[#0F2942];
   }
 
   .table-header {
-    @apply bg-primary-500 text-white font-bold text-sm px-5 py-4 text-left uppercase tracking-wider;
+    @apply bg-[#F8FAFC] text-[#0F2942] font-bold text-xs px-4 py-3.5 text-left border-b border-[#DCE4EE];
   }
 
   .table-cell {
-    @apply px-5 py-4 text-sm text-gray-700 border-b border-gray-50;
+    @apply px-4 py-3.5 text-xs text-[#0F2942] border-b border-[#DCE4EE];
   }
 }
 
@@ -146,9 +177,8 @@ html.font-xlarge {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(16px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -159,123 +189,55 @@ html.font-xlarge {
   from {
     opacity: 0;
   }
-
   to {
     opacity: 1;
-  }
-}
-
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
   }
 }
 
 .animate-fade-in-up {
-  animation: fadeInUp 0.6s ease forwards;
+  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.5s ease forwards;
+  animation: fadeIn 0.4s ease forwards;
 }
 
-.animate-slide-in {
-  animation: slideInLeft 0.6s ease forwards;
-}
-
-/* === HERO GRADIENT === */
+/* === HERO GRADIENT MODELO 3 === */
 .hero-gradient {
   background: linear-gradient(
-    135deg,
-    rgba(0, 34, 65, 0.6) 0%,
-    rgba(1, 136, 185, 0.3) 35%,
-    rgba(1, 176, 239, 0.15) 65%,
-    rgba(253, 185, 19, 0.05) 100%
+    125deg,
+    rgba(0, 43, 92, 0.90) 0%,
+    rgba(0, 114, 206, 0.72) 52%,
+    rgba(234, 88, 12, 0.48) 100%
   );
 }
 
 .hero-overlay {
-  background: linear-gradient(to bottom, rgba(0, 18, 36, 0.5) 0%, rgba(1, 136, 185, 0.15) 55%, rgba(248, 250, 252, 1) 100%);
+  background: linear-gradient(to bottom, rgba(0, 43, 92, 0.75) 0%, rgba(0, 114, 206, 0.35) 60%, rgba(244, 247, 251, 1) 100%);
 }
 
-/* === SECTION BACKGROUNDS === */
-.bg-section-dark {
-  background: linear-gradient(135deg, #002241 0%, #004b8d 100%);
-}
-
-.bg-section-light {
-  background: linear-gradient(180deg, #f0f8ff 0%, #ffffff 100%);
-}
-
-/* === GLASSMORPHISM === */
-.glass {
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 8px 32px 0 rgba(1, 176, 239, 0.1);
-}
-
-.glass-dark {
-  background: rgba(0, 33, 49, 0.7);
-  backdrop-filter: blur(16px) saturate(160%);
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.glass-light {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(24px) saturate(200%);
-  -webkit-backdrop-filter: blur(24px) saturate(200%);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-}
-
-/* === BARRA GOV (Baseada no estilo de topo das prefeituras do Piauí/Gov) === */
+/* === BARRA GOV MODELO 3 (Verde Agave do Brasão/Bandeira) === */
 .barra-gov {
-  background: #002241;
+  background: #064E3B;
 }
 
 /* === NOTÍCIAS === */
 .news-card:hover .news-image {
-  transform: scale(1.08);
+  transform: scale(1.05);
 }
 
 .news-image {
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* === CARD SIMPLES DESTAQUE (Serviços e Transparência) === */
-.service-card {
-  @apply rounded-3xl p-8 bg-white text-gray-800 shadow-sm border border-gray-100 hover:shadow-2xl hover:border-primary/20 transition-all duration-300 hover:-translate-y-2 flex flex-col items-center justify-center text-center;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* === PRINT === */
 @media print {
-
   header,
   footer,
   .no-print {
     display: none !important;
   }
-
   body {
-    font-size: 12pt;
-  }
-}
-
-/* === RESPONSIVE === */
-@media (max-width: 768px) {
-  .section-title {
-    @apply text-2xl;
-  }
-
-  .hero-title {
-    @apply text-3xl;
+    font-size: 11pt;
   }
 }

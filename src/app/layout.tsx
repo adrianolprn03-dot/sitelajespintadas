@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
-
 import { MUNICIPIO } from "@/config/municipio";
+import VLibras from "@/components/VLibras";
 
 export const dynamic = "force-dynamic";
 
@@ -22,17 +22,18 @@ export const metadata: Metadata = {
     },
 };
 
-import VLibras from "@/components/VLibras";
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="pt-BR">
             <head>
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-                <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+                <link
+                    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
+                    rel="stylesheet"
+                />
             </head>
-            <body className="font-sans antialiased bg-white text-gray-900" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+            <body className="font-sans antialiased bg-[#F4F7FB] text-[#0F2942]">
                 <Providers>
                     <a href="#conteudo-principal" className="skip-link">
                         Ir para o conteúdo principal

@@ -4,26 +4,49 @@ export const MUNICIPIO = {
     uf: "RN",
     estado: "Rio Grande do Norte",
     cnpj: "08.159.394/0001-37",
-    ibge: "2406306",
+    ibge: "2406601", // Código IBGE oficial de Lajes Pintadas/RN
     endereco: "Rua São Francisco, 275, Centro",
     cep: "59.235-000",
     telefone: "(84) 9 8748-0287",
     email: "ouvidoria@lajespintadas.rn.gov.br",
     horario: "07:00 às 13:00",
     cores: {
-        primaria: "#0088b9", // Azul Lajes Pintadas
-        secundaria: "#01b0ef",
-        destaque: "#FDB913",
+        primaria: "#0072CE", // Azul Safira do Brasão
+        secundaria: "#EA580C", // Laranja Terracota do Brasão
+        verde: "#15803D", // Verde Agave do Brasão e Bandeira
+        ouro: "#FACC15", // Amarelo Ouro do Brasão e Bandeira
+        destaque: "#EA580C",
+        texto: "#0F2942",
+        fundo: "#F4F7FB",
     },
     gentilico: "Laje-pintadense",
     video: "/video_lajes_pintadas.mp4",
     heroVideo: "https://res.cloudinary.com/drvvsfap5/video/upload/v1775670797/v%C3%ADdeo_lajes_pintadas_uf9kbm.mp4",
     dpo: "Francisco Adriano Bezerra da Silva",
     dpoEmail: "controladoria@lajespintadas.rn.gov.br",
-    brasaoPath: "/images/brasao.png",
+    brasaoPath: "/images/brasao-lajes-pintadas.png",
+    logoColoridaPath: "/images/logo-lajes-pintadas-colorida.png",
+    logoBrancaPath: "/images/logo-lajes-pintadas-new.png",
+    bandeiraPath: "/images/bandeira-lajes-pintadas.png",
     estatisticas: {
         populacao: "4.700",
         area: "311,6 km²",
         fundacao: "1958",
-    }
+    },
+    cicloAvaliacaoAnos: ["2026", "2025", "2024", "2023", "2022"],
+    prazosEsic: {
+        respostaInicialDias: 20,
+        prorrogacaoDias: 10,
+        recursoDias: 10,
+    },
+    periodicidadesPntpDias: {
+        estoqueMedicamentos: 15,
+        receitasDespesas: 30,
+        servidoresFolha: 30,
+        licitacoesContratos: 30,
+        obrasPublicas: 30,
+        rreo: 60,
+        rgf: 120,
+        relatoriosAnuais: 365,
+    },
 };

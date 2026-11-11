@@ -1,6 +1,6 @@
-import React from 'react';
-import Link from 'next/link';
-import { FaChevronRight } from 'react-icons/fa';
+import React from "react";
+import Link from "next/link";
+import { FaChevronRight } from "react-icons/fa6";
 
 interface BreadcrumbItem {
     label: string;
@@ -11,30 +11,39 @@ interface PageHeaderProps {
     title: string;
     subtitle?: string;
     breadcrumbs: BreadcrumbItem[];
-    variant?: 'default' | 'premium';
+    variant?: "default" | "premium";
     icon?: React.ReactNode;
 }
 
-export default function PageHeader({ title, subtitle, breadcrumbs, variant = 'default', icon }: PageHeaderProps) {
-    if (variant === 'premium') {
-        return (
-            <div className="bg-[#f8fafc] relative overflow-hidden pt-44 pb-24 px-6 md:px-12 lg:px-20 border-b border-primary-50">
-                {/* Decorativos suaves */}
-                <div className="absolute top-0 right-0 w-1/2 h-full bg-primary-500/5 -skew-x-12 translate-x-1/4" />
-                <div className="absolute bottom-0 left-0 w-1/3 h-2/3 bg-primary-900/5 skew-x-12 -translate-x-1/4" />
-                
-                <div className="w-full relative z-10">
-                    {/* Breadcrumbs Soft Premium */}
-                    <nav className="text-[10px] font-black uppercase tracking-[0.2em] text-primary-900/30 mb-8 flex items-center gap-3">
+export default function PageHeader({
+    title,
+    subtitle,
+    breadcrumbs,
+    variant = "default",
+    icon,
+}: PageHeaderProps) {
+    return (
+        <div className="bg-white border-b border-[#DCE4EE] pt-8 pb-10 sm:pt-10 sm:pb-12 relative overflow-hidden">
+            {/* Ambient Heraldic Glows (Cores do Brasão: Azul Safira, Verde Agave e Amarelo Ouro) */}
+            <div className="absolute top-0 right-0 w-96 h-96 bg-[#0072CE]/8 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/3" />
+            <div className="absolute bottom-0 left-1/4 w-72 h-72 bg-[#15803D]/6 rounded-full blur-3xl pointer-events-none translate-y-1/2" />
+
+            <div className="max-w-[1280px] mx-auto px-4 sm:px-6 relative z-10 flex flex-col items-start text-left">
+                {/* Breadcrumbs */}
+                {breadcrumbs && breadcrumbs.length > 0 && (
+                    <nav
+                        className="flex items-center flex-wrap gap-2 text-xs font-semibold text-[#526B84] mb-4 bg-[#F4F7FB] px-3.5 py-1.5 rounded-full border border-[#DCE4EE]"
+                        aria-label="Breadcrumb"
+                    >
                         {breadcrumbs.map((item, index) => {
                             const isLast = index === breadcrumbs.length - 1;
                             return (
                                 <React.Fragment key={index}>
-                                    {index > 0 && <span className="opacity-20">/</span>}
+                                    {index > 0 && <FaChevronRight size={8} className="text-slate-400" />}
                                     {isLast || !item.href ? (
-                                        <span className="text-primary-900 font-black">{item.label}</span>
+                                        <span className="text-[#0072CE] font-bold">{item.label}</span>
                                     ) : (
-                                        <Link href={item.href} className="hover:text-primary-500 transition-colors">
+                                        <Link href={item.href} className="hover:text-[#0072CE] transition-colors">
                                             {item.label}
                                         </Link>
                                     )}
@@ -42,73 +51,36 @@ export default function PageHeader({ title, subtitle, breadcrumbs, variant = 'de
                             );
                         })}
                     </nav>
-                    
-                    <div className="flex flex-col md:flex-row md:items-center gap-12">
-                        {icon && (
-                            <div className="w-24 h-24 bg-primary-600 rounded-[2.5rem] flex items-center justify-center shadow-2xl shadow-primary-900/20 relative group overflow-hidden">
-                                <div className="text-white text-4xl group-hover:scale-110 transition-transform duration-500 z-10">
-                                    {icon}
-                                </div>
-                                <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                                <div className="absolute -right-4 -top-4 w-12 h-12 bg-white/10 rounded-full blur-xl" />
-                            </div>
-                        )}
-                        
-                        <div className="flex-1">
-                            <h1 className="text-4xl md:text-6xl font-black text-primary-900 mb-5 tracking-tighter uppercase leading-tight drop-shadow-sm">
-                                {title}
-                            </h1>
-                            {subtitle && (
-                                <p className="text-primary-900/60 max-w-4xl text-lg font-bold leading-relaxed uppercase tracking-wide opacity-80">
-                                    {subtitle}
-                                </p>
-                            )}
+                )}
+
+                <div className="flex flex-col sm:flex-row sm:items-center gap-5 w-full">
+                    {icon && (
+                        <div
+                            className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center text-2xl sm:text-3xl shrink-0 shadow-md ${
+                                variant === "premium"
+                                    ? "bg-gradient-to-br from-[#0072CE] to-[#003B73] text-white ring-2 ring-[#FACC15]"
+                                    : "bg-[#F0F7FF] border border-[#BAE0FD] text-[#0072CE]"
+                            }`}
+                        >
+                            {icon}
                         </div>
+                    )}
+
+                    <div className="flex-1">
+                        <h1 className="text-2xl sm:text-4xl lg:text-[42px] font-black text-[#0F2942] font-heading tracking-tight leading-tight">
+                            {title}
+                        </h1>
+
+                        {/* Barra de assinatura com as 4 cores do Brasão de Lajes Pintadas */}
+                        <div className="h-1.5 w-24 rounded-full heraldic-stripe mt-3 mb-2.5" />
+
+                        {subtitle && (
+                            <p className="text-sm sm:text-base text-[#526B84] font-medium max-w-3xl leading-relaxed">
+                                {subtitle}
+                            </p>
+                        )}
                     </div>
                 </div>
-            </div>
-        );
-    }
-
-    return (
-        <div className="bg-gradient-to-b from-blue-50/80 to-transparent border-b border-gray-100 pt-44 pb-16 relative overflow-hidden z-10">
-            {/* Background Accent */}
-            <div className="absolute top-0 right-0 w-96 h-96 bg-primary-500/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl shadow-inner" />
-            
-            <div className="max-w-[1240px] mx-auto px-6 relative z-10 flex flex-col items-start text-left">
-                {breadcrumbs && breadcrumbs.length > 0 && (
-                    <nav className="flex text-[10px] text-gray-400 font-black uppercase tracking-[0.3em] mb-8" aria-label="Breadcrumb">
-                        <ol className="inline-flex items-center space-x-1 md:space-x-2">
-                            {breadcrumbs.map((item, index) => {
-                                const isLast = index === breadcrumbs.length - 1;
-                                return (
-                                    <li key={index} className="inline-flex items-center">
-                                        {index > 0 && (
-                                            <span className="mx-3 text-gray-300">/</span>
-                                        )}
-                                        {isLast || !item.href ? (
-                                            <span className="text-primary-600 opacity-80">{item.label}</span>
-                                        ) : (
-                                            <Link href={item.href} className="hover:text-primary-500 transition-colors duration-200">
-                                                {item.label}
-                                            </Link>
-                                        )}
-                                    </li>
-                                );
-                            })}
-                        </ol>
-                    </nav>
-                )}
-
-                <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-4 tracking-tighter uppercase leading-tight drop-shadow-sm">
-                    {title}
-                </h1>
-                
-                {subtitle && (
-                    <p className="text-lg text-gray-500 max-w-3xl leading-relaxed font-medium">
-                        {subtitle}
-                    </p>
-                )}
             </div>
         </div>
     );
