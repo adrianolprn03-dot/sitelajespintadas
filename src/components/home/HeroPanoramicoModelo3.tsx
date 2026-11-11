@@ -2,14 +2,8 @@
 
 import Link from "next/link";
 import { MUNICIPIO } from "@/config/municipio";
-import {
-    HiMagnifyingGlass,
-    HiOutlineDocumentText,
-    HiOutlineCreditCard,
-    HiOutlineSparkles,
-} from "react-icons/hi2";
+import { HiMagnifyingGlass } from "react-icons/hi2";
 import { 
-    FaComments, 
     FaArrowRight, 
     FaShieldHalved, 
     FaFileLines, 
@@ -18,29 +12,6 @@ import {
     FaReceipt, 
     FaIdCard 
 } from "react-icons/fa6";
-
-const quickLinks = [
-    {
-        label: "Transparência",
-        href: "/transparencia",
-        icon: FaShieldHalved,
-    },
-    {
-        label: "Licitações",
-        href: "/transparencia/licitacoes",
-        icon: HiOutlineDocumentText,
-    },
-    {
-        label: "Contracheque",
-        href: "/servicos/contracheque",
-        icon: HiOutlineCreditCard,
-    },
-    {
-        label: "Ouvidoria / e-SIC",
-        href: "/servicos/ouvidoria",
-        icon: FaComments,
-    },
-];
 
 const atalhosPrincipais = [
     {
@@ -97,8 +68,8 @@ export default function HeroPanoramicoModelo3() {
                 <div className="max-w-[1280px] mx-auto px-4 sm:px-6">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
                         
-                        {/* Lado Esquerdo: Identidade Cívica, Título, Linha de Apoio, Busca e Atalhos */}
-                        <div className="lg:col-span-6 space-y-5 text-left order-1">
+                        {/* Lado Esquerdo: Identidade Cívica, Título, Linha de Apoio e Busca */}
+                        <div className="lg:col-span-6 space-y-6 text-left order-1">
                             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-blue-50 border border-blue-200/70 rounded-full text-[11px] font-extrabold text-[#1254A3] uppercase tracking-wider shadow-sm">
                                 <span className="w-2 h-2 rounded-full bg-[#F39A32]" />
                                 <span>{MUNICIPIO.nomeCompleto} • {MUNICIPIO.uf}</span>
@@ -131,7 +102,7 @@ export default function HeroPanoramicoModelo3() {
                                         name="q"
                                         placeholder="O que você procura? Ex: IPTU, Licitações, Contracheque..."
                                         className="w-full bg-transparent text-sm text-[#12304A] placeholder-[#5B738B] font-medium focus:outline-none py-2"
-                                        aria-label="Buscar serviços ou dados no portal"
+                                        aria-label="Buscar no portal"
                                     />
                                 </div>
                                 <button
@@ -141,30 +112,9 @@ export default function HeroPanoramicoModelo3() {
                                     <span>Buscar</span>
                                 </button>
                             </form>
-
-                            {/* Atalhos Rápidos com Ícones ("Mais Buscados") */}
-                            <div className="flex flex-wrap items-center gap-2 pt-1">
-                                <span className="inline-flex items-center gap-1.5 text-xs font-extrabold text-[#5B738B]">
-                                    <HiOutlineSparkles className="text-sm text-[#F39A32]" />
-                                    Mais buscados:
-                                </span>
-                                {quickLinks.map((chip, idx) => {
-                                    const Icon = chip.icon;
-                                    return (
-                                        <Link
-                                            key={idx}
-                                            href={chip.href}
-                                            className="group inline-flex items-center gap-1.5 text-xs font-bold text-[#1254A3] bg-blue-50/80 hover:bg-[#1254A3] hover:text-white border border-blue-200/70 hover:border-[#1254A3] px-3.5 py-1.5 rounded-full transition-all duration-200 shadow-sm hover:shadow hover:-translate-y-0.5 active:scale-95"
-                                        >
-                                            <Icon className="text-xs text-[#1254A3] group-hover:text-white transition-colors shrink-0" />
-                                            <span>{chip.label}</span>
-                                        </Link>
-                                    );
-                                })}
-                            </div>
                         </div>
 
-                        {/* Lado Direito: Vídeo Oficial Amplo com Card de Acesso à Informação */}
+                        {/* Lado Direito: Vídeo Oficial Limpo e Amplo */}
                         <div className="lg:col-span-6 relative order-2">
                             <div className="relative rounded-[20px] sm:rounded-[26px] overflow-hidden border border-[#DDE3EA] shadow-[0_16px_40px_rgba(0,43,92,0.12)] group bg-slate-900">
                                 <div className="aspect-[16/11] sm:aspect-[16/10] relative w-full">
@@ -177,8 +127,6 @@ export default function HeroPanoramicoModelo3() {
                                         poster="/images/historia-panoramica.jpg"
                                         className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-700"
                                     />
-                                    {/* Gradiente suave na base para legibilidade do card sobreposto */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-[#0B2545]/85 via-transparent to-transparent pointer-events-none" />
                                 </div>
 
                                 {/* Badge Superior no Vídeo */}
@@ -187,32 +135,6 @@ export default function HeroPanoramicoModelo3() {
                                         <span className="w-2 h-2 rounded-full bg-[#F39A32] animate-pulse" />
                                         <span>Vídeo Oficial • Lajes Pintadas/RN</span>
                                     </span>
-                                </div>
-
-                                {/* Card Sobreposto: Acesso à Informação (e-SIC) */}
-                                <div className="absolute bottom-4 left-4 right-4 sm:bottom-5 sm:left-5 sm:right-5 bg-white/95 backdrop-blur-md p-4 sm:p-5 rounded-2xl border border-white/80 shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                                    <div className="space-y-1">
-                                        <div className="flex items-center gap-2">
-                                            <span className="w-2 h-2 rounded-full bg-[#F39A32]" />
-                                            <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#1254A3]">
-                                                Lei de Acesso à Informação
-                                            </span>
-                                        </div>
-                                        <h2 className="text-sm sm:text-base font-extrabold text-[#12304A] font-heading leading-tight">
-                                            Acesso à Informação e e-SIC
-                                        </h2>
-                                        <p className="text-xs text-[#5B738B] hidden sm:block">
-                                            Abra pedidos e consulte protocolos pelo e-SIC oficial.
-                                        </p>
-                                    </div>
-
-                                    <Link
-                                        href="/servicos/esic"
-                                        className="bg-[#1254A3] hover:bg-[#0d4282] text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 shrink-0 shadow-sm hover:shadow group/btn"
-                                    >
-                                        <span>Solicitar Informação</span>
-                                        <FaArrowRight size={11} className="group-hover/btn:translate-x-1 transition-transform" />
-                                    </Link>
                                 </div>
                             </div>
                         </div>

@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { 
-    FaPlaneDeparture, FaSpinner, FaUserTie, FaMapMarker, 
-    FaCalendar, FaMoneyBillWave, FaBuilding, FaArrowRight, 
+import {
+    FaPlaneDeparture, FaSpinner, FaUserTie, FaMapMarker,
+    FaCalendar, FaMoneyBillWave, FaBuilding, FaArrowRight,
     FaInfoCircle, FaDownload
 } from "react-icons/fa";
-import { 
+import {
     FaMagnifyingGlass, FaSuitcaseRolling,
     FaCircleCheck, FaFilter, FaBuildingColumns,
     FaFileSignature
@@ -138,7 +138,7 @@ export default function DiariasPage() {
         }));
 
         const filename = `diarias_lajespintadas_${mes}_${ano}`;
-        const title = `Relatório de Concessão de Diárias – Lajes Pintadas/RN (${mesesLabels[Number(mes)-1]} / ${ano})`;
+        const title = `Relatório de Concessão de Diárias – Lajes Pintadas/RN (${mesesLabels[Number(mes) - 1]} / ${ano})`;
 
         if (format === "csv") exportToCSV(payload, filename);
         else if (format === "json") exportToJSON(payload, filename);
@@ -162,7 +162,7 @@ export default function DiariasPage() {
                 ]}
             />
 
-            <motion.main 
+            <motion.main
                 initial="hidden"
                 animate="visible"
                 variants={containerVariants}
@@ -170,7 +170,7 @@ export default function DiariasPage() {
             >
                 {/* Highlight Section - Diamond Standard Bento */}
                 <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16 items-stretch">
-                    
+
                     {/* Primary Highlight Card - Total Investido */}
                     <div className="lg:col-span-2 bg-slate-900 rounded-[3rem] p-10 shadow-2xl shadow-slate-900/20 text-white relative overflow-hidden group border border-slate-800">
                         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] -mr-40 -mt-40 group-hover:bg-blue-600/20 transition-all duration-700" />
@@ -198,11 +198,11 @@ export default function DiariasPage() {
                                     <span className="text-2xl font-black text-white/20">,{fmt(totalValor).split(',')[1]}</span>
                                 </div>
                             </div>
-                            
+
                             <div className="mt-16 flex flex-wrap gap-12 items-center border-t border-white/5 pt-10">
                                 <div className="flex flex-col">
                                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/20 mb-2">Ano base</span>
-                                    <span className="text-2xl font-black tracking-tight">{mes ? `${mesesAbrev[Number(mes)-1]} / ` : ''}{ano}</span>
+                                    <span className="text-2xl font-black tracking-tight">{mes ? `${mesesAbrev[Number(mes) - 1]} / ` : ''}{ano}</span>
                                 </div>
                                 <div className="w-px h-12 bg-white/5 hidden md:block" />
                                 <div className="flex flex-col">
@@ -215,36 +215,36 @@ export default function DiariasPage() {
 
                     {/* Secondary Context Card */}
                     <div className="bg-white rounded-[3rem] p-10 shadow-2xl shadow-slate-200/50 border border-slate-100/50 flex flex-col justify-between relative overflow-hidden group">
-                         <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-blue-50/50 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                         <div className="relative">
+                        <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-blue-50/50 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                        <div className="relative">
                             <div className="w-20 h-20 bg-slate-50 rounded-[2rem] flex items-center justify-center mb-8 group-hover:bg-blue-600 transition-all duration-500 group-hover:rotate-6 group-hover:scale-110 shadow-inner group-hover:shadow-blue-600/40">
                                 <FaSuitcaseRolling className="text-blue-300 group-hover:text-white transition-colors" size={36} />
                             </div>
                             <h4 className="text-3xl font-black text-slate-900 tracking-tighter leading-[0.9] mb-4 uppercase">
-                                Missões <br/> <span className="text-blue-600">Oficiais</span>
+                                Missões <br /> <span className="text-blue-600">Oficiais</span>
                             </h4>
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-relaxed opacity-80">
                                 Controle de diárias pagas para serviço público externo.
                             </p>
-                         </div>
-                         <div className="pt-10 border-t border-slate-50">
-                             <div className="flex items-center justify-between">
-                                 <div className="flex items-center gap-2">
-                                     <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Base de Dados</span>
-                                 </div>
-                                 <FaCircleCheck className="text-emerald-500" />
-                             </div>
-                         </div>
+                        </div>
+                        <div className="pt-10 border-t border-slate-50">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Base de Dados</span>
+                                </div>
+                                <FaCircleCheck className="text-emerald-500" />
+                            </div>
+                        </div>
                     </div>
                 </motion.div>
-                
+
                 {/* PNTP Requirements Section - Regulation & Values Table */}
                 <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
                     {/* Regulation Card */}
-                    <a 
-                        href="/uploads/diarias/regulamentacao.pdf" 
-                        target="_blank" 
+                    <a
+                        href="/uploads/diarias/regulamentacao.pdf"
+                        target="_blank"
                         rel="noopener noreferrer"
                         className="group relative bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-xl shadow-slate-200/40 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 overflow-hidden"
                     >
@@ -267,7 +267,7 @@ export default function DiariasPage() {
                     </a>
 
                     {/* Values Table Card */}
-                    <a 
+                    <a
                         href="/transparencia/tabela-diarias"
                         className="group relative bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-xl shadow-slate-200/40 hover:shadow-2xl hover:shadow-emerald-500/10 transition-all duration-500 overflow-hidden"
                     >
@@ -319,8 +319,8 @@ export default function DiariasPage() {
                                 <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none group-focus-within:text-blue-600 transition-colors z-10">
                                     <FaFilter size={14} />
                                 </div>
-                                <select 
-                                    value={secretaria} 
+                                <select
+                                    value={secretaria}
                                     onChange={(e) => setSecretaria(e.target.value)}
                                     className="pl-12 pr-10 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-700 outline-none focus:ring-4 focus:ring-blue-600/5 focus:bg-white transition-all appearance-none cursor-pointer hover:border-blue-400 min-w-[240px] shadow-inner"
                                 >
@@ -338,7 +338,7 @@ export default function DiariasPage() {
                 <div className="space-y-12">
                     <AnimatePresence mode="wait">
                         {loading ? (
-                            <motion.div 
+                            <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
@@ -352,7 +352,7 @@ export default function DiariasPage() {
                                 <p className="text-[12px] font-black text-slate-300 uppercase tracking-[0.5em] animate-pulse">Sincronizando Atos de Concessão</p>
                             </motion.div>
                         ) : diarias.length === 0 ? (
-                            <motion.div 
+                            <motion.div
                                 initial={{ opacity: 0, scale: 0.98 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 className="bg-white rounded-[3rem] p-32 text-center border-4 border-dashed border-slate-50 group hover:border-slate-100 transition-colors"
@@ -365,8 +365,8 @@ export default function DiariasPage() {
                                 <button onClick={handleClearFilters} className="px-12 py-5 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-blue-600 transition-all shadow-xl active:scale-95">Resetar Filtros</button>
                             </motion.div>
                         ) : (
-                            <motion.div 
-                                variants={containerVariants} 
+                            <motion.div
+                                variants={containerVariants}
                                 className="bg-white rounded-[3rem] border border-slate-100 shadow-2xl shadow-slate-200/40 overflow-hidden"
                             >
                                 {/* Cabeçalho da Tabela */}
@@ -384,7 +384,7 @@ export default function DiariasPage() {
                                         </thead>
                                         <tbody>
                                             {diariasPaginadas.map((d, idx) => (
-                                                <motion.tr 
+                                                <motion.tr
                                                     key={d.id}
                                                     variants={itemVariants}
                                                     className="group hover:bg-blue-50/30 transition-all duration-300 border-b border-slate-50 last:border-0"
@@ -408,7 +408,7 @@ export default function DiariasPage() {
                                                     <td className="px-8 py-8 max-w-[250px]">
                                                         <p className="text-[11px] font-black text-slate-800 uppercase tracking-tight mb-1 truncate">{d.destino}</p>
                                                         <p className="text-[10px] text-slate-400 font-bold italic line-clamp-2 leading-relaxed mb-3">"{d.motivo}"</p>
-                                                        <a 
+                                                        <a
                                                             href={d.portariaUrl || `/transparencia/diarias/portaria-${d.id}.pdf`}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
@@ -449,34 +449,34 @@ export default function DiariasPage() {
                                     <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">
                                         Exibindo <span className="text-slate-800">{(pagina - 1) * PER_PAGE + 1}–{Math.min(pagina * PER_PAGE, diarias.length)}</span> de <span className="text-blue-600">{diarias.length}</span> resultados
                                     </p>
-                                    
+
                                     {totalPaginas > 1 && (
                                         <div className="flex items-center gap-2">
-                                            <button 
-                                                onClick={() => setPagina(p => Math.max(1, p - 1))} 
-                                                disabled={pagina === 1} 
+                                            <button
+                                                onClick={() => setPagina(p => Math.max(1, p - 1))}
+                                                disabled={pagina === 1}
                                                 className="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 rounded-xl text-slate-400 hover:bg-blue-600 hover:text-white hover:border-blue-600 disabled:opacity-30 transition-all shadow-sm"
                                             >
                                                 &larr;
                                             </button>
-                                            
+
                                             {/* Paginação Inteligente (Simplificada para o exemplo) */}
                                             {Array.from({ length: Math.min(5, totalPaginas) }, (_, i) => {
                                                 const p = i + 1;
                                                 return (
-                                                    <button 
-                                                        key={p} 
-                                                        onClick={() => setPagina(p)} 
-                                                        className={`w-10 h-10 rounded-xl text-[10px] font-black transition-all border ${ p === pagina ? 'bg-blue-600 text-white border-blue-600 shadow-blue-500/20 shadow-lg' : 'bg-white border-slate-200 text-slate-500 hover:border-blue-400' }`}
+                                                    <button
+                                                        key={p}
+                                                        onClick={() => setPagina(p)}
+                                                        className={`w-10 h-10 rounded-xl text-[10px] font-black transition-all border ${p === pagina ? 'bg-blue-600 text-white border-blue-600 shadow-blue-500/20 shadow-lg' : 'bg-white border-slate-200 text-slate-500 hover:border-blue-400'}`}
                                                     >
                                                         {p}
                                                     </button>
                                                 );
                                             })}
 
-                                            <button 
-                                                onClick={() => setPagina(p => Math.min(totalPaginas, p + 1))} 
-                                                disabled={pagina === totalPaginas} 
+                                            <button
+                                                onClick={() => setPagina(p => Math.min(totalPaginas, p + 1))}
+                                                disabled={pagina === totalPaginas}
                                                 className="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 rounded-xl text-slate-400 hover:bg-blue-600 hover:text-white hover:border-blue-600 disabled:opacity-30 transition-all shadow-sm"
                                             >
                                                 &rarr;
@@ -512,7 +512,7 @@ export default function DiariasPage() {
                     <BannerPNTP />
                     <div className="mt-20 text-center">
                         <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em] leading-[2] max-w-2xl mx-auto">
-                            GESTÃO DE DIÁRIAS E PASSAGENS • PREFEITURA DE LAJES PINTADAS/RN <br/>
+                            GESTÃO DE DIÁRIAS E PASSAGENS • PREFEITURA DE LAJES PINTADAS/RN <br />
                             <span className="opacity-40 font-bold italic">Processamento eletrônico em conformidade com as recomendações do Ministério Público Estadual.</span>
                         </p>
                     </div>
