@@ -14,7 +14,8 @@ export default function AdminNovoUsuarioPage() {
         senha: "",
         confirmarSenha: "",
         perfil: "editor",
-        ativo: true
+        secretariasAutorizadas: "",
+        ativo: true,
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -45,7 +46,11 @@ export default function AdminNovoUsuarioPage() {
                     email: formData.email,
                     senha: formData.senha,
                     perfil: formData.perfil,
-                    ativo: formData.ativo
+                    secretariasAutorizadas: formData.secretariasAutorizadas
+                        .split(",")
+                        .map((s) => s.trim())
+                        .filter(Boolean),
+                    ativo: formData.ativo,
                 }),
             });
 
@@ -58,7 +63,7 @@ export default function AdminNovoUsuarioPage() {
             } else {
                 toast.error(data.error || "Erro ao criar usuário.");
             }
-        } catch (error) {
+        } catch {
             toast.error("Erro de conexão.");
         } finally {
             setLoading(false);
@@ -68,12 +73,15 @@ export default function AdminNovoUsuarioPage() {
     return (
         <div className="max-w-3xl mx-auto space-y-6">
             <div className="flex items-center gap-4">
-                <Link href="/admin/usuarios" className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-500 hover:text-primary-600 hover:bg-primary-50 transition-all shadow-sm">
+                <Link
+                    href="/admin/usuarios"
+                    className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-500 hover:text-primary-600 hover:bg-primary-50 transition-all shadow-sm"
+                >
                     <FaArrowLeft />
                 </Link>
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-800">Novo Usuário</h1>
-                    <p className="text-gray-500 text-sm">Adicione um novo membro da equipe ao sistema</p>
+                    <h1 className="text-2xl font-bold text-gray-800">Novo Responsável / Usuário</h1>
+                    <p className="text-gray-500 text-sm">Defina o perfil de governança e as secretarias autorizadas</p>
                 </div>
             </div>
 
@@ -88,12 +96,12 @@ export default function AdminNovoUsuarioPage() {
                             className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
                             value={formData.nome}
                             onChange={handleChange}
-                            placeholder="Ex: João da Silva"
+                            placeholder="Ex: Maria da Silva"
                         />
                     </div>
 
                     <div className="col-span-1 md:col-span-2">
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">E-mail (Login) *</label>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">E-mail Institucional (Login) *</label>
                         <input
                             type="email"
                             name="email"
@@ -101,7 +109,7 @@ export default function AdminNovoUsuarioPage() {
                             className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
                             value={formData.email}
                             onChange={handleChange}
-                            placeholder="email@lajespintadas.rn.gov.br"
+                            placeholder="servidor@lajespintadas.rn.gov.br"
                         />
                     </div>
 
@@ -134,14 +142,17 @@ export default function AdminNovoUsuarioPage() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Perfil de Acesso *</label>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Perfil de Acesso (RBAC) *</label>
                         <select
                             name="perfil"
                             className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
                             value={formData.perfil}
                             onChange={handleChange}
                         >
-                            <option value="editor">Editor (Conteúdo Geral)</option>
+                            <option value="editor">Editor de Secretaria</option>
+                            <option value="controladoria">Controladoria / Revisor</option>
+                            <option value="integracao">Operador de Integração</option>
+                            <option value="esic">Operador de e-SIC / Ouvidoria</option>
                             <option value="comunicacao">Comunicação (Notícias e Mídia)</option>
                             <option value="admin">Administrador (Acesso Total)</option>
                         </select>
@@ -157,25 +168,38 @@ export default function AdminNovoUsuarioPage() {
                                     checked={formData.ativo}
                                     onChange={handleChange}
                                 />
-                                <div className={`block w-10 h-6 rounded-full transition-colors ${formData.ativo ? 'bg-primary-500' : 'bg-gray-300'}`}></div>
-                                <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${formData.ativo ? 'translate-x-4' : ''}`}></div>
+                                <div className={`block w-10 h-6 rounded-full transition-colors ${formData.ativo ? "bg-primary-500" : "bg-gray-300"}`}></div>
+                                <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${formData.ativo ? "translate-x-4" : ""}`}></div>
                             </div>
-                            <div className="ml-3 font-medium text-gray-700 text-sm">
-                                Usuário Ativo (pode fazer login)
-                            </div>
+                            <div className="ml-3 font-medium text-gray-700 text-sm">Usuário Ativo (pode fazer login)</div>
                         </label>
                     </div>
+
+                    {formData.perfil === "editor" && (
+                        <div className="col-span-1 md:col-span-2">
+                            <label className="block text-sm font-semibold text-gray-700 mb-1">
+                                Secretarias / Unidades Autorizadas (separadas por vírgula)
+                            </label>
+                            <p className="text-xs text-gray-500 mb-2">
+                                Deixe em branco para autorizar todas as secretarias ou informe as unidades específicas (ex: Secretaria de Saúde, Secretaria de Educação).
+                            </p>
+                            <input
+                                type="text"
+                                name="secretariasAutorizadas"
+                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
+                                value={formData.secretariasAutorizadas}
+                                onChange={handleChange}
+                                placeholder="Ex: Secretaria de Saúde, Secretaria de Finanças"
+                            />
+                        </div>
+                    )}
                 </div>
 
                 <div className="pt-6 border-t border-gray-100 flex justify-end gap-3">
                     <Link href="/admin/usuarios" className="btn-secondary">
                         Cancelar
                     </Link>
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="btn-primary flex items-center gap-2"
-                    >
+                    <button type="submit" disabled={loading} className="btn-primary flex items-center gap-2">
                         {loading ? "Salvando..." : <><FaSave /> Salvar Usuário</>}
                     </button>
                 </div>

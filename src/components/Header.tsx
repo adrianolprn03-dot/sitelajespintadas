@@ -1,13 +1,12 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { useAccessibility } from "./AccessibilityProvider";
 import { usePathname } from "next/navigation";
-import { HiOutlineCloud, HiOutlineBars3, HiOutlineXMark, HiMagnifyingGlass } from "react-icons/hi2";
+import { HiOutlineBars3, HiOutlineXMark, HiMagnifyingGlass } from "react-icons/hi2";
+import { FaShieldHalved, FaUserLock } from "react-icons/fa6";
 import BuscaGlobal from "./BuscaGlobal";
+import AccessibilityToolbar from "./AccessibilityToolbar";
 import { MUNICIPIO } from "@/config/municipio";
-
 
 const navItems = [
     { label: "Início", href: "/", hasDropdown: false },
@@ -25,44 +24,40 @@ const navItems = [
         label: "Transparência", href: "/transparencia", hasDropdown: true,
         children: [
             { label: "Portal da Transparência", href: "/transparencia" },
+            { label: "Licitações Públicas", href: "/transparencia/licitacoes" },
+            { label: "Contratos e Aditivos", href: "/transparencia/contratos" },
+            { label: "Receitas Públicas", href: "/transparencia/receitas" },
+            { label: "Despesas Públicas", href: "/transparencia/despesas" },
+            { label: "Quadro de Pessoal", href: "/transparencia/servidores" },
+            { label: "Diárias Concedidas", href: "/transparencia/diarias" },
             { label: "Obras Públicas", href: "/transparencia/obras" },
-            { label: "Licitações", href: "/transparencia/licitacoes" },
-            { label: "Contratos", href: "/transparencia/contratos" },
             { label: "Legislação Municipal", href: "/transparencia/legislacao" },
-            { label: "Dados Abertos", href: "/transparencia/dados-abertos" },
-            { label: "Transferências Const.", href: "/transparencia/transferencias" },
-            { label: "Dívida Ativa", href: "/transparencia/divida-ativa" },
-            { label: "Conselhos Municipais", href: "/transparencia/conselhos" },
-            { label: "Emendas PIX", href: "/transparencia/emendas-pix" },
+            { label: "Dados Abertos e API", href: "/transparencia/dados-abertos" },
             { label: "Transparência Passiva (e-SIC)", href: "/transparencia/passiva" },
         ]
     },
     {
-        label: "Informativos", href: "/noticias", hasDropdown: true,
+        label: "Serviços", href: "/servicos/educacao", hasDropdown: true,
         children: [
-            { label: "Notícias", href: "/noticias" },
-            { label: "Agenda de Eventos", href: "/agenda" },
-            { label: "Galeria de Fotos", href: "/galeria" },
-        ]
-    },
-    {
-        label: "Serviços", href: "/unidades-de-saude", hasDropdown: true,
-        children: [
-            { label: "Unidades Escolares", href: "/unidades-escolares" },
-            { label: "Unidades de Saúde", href: "/unidades-de-saude" },
             { label: "Educação e Escolas", href: "/servicos/educacao" },
             { label: "Assistência Social", href: "/servicos/social" },
             { label: "Cultura e Esporte", href: "/servicos/cultura" },
+            { label: "Unidades de Saúde", href: "/unidades-de-saude" },
+            { label: "Ouvidoria Municipal", href: "/servicos/ouvidoria" },
+            { label: "e-SIC (LAI)", href: "/servicos/esic" },
         ]
+    },
+    {
+        label: "Notícias", href: "/noticias", hasDropdown: false,
     },
     {
         label: "Cidadão", href: "/servicos/ouvidoria", hasDropdown: true,
         children: [
             { label: "Ouvidoria Municipal", href: "/servicos/ouvidoria" },
             { label: "e-SIC (LAI)", href: "/servicos/esic" },
-            { label: "FAQ - Perguntas", href: "/transparencia/faq" },
-            { label: "Glossário", href: "/transparencia/glossario" },
-            { label: "Política de Privacidade", href: "/privacidade" },
+            { label: "FAQ / Perguntas Frequentes", href: "/transparencia/faq" },
+            { label: "Glossário do Cidadão", href: "/transparencia/glossario" },
+            { label: "Política de Privacidade (LGPD)", href: "/privacidade" },
         ]
     },
 ];
@@ -73,16 +68,13 @@ const ChevronDown = () => (
     </svg>
 );
 
-import AccessibilityToolbar from "./AccessibilityToolbar";
-
 export default function Header() {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const [openDropdown, setOpenDropdown] = useState<number | null>(null);
     const pathname = usePathname();
-    const [logo, setLogo] = useState("/logo_v2.png");
+    const [logo, setLogo] = useState("/images/logo-lajes-pintadas-new.png");
     const [isSearchOpen, setIsSearchOpen] = useState(false);
-
 
     useEffect(() => {
         const fetchLogo = async () => {
@@ -109,24 +101,38 @@ export default function Header() {
     }, []);
 
     return (
-        <header className="w-full z-50 fixed top-0 left-0 right-0 transition-all duration-500">
+        <header className="w-full z-50 fixed top-0 left-0 right-0 transition-all duration-300">
             <AccessibilityToolbar />
 
             {/* MAIN NAVBAR */}
-            <div className={`w-full transition-all duration-500 flex items-center justify-between gap-8 px-4 md:px-10 lg:px-16 shadow-xl ${scrolled ? 'h-14 bg-white/90 backdrop-blur-2xl border-b border-primary-100 shadow-primary-900/5' : 'h-20 md:h-24 bg-white/80 backdrop-blur-xl border-b border-white/50 shadow-none'} relative`}>
-                {/* Logo */}
+            <div className={`w-full transition-all duration-300 flex items-center justify-between gap-6 px-4 md:px-8 lg:px-12 ${
+                scrolled 
+                    ? 'h-16 bg-white/95 backdrop-blur-md border-b border-[#DDE3EA] shadow-sm' 
+                    : 'h-20 bg-white border-b border-[#DDE3EA] shadow-none'
+            }`}>
+                {/* Logo e Identidade */}
                 <div className="flex-shrink-0">
-                    <Link href="/" className="flex items-center group">
-                        <img
-                            src={logo}
-                            alt={`Prefeitura de ${MUNICIPIO.nome}`}
-                            className="object-contain h-10 w-auto md:h-12 group-hover:scale-105 transition-transform duration-500"
-                        />
+                    <Link href="/" className="flex items-center gap-3 group focus:outline-none focus:ring-2 focus:ring-[#1254A3] rounded-lg p-1">
+                        <div className="relative h-11 w-11 shrink-0 bg-slate-50 rounded-lg p-1 border border-[#DDE3EA] flex items-center justify-center">
+                            <img
+                                src={logo}
+                                alt={`Prefeitura de ${MUNICIPIO.nome}`}
+                                className="object-contain h-9 w-auto group-hover:scale-105 transition-transform duration-300"
+                            />
+                        </div>
+                        <div className="hidden sm:block">
+                            <span className="block text-[10px] font-bold text-[#5B738B] uppercase tracking-wider">
+                                Poder Executivo
+                            </span>
+                            <span className="block text-base font-extrabold text-[#12304A] leading-tight font-heading group-hover:text-[#1254A3] transition-colors">
+                                Prefeitura de {MUNICIPIO.nome}
+                            </span>
+                        </div>
                     </Link>
                 </div>
 
                 {/* Desktop Menu */}
-                <nav className="hidden lg:flex items-center gap-1">
+                <nav id="menu-principal" className="hidden lg:flex items-center gap-1">
                     {navItems.map((item, index) => {
                         const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
                         const isDropdownOpen = openDropdown === index;
@@ -134,16 +140,16 @@ export default function Header() {
                         return (
                             <div 
                                 key={index} 
-                                className="relative py-4"
+                                className="relative py-2"
                                 onMouseEnter={() => setOpenDropdown(index)}
                                 onMouseLeave={() => setOpenDropdown(null)}
                             >
                                 <Link
                                     href={item.href}
-                                    className={`h-10 px-5 flex items-center text-[10.5px] font-black uppercase tracking-[0.15em] rounded-full transition-all duration-300 ${
+                                    className={`h-9 px-3.5 flex items-center text-xs font-semibold rounded-[8px] transition-colors ${
                                         isActive 
-                                        ? "text-primary-600 bg-primary-50" 
-                                        : "text-primary-900 hover:text-primary-500 hover:bg-gray-50"
+                                            ? "text-[#1254A3] bg-blue-50/80 font-bold" 
+                                            : "text-[#12304A] hover:text-[#1254A3] hover:bg-slate-50"
                                     }`}
                                 >
                                     {item.label}
@@ -152,16 +158,16 @@ export default function Header() {
 
                                 {/* Dropdown Menu */}
                                 {item.children && isDropdownOpen && (
-                                    <div className="absolute top-full left-0 pt-2 w-64 animate-dropdown-fade">
-                                        <div className="bg-white/95 backdrop-blur-xl rounded-[2rem] p-4 shadow-2xl shadow-primary-900/10 border border-primary-50 overflow-hidden">
+                                    <div className="absolute top-full left-0 pt-2 w-64 animate-in fade-in duration-200">
+                                        <div className="bg-white rounded-[10px] p-2 shadow-lg border border-[#DDE3EA] overflow-hidden space-y-1">
                                             {item.children.map((sub, sIndex) => (
                                                 <Link
                                                     key={sIndex}
                                                     href={sub.href}
-                                                    className="flex items-center gap-3 px-4 py-3 rounded-2xl text-[10px] font-bold text-gray-600 hover:text-primary-600 hover:bg-primary-50 transition-all group/sub"
+                                                    className="flex items-center gap-2.5 px-3 py-2 rounded-[6px] text-xs font-medium text-[#12304A] hover:text-[#1254A3] hover:bg-blue-50/60 transition-colors"
                                                 >
-                                                    <div className="w-1.5 h-1.5 rounded-full bg-primary-200 group-hover/sub:bg-primary-500 transition-colors" />
-                                                    <span className="uppercase tracking-widest">{sub.label}</span>
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-[#1254A3]/30" />
+                                                    <span>{sub.label}</span>
                                                 </Link>
                                             ))}
                                         </div>
@@ -170,83 +176,104 @@ export default function Header() {
                             </div>
                         );
                     })}
-                    <Link
-                        href="/contato"
-                        className="h-10 px-5 flex items-center text-[10.5px] font-black uppercase tracking-[0.2em] text-primary-900 hover:text-primary-500 hover:bg-gray-50 rounded-full transition-all"
-                    >
-                        Contato
-                    </Link>
                 </nav>
 
-                <div className="flex items-center gap-4">
-                    <button 
-                        onClick={() => setIsSearchOpen(true)}
-                        className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-50 text-gray-400 hover:bg-primary-500 hover:text-white transition-all shadow-inner border border-gray-100"
-                        title="Buscar no portal"
+                {/* Botão Destaque Transparência e Ações */}
+                <div className="flex items-center gap-3">
+                    <Link
+                        href="/transparencia"
+                        className="hidden sm:inline-flex items-center gap-2 bg-[#1254A3] hover:bg-[#0d4282] text-white text-xs font-bold px-4 py-2 rounded-[10px] shadow-sm transition-all hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#1254A3] focus:ring-offset-2"
                     >
-                        <HiMagnifyingGlass size={20} />
-                    </button>
-
-                    <Link href="/admin" className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-50 text-gray-400 hover:bg-primary-500 hover:text-white transition-all shadow-inner border border-gray-100">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        <FaShieldHalved className="text-amber-300" size={13} />
+                        <span>Portal da Transparência</span>
                     </Link>
 
-                    
+                    <button 
+                        onClick={() => setIsSearchOpen(true)}
+                        className="w-9 h-9 flex items-center justify-center rounded-[8px] bg-slate-50 text-[#5B738B] hover:bg-[#1254A3] hover:text-white transition-colors border border-[#DDE3EA]"
+                        title="Buscar no portal"
+                        aria-label="Buscar no portal"
+                    >
+                        <HiMagnifyingGlass size={18} />
+                    </button>
+
+                    <Link 
+                        href="/admin" 
+                        className="w-9 h-9 flex items-center justify-center rounded-[8px] bg-slate-50 text-[#5B738B] hover:bg-[#1254A3] hover:text-white transition-colors border border-[#DDE3EA]"
+                        title="Painel Administrativo"
+                        aria-label="Painel Administrativo"
+                    >
+                        <FaUserLock size={15} />
+                    </Link>
+
                     <button 
                         onClick={() => setMobileOpen(!mobileOpen)} 
-                        className="lg:hidden w-10 h-10 flex items-center justify-center rounded-full bg-primary-500 text-white hover:bg-primary-600 transition-all shadow-lg"
+                        className="lg:hidden w-9 h-9 flex items-center justify-center rounded-[8px] bg-[#1254A3] text-white hover:bg-[#0d4282] transition-colors"
+                        aria-label="Menu de navegação"
                     >
-                        {mobileOpen ? <HiOutlineXMark size={24} /> : <HiOutlineBars3 size={24} />}
+                        {mobileOpen ? <HiOutlineXMark size={20} /> : <HiOutlineBars3 size={20} />}
                     </button>
                 </div>
             </div>
 
             {/* Mobile Menu */}
             {mobileOpen && (
-                <div className={`lg:hidden fixed inset-0 ${scrolled ? 'top-[104px]' : 'top-[128px]'} bg-white/95 backdrop-blur-xl z-40 overflow-y-auto animate-fade-in px-6 py-10 transition-all duration-300`}>
-                    <div className="flex flex-col gap-8">
+                <div className={`lg:hidden fixed inset-0 top-[110px] bg-white z-40 overflow-y-auto px-6 py-6 border-t border-[#DDE3EA] space-y-4`}>
+                    <div className="pb-3 border-b border-slate-100">
+                        <Link
+                            href="/transparencia"
+                            onClick={() => setMobileOpen(false)}
+                            className="flex items-center justify-center gap-2 w-full bg-[#1254A3] text-white text-xs font-bold py-3 rounded-[10px] shadow-sm"
+                        >
+                            <FaShieldHalved className="text-amber-300" size={14} />
+                            <span>Acessar Portal da Transparência</span>
+                        </Link>
+                    </div>
+
+                    <div className="flex flex-col space-y-2">
                         {navItems.map((item, index) => (
-                            <div key={index} className="flex flex-col gap-4">
-                                <div className="text-[9px] font-black uppercase tracking-[0.3em] text-primary-300 px-2">{item.label}</div>
-                                <div className="grid grid-cols-1 gap-2">
-                                    {(item.children || [{ label: item.label, href: item.href }]).map((sub, sIdx) => (
-                                        <Link
-                                            key={sIdx}
-                                            href={sub.href}
-                                            onClick={() => setMobileOpen(false)}
-                                            className="flex items-center justify-between p-5 text-primary-900 font-black uppercase tracking-[0.25em] text-[10px] bg-white border border-primary-50 rounded-3xl shadow-sm hover:border-primary-400 transition-all underline-offset-4"
-                                        >
-                                            {sub.label}
-                                            <span className="text-primary-500">→</span>
-                                        </Link>
-                                    ))}
-                                </div>
+                            <div key={index} className="space-y-1">
+                                <Link
+                                    href={item.href}
+                                    onClick={() => setMobileOpen(false)}
+                                    className="block px-3 py-2 text-sm font-bold text-[#12304A] hover:bg-slate-50 rounded-[8px]"
+                                >
+                                    {item.label}
+                                </Link>
+                                {item.children && (
+                                    <div className="pl-4 space-y-1 border-l-2 border-slate-100 ml-3">
+                                        {item.children.map((sub, sIdx) => (
+                                            <Link
+                                                key={sIdx}
+                                                href={sub.href}
+                                                onClick={() => setMobileOpen(false)}
+                                                className="block py-1.5 px-2 text-xs text-[#5B738B] hover:text-[#1254A3]"
+                                            >
+                                                {sub.label}
+                                            </Link>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         ))}
-                        <Link
-                            href="/contato"
-                            onClick={() => setMobileOpen(false)}
-                            className="bg-primary-600 text-white text-center p-6 rounded-[2.5rem] font-black uppercase tracking-widest text-xs shadow-xl shadow-primary-500/20"
-                        >
-                            Falar com a Prefeitura
-                        </Link>
                     </div>
                 </div>
             )}
+
             {/* Search Overlay */}
             {isSearchOpen && (
                 <div className="fixed inset-0 z-[100] flex items-start justify-center pt-20 px-4 md:pt-32">
                     <div 
-                        className="absolute inset-0 bg-primary-950/40 backdrop-blur-md animate-fade-in" 
+                        className="absolute inset-0 bg-[#0B2545]/60 backdrop-blur-sm" 
                         onClick={() => setIsSearchOpen(false)}
                     />
-                    <div className="relative w-full max-w-2xl animate-fade-in-up">
-                        <div className="flex justify-end mb-4">
+                    <div className="relative w-full max-w-2xl">
+                        <div className="flex justify-end mb-3">
                             <button 
                                 onClick={() => setIsSearchOpen(false)}
-                                className="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-all border border-white/20"
+                                className="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 transition-all"
                             >
-                                <HiOutlineXMark size={24} />
+                                <HiOutlineXMark size={20} />
                             </button>
                         </div>
                         <BuscaGlobal onClose={() => setIsSearchOpen(false)} />
@@ -256,4 +283,3 @@ export default function Header() {
         </header>
     );
 }
-

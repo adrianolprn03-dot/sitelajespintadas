@@ -12,7 +12,7 @@ import {
     FaHandshake, FaPlane, FaHammer, FaQuestionCircle, FaBook,
     FaUserFriends, FaUpload, FaFile, FaExternalLinkAlt, FaUserShield,
     FaUserGraduate, FaUserTie, FaCog, FaTheaterMasks, FaHeartbeat,
-    FaChevronDown, FaShieldAlt
+    FaShieldAlt, FaHistory
 } from "react-icons/fa";
 
 type MenuItem = {
@@ -29,79 +29,82 @@ type MenuCategory = {
     items: MenuItem[];
 };
 
+const ALL_TRANSPARENCY_ROLES = ["admin", "controladoria", "editor", "integracao"];
+
 const menuCategories: MenuCategory[] = [
     {
-        title: "Principal",
+        title: "Governança & Visão Geral",
         items: [
-            { label: "Dashboard", href: "/admin", icon: FaHome, exact: true, roles: ["admin", "editor", "comunicacao"] },
+            { label: "Visão Geral", href: "/admin", icon: FaHome, exact: true, roles: ["admin", "controladoria", "editor", "integracao", "esic", "comunicacao"] },
+            { label: "Acompanhamento PNTP", href: "/admin/pntp", icon: FaShieldAlt, roles: ["admin", "controladoria", "editor", "integracao"] },
+            { label: "Histórico de Alterações", href: "/admin/historico", icon: FaHistory, roles: ["admin", "controladoria", "editor", "integracao"] },
+            { label: "Importações & Integrações", href: "/admin/importacao", icon: FaUpload, roles: ["admin", "controladoria", "integracao", "editor"] },
         ]
     },
     {
-        title: "Conteúdo & Mídia",
+        title: "Publicações e Documentos",
         items: [
-            { label: "Notícias", href: "/admin/noticias", icon: FaNewspaper, roles: ["admin", "editor", "comunicacao"] },
-            { label: "Agenda Eventos", href: "/admin/agenda", icon: FaCalendar, roles: ["admin", "editor", "comunicacao"] },
-            { label: "Galeria de Fotos", href: "/admin/galeria", icon: FaImages, roles: ["admin", "editor", "comunicacao"] },
-            { label: "FAQ / Dúvidas", href: "/admin/faq", icon: FaQuestionCircle, roles: ["admin", "editor"] },
-            { label: "Glossário", href: "/admin/glossario", icon: FaBook, roles: ["admin", "editor"] },
-            { label: "Incentivos Culturais", href: "/admin/incentivos-culturais", icon: FaTheaterMasks, roles: ["admin", "editor"] },
+            { label: "Documentos Oficiais", href: "/admin/documentos", icon: FaFileContract, roles: ALL_TRANSPARENCY_ROLES },
+            { label: "Legislação e Atos", href: "/admin/legislacao", icon: FaGavel, roles: ALL_TRANSPARENCY_ROLES },
+            { label: "Relatórios Fiscais (LRF)", href: "/admin/relatorios-fiscais", icon: FaChartBar, roles: ALL_TRANSPARENCY_ROLES },
+            { label: "Editais Oficiais", href: "/admin/editais", icon: FaBullhorn, roles: ALL_TRANSPARENCY_ROLES },
         ]
     },
     {
-        title: "Transparência & Finanças",
+        title: "Cadastros por Assunto: Finanças",
         items: [
-            { label: "Licitações", href: "/admin/licitacoes", icon: FaGavel, roles: ["admin", "editor"] },
-            { label: "Contratos", href: "/admin/contratos", icon: FaFileContract, roles: ["admin", "editor"] },
-            { label: "Convênios", href: "/admin/convenios", icon: FaHandshake, roles: ["admin", "editor"] },
-            { label: "Diárias de Viagem", href: "/admin/diarias", icon: FaPlane, roles: ["admin", "editor"] },
-            { label: "Receitas", href: "/admin/receitas", icon: FaMoneyBillWave, roles: ["admin", "editor"] },
-            { label: "Despesas", href: "/admin/despesas", icon: FaChartBar, roles: ["admin", "editor"] },
-            { label: "Emendas Parl.", href: "/admin/emendas", icon: FaMoneyBillWave, roles: ["admin", "editor"] },
-            { label: "Emendas PIX", href: "/admin/emendas-pix", icon: FaMoneyBillWave, roles: ["admin", "editor"] },
-            { label: "Relatórios Fiscais", href: "/admin/relatorios-fiscais", icon: FaChartBar, roles: ["admin", "editor"] },
-            { label: "Pesquisas (PNTP)", href: "/admin/pesquisa-satisfacao", icon: FaChartBar, roles: ["admin", "editor"] },
+            { label: "Receitas Públicas", href: "/admin/receitas", icon: FaMoneyBillWave, roles: ALL_TRANSPARENCY_ROLES },
+            { label: "Despesas Públicas", href: "/admin/despesas", icon: FaChartBar, roles: ALL_TRANSPARENCY_ROLES },
+            { label: "Licitações", href: "/admin/licitacoes", icon: FaGavel, roles: ALL_TRANSPARENCY_ROLES },
+            { label: "Contratos e Fiscais", href: "/admin/contratos", icon: FaFileContract, roles: ALL_TRANSPARENCY_ROLES },
+            { label: "Convênios e Repasses", href: "/admin/convenios", icon: FaHandshake, roles: ALL_TRANSPARENCY_ROLES },
+            { label: "Diárias de Viagem", href: "/admin/diarias", icon: FaPlane, roles: ALL_TRANSPARENCY_ROLES },
+            { label: "Emendas Parlamentares", href: "/admin/emendas", icon: FaMoneyBillWave, roles: ALL_TRANSPARENCY_ROLES },
+            { label: "Incentivos e Renúncias", href: "/admin/incentivos-culturais", icon: FaTheaterMasks, roles: ALL_TRANSPARENCY_ROLES },
         ]
     },
     {
-        title: "Saúde & Serviços",
+        title: "Cadastros: Pessoal, Saúde e Obras",
         items: [
-            { label: "Saúde / REMUME", href: "/admin/saude", icon: FaBook, roles: ["admin", "editor"] },
-            { label: "Regulação em Saúde", href: "/admin/central-regulacao", icon: FaHeartbeat, roles: ["admin", "editor"] },
-            { label: "Obras Públicas", href: "/admin/obras", icon: FaHammer, roles: ["admin", "editor"] },
-            { label: "Unidades Atend.", href: "/admin/unidades", icon: FaBuilding, roles: ["admin", "editor"] },
-            { label: "Carta de Serviços", href: "/admin/carta-servicos", icon: FaFile, roles: ["admin", "editor"] },
-            { label: "Conselhos", href: "/admin/conselhos", icon: FaUserFriends, roles: ["admin", "editor"] },
-            { label: "Legislação", href: "/admin/legislacao", icon: FaGavel, roles: ["admin", "editor"] },
-            { label: "Documentos", href: "/admin/documentos", icon: FaFileContract, roles: ["admin", "editor"] },
+            { label: "Servidores e Folha", href: "/admin/servidores", icon: FaUsers, roles: ALL_TRANSPARENCY_ROLES },
+            { label: "Estagiários", href: "/admin/estagiarios", icon: FaUserGraduate, roles: ALL_TRANSPARENCY_ROLES },
+            { label: "Terceirizados", href: "/admin/terceirizados", icon: FaUserTie, roles: ALL_TRANSPARENCY_ROLES },
+            { label: "Concursos e Seleções", href: "/admin/concursos", icon: FaUsers, roles: ALL_TRANSPARENCY_ROLES },
+            { label: "Obras Públicas", href: "/admin/obras", icon: FaHammer, roles: ALL_TRANSPARENCY_ROLES },
+            { label: "Saúde / Medicamentos", href: "/admin/saude", icon: FaBook, roles: ALL_TRANSPARENCY_ROLES },
+            { label: "Regulação / Filas SUS", href: "/admin/central-regulacao", icon: FaHeartbeat, roles: ALL_TRANSPARENCY_ROLES },
+            { label: "Unidades e Horários", href: "/admin/unidades", icon: FaBuilding, roles: ALL_TRANSPARENCY_ROLES },
+            { label: "Conselhos Municipais", href: "/admin/conselhos", icon: FaUserFriends, roles: ALL_TRANSPARENCY_ROLES },
+            { label: "Carta de Serviços", href: "/admin/carta-servicos", icon: FaFile, roles: ALL_TRANSPARENCY_ROLES },
+            { label: "Frota Municipal", href: "/admin/frota", icon: FaHome, roles: ALL_TRANSPARENCY_ROLES },
         ]
     },
     {
-        title: "Gestão de Pessoas & Frota",
+        title: "Atendimento pelo e-SIC & Ouvidoria",
         items: [
-            { label: "Servidores", href: "/admin/servidores", icon: FaUsers, roles: ["admin", "editor"] },
-            { label: "Estagiários", href: "/admin/estagiarios", icon: FaUserGraduate, roles: ["admin", "editor"] },
-            { label: "Terceirizados", href: "/admin/terceirizados", icon: FaUserTie, roles: ["admin", "editor"] },
-            { label: "Concursos Público", href: "/admin/concursos", icon: FaUsers, roles: ["admin", "editor"] },
-            { label: "Editais", href: "/admin/editais", icon: FaBullhorn, roles: ["admin", "editor"] },
-            { label: "Frota Municipal", href: "/admin/frota", icon: FaHome, roles: ["admin", "editor"] },
+            { label: "Atendimento e-SIC (LAI)", href: "/admin/esic", icon: FaFile, roles: ["admin", "controladoria", "esic", "editor"] },
+            { label: "Ouvidoria Municipal", href: "/admin/ouvidoria", icon: FaBullhorn, roles: ["admin", "controladoria", "esic", "editor"] },
+            { label: "Pesquisas de Satisfação", href: "/admin/pesquisa-satisfacao", icon: FaChartBar, roles: ["admin", "controladoria", "esic", "editor"] },
+            { label: "Fale Conosco", href: "/admin/contatos", icon: FaEnvelope, roles: ["admin", "controladoria", "esic", "editor"] },
         ]
     },
     {
-        title: "Atendimento & Comunicação",
+        title: "Institucional & Comunicação",
         items: [
-            { label: "Ouvidoria", href: "/admin/ouvidoria", icon: FaBullhorn, roles: ["admin", "editor"] },
-            { label: "e-SIC", href: "/admin/esic", icon: FaFile, roles: ["admin", "editor"] },
-            { label: "Fale Conosco", href: "/admin/contatos", icon: FaEnvelope, roles: ["admin", "editor"] },
-            { label: "Links Externos", href: "/admin/links-externos", icon: FaExternalLinkAlt, roles: ["admin", "editor"] },
+            { label: "Notícias", href: "/admin/noticias", icon: FaNewspaper, roles: ["admin", "controladoria", "editor", "comunicacao"] },
+            { label: "Agenda Eventos", href: "/admin/agenda", icon: FaCalendar, roles: ["admin", "controladoria", "editor", "comunicacao"] },
+            { label: "Galeria de Fotos", href: "/admin/galeria", icon: FaImages, roles: ["admin", "controladoria", "editor", "comunicacao"] },
+            { label: "FAQ / Perguntas", href: "/admin/faq", icon: FaQuestionCircle, roles: ALL_TRANSPARENCY_ROLES },
+            { label: "Glossário Técnico", href: "/admin/glossario", icon: FaBook, roles: ALL_TRANSPARENCY_ROLES },
+            { label: "Links Oficiais / Radar", href: "/admin/links-externos", icon: FaExternalLinkAlt, roles: ALL_TRANSPARENCY_ROLES },
         ]
     },
     {
-        title: "Configurações & Sistema",
+        title: "Responsáveis e Permissões",
         items: [
-            { label: "Configurações", href: "/admin/configuracoes", icon: FaCog, roles: ["admin", "editor", "comunicacao"] },
-            { label: "Gestão de Usuários", href: "/admin/usuarios", icon: FaUserShield, roles: ["admin"] },
+            { label: "Responsáveis e Permissões", href: "/admin/usuarios", icon: FaUserShield, roles: ["admin", "controladoria"] },
+            { label: "Configurações do Portal", href: "/admin/configuracoes", icon: FaCog, roles: ["admin", "controladoria"] },
             { label: "Símbolos Oficiais", href: "/admin/configuracoes/simbolos", icon: FaImages, roles: ["admin"] },
-            { label: "Importar Dados CSV", href: "/admin/importacao", icon: FaUpload, roles: ["admin"] },
         ]
     }
 ];
@@ -172,7 +175,6 @@ export default function AdminSidebar({ userRole = "admin" }: { userRole?: string
                                                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                                             } ${collapsed ? 'justify-center px-0 py-3' : ''}`}
                                         >
-                                            {/* Indicador Ativo Borda Esquerda */}
                                             {active && !collapsed && (
                                                 <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-5 bg-primary-600 rounded-r-full shadow-sm" />
                                             )}
