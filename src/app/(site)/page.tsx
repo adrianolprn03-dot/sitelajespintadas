@@ -5,6 +5,7 @@ import { MUNICIPIO } from "@/config/municipio";
 import HeroPanoramicoModelo3 from "@/components/home/HeroPanoramicoModelo3";
 import {
     FaArrowRight,
+    FaArrowUpRightFromSquare,
     FaHandshake,
     FaScaleBalanced,
     FaDatabase,
@@ -119,6 +120,31 @@ export default async function Home() {
     } catch {
         // fallback silencioso preservando integridade
     }
+
+    let linksExternos: Array<{ moduloAlvo: string | null; url: string }> = [];
+    try {
+        linksExternos = await (prisma as any).linkExterno.findMany({
+            where: { ativo: true },
+            select: { moduloAlvo: true, url: true },
+        });
+    } catch {
+        // fallback silencioso
+    }
+
+    const getLinkOverride = (identifiers: string[], fallbackHref: string) => {
+        const found = linksExternos.find((l) =>
+            l.moduloAlvo && identifiers.some((id) => id.toLowerCase() === l.moduloAlvo?.toLowerCase())
+        );
+        return {
+            href: found ? found.url : fallbackHref,
+            isExternal: !!found,
+        };
+    };
+
+    const licitacoesLink = getLinkOverride(["home-licitacoes", "licitacoes"], "/transparencia/licitacoes");
+    const contratosLink = getLinkOverride(["home-contratos", "contratos"], "/transparencia/contratos");
+    const leisLink = getLinkOverride(["home-leis-decretos", "legislacao", "leis"], "/transparencia/legislacao");
+    const lrfLink = getLinkOverride(["home-prestacao-contas", "lrf", "prestacao-contas"], "/transparencia/lrf");
 
     if (noticias.length === 0) {
         noticias = [
@@ -261,7 +287,9 @@ export default async function Home() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                     {/* 1. Licitações */}
                     <Link
-                        href="/transparencia/licitacoes"
+                        href={licitacoesLink.href}
+                        target={licitacoesLink.isExternal ? "_blank" : undefined}
+                        rel={licitacoesLink.isExternal ? "noopener noreferrer" : undefined}
                         className="bg-white p-6 rounded-2xl border border-[#DDE3EA] hover:border-[#1254A3] shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col justify-between group text-left"
                     >
                         <div>
@@ -270,7 +298,7 @@ export default async function Home() {
                                     <HiOutlineDocumentText />
                                 </div>
                                 <span className="text-[10px] font-bold text-[#1254A3] bg-blue-50 px-2.5 py-1 rounded-full uppercase tracking-wider border border-blue-200/60">
-                                    PNCP Integrado
+                                    {licitacoesLink.isExternal ? "Link Externo" : "PNCP Integrado"}
                                 </span>
                             </div>
 
@@ -284,14 +312,16 @@ export default async function Home() {
                         </div>
 
                         <div className="flex items-center gap-1.5 text-xs font-bold text-[#1254A3] pt-3 border-t border-slate-100 group-hover:translate-x-1 transition-transform">
-                            <span>Acessar licitações</span>
-                            <FaArrowRight size={10} />
+                            <span>{licitacoesLink.isExternal ? "Acessar portal externo" : "Acessar licitações"}</span>
+                            {licitacoesLink.isExternal ? <FaArrowUpRightFromSquare size={10} /> : <FaArrowRight size={10} />}
                         </div>
                     </Link>
 
                     {/* 2. Contratos */}
                     <Link
-                        href="/transparencia/contratos"
+                        href={contratosLink.href}
+                        target={contratosLink.isExternal ? "_blank" : undefined}
+                        rel={contratosLink.isExternal ? "noopener noreferrer" : undefined}
                         className="bg-white p-6 rounded-2xl border border-[#DDE3EA] hover:border-[#1254A3] shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col justify-between group text-left"
                     >
                         <div>
@@ -300,7 +330,7 @@ export default async function Home() {
                                     <FaHandshake />
                                 </div>
                                 <span className="text-[10px] font-bold text-[#1254A3] bg-blue-50 px-2.5 py-1 rounded-full uppercase tracking-wider border border-blue-200/60">
-                                    Atualizado
+                                    {contratosLink.isExternal ? "Link Externo" : "Atualizado"}
                                 </span>
                             </div>
 
@@ -314,14 +344,16 @@ export default async function Home() {
                         </div>
 
                         <div className="flex items-center gap-1.5 text-xs font-bold text-[#1254A3] pt-3 border-t border-slate-100 group-hover:translate-x-1 transition-transform">
-                            <span>Acessar contratos</span>
-                            <FaArrowRight size={10} />
+                            <span>{contratosLink.isExternal ? "Acessar portal externo" : "Acessar contratos"}</span>
+                            {contratosLink.isExternal ? <FaArrowUpRightFromSquare size={10} /> : <FaArrowRight size={10} />}
                         </div>
                     </Link>
 
                     {/* 3. Leis e Decretos */}
                     <Link
-                        href="/transparencia/legislacao"
+                        href={leisLink.href}
+                        target={leisLink.isExternal ? "_blank" : undefined}
+                        rel={leisLink.isExternal ? "noopener noreferrer" : undefined}
                         className="bg-white p-6 rounded-2xl border border-[#DDE3EA] hover:border-[#1254A3] shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col justify-between group text-left"
                     >
                         <div>
@@ -330,7 +362,7 @@ export default async function Home() {
                                     <FaScaleBalanced />
                                 </div>
                                 <span className="text-[10px] font-bold text-[#1254A3] bg-blue-50 px-2.5 py-1 rounded-full uppercase tracking-wider border border-blue-200/60">
-                                    Pesquisável
+                                    {leisLink.isExternal ? "Link Externo" : "Pesquisável"}
                                 </span>
                             </div>
 
@@ -344,14 +376,16 @@ export default async function Home() {
                         </div>
 
                         <div className="flex items-center gap-1.5 text-xs font-bold text-[#1254A3] pt-3 border-t border-slate-100 group-hover:translate-x-1 transition-transform">
-                            <span>Acessar legislação</span>
-                            <FaArrowRight size={10} />
+                            <span>{leisLink.isExternal ? "Acessar portal externo" : "Acessar legislação"}</span>
+                            {leisLink.isExternal ? <FaArrowUpRightFromSquare size={10} /> : <FaArrowRight size={10} />}
                         </div>
                     </Link>
 
                     {/* 4. Prestação de Contas */}
                     <Link
-                        href="/transparencia/lrf"
+                        href={lrfLink.href}
+                        target={lrfLink.isExternal ? "_blank" : undefined}
+                        rel={lrfLink.isExternal ? "noopener noreferrer" : undefined}
                         className="bg-white p-6 rounded-2xl border border-[#DDE3EA] hover:border-[#1254A3] shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col justify-between group text-left"
                     >
                         <div>
@@ -360,7 +394,7 @@ export default async function Home() {
                                     <FaChartPie />
                                 </div>
                                 <span className="text-[10px] font-bold text-[#1254A3] bg-blue-50 px-2.5 py-1 rounded-full uppercase tracking-wider border border-blue-200/60">
-                                    LRF / SICONFI
+                                    {lrfLink.isExternal ? "Link Externo" : "LRF / SICONFI"}
                                 </span>
                             </div>
 
@@ -374,8 +408,8 @@ export default async function Home() {
                         </div>
 
                         <div className="flex items-center gap-1.5 text-xs font-bold text-[#1254A3] pt-3 border-t border-slate-100 group-hover:translate-x-1 transition-transform">
-                            <span>Acessar demonstrativos</span>
-                            <FaArrowRight size={10} />
+                            <span>{lrfLink.isExternal ? "Acessar demonstrativos externos" : "Acessar demonstrativos"}</span>
+                            {lrfLink.isExternal ? <FaArrowUpRightFromSquare size={10} /> : <FaArrowRight size={10} />}
                         </div>
                     </Link>
                 </div>

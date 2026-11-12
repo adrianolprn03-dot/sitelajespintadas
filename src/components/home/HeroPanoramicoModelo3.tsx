@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { MUNICIPIO } from "@/config/municipio";
 import { HiMagnifyingGlass } from "react-icons/hi2";
@@ -10,11 +11,13 @@ import {
     FaBullhorn, 
     FaBookOpen, 
     FaReceipt, 
-    FaIdCard 
+    FaIdCard,
+    FaArrowUpRightFromSquare
 } from "react-icons/fa6";
 
 const atalhosPrincipais = [
     {
+        id: "home-transparencia",
         label: "Portal da Transparência",
         sublabel: "Receitas, despesas e gestão fiscal",
         href: "/transparencia",
@@ -22,6 +25,7 @@ const atalhosPrincipais = [
         destaque: true,
     },
     {
+        id: "home-esic",
         label: "e-SIC",
         sublabel: "Acesso à Informação e pedidos",
         href: "/servicos/esic",
@@ -29,6 +33,7 @@ const atalhosPrincipais = [
         destaque: false,
     },
     {
+        id: "home-ouvidoria",
         label: "Ouvidoria",
         sublabel: "Elogios, sugestões e denúncias",
         href: "/servicos/ouvidoria",
@@ -36,6 +41,7 @@ const atalhosPrincipais = [
         destaque: false,
     },
     {
+        id: "home-diario",
         label: "Diário Oficial",
         sublabel: "Atos administrativos e decretos",
         href: "/transparencia/legislacao",
@@ -43,6 +49,7 @@ const atalhosPrincipais = [
         destaque: false,
     },
     {
+        id: "home-contribuinte",
         label: "Contribuinte",
         sublabel: "IPTU, certidões e tributos",
         href: "/servicos/tributario",
@@ -50,6 +57,7 @@ const atalhosPrincipais = [
         destaque: false,
     },
     {
+        id: "home-contracheque",
         label: "Contracheque",
         sublabel: "Portal do Servidor e holerites",
         href: "/servicos/contracheque",
@@ -59,6 +67,17 @@ const atalhosPrincipais = [
 ];
 
 export default function HeroPanoramicoModelo3() {
+    const [linksExternos, setLinksExternos] = useState<any[]>([]);
+
+    useEffect(() => {
+        fetch("/api/links-externos")
+            .then((res) => res.json())
+            .then((data) => {
+                if (Array.isArray(data)) setLinksExternos(data);
+            })
+            .catch(() => {});
+    }, []);
+
     return (
         <div className="space-y-8 sm:space-y-12">
             {/* ========================================================= */}
@@ -148,52 +167,70 @@ export default function HeroPanoramicoModelo3() {
             {/* ========================================================= */}
             <section className="max-w-[1280px] mx-auto px-4 sm:px-6">
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-                    {atalhosPrincipais.map((item) => (
-                        <Link
-                            key={item.label}
-                            href={item.href}
-                            className={`p-4 sm:p-5 rounded-2xl border transition-all flex flex-col justify-between group shadow-sm hover:shadow-md hover:-translate-y-0.5 ${
-                                item.destaque
-                                    ? "bg-[#1254A3] text-white border-[#1254A3] shadow-md shadow-[#1254A3]/15"
-                                    : "bg-white text-[#12304A] border-[#DDE3EA] hover:border-[#1254A3]"
-                            }`}
-                        >
-                            <div className="flex items-center justify-between mb-3">
-                                <div
-                                    className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl transition-all ${
-                                        item.destaque
-                                            ? "bg-white/15 text-amber-300"
-                                            : "bg-blue-50 text-[#1254A3] group-hover:bg-[#1254A3] group-hover:text-white"
-                                    }`}
-                                >
-                                    <item.icon />
-                                </div>
-                                <FaArrowRight
-                                    size={10}
-                                    className={`opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all ${
-                                        item.destaque ? "text-amber-300" : "text-[#1254A3]"
-                                    }`}
-                                />
-                            </div>
+                    {atalhosPrincipais.map((item) => {
+                        const override = linksExternos.find(
+                            (l) => l.moduloAlvo?.toLowerCase() === item.id.toLowerCase()
+                        );
+                        const finalHref = override ? override.url : item.href;
+                        const isExternal = !!override;
 
-                            <div>
-                                <span
-                                    className={`block text-xs sm:text-sm font-extrabold font-heading leading-tight mb-1 ${
-                                        item.destaque ? "text-white" : "text-[#12304A]"
-                                    }`}
-                                >
-                                    {item.label}
-                                </span>
-                                <span
-                                    className={`block text-[10px] line-clamp-1 ${
-                                        item.destaque ? "text-white/80" : "text-[#5B738B]"
-                                    }`}
-                                >
-                                    {item.sublabel}
-                                </span>
-                            </div>
-                        </Link>
-                    ))}
+                        return (
+                            <Link
+                                key={item.label}
+                                href={finalHref}
+                                target={isExternal ? "_blank" : undefined}
+                                rel={isExternal ? "noopener noreferrer" : undefined}
+                                className={`p-4 sm:p-5 rounded-2xl border transition-all flex flex-col justify-between group shadow-sm hover:shadow-md hover:-translate-y-0.5 ${
+                                    item.destaque
+                                        ? "bg-[#1254A3] text-white border-[#1254A3] shadow-md shadow-[#1254A3]/15"
+                                        : "bg-white text-[#12304A] border-[#DDE3EA] hover:border-[#1254A3]"
+                                }`}
+                            >
+                                <div className="flex items-center justify-between mb-3">
+                                    <div
+                                        className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl transition-all ${
+                                            item.destaque
+                                                ? "bg-white/15 text-amber-300"
+                                                : "bg-blue-50 text-[#1254A3] group-hover:bg-[#1254A3] group-hover:text-white"
+                                        }`}
+                                    >
+                                        <item.icon />
+                                    </div>
+                                    {isExternal ? (
+                                        <FaArrowUpRightFromSquare
+                                            size={11}
+                                            className={item.destaque ? "text-amber-300" : "text-[#1254A3]"}
+                                            title="Link Externo"
+                                        />
+                                    ) : (
+                                        <FaArrowRight
+                                            size={10}
+                                            className={`opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all ${
+                                                item.destaque ? "text-amber-300" : "text-[#1254A3]"
+                                            }`}
+                                        />
+                                    )}
+                                </div>
+
+                                <div>
+                                    <span
+                                        className={`block text-xs sm:text-sm font-extrabold font-heading leading-tight mb-1 ${
+                                            item.destaque ? "text-white" : "text-[#12304A]"
+                                        }`}
+                                    >
+                                        {item.label}
+                                    </span>
+                                    <span
+                                        className={`block text-[10px] line-clamp-1 ${
+                                            item.destaque ? "text-white/80" : "text-[#5B738B]"
+                                        }`}
+                                    >
+                                        {item.sublabel}
+                                    </span>
+                                </div>
+                            </Link>
+                        );
+                    })}
                 </div>
             </section>
         </div>

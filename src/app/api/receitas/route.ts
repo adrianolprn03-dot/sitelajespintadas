@@ -58,9 +58,9 @@ export async function GET(req: NextRequest) {
         const ultimaAtualizacao =
             items.length > 0
                 ? items.reduce((latest, item) => {
-                      const d = new Date(item.dataAtualizacaoEfetiva || item.criadoEm).getTime();
-                      return d > latest ? d : latest;
-                  }, 0)
+                    const d = new Date(item.dataAtualizacaoEfetiva || item.criadoEm).getTime();
+                    return d > latest ? d : latest;
+                }, 0)
                 : null;
 
         return NextResponse.json({
