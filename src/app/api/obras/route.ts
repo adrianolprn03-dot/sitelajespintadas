@@ -17,6 +17,8 @@ export async function GET(req: NextRequest) {
             { descricao: { contains: query, mode: 'insensitive' } },
             { local: { contains: query, mode: 'insensitive' } },
             { empresa: { contains: query, mode: 'insensitive' } },
+            { numeroContrato: { contains: query, mode: 'insensitive' } },
+            { cnpjEmpresa: { contains: query, mode: 'insensitive' } },
         ];
     }
 

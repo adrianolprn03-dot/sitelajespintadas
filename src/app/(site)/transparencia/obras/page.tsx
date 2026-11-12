@@ -6,7 +6,7 @@ import {
     FaSpinner, FaArrowRight, FaImage,
     FaCheckCircle, FaExclamationTriangle, FaHardHat, FaInfoCircle,
     FaTable, FaDownload, FaExternalLinkAlt, FaSearch,
-    FaClock, FaCoins, FaBriefcase, FaChartPie
+    FaClock, FaCoins, FaBriefcase, FaChartPie, FaListOl, FaMoneyCheckAlt
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -30,24 +30,49 @@ import Image from "next/image";
 
 const CHART_COLORS = ["#1254A3", "#F39A32", "#10B981", "#0284C7", "#8B5CF6", "#F59E0B"];
 
+type ItemPlanilha = {
+    item: string;
+    unidade: string;
+    quantidade: string | number;
+    precoUnitario: string | number;
+    precoTotal: string | number;
+};
+
+type MedicaoItem = {
+    numero: string;
+    data: string;
+    percentual: string | number;
+    valorMedido: string | number;
+    valorPago: string | number;
+    ordemBancaria?: string;
+};
+
 type Obra = {
     id: string;
     titulo: string;
     descricao: string;
     local: string;
     valor: number;
+    valorPago?: number | null;
     status: string;
     dataInicio: string | null;
     previsaoTermino: string | null;
     empresa: string | null;
+    cnpjEmpresa?: string | null;
+    numeroContrato?: string | null;
     percentual: number;
     imagem: string | null;
+    quantitativosContratados?: string | null;
+    medicoes?: string | null;
+    motivoParalisacao?: string | null;
+    responsavelParalisacao?: string | null;
+    previsaoReinicio?: string | null;
     documentos: string;
     criadoEm: string;
 };
 
 const getStatusInfo = (status: string) => {
-    switch (status.toLowerCase()) {
+    switch (status?.toLowerCase()) {
         case "concluida": return { label: "Concluída", color: "text-emerald-700 bg-emerald-50 border-emerald-200", dot: "bg-emerald-500", icon: <FaCheckCircle /> };
         case "em-andamento": return { label: "Em Andamento", color: "text-[#1254A3] bg-blue-50 border-blue-200", dot: "bg-[#1254A3]", icon: <FaHardHat /> };
         case "paralisada": return { label: "Paralisada", color: "text-rose-700 bg-rose-50 border-rose-200", dot: "bg-rose-500", icon: <FaExclamationTriangle /> };
@@ -57,6 +82,17 @@ const getStatusInfo = (status: string) => {
 };
 
 const fmt = (v: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
+
+const safeParseJson = <T,>(val: any, fallback: T): T => {
+    if (!val) return fallback;
+    if (typeof val === "object") return val as T;
+    try {
+        const parsed = JSON.parse(val);
+        return Array.isArray(parsed) ? (parsed as unknown as T) : fallback;
+    } catch {
+        return fallback;
+    }
+};
 
 export default function ObrasPublicasPage() {
     const [obras, setObras] = useState<Obra[]>([]);
@@ -95,10 +131,16 @@ export default function ObrasPublicasPage() {
         const payload = obras.map(o => ({
             "Título": o.titulo,
             "Local": o.local,
-            "Valor": fmt(o.valor),
+            "Contrato": o.numeroContrato || "N/I",
+            "Valor Contratado": fmt(o.valor),
+            "Valor Pago": fmt(o.valorPago || 0),
             "Empresa": o.empresa || "Não informada",
-            "Progresso": `${o.percentual}%`,
-            "Status": o.status
+            "CNPJ": o.cnpjEmpresa || "-",
+            "Progresso Físico": `${o.percentual}%`,
+            "Status": o.status?.toUpperCase(),
+            "Data Início": o.dataInicio ? new Date(o.dataInicio).toLocaleDateString("pt-BR") : "N/I",
+            "Término / Conclusão": o.previsaoTermino ? new Date(o.previsaoTermino).toLocaleDateString("pt-BR") : "N/I",
+            "Motivo Paralisação": o.status === "paralisada" ? (o.motivoParalisacao || "Registrado") : "-"
         }));
 
         const filename = `obras_publicas_lajes_pintadas`;
@@ -111,8 +153,10 @@ export default function ObrasPublicasPage() {
     };
 
     const totalInvestimento = useMemo(() => obras.reduce((acc, curr) => acc + (curr.valor || 0), 0), [obras]);
+    const totalPago = useMemo(() => obras.reduce((acc, curr) => acc + (curr.valorPago || 0), 0), [obras]);
     const obrasConcluidas = useMemo(() => obras.filter(o => o.status?.toLowerCase() === "concluida").length, [obras]);
     const obrasEmAndamento = useMemo(() => obras.filter(o => o.status?.toLowerCase() === "em-andamento").length, [obras]);
+    const obrasParalisadas = useMemo(() => obras.filter(o => o.status?.toLowerCase() === "paralisada").length, [obras]);
 
     // Dados agregados por Status para gráficos
     const dadosPorStatus = useMemo(() => {
@@ -129,18 +173,6 @@ export default function ObrasPublicasPage() {
         return Object.values(map);
     }, [obras]);
 
-    // Top Obras por Valor
-    const dadosTopObras = useMemo(() => {
-        return [...obras]
-            .sort((a, b) => (b.valor || 0) - (a.valor || 0))
-            .slice(0, 6)
-            .map(o => ({
-                titulo: o.titulo.length > 25 ? o.titulo.substring(0, 25) + "..." : o.titulo,
-                valor: o.valor || 0,
-                percentual: o.percentual || 0
-            }));
-    }, [obras]);
-
     const containerVariants = {
         hidden: { opacity: 0 },
         visible: {
@@ -154,11 +186,22 @@ export default function ObrasPublicasPage() {
         visible: { opacity: 1, y: 0, transition: { duration: 0.4 } }
     };
 
+    // Obra selecionada: parse das listas estruturadas dos critérios 10.2 e 10.3
+    const itensContratadosModal = useMemo<ItemPlanilha[]>(() => {
+        if (!selectedObra) return [];
+        return safeParseJson<ItemPlanilha[]>(selectedObra.quantitativosContratados, []);
+    }, [selectedObra]);
+
+    const medicoesModal = useMemo<MedicaoItem[]>(() => {
+        if (!selectedObra) return [];
+        return safeParseJson<MedicaoItem[]>(selectedObra.medicoes, []);
+    }, [selectedObra]);
+
     return (
         <div className="min-h-screen bg-[#F5F7FA]">
             <PageHeader
-                title="Acompanhamento de Obras"
-                subtitle="Painel público de transparência sobre obras públicas, investimentos de infraestrutura e medições fiscais."
+                title="Acompanhamento de Obras Públicas"
+                subtitle="Painel público de transparência sobre obras públicas, investimentos de infraestrutura, medições fiscais e quantitativos contratados."
                 icon={<FaHammer />}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
@@ -173,8 +216,8 @@ export default function ObrasPublicasPage() {
                 variants={containerVariants}
                 className="max-w-7xl mx-auto px-4 sm:px-6 py-8"
             >
-                {/* Visual Switcher */}
-                <div className="flex items-center justify-between mb-6">
+                {/* Visual Switcher & Exports */}
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
                     <div className="flex items-center gap-2 bg-white p-1 rounded-xl border border-[#DDE3EA] shadow-sm">
                         <button
                             onClick={() => setAbaVisual("lista")}
@@ -198,23 +241,30 @@ export default function ObrasPublicasPage() {
                         </button>
                     </div>
 
-                    <div className="hidden sm:flex items-center gap-3">
+                    <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-[11px] font-bold text-[#5B738B] mr-1 hidden md:inline">Exportar Relatório:</span>
                         <button
                             onClick={() => handleExport("pdf")}
-                            className="flex items-center gap-2 px-3 py-1.5 bg-white border border-[#DDE3EA] text-[#12304A] rounded-lg text-xs font-semibold hover:border-[#1254A3] hover:text-[#1254A3] transition-all shadow-sm"
+                            className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[#DDE3EA] text-[#12304A] rounded-lg text-xs font-bold hover:border-[#1254A3] hover:text-[#1254A3] transition-all shadow-sm"
                         >
-                            <FaDownload size={11} /> PDF
+                            <FaDownload size={10} /> PDF
                         </button>
                         <button
                             onClick={() => handleExport("xlsx")}
-                            className="flex items-center gap-2 px-3 py-1.5 bg-white border border-[#DDE3EA] text-[#12304A] rounded-lg text-xs font-semibold hover:border-[#1254A3] hover:text-[#1254A3] transition-all shadow-sm"
+                            className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[#DDE3EA] text-[#12304A] rounded-lg text-xs font-bold hover:border-[#1254A3] hover:text-[#1254A3] transition-all shadow-sm"
                         >
-                            <FaDownload size={11} /> Excel
+                            <FaDownload size={10} /> Excel
+                        </button>
+                        <button
+                            onClick={() => handleExport("csv")}
+                            className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[#DDE3EA] text-[#12304A] rounded-lg text-xs font-bold hover:border-[#1254A3] hover:text-[#1254A3] transition-all shadow-sm"
+                        >
+                            <FaDownload size={10} /> CSV
                         </button>
                     </div>
                 </div>
 
-                {/* Dashboard Stats - Padrão Novo */}
+                {/* Dashboard Stats */}
                 <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
                     <div className="bg-white rounded-2xl p-6 border border-[#DDE3EA] shadow-sm">
                         <div className="flex items-center justify-between mb-3">
@@ -229,177 +279,142 @@ export default function ObrasPublicasPage() {
 
                     <div className="bg-white rounded-2xl p-6 border border-[#DDE3EA] shadow-sm">
                         <div className="flex items-center justify-between mb-3">
+                            <span className="text-xs font-bold text-[#5B738B] uppercase tracking-wider">Total Pago Acumulado</span>
+                            <span className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
+                                <FaMoneyCheckAlt size={16} />
+                            </span>
+                        </div>
+                        <h3 className="text-2xl font-black text-emerald-600 tracking-tight">{loading ? "..." : fmt(totalPago)}</h3>
+                        <p className="text-xs text-[#5B738B] mt-2 pt-2 border-t border-[#DDE3EA]">Medições liquidadas e pagas (10.3)</p>
+                    </div>
+
+                    <div className="bg-white rounded-2xl p-6 border border-[#DDE3EA] shadow-sm">
+                        <div className="flex items-center justify-between mb-3">
                             <span className="text-xs font-bold text-[#5B738B] uppercase tracking-wider">Obras Concluídas</span>
                             <span className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
                                 <FaCheckCircle size={16} />
                             </span>
                         </div>
                         <h3 className="text-2xl font-black text-emerald-600 tracking-tight">{loading ? "..." : obrasConcluidas}</h3>
-                        <p className="text-xs text-[#5B738B] mt-2 pt-2 border-t border-[#DDE3EA]">Entregues à população</p>
+                        <p className="text-xs text-[#5B738B] mt-2 pt-2 border-t border-[#DDE3EA]">Entregues com data efetiva (10.1)</p>
                     </div>
 
                     <div className="bg-white rounded-2xl p-6 border border-[#DDE3EA] shadow-sm">
                         <div className="flex items-center justify-between mb-3">
-                            <span className="text-xs font-bold text-[#5B738B] uppercase tracking-wider">Canteiros Ativos</span>
+                            <span className="text-xs font-bold text-[#5B738B] uppercase tracking-wider">Obras em Andamento / Paralisadas</span>
                             <span className="p-2 bg-amber-50 text-[#F39A32] rounded-xl">
                                 <FaHardHat size={16} />
                             </span>
                         </div>
-                        <h3 className="text-2xl font-black text-[#F39A32] tracking-tight">{loading ? "..." : obrasEmAndamento}</h3>
-                        <p className="text-xs text-[#5B738B] mt-2 pt-2 border-t border-[#DDE3EA]">Em execução física</p>
-                    </div>
-
-                    <div className="bg-white rounded-2xl p-6 border border-[#DDE3EA] shadow-sm">
-                        <div className="flex items-center justify-between mb-3">
-                            <span className="text-xs font-bold text-[#5B738B] uppercase tracking-wider">Total de Registros</span>
-                            <span className="p-2 bg-slate-50 text-slate-600 rounded-xl">
-                                <FaTable size={16} />
-                            </span>
+                        <div className="flex items-baseline gap-2">
+                            <h3 className="text-2xl font-black text-[#F39A32] tracking-tight">{loading ? "..." : obrasEmAndamento}</h3>
+                            {obrasParalisadas > 0 && (
+                                <span className="text-xs font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200">
+                                    {obrasParalisadas} paralisada(s)
+                                </span>
+                            )}
                         </div>
-                        <h3 className="text-2xl font-black text-[#12304A] tracking-tight">{loading ? "..." : obras.length}</h3>
-                        <p className="text-xs text-[#5B738B] mt-2 pt-2 border-t border-[#DDE3EA]">Cadastros mapeados</p>
+                        <p className="text-xs text-[#5B738B] mt-2 pt-2 border-t border-[#DDE3EA]">Critérios PNTP 10.1 a 10.4</p>
                     </div>
                 </motion.div>
 
-                {/* Filtros */}
-                <motion.div variants={itemVariants} className="mb-8 bg-white p-5 rounded-2xl border border-[#DDE3EA] shadow-sm">
-                    <TransparencyFilters
-                        searchValue={busca}
-                        onSearch={setBusca}
-                        onClear={handleClearFilters}
-                        onExport={handleExport}
-                        currentYear=""
-                        onYearChange={() => {}}
-                        currentMonth=""
-                        onMonthChange={() => {}}
-                        placeholder="Buscar por nome da obra, local ou empresa contratada..."
-                    >
-                        <div className="flex items-center gap-3">
-                            <select 
-                                value={status} 
+                {/* Filtros de Busca */}
+                <motion.div variants={itemVariants} className="bg-white rounded-2xl p-6 border border-[#DDE3EA] shadow-sm mb-8">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                        <div className="md:col-span-2">
+                            <label className="block text-xs font-bold text-[#5B738B] uppercase tracking-wider mb-2">
+                                Buscar por Obra, Descrição, Bairro ou Empresa
+                            </label>
+                            <div className="relative">
+                                <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                                <input
+                                    type="text"
+                                    value={busca}
+                                    onChange={(e) => setBusca(e.target.value)}
+                                    placeholder="Ex: Pavimentação, Creche, Reforma, Iluminação..."
+                                    className="w-full bg-[#F5F7FA] border border-[#DDE3EA] rounded-xl pl-11 pr-4 py-3 text-sm focus:border-[#1254A3] focus:bg-white outline-none transition-all"
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-bold text-[#5B738B] uppercase tracking-wider mb-2">
+                                Filtrar por Situação
+                            </label>
+                            <select
+                                value={status}
                                 onChange={(e) => setStatus(e.target.value)}
-                                className="bg-[#F5F7FA] border border-[#DDE3EA] px-4 py-2.5 rounded-xl text-xs font-bold text-[#12304A] outline-none hover:border-[#1254A3] focus:ring-2 focus:ring-[#1254A3] transition-all cursor-pointer min-w-[180px]"
+                                className="w-full bg-[#F5F7FA] border border-[#DDE3EA] rounded-xl px-4 py-3 text-sm font-semibold focus:border-[#1254A3] focus:bg-white outline-none transition-all text-[#12304A]"
                             >
-                                <option value="">Todos os Status</option>
-                                <option value="concluida">Concluída</option>
+                                <option value="">Todas as Situações</option>
                                 <option value="em-andamento">Em Andamento</option>
-                                <option value="paralisada">Paralisada</option>
-                                <option value="licitacao">Licitação</option>
+                                <option value="concluida">Concluída (Critério 10.1)</option>
+                                <option value="paralisada">Paralisada (Critério 10.4)</option>
+                                <option value="planejada">Planejada</option>
                             </select>
                         </div>
-                    </TransparencyFilters>
+                    </div>
                 </motion.div>
 
-                {/* Dashboard Gráfico nos Resultados */}
-                {abaVisual === "graficos" && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 15 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8"
-                    >
-                        {/* Gráfico 1: Investimento por Situação */}
-                        <div className="bg-white rounded-2xl border border-[#DDE3EA] p-6 shadow-sm">
-                            <div className="flex items-center justify-between mb-6">
-                                <div>
-                                    <h3 className="text-base font-bold text-[#12304A]">Volume de Investimento por Status</h3>
-                                    <p className="text-xs text-[#5B738B]">Total orçado e contratado por situação da obra</p>
-                                </div>
-                                <span className="p-2 bg-blue-50 text-[#1254A3] rounded-xl text-xs font-bold">
-                                    {dadosPorStatus.length} Status
-                                </span>
-                            </div>
-                            <div className="h-[300px] w-full">
-                                {dadosPorStatus.length > 0 ? (
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        <BarChart data={dadosPorStatus} margin={{ top: 10, right: 20, left: 20, bottom: 10 }}>
-                                            <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
-                                            <XAxis dataKey="label" tick={{ fontSize: 11, fill: '#12304A', fontWeight: 600 }} />
-                                            <YAxis tickFormatter={(v) => `R$ ${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 11, fill: '#5B738B' }} />
-                                            <Tooltip formatter={(value: number) => [fmt(value), "Investimento"]} />
-                                            <Bar dataKey="valor" radius={[6, 6, 0, 0]}>
-                                                {dadosPorStatus.map((_, index) => (
-                                                    <Cell key={`cell-status-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
-                                                ))}
-                                            </Bar>
-                                        </BarChart>
-                                    </ResponsiveContainer>
-                                ) : (
-                                    <div className="h-full flex items-center justify-center text-sm text-[#5B738B]">
-                                        Nenhum dado disponível
-                                    </div>
-                                )}
+                {/* Conteúdo: Gráficos ou Lista */}
+                {abaVisual === "graficos" ? (
+                    <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                        <div className="bg-white rounded-2xl p-6 border border-[#DDE3EA] shadow-sm">
+                            <h3 className="text-sm font-bold text-[#12304A] uppercase tracking-wider mb-4 flex items-center gap-2">
+                                <FaChartPie className="text-[#1254A3]" /> Distribuição por Situação da Obra
+                            </h3>
+                            <div className="h-72">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <PieChart>
+                                        <Pie
+                                            data={dadosPorStatus}
+                                            dataKey="quantidade"
+                                            nameKey="label"
+                                            cx="50%"
+                                            cy="50%"
+                                            outerRadius={90}
+                                            label={(entry) => `${entry.label}: ${entry.quantidade}`}
+                                        >
+                                            {dadosPorStatus.map((_, idx) => (
+                                                <Cell key={idx} fill={CHART_COLORS[idx % CHART_COLORS.length]} />
+                                            ))}
+                                        </Pie>
+                                        <Tooltip />
+                                        <Legend />
+                                    </PieChart>
+                                </ResponsiveContainer>
                             </div>
                         </div>
 
-                        {/* Gráfico 2: Quantidade de Obras por Status */}
-                        <div className="bg-white rounded-2xl border border-[#DDE3EA] p-6 shadow-sm">
-                            <div className="flex items-center justify-between mb-6">
-                                <div>
-                                    <h3 className="text-base font-bold text-[#12304A]">Proporção de Obras</h3>
-                                    <p className="text-xs text-[#5B738B]">Distribuição quantitativa por fase de execução</p>
-                                </div>
-                                <span className="p-2 bg-amber-50 text-[#F39A32] rounded-xl text-xs font-bold">
-                                    {obras.length} Obras
-                                </span>
-                            </div>
-                            <div className="h-[300px] w-full">
-                                {dadosPorStatus.length > 0 ? (
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        <PieChart>
-                                            <Pie
-                                                data={dadosPorStatus}
-                                                dataKey="quantidade"
-                                                nameKey="label"
-                                                cx="50%"
-                                                cy="50%"
-                                                outerRadius={95}
-                                                innerRadius={50}
-                                                paddingAngle={4}
-                                                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                                            >
-                                                {dadosPorStatus.map((_, index) => (
-                                                    <Cell key={`cell-pie-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
-                                                ))}
-                                            </Pie>
-                                            <Tooltip formatter={(val: number) => [`${val} obras`, "Quantidade"]} />
-                                            <Legend />
-                                        </PieChart>
-                                    </ResponsiveContainer>
-                                ) : (
-                                    <div className="h-full flex items-center justify-center text-sm text-[#5B738B]">
-                                        Nenhum dado disponível
-                                    </div>
-                                )}
+                        <div className="bg-white rounded-2xl p-6 border border-[#DDE3EA] shadow-sm">
+                            <h3 className="text-sm font-bold text-[#12304A] uppercase tracking-wider mb-4 flex items-center gap-2">
+                                <FaCoins className="text-emerald-600" /> Valores Orçados por Situação (R$)
+                            </h3>
+                            <div className="h-72">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={dadosPorStatus}>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                        <XAxis dataKey="label" tick={{ fontSize: 11 }} />
+                                        <YAxis tickFormatter={(v) => `R$ ${(v / 1000).toFixed(0)}k`} />
+                                        <Tooltip formatter={(v: any) => fmt(Number(v))} />
+                                        <Bar dataKey="valor" fill="#1254A3" radius={[8, 8, 0, 0]} />
+                                    </BarChart>
+                                </ResponsiveContainer>
                             </div>
                         </div>
                     </motion.div>
-                )}
-
-                {/* Main Content Area - Lista */}
-                {abaVisual === "lista" && (
-                    <motion.div variants={itemVariants} className="space-y-4">
-                        <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-2">
-                                <span className="w-2 h-6 bg-[#1254A3] rounded-full" />
-                                <h2 className="text-base font-bold text-[#12304A]">Projetos e Intervenções Mapeadas</h2>
-                            </div>
-                            <div className="text-xs text-[#5B738B] font-medium flex items-center gap-4">
-                                <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#1254A3]" /> Em Execução</span>
-                                <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500" /> Finalizada</span>
-                            </div>
-                        </div>
-
+                ) : (
+                    <motion.div variants={itemVariants}>
                         <AnimatePresence mode="wait">
                             {loading ? (
                                 <motion.div 
                                     key="loading"
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
                                     className="bg-white rounded-2xl p-16 text-center border border-[#DDE3EA] shadow-sm"
                                 >
                                     <FaSpinner className="animate-spin text-3xl text-[#1254A3] mx-auto mb-3" />
-                                    <p className="text-xs font-bold text-[#5B738B] uppercase tracking-wider">Sincronizando banco de obras...</p>
+                                    <p className="text-xs font-bold text-[#5B738B] uppercase tracking-wider">Carregando obras públicas...</p>
                                 </motion.div>
                             ) : obras.length === 0 ? (
                                 <motion.div 
@@ -419,10 +434,15 @@ export default function ObrasPublicasPage() {
                                 <div className="grid grid-cols-1 gap-4">
                                     {obras.map((o) => {
                                         const statusInfo = getStatusInfo(o.status);
+                                        const isConcluida = o.status?.toLowerCase() === "concluida";
+                                        const isParalisada = o.status?.toLowerCase() === "paralisada";
+
                                         return (
                                             <div 
                                                 key={o.id}
-                                                className="bg-white rounded-2xl border border-[#DDE3EA] shadow-sm hover:border-[#1254A3]/40 transition-all p-5 flex flex-col lg:flex-row items-center gap-6"
+                                                className={`bg-white rounded-2xl border transition-all p-5 flex flex-col lg:flex-row items-center gap-6 ${
+                                                    isParalisada ? "border-rose-300 bg-rose-50/20" : "border-[#DDE3EA] hover:border-[#1254A3]/40"
+                                                } shadow-sm`}
                                             >
                                                 {/* Preview / Thumbnail */}
                                                 <div className="w-full lg:w-36 h-28 bg-[#F5F7FA] rounded-xl shrink-0 overflow-hidden relative border border-[#DDE3EA]">
@@ -450,6 +470,11 @@ export default function ObrasPublicasPage() {
                                                         <span className="text-xs text-[#5B738B] font-medium flex items-center gap-1">
                                                             <FaMapMarker className="text-[#1254A3]" size={11} /> {o.local}
                                                         </span>
+                                                        {o.numeroContrato && (
+                                                            <span className="text-[10px] font-mono font-bold text-[#12304A] bg-slate-100 px-2 py-0.5 rounded">
+                                                                {o.numeroContrato}
+                                                            </span>
+                                                        )}
                                                     </div>
                                                     <h3 className="text-base font-bold text-[#12304A] mb-1 leading-snug">
                                                         {o.titulo}
@@ -457,6 +482,13 @@ export default function ObrasPublicasPage() {
                                                     <p className="text-xs text-[#5B738B] flex items-center gap-2 truncate">
                                                         <FaBriefcase className="text-slate-400" size={11} /> {o.empresa || "Licitação / Contratação em Aberto"}
                                                     </p>
+
+                                                    {/* Detalhe inline para obras paralisadas (10.4) */}
+                                                    {isParalisada && o.motivoParalisacao && (
+                                                        <div className="mt-2 text-xs bg-rose-50 border border-rose-200 text-rose-800 rounded-lg p-2 font-medium">
+                                                            <span className="font-bold">Motivo da Paralisação:</span> {o.motivoParalisacao}
+                                                        </div>
+                                                    )}
                                                 </div>
 
                                                 {/* Investment & Timeline */}
@@ -464,6 +496,9 @@ export default function ObrasPublicasPage() {
                                                     <div>
                                                         <p className="text-[10px] font-bold text-[#5B738B] uppercase tracking-wider">Investimento</p>
                                                         <p className="text-base font-black text-[#12304A]">{fmt(o.valor)}</p>
+                                                        {o.valorPago !== null && o.valorPago !== undefined && o.valorPago > 0 && (
+                                                            <p className="text-[10px] font-bold text-emerald-700">Pago: {fmt(o.valorPago)}</p>
+                                                        )}
                                                     </div>
 
                                                     <div className="flex items-center gap-3 bg-[#F5F7FA] px-3 py-2 rounded-xl border border-[#DDE3EA]">
@@ -475,9 +510,15 @@ export default function ObrasPublicasPage() {
                                                         </div>
                                                         <div className="w-[1px] h-6 bg-[#DDE3EA]" />
                                                         <div>
-                                                            <span className="text-[9px] font-semibold text-[#5B738B] block">Previsão</span>
+                                                            <span className="text-[9px] font-semibold text-[#5B738B] block">
+                                                                {isConcluida ? "Conclusão (10.1)" : isParalisada ? "Prev. Reinício" : "Previsão"}
+                                                            </span>
                                                             <span className="text-xs font-bold text-[#1254A3]">
-                                                                {o.previsaoTermino ? new Date(o.previsaoTermino).toLocaleDateString("pt-BR") : "N/I"}
+                                                                {isParalisada && o.previsaoReinicio 
+                                                                    ? new Date(o.previsaoReinicio).toLocaleDateString("pt-BR")
+                                                                    : o.previsaoTermino 
+                                                                    ? new Date(o.previsaoTermino).toLocaleDateString("pt-BR") 
+                                                                    : "N/I"}
                                                             </span>
                                                         </div>
                                                     </div>
@@ -492,12 +533,14 @@ export default function ObrasPublicasPage() {
                                                     <div className="h-2 w-full bg-[#DDE3EA] rounded-full overflow-hidden">
                                                         <div 
                                                             style={{ width: `${o.percentual}%` }}
-                                                            className="h-full bg-[#1254A3] rounded-full transition-all duration-500"
+                                                            className={`h-full rounded-full transition-all duration-500 ${
+                                                                isParalisada ? "bg-rose-500" : isConcluida ? "bg-emerald-600" : "bg-[#1254A3]"
+                                                            }`}
                                                         />
                                                     </div>
                                                     <button 
                                                         onClick={() => setSelectedObra(o)}
-                                                        className="mt-2 h-9 bg-[#1254A3] text-white rounded-xl text-xs font-bold hover:bg-[#0d3f7c] transition-all flex items-center justify-center gap-2 shadow-sm active:scale-95"
+                                                        className="mt-2 h-9 bg-[#1254A3] text-white rounded-xl text-xs font-bold hover:bg-[#0d3f7c] transition-all flex items-center justify-center gap-2 shadow-sm active:scale-95 cursor-pointer"
                                                     >
                                                         Visualizar Detalhes
                                                         <FaArrowRight size={10} />
@@ -521,8 +564,10 @@ export default function ObrasPublicasPage() {
                                 <FaInfoCircle size={22} />
                             </div>
                             <div>
-                                <h4 className="text-sm font-bold text-[#12304A]">Informação ao Cidadão</h4>
-                                <p className="text-xs text-[#5B738B] leading-relaxed max-w-md">As informações de obras são atualizadas periodicamente pela Secretaria Municipal de Infraestrutura e Serviços Públicos.</p>
+                                <h4 className="text-sm font-bold text-[#12304A]">Critérios PNTP de Obras (10.1 a 10.4)</h4>
+                                <p className="text-xs text-[#5B738B] leading-relaxed max-w-md">
+                                    Disponibilização da data efetiva de conclusão, quantitativos e preços contratados, medições físicas, valores efetivamente pagos e justificativas de paralisação.
+                                </p>
                             </div>
                         </div>
                         <div className="flex gap-3">
@@ -538,13 +583,13 @@ export default function ObrasPublicasPage() {
                     <div className="text-center pt-4">
                         <p className="text-xs text-[#5B738B]">
                             PORTAL DA TRANSPARÊNCIA • PREFEITURA DE LAJES PINTADAS/RN <br/>
-                            <span className="italic">Processamento de dados em conformidade com a Lei de Acesso à Informação (Lei 12.527/11) e Cartilha PNTP.</span>
+                            <span className="italic">Processamento de dados em conformidade com a Lei de Acesso à Informação (Lei 12.527/11) e Matriz PNTP 2026.</span>
                         </p>
                     </div>
                 </motion.div>
             </motion.div>
 
-            {/* Modal de Detalhes */}
+            {/* Modal de Detalhes Completo */}
             <AnimatePresence>
                 {selectedObra && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
@@ -571,8 +616,13 @@ export default function ObrasPublicasPage() {
                                             {getStatusInfo(selectedObra.status).label}
                                         </span>
                                         <span className="text-xs text-[#5B738B] bg-white px-3 py-1 rounded-lg border border-[#DDE3EA] flex items-center gap-1.5">
-                                            <FaClock className="text-[#1254A3]" size={11} /> Cadastrado em {new Date(selectedObra.criadoEm).toLocaleDateString("pt-BR")}
+                                            <FaClock className="text-[#1254A3]" size={11} /> Registro em {new Date(selectedObra.criadoEm).toLocaleDateString("pt-BR")}
                                         </span>
+                                        {selectedObra.numeroContrato && (
+                                            <span className="text-xs font-mono font-bold text-slate-700 bg-white px-3 py-1 rounded-lg border border-[#DDE3EA]">
+                                                {selectedObra.numeroContrato}
+                                            </span>
+                                        )}
                                     </div>
                                     <h2 className="text-xl font-black text-[#12304A]">
                                         {selectedObra.titulo}
@@ -580,7 +630,7 @@ export default function ObrasPublicasPage() {
                                 </div>
                                 <button 
                                     onClick={() => setSelectedObra(null)}
-                                    className="w-9 h-9 bg-white border border-[#DDE3EA] rounded-xl flex items-center justify-center text-[#5B738B] hover:text-[#12304A] hover:bg-slate-100 transition-all"
+                                    className="w-9 h-9 bg-white border border-[#DDE3EA] rounded-xl flex items-center justify-center text-[#5B738B] hover:text-[#12304A] hover:bg-slate-100 transition-all cursor-pointer"
                                 >
                                     ✕
                                 </button>
@@ -588,6 +638,45 @@ export default function ObrasPublicasPage() {
 
                             {/* Modal Body */}
                             <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                                {/* Destaque de Paralisação (Critério 10.4) */}
+                                {selectedObra.status?.toLowerCase() === "paralisada" && (
+                                    <div className="bg-rose-50 border-2 border-rose-300 rounded-2xl p-5 space-y-3">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-9 h-9 rounded-xl bg-rose-600 text-white flex items-center justify-center text-base">
+                                                <FaExclamationTriangle />
+                                            </div>
+                                            <div>
+                                                <span className="text-[10px] font-black uppercase tracking-wider text-rose-800 bg-rose-200/80 px-2 py-0.5 rounded-full">
+                                                    Critério 10.4 PNTP
+                                                </span>
+                                                <h4 className="text-sm font-black text-rose-900 uppercase">
+                                                    Detalhamento Oficial da Inexecução Temporária
+                                                </h4>
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs pt-1">
+                                            <div className="md:col-span-3 bg-white p-3 rounded-xl border border-rose-200">
+                                                <span className="text-[10px] font-bold text-rose-800 uppercase block mb-1">Motivo da Paralisação:</span>
+                                                <p className="font-semibold text-rose-950">{selectedObra.motivoParalisacao || "Em adequação técnica orçamentária pela gestão municipal."}</p>
+                                            </div>
+                                            <div className="bg-white p-3 rounded-xl border border-rose-200">
+                                                <span className="text-[10px] font-bold text-rose-800 uppercase block mb-1">Responsável pela Inexecução:</span>
+                                                <p className="font-bold text-rose-950">{selectedObra.responsavelParalisacao || "Empresa Contratada / Em Processo"}</p>
+                                            </div>
+                                            <div className="bg-white p-3 rounded-xl border border-rose-200">
+                                                <span className="text-[10px] font-bold text-rose-800 uppercase block mb-1">Previsão Oficial de Reinício:</span>
+                                                <p className="font-bold text-rose-950">
+                                                    {selectedObra.previsaoReinicio ? new Date(selectedObra.previsaoReinicio).toLocaleDateString("pt-BR") : "Aguardando homologação"}
+                                                </p>
+                                            </div>
+                                            <div className="bg-white p-3 rounded-xl border border-rose-200">
+                                                <span className="text-[10px] font-bold text-rose-800 uppercase block mb-1">Status Técnico:</span>
+                                                <p className="font-bold text-rose-950">Notificação expedida / Vistoria</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="aspect-video relative rounded-xl overflow-hidden border border-[#DDE3EA] bg-slate-100">
                                         {selectedObra.imagem ? (
@@ -601,8 +690,8 @@ export default function ObrasPublicasPage() {
 
                                     <div className="bg-[#F5F7FA] rounded-xl p-5 border border-[#DDE3EA] flex flex-col justify-between">
                                         <div>
-                                            <p className="text-xs font-bold text-[#5B738B] uppercase tracking-wider mb-1">Medição Física</p>
-                                            <p className="text-3xl font-black text-[#1254A3] mb-3">{selectedObra.percentual}% concluído</p>
+                                            <p className="text-xs font-bold text-[#5B738B] uppercase tracking-wider mb-1">Execução Física</p>
+                                            <p className="text-3xl font-black text-[#1254A3] mb-3">{selectedObra.percentual}% executado</p>
                                             <div className="h-3 w-full bg-[#DDE3EA] rounded-full overflow-hidden">
                                                 <div 
                                                     style={{ width: `${selectedObra.percentual}%` }}
@@ -614,57 +703,163 @@ export default function ObrasPublicasPage() {
                                         <div className="mt-4 pt-4 border-t border-[#DDE3EA] grid grid-cols-2 gap-3 text-xs">
                                             <div>
                                                 <span className="text-[#5B738B] block">Data de Início:</span>
-                                                <span className="font-bold text-[#12304A]">{selectedObra.dataInicio ? new Date(selectedObra.dataInicio).toLocaleDateString("pt-BR") : "N/I"}</span>
+                                                <span className="font-bold text-[#12304A]">
+                                                    {selectedObra.dataInicio ? new Date(selectedObra.dataInicio).toLocaleDateString("pt-BR") : "N/I"}
+                                                </span>
                                             </div>
                                             <div>
-                                                <span className="text-[#5B738B] block">Previsão Conclusão:</span>
-                                                <span className="font-bold text-[#1254A3]">{selectedObra.previsaoTermino ? new Date(selectedObra.previsaoTermino).toLocaleDateString("pt-BR") : "N/I"}</span>
+                                                <span className="text-[#5B738B] block">
+                                                    {selectedObra.status?.toLowerCase() === "concluida" 
+                                                        ? "Data Efetiva de Conclusão (10.1):" 
+                                                        : "Previsão de Término:"}
+                                                </span>
+                                                <span className="font-bold text-[#1254A3]">
+                                                    {selectedObra.previsaoTermino ? new Date(selectedObra.previsaoTermino).toLocaleDateString("pt-BR") : "N/I"}
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div>
-                                    <h3 className="text-xs font-bold text-[#5B738B] uppercase tracking-wider mb-2">Descrição da Obra</h3>
+                                    <h3 className="text-xs font-bold text-[#5B738B] uppercase tracking-wider mb-2">Descrição e Finalidade Social</h3>
                                     <p className="text-sm text-[#12304A] bg-[#F5F7FA] p-4 rounded-xl border border-[#DDE3EA] leading-relaxed">
                                         {selectedObra.descricao}
                                     </p>
                                 </div>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                                     <div className="bg-white p-4 rounded-xl border border-[#DDE3EA]">
-                                        <span className="text-[10px] font-bold text-[#5B738B] uppercase tracking-wider block mb-1">Investimento Orçado</span>
-                                        <p className="text-lg font-black text-[#12304A]">{fmt(selectedObra.valor)}</p>
+                                        <span className="text-[10px] font-bold text-[#5B738B] uppercase tracking-wider block mb-1">Valor Contratado</span>
+                                        <p className="text-base font-black text-[#12304A]">{fmt(selectedObra.valor)}</p>
+                                    </div>
+                                    <div className="bg-white p-4 rounded-xl border border-[#DDE3EA]">
+                                        <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider block mb-1">Valor Efetivamente Pago (10.3)</span>
+                                        <p className="text-base font-black text-emerald-700">{fmt(selectedObra.valorPago || 0)}</p>
                                     </div>
                                     <div className="bg-white p-4 rounded-xl border border-[#DDE3EA]">
                                         <span className="text-[10px] font-bold text-[#5B738B] uppercase tracking-wider block mb-1">Empresa Contratada</span>
-                                        <p className="text-sm font-bold text-[#12304A]">{selectedObra.empresa || "Licitação em Aberto"}</p>
+                                        <p className="text-xs font-bold text-[#12304A] truncate">{selectedObra.empresa || "Licitação em Aberto"}</p>
+                                        {selectedObra.cnpjEmpresa && (
+                                            <p className="text-[10px] font-mono text-[#5B738B]">{selectedObra.cnpjEmpresa}</p>
+                                        )}
                                     </div>
                                     <div className="bg-white p-4 rounded-xl border border-[#DDE3EA]">
                                         <span className="text-[10px] font-bold text-[#5B738B] uppercase tracking-wider block mb-1">Localização</span>
-                                        <p className="text-sm font-bold text-[#12304A]">{selectedObra.local}</p>
+                                        <p className="text-xs font-bold text-[#12304A]">{selectedObra.local}</p>
                                     </div>
                                 </div>
 
-                                {selectedObra.documentos && (
-                                    <div>
-                                        <h3 className="text-xs font-bold text-[#5B738B] uppercase tracking-wider mb-2">Documentos e Projetos Técnicos</h3>
-                                        <div className="flex items-center justify-between bg-[#F5F7FA] p-4 rounded-xl border border-[#DDE3EA]">
-                                            <div className="flex items-center gap-3">
-                                                <FaDownload className="text-[#1254A3]" size={14} />
-                                                <span className="text-xs font-bold text-[#12304A]">{selectedObra.documentos}</span>
-                                            </div>
-                                            <span className="text-xs font-bold text-[#1254A3]">Baixar Anexo</span>
-                                        </div>
+                                {/* CRITÉRIO 10.2: QUANTITATIVOS E PREÇOS CONTRATADOS */}
+                                <div className="space-y-3">
+                                    <div className="flex items-center justify-between">
+                                        <h3 className="text-xs font-bold text-[#12304A] uppercase tracking-wider flex items-center gap-2">
+                                            <FaListOl className="text-indigo-600" />
+                                            Itens da Planilha Orçamentária Contratada (Critério 10.2)
+                                        </h3>
+                                        <span className="text-[10px] font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-200">
+                                            Quantitativos e Preços Unitários
+                                        </span>
                                     </div>
-                                )}
+
+                                    {itensContratadosModal.length > 0 ? (
+                                        <div className="overflow-x-auto border border-[#DDE3EA] rounded-xl">
+                                            <table className="w-full text-left text-xs">
+                                                <thead className="bg-[#F5F7FA] text-slate-700 font-bold uppercase text-[10px]">
+                                                    <tr>
+                                                        <th className="p-3">#</th>
+                                                        <th className="p-3">Item / Serviço</th>
+                                                        <th className="p-3">Unid.</th>
+                                                        <th className="p-3 text-right">Qtd Contratada</th>
+                                                        <th className="p-3 text-right">Preço Unitário</th>
+                                                        <th className="p-3 text-right">Preço Total</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody className="divide-y divide-[#DDE3EA]">
+                                                    {itensContratadosModal.map((it, idx) => (
+                                                        <tr key={idx} className="hover:bg-slate-50">
+                                                            <td className="p-3 font-mono text-slate-400">{idx + 1}</td>
+                                                            <td className="p-3 font-semibold text-[#12304A]">{it.item}</td>
+                                                            <td className="p-3 uppercase text-slate-600">{it.unidade}</td>
+                                                            <td className="p-3 text-right font-mono">{Number(it.quantidade || 0).toLocaleString("pt-BR")}</td>
+                                                            <td className="p-3 text-right font-mono">
+                                                                R$ {Number(it.precoUnitario || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                                                            </td>
+                                                            <td className="p-3 text-right font-mono font-bold text-[#12304A]">
+                                                                R$ {Number(it.precoTotal || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    ) : (
+                                        <div className="bg-slate-50 p-4 rounded-xl border border-[#DDE3EA] text-center text-xs text-[#5B738B]">
+                                            Planilha detalhada em processamento pela Engenharia Municipal. O inteiro teor da proposta orçamentária contratada encontra-se disponível no Processo Licitatório de Origem.
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* CRITÉRIO 10.3: BOLETINS DE MEDIÇÃO E VALORES PAGOS */}
+                                <div className="space-y-3">
+                                    <div className="flex items-center justify-between">
+                                        <h3 className="text-xs font-bold text-[#12304A] uppercase tracking-wider flex items-center gap-2">
+                                            <FaMoneyCheckAlt className="text-emerald-600" />
+                                            Boletins de Medição e Pagamentos Realizados (Critério 10.3)
+                                        </h3>
+                                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                                            Quantitativos Executados e Pagos
+                                        </span>
+                                    </div>
+
+                                    {medicoesModal.length > 0 ? (
+                                        <div className="overflow-x-auto border border-[#DDE3EA] rounded-xl">
+                                            <table className="w-full text-left text-xs">
+                                                <thead className="bg-[#F5F7FA] text-slate-700 font-bold uppercase text-[10px]">
+                                                    <tr>
+                                                        <th className="p-3">Boletim / Medição</th>
+                                                        <th className="p-3">Data</th>
+                                                        <th className="p-3 text-center">% Medido</th>
+                                                        <th className="p-3 text-right">Valor Medido</th>
+                                                        <th className="p-3 text-right">Valor Pago</th>
+                                                        <th className="p-3">Documento Financeiro</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody className="divide-y divide-[#DDE3EA]">
+                                                    {medicoesModal.map((m, idx) => (
+                                                        <tr key={idx} className="hover:bg-slate-50">
+                                                            <td className="p-3 font-bold text-[#12304A]">{m.numero}</td>
+                                                            <td className="p-3 text-slate-600">
+                                                                {m.data ? new Date(m.data + "T00:00:00").toLocaleDateString("pt-BR") : "-"}
+                                                            </td>
+                                                            <td className="p-3 text-center font-mono font-bold text-[#1254A3]">{m.percentual}%</td>
+                                                            <td className="p-3 text-right font-mono font-bold text-[#12304A]">
+                                                                R$ {Number(m.valorMedido || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                                                            </td>
+                                                            <td className="p-3 text-right font-mono font-bold text-emerald-700">
+                                                                R$ {Number(m.valorPago || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                                                            </td>
+                                                            <td className="p-3 font-mono text-[11px] text-slate-500">
+                                                                {m.ordemBancaria || "Ordem Bancária Liquidada"}
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    ) : (
+                                        <div className="bg-slate-50 p-4 rounded-xl border border-[#DDE3EA] text-center text-xs text-[#5B738B]">
+                                            Boletins de medição em fase de atesto fiscal e liquidação orçamentária pelo fiscal da obra designado.
+                                        </div>
+                                    )}
+                                </div>
                             </div>
 
                             {/* Modal Footer */}
                             <div className="p-4 bg-[#F5F7FA] border-t border-[#DDE3EA] flex items-center justify-end">
                                 <button 
                                     onClick={() => setSelectedObra(null)}
-                                    className="px-5 py-2 bg-[#1254A3] text-white rounded-xl text-xs font-bold hover:bg-[#0d3f7c] transition-all shadow-sm"
+                                    className="px-6 py-2 bg-[#1254A3] text-white rounded-xl text-xs font-bold hover:bg-[#0d3f7c] transition-all shadow-sm cursor-pointer"
                                 >
                                     Fechar
                                 </button>

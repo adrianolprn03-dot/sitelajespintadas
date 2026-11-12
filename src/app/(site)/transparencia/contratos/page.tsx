@@ -5,7 +5,7 @@ import {
     FaFileContract, FaSpinner, FaHistory, FaCheckCircle, 
     FaExclamationTriangle, FaTimesCircle, FaBuilding, 
     FaWallet, FaArrowRight, FaRegCalendar,
-    FaBriefcase
+    FaBriefcase, FaExternalLinkAlt
 } from "react-icons/fa";
 import { 
     FaBuildingColumns, FaShieldHalved, FaMagnifyingGlass,
@@ -228,7 +228,7 @@ export default function ContratosPage() {
                          <div className="pt-5 border-t border-[#DDE3EA] flex items-center justify-between text-xs font-bold text-[#5B738B]">
                              <div className="flex items-center gap-2">
                                  <div className="w-2 h-2 rounded-full bg-[#1254A3] animate-pulse" />
-                                 <span>PNTP Critério 5.2</span>
+                                 <span>PNTP Critérios 9.2 e 9.3</span>
                              </div>
                              <FaCheckCircle className="text-emerald-500" />
                          </div>
@@ -597,13 +597,38 @@ export default function ContratosPage() {
                                                     <span className="font-bold text-slate-800">{ad.numero || `${idx + 1}º Termo Aditivo`}</span>
                                                     {ad.objeto && <p className="text-slate-600 mt-0.5">{ad.objeto}</p>}
                                                 </div>
-                                                {ad.valor !== undefined && <span className="font-bold text-orange-600">{fmt(Number(ad.valor))}</span>}
+                                                <div className="flex items-center gap-3">
+                                                    {ad.valor !== undefined && <span className="font-bold text-orange-600">{fmt(Number(ad.valor))}</span>}
+                                                    {ad.url && (
+                                                        <a href={ad.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 font-bold hover:underline">
+                                                            Ver PDF
+                                                        </a>
+                                                    )}
+                                                </div>
                                             </div>
                                         ))}
                                     </div>
                                 ) : (
                                     <p className="text-xs text-slate-500 italic">
                                         Não constam termos aditivos registrados para este instrumento até a presente data.
+                                    </p>
+                                )}
+                            </div>
+
+                            <div>
+                                <h4 className="text-xs font-black text-slate-500 uppercase mb-2">Inteiro Teor do Contrato (Critério 9.2)</h4>
+                                {(selectedContrato.instrumentoIntegralUrl || selectedContrato.arquivo) ? (
+                                    <a
+                                        href={selectedContrato.instrumentoIntegralUrl || selectedContrato.arquivo || "#"}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#1254A3] text-white text-xs font-bold hover:bg-blue-800 transition-colors shadow-sm"
+                                    >
+                                        <FaFileLines /> Abrir Contrato Integral Assinado (PDF) <FaExternalLinkAlt size={10} />
+                                    </a>
+                                ) : (
+                                    <p className="text-xs text-slate-500 italic">
+                                        O arquivo digitalizado do contrato integral está arquivado nos autos do processo e disponível para consulta presencial no setor de Contratos.
                                     </p>
                                 )}
                             </div>

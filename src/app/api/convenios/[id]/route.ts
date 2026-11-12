@@ -14,23 +14,39 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     }
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
     try {
         const body = await req.json();
         const updated = await prisma.convenio.update({
             where: { id: params.id },
             data: {
-                ...body,
+                numero: body.numero ? String(body.numero).trim() : undefined,
+                ano: body.ano ? parseInt(String(body.ano)) : undefined,
+                tipoConvenio: body.tipoConvenio || undefined,
+                objeto: body.objeto !== undefined ? String(body.objeto).trim() : undefined,
+                concedente: body.concedente !== undefined ? String(body.concedente).trim() : undefined,
+                beneficiario: body.beneficiario !== undefined ? (body.beneficiario ? String(body.beneficiario).trim() : null) : undefined,
+                cnpjParticipe: body.cnpjParticipe !== undefined ? (body.cnpjParticipe ? String(body.cnpjParticipe).trim() : null) : undefined,
+                valor: body.valor !== undefined ? parseFloat(String(body.valor)) : undefined,
+                contrapartida: body.contrapartida !== undefined ? parseFloat(String(body.contrapartida)) : undefined,
+                valorLiberado: body.valorLiberado !== undefined ? parseFloat(String(body.valorLiberado)) : undefined,
                 dataInicio: body.dataInicio ? new Date(body.dataInicio) : undefined,
                 dataFim: body.dataFim ? new Date(body.dataFim) : undefined,
-                valor: body.valor ? parseFloat(body.valor) : undefined,
-                contrapartida: body.contrapartida !== undefined ? parseFloat(body.contrapartida) : undefined,
+                secretaria: body.secretaria !== undefined ? String(body.secretaria).trim() : undefined,
+                status: body.status || undefined,
+                arquivoInteiroTeor: body.arquivoInteiroTeor !== undefined ? (body.arquivoInteiroTeor ? String(body.arquivoInteiroTeor).trim() : null) : undefined,
+                obrigacoes: body.obrigacoes !== undefined ? String(body.obrigacoes).trim() : undefined,
             },
         });
         return NextResponse.json(updated);
     } catch (error) {
-        return NextResponse.json({ error: "Erro interno" }, { status: 500 });
+        console.error("Erro ao atualizar convênio:", error);
+        return NextResponse.json({ error: "Erro interno ao atualizar convênio" }, { status: 500 });
     }
+}
+
+export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+    return PUT(req, { params });
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {

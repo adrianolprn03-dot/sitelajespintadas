@@ -49,12 +49,21 @@ type Licitacao = {
     dataAbertura?: string;
     editalUrl?: string | null;
     arquivo?: string | null;
-    fasesDocumentos?: Array<{ fase?: string; tipo?: string; titulo?: string; url?: string }> | null;
+    ataRegistroPreco?: boolean;
+    adesaoArp?: boolean;
+    fasesDocumentos?: Array<{ fase?: string; tipo?: string; titulo?: string; url?: string }> | string | null;
 };
 
 const modalidadeLabel: Record<string, string> = {
-    pregao: "Pregão Eletrônico", concorrencia: "Concorrência", "tomada-precos": "Tomada de Preços",
-    convite: "Convite", dispensa: "Dispensa de Licitação", inexigibilidade: "Inexigibilidade",
+    pregao: "Pregão Eletrônico",
+    concorrencia: "Concorrência",
+    "tomada-precos": "Tomada de Preços",
+    convite: "Convite",
+    dispensa: "Dispensa de Licitação (8.4)",
+    inexigibilidade: "Inexigibilidade (8.4)",
+    adesao: "Adesão a Registro de Preços - Carona (8.5)",
+    leilao: "Leilão Eletrônico",
+    credenciamento: "Credenciamento"
 };
 
 const statusConfig: Record<string, { label: string; cor: string; icon: any }> = {
@@ -670,38 +679,107 @@ export default function LicitacoesClient() {
                             </div>
 
                             <div>
-                                <h4 className="text-xs font-black text-slate-500 uppercase mb-2">Documentos das Fases Interna e Externa</h4>
+                                <div className="flex items-center justify-between mb-3">
+                                    <h4 className="text-xs font-black text-slate-700 uppercase">
+                                        Peças e Documentos Integrais do Processo
+                                    </h4>
+                                    {selectedLicitacao.adesaoArp ? (
+                                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
+                                            Ata de Adesão / Carona (PNTP 8.5)
+                                        </span>
+                                    ) : selectedLicitacao.ataRegistroPreco ? (
+                                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">
+                                            Ata Própria de Registro de Preços
+                                        </span>
+                                    ) : null}
+                                </div>
+
+                                {/* Edital Integral (Critério 8.2) */}
                                 {(selectedLicitacao.editalUrl || selectedLicitacao.arquivo) && (
-                                    <a
-                                        href={selectedLicitacao.editalUrl || selectedLicitacao.arquivo || "#"}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 text-white text-xs font-bold mb-3"
-                                    >
-                                        <FaFileLines /> Abrir Íntegra do Edital <FaExternalLinkAlt size={10} />
-                                    </a>
-                                )}
-                                {Array.isArray(selectedLicitacao.fasesDocumentos) && selectedLicitacao.fasesDocumentos.length > 0 ? (
-                                    <div className="space-y-2">
-                                        {selectedLicitacao.fasesDocumentos.map((doc, idx) => (
-                                            <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs">
-                                                <div>
-                                                    <span className="font-bold text-slate-800">{doc.titulo || doc.tipo || "Documento"}</span>
-                                                    {doc.fase && <span className="ml-2 text-[10px] uppercase px-2 py-0.5 bg-blue-100 text-blue-800 rounded">{doc.fase}</span>}
-                                                </div>
-                                                {doc.url && (
-                                                    <a href={doc.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 font-bold hover:underline">
-                                                        Baixar PDF
-                                                    </a>
-                                                )}
-                                            </div>
-                                        ))}
+                                    <div className="p-4 rounded-2xl bg-blue-50 border border-blue-200 mb-4 flex items-center justify-between">
+                                        <div>
+                                            <span className="text-[10px] font-black uppercase text-blue-800 tracking-wider block">
+                                                Critério PNTP 8.2 • Instrumento Convocatório
+                                            </span>
+                                            <span className="font-bold text-slate-800 text-xs">Íntegra do Edital de Licitação / Termo Convocatório</span>
+                                        </div>
+                                        <a
+                                            href={selectedLicitacao.editalUrl || selectedLicitacao.arquivo || "#"}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1254A3] text-white text-xs font-bold hover:bg-blue-800 transition-colors shadow-sm"
+                                        >
+                                            <FaFileLines /> Abrir Edital Integral <FaExternalLinkAlt size={10} />
+                                        </a>
                                     </div>
-                                ) : (
-                                    <p className="text-xs text-slate-500 italic">
-                                        Os demais anexos das fases interna e externa encontram-se vinculados ao processo administrativo ou sincronizados na aba PNCP Federal.
-                                    </p>
                                 )}
+
+                                {/* Relação de Documentos das Fases Interna e Externa (8.3 e 8.4) */}
+                                {(() => {
+                                    let docs: any[] = [];
+                                    if (Array.isArray(selectedLicitacao.fasesDocumentos)) {
+                                        docs = selectedLicitacao.fasesDocumentos;
+                                    } else if (typeof selectedLicitacao.fasesDocumentos === "string") {
+                                        try { docs = JSON.parse(selectedLicitacao.fasesDocumentos); } catch {}
+                                    }
+
+                                    if (docs.length === 0) {
+                                        return (
+                                            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-500 italic space-y-1">
+                                                <p>Os documentos das fases preparatória e externa encontram-se arquivados nos autos do processo nº {selectedLicitacao.numeroProcesso || selectedLicitacao.numero} e sincronizados perante o PNCP Federal.</p>
+                                            </div>
+                                        );
+                                    }
+
+                                    const interna = docs.filter(d => d.fase === "interna");
+                                    const externa = docs.filter(d => d.fase !== "interna");
+
+                                    return (
+                                        <div className="space-y-4">
+                                            {interna.length > 0 && (
+                                                <div className="space-y-2">
+                                                    <span className="text-[10px] font-black uppercase text-purple-700 tracking-wider block">
+                                                        Fase Interna / Preparatória (ETP, Termo de Referência, Pareceres)
+                                                    </span>
+                                                    {interna.map((doc, idx) => (
+                                                        <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-purple-50/50 border border-purple-100 text-xs">
+                                                            <div>
+                                                                <span className="font-bold text-slate-800">{doc.tipo || "Documento"}: </span>
+                                                                <span className="text-slate-600">{doc.titulo}</span>
+                                                            </div>
+                                                            {doc.url && (
+                                                                <a href={doc.url} target="_blank" rel="noopener noreferrer" className="text-purple-700 font-bold hover:underline">
+                                                                    Ver PDF
+                                                                </a>
+                                                            )}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+
+                                            {externa.length > 0 && (
+                                                <div className="space-y-2">
+                                                    <span className="text-[10px] font-black uppercase text-blue-700 tracking-wider block">
+                                                        Fase Externa (Habilitação, Atas, Recursos, Homologação)
+                                                    </span>
+                                                    {externa.map((doc, idx) => (
+                                                        <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-blue-50/50 border border-blue-100 text-xs">
+                                                            <div>
+                                                                <span className="font-bold text-slate-800">{doc.tipo || "Documento"}: </span>
+                                                                <span className="text-slate-600">{doc.titulo}</span>
+                                                            </div>
+                                                            {doc.url && (
+                                                                <a href={doc.url} target="_blank" rel="noopener noreferrer" className="text-blue-700 font-bold hover:underline">
+                                                                    Ver PDF
+                                                                </a>
+                                                            )}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })()}
                             </div>
                         </div>
                     </div>
