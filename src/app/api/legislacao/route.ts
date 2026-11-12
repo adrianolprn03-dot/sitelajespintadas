@@ -9,16 +9,20 @@ export async function GET(request: NextRequest) {
     const busca = searchParams.get("busca");
     const categoria = searchParams.get("categoria");
     const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "20");
+    const limit = Math.min(parseInt(searchParams.get("limit") || "20"), 10000);
     const skip = (page - 1) * limit;
 
     const where: any = { ativo: true };
     if (tipo) {
-        if (tipo.includes(",")) {
-            where.tipo = { in: tipo.split(",").map(t => t.trim()) };
-        } else {
-            where.tipo = tipo;
+        const rawList = tipo.includes(",") ? tipo.split(",").map(t => t.trim()) : [tipo.trim()];
+        const expandedTipos = new Set<string>();
+        for (const t of rawList) {
+            expandedTipos.add(t);
+            expandedTipos.add(t.toLowerCase());
+            expandedTipos.add(t.toUpperCase());
+            expandedTipos.add(t.charAt(0).toUpperCase() + t.slice(1).toLowerCase());
         }
+        where.tipo = { in: Array.from(expandedTipos) };
     }
     if (categoria) where.categoria = categoria;
     if (ano) where.ano = parseInt(ano);
@@ -32,7 +36,7 @@ export async function GET(request: NextRequest) {
     const [items, total] = await Promise.all([
         prisma.legislacao.findMany({
             where,
-            orderBy: [{ ano: "desc" }, { criadoEm: "desc" }, { id: "desc" }],
+            orderBy: [{ ano: "desc" }, { dataAto: "desc" }, { criadoEm: "desc" }, { id: "desc" }],
             skip,
             take: limit,
         }),

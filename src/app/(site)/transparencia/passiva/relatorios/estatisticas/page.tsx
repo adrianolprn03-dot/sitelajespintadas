@@ -1,189 +1,329 @@
-import type { Metadata } from "next";
-import PageHeader from "@/components/PageHeader";
-import { prisma } from "@/lib/prisma";
-import { BarChart3, PieChart, Timer, CheckCircle2, AlertCircle, FileText, Users, Download } from "lucide-react";
-import Link from "next/link";
+"use client";
 
-export const metadata: Metadata = {
-    title: "Estatísticas do e-SIC | Portal da Transparência",
-    description: "Painel de indicadores de desempenho e estatísticas de acesso à informação (LAI) do município.",
+import React, { useState, useEffect } from "react";
+import PageHeader from "@/components/PageHeader";
+import BannerPNTP from "@/components/transparencia/BannerPNTP";
+import { exportToCSV, exportToJSON, exportToPDF, exportToXLSX } from "@/lib/exportUtils";
+import {
+    FaChartBar,
+    FaFileAlt,
+    FaCheckCircle,
+    FaTimesCircle,
+    FaClock,
+    FaUsers,
+    FaBuilding,
+    FaCalendarAlt,
+    FaFilePdf,
+    FaSpinner,
+    FaBalanceScale
+} from "react-icons/fa";
+
+type ExercicioStats = {
+    exercicio: number;
+    totalRecebidos: number;
+    atendidos: number;
+    indeferidos: number;
+    emTramitacao: number;
+    taxaAtendimento: number;
+    tempoMedioDias: number;
+    perfilSolicitantes: {
+        pessoaFisica: number;
+        pessoaJuridica: number;
+        generoNaoInformado: number;
+    };
+    recursos: {
+        primeiraInstancia: number;
+        segundaInstancia: number;
+        providos: number;
+        negados: number;
+    };
 };
 
-async function getDetailedStats() {
-    const total = await prisma.esic.count();
-    const respondidos = await prisma.esic.count({ 
-        where: { 
-            OR: [
-                { status: "concluido" },
-                { respondidoEm: { not: null } }
-            ]
-        } 
-    });
-    
-    const pendentes = total - respondidos;
-    
-    // Simulação de tempo médio (em dias) baseado nos dados reais se houver data de resposta
-    const pedidosComResposta = await prisma.esic.findMany({
-        where: { respondidoEm: { not: null } },
-        select: { criadoEm: true, respondidoEm: true }
-    });
+export default function SICEstatisticasPage() {
+    const [loading, setLoading] = useState(true);
+    const [stats, setStats] = useState<ExercicioStats[]>([]);
+    const [exercicioSelecionado, setExercicioSelecionado] = useState(2026);
 
-    let tempoMedio = 0;
-    if (pedidosComResposta.length > 0) {
-        const totalDias = pedidosComResposta.reduce((acc, curr) => {
-            const diff = curr.respondidoEm!.getTime() - curr.criadoEm.getTime();
-            return acc + (diff / (1000 * 60 * 60 * 24));
-        }, 0);
-        tempoMedio = Math.round(totalDias / pedidosComResposta.length);
-    } else {
-        tempoMedio = 12; // Valor de referência LAI se não houver dados
-    }
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                const res = await fetch("/api/transparencia/esic-relatorios?tipo=estatisticas");
+                const data = await res.json();
+                if (data.sucesso) {
+                    setStats(data.statsPorExercicio || []);
+                }
+            } catch (error) {
+                console.error("Erro ao carregar estatísticas do e-SIC:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
 
-    const porSigilo = {
-        semSigilo: await prisma.esic.count({ where: { grauSigilo: "Sem Sigilo" } }),
-        comSigilo: await prisma.esic.count({ where: { NOT: { grauSigilo: "Sem Sigilo" } } })
+    const atual = stats.find((s) => s.exercicio === exercicioSelecionado) || {
+        exercicio: exercicioSelecionado,
+        totalRecebidos: 0,
+        atendidos: 0,
+        indeferidos: 0,
+        emTramitacao: 0,
+        taxaAtendimento: 100,
+        tempoMedioDias: 0,
+        perfilSolicitantes: { pessoaFisica: 0, pessoaJuridica: 0, generoNaoInformado: 0 },
+        recursos: { primeiraInstancia: 0, segundaInstancia: 0, providos: 0, negados: 0 }
     };
 
-    return { total, respondidos, pendentes, tempoMedio, porSigilo };
-}
+    const handleExport = (format: "pdf" | "csv" | "json" | "xlsx") => {
+        const payload = stats.map((s) => ({
+            "Exercício": s.exercicio,
+            "Pedidos Recebidos": s.totalRecebidos,
+            "Pedidos Atendidos": s.atendidos,
+            "Pedidos Indeferidos": s.indeferidos,
+            "Em Tramitação": s.emTramitacao,
+            "Taxa de Atendimento (%)": `${s.taxaAtendimento}%`,
+            "Tempo Médio (Dias)": s.tempoMedioDias,
+            "Solicitantes Pessoa Física": s.perfilSolicitantes.pessoaFisica,
+            "Solicitantes Pessoa Jurídica": s.perfilSolicitantes.pessoaJuridica
+        }));
 
-export default async function SICEstatisticasPage() {
-    const stats = await getDetailedStats();
-    const taxaResposta = stats.total > 0 ? Math.round((stats.respondidos / stats.total) * 100) : 100;
+        const filename = `relatorio_estatistico_anual_esic_lajes_pintadas`;
+        const title = `Relatório Estatístico Anual de Atendimento à LAI (PNTP 12.7) – Lajes Pintadas/RN`;
+
+        if (format === "csv") exportToCSV(payload, filename);
+        else if (format === "json") exportToJSON(payload, filename);
+        else if (format === "xlsx") exportToXLSX(payload, filename);
+        else exportToPDF(payload, filename, title);
+    };
 
     return (
-        <div className="min-h-screen bg-[#f8fafc] font-['Montserrat',sans-serif]">
+        <div className="min-h-screen bg-[#F8FAFC]">
             <PageHeader
-                title="Indicadores e-SIC"
-                subtitle="Transparência Passiva em números: acompanhe a eficiência no atendimento à Lei de Acesso à Informação."
-                variant="premium"
-                icon={<BarChart3 />}
+                title="Relatório Estatístico Anual do e-SIC (12.7)"
+                subtitle="Consolidado anual de pedidos recebidos, atendidos, indeferidos, perfil dos solicitantes e tempo de resposta (Lei nº 12.527/2011)."
+                icon={<FaChartBar className="w-8 h-8 text-[#1254A3]" />}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
                     { label: "Transparência", href: "/transparencia" },
                     { label: "Transparência Passiva", href: "/transparencia/passiva" },
-                    { label: "Estatísticas" }
+                    { label: "Relatórios", href: "/transparencia/passiva/relatorios" },
+                    { label: "Estatísticas Anuais" }
                 ]}
             />
 
-            <div className="max-w-[1240px] mx-auto px-6 py-12">
-                
-                {/* Destaques Principais */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                    <div className="bg-white p-8 rounded-[2rem] border border-blue-100 shadow-sm border-l-4 border-l-blue-600">
-                        <div className="flex items-center justify-between mb-4">
-                            <FileText className="text-blue-600" size={24} />
-                            <span className="text-[10px] font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-100">Total</span>
-                        </div>
-                        <p className="text-3xl font-black text-gray-800 tracking-tighter">{stats.total}</p>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Pedidos Realizados</p>
-                    </div>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+                {/* Banner de Conformidade PNTP */}
+                <BannerPNTP
+                    criterio="12.7"
+                    requisito="Divulga relatório estatístico contendo a quantidade de pedidos de informação recebidos, atendidos e indeferidos, bem como informações genéricas sobre os solicitantes?"
+                    status="Atende com Série Histórica e Indicadores Oficiais"
+                />
 
-                    <div className="bg-white p-8 rounded-[2rem] border border-emerald-100 shadow-sm border-l-4 border-l-emerald-600">
-                        <div className="flex items-center justify-between mb-4">
-                            <CheckCircle2 className="text-emerald-600" size={24} />
-                            <span className="text-[10px] font-black text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">{taxaResposta}%</span>
-                        </div>
-                        <p className="text-3xl font-black text-gray-800 tracking-tighter">{stats.respondidos}</p>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Pedidos Atendidos</p>
-                    </div>
-
-                    <div className="bg-white p-8 rounded-[2rem] border border-amber-100 shadow-sm border-l-4 border-l-amber-600">
-                        <div className="flex items-center justify-between mb-4">
-                            <Timer className="text-amber-600" size={24} />
-                            <span className="text-[10px] font-black text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-100">Meta: 20 dias</span>
-                        </div>
-                        <p className="text-3xl font-black text-gray-800 tracking-tighter">{stats.tempoMedio} dias</p>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Tempo de Resposta</p>
-                    </div>
-
-                    <div className="bg-white p-8 rounded-[2rem] border border-rose-100 shadow-sm border-l-4 border-l-rose-600">
-                        <div className="flex items-center justify-between mb-4">
-                            <AlertCircle className="text-rose-600" size={24} />
-                            <span className="text-[10px] font-black text-rose-600 bg-rose-50 px-3 py-1 rounded-full border border-rose-100">Pendente</span>
-                        </div>
-                        <p className="text-3xl font-black text-gray-800 tracking-tighter">{stats.pendentes}</p>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Aguardando Retorno</p>
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-                    {/* Gráfico Simulado - Perfil do Solicitante */}
-                    <div className="bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-xl shadow-gray-200/40">
-                        <div className="flex items-center gap-3 mb-10">
-                            <Users className="text-blue-600" size={20} />
-                            <h3 className="text-sm font-black text-gray-800 uppercase tracking-widest">Perfil do Solicitante</h3>
-                        </div>
-                        <div className="space-y-6">
-                            {[
-                                { label: "Pessoa Física", perc: 85, color: "bg-blue-600" },
-                                { label: "Pessoa Jurídica", perc: 15, color: "bg-orange-500" }
-                            ].map((p, i) => (
-                                <div key={i}>
-                                    <div className="flex justify-between items-center mb-2">
-                                        <span className="text-[11px] font-black uppercase text-gray-600">{p.label}</span>
-                                        <span className="text-[11px] font-black text-gray-900">{p.perc}%</span>
-                                    </div>
-                                    <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
-                                        <div className={`h-full ${p.color}`} style={{ width: `${p.perc}%` }}></div>
-                                    </div>
-                                </div>
+                {/* Seletor de Exercício e Exportação */}
+                <div className="bg-white rounded-3xl p-6 border border-gray-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                        <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Exercício de Referência:</span>
+                        <div className="flex flex-wrap gap-2">
+                            {[2021, 2022, 2023, 2024, 2025, 2026].map((ano) => (
+                                <button
+                                    key={ano}
+                                    onClick={() => setExercicioSelecionado(ano)}
+                                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                                        exercicioSelecionado === ano
+                                            ? "bg-[#1254A3] text-white shadow-md shadow-blue-900/10"
+                                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                    }`}
+                                >
+                                    {ano}
+                                </button>
                             ))}
                         </div>
                     </div>
 
-                    {/* Classificação de Sigilo */}
-                    <div className="bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-xl shadow-gray-200/40">
-                        <div className="flex items-center gap-3 mb-10">
-                            <PieChart className="text-purple-600" size={20} />
-                            <h3 className="text-sm font-black text-gray-800 uppercase tracking-widest">Classificação de Sigilo</h3>
-                        </div>
-                        <div className="space-y-6">
-                            {[
-                                { label: "Acesso Público", val: stats.porSigilo.semSigilo, color: "bg-emerald-500" },
-                                { label: "Com Sigilo (LAI Art. 23)", val: stats.porSigilo.comSigilo, color: "bg-purple-600" }
-                            ].map((p, i) => (
-                                <div key={i}>
-                                    <div className="flex justify-between items-center mb-2">
-                                        <span className="text-[11px] font-black uppercase text-gray-600">{p.label}</span>
-                                        <span className="text-[11px] font-black text-gray-900">{p.val}</span>
-                                    </div>
-                                    <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
-                                        <div className={`h-full ${p.color}`} style={{ width: `${stats.total > 0 ? (p.val / stats.total) * 100 : 0}%` }}></div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => handleExport("pdf")}
+                            className="inline-flex items-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition-colors shadow-sm"
+                        >
+                            <FaFilePdf /> Baixar Relatório Anual (PDF)
+                        </button>
                     </div>
                 </div>
 
-                {/* Seção Informativa/Download */}
-                <div className="bg-gray-900 rounded-[3rem] p-12 text-white relative overflow-hidden shadow-2xl">
-                     <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/20 rounded-full blur-3xl -mr-32 -mt-32"></div>
-                     <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
-                        <div className="max-w-xl">
-                            <h3 className="text-2xl font-black uppercase tracking-tighter mb-4">Relatório Anual Consolidado</h3>
-                            <p className="text-blue-100/60 text-sm font-medium leading-relaxed mb-6">
-                                Baixe o documento completo com a análise qualitativa dos pedidos atendidos, 
-                                recursos interpostos e motivos de indeferimento, conforme exigido pela 
-                                Controladoria Geral e PNTP.
-                            </p>
-                            <div className="flex flex-wrap gap-4">
-                                <span className="bg-white/10 px-4 py-2 rounded-xl text-[10px] font-black tracking-widest uppercase border border-white/10">Ano Base 2024</span>
-                                <span className="bg-white/10 px-4 py-2 rounded-xl text-[10px] font-black tracking-widest uppercase border border-white/10">Atualização Trimestral</span>
+                {loading ? (
+                    <div className="py-20 text-center text-gray-500 flex flex-col items-center justify-center gap-3">
+                        <FaSpinner className="animate-spin text-3xl text-[#1254A3]" />
+                        <span>Calculando indicadores anuais da base oficial...</span>
+                    </div>
+                ) : (
+                    <>
+                        {/* 4 Cards Principais do Exercício */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-2 border-l-4 border-l-[#1254A3]">
+                                <div className="flex items-center justify-between">
+                                    <FaFileAlt className="text-[#1254A3] text-xl" />
+                                    <span className="text-[10px] font-bold text-gray-500 uppercase">Exercício {atual.exercicio}</span>
+                                </div>
+                                <p className="text-3xl font-black text-gray-900">{atual.totalRecebidos}</p>
+                                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Pedidos Recebidos</p>
+                            </div>
+
+                            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-2 border-l-4 border-l-emerald-500">
+                                <div className="flex items-center justify-between">
+                                    <FaCheckCircle className="text-emerald-500 text-xl" />
+                                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100">
+                                        {atual.taxaAtendimento}% Atendidos
+                                    </span>
+                                </div>
+                                <p className="text-3xl font-black text-gray-900">{atual.atendidos}</p>
+                                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Atendidos / Deferidos</p>
+                            </div>
+
+                            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-2 border-l-4 border-l-rose-500">
+                                <div className="flex items-center justify-between">
+                                    <FaTimesCircle className="text-rose-500 text-xl" />
+                                    <span className="text-[10px] font-bold text-rose-700 bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-100">
+                                        Indeferimentos
+                                    </span>
+                                </div>
+                                <p className="text-3xl font-black text-gray-900">{atual.indeferidos}</p>
+                                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Pedidos Indeferidos</p>
+                            </div>
+
+                            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-2 border-l-4 border-l-amber-500">
+                                <div className="flex items-center justify-between">
+                                    <FaClock className="text-amber-500 text-xl" />
+                                    <span className="text-[10px] font-bold text-gray-500 uppercase">Meta LAI: 20 dias</span>
+                                </div>
+                                <p className="text-3xl font-black text-gray-900">
+                                    {atual.tempoMedioDias > 0 ? `${atual.tempoMedioDias} dias` : "Atendimento imediato"}
+                                </p>
+                                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Tempo Médio de Resposta</p>
                             </div>
                         </div>
-                        <button className="w-full md:w-auto bg-white text-blue-900 px-10 py-5 rounded-full font-black uppercase text-xs tracking-widest shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-3">
-                             <Download size={18} /> Baixar Relatório (PDF)
-                        </button>
-                     </div>
-                </div>
 
-                <div className="mt-16 text-center">
-                    <Link href="/transparencia/passiva/relatorios" className="text-[10px] font-black text-gray-400 uppercase tracking-widest hover:text-blue-600 transition-colors">
-                        Voltar para Relação de Pedidos
-                    </Link>
-                </div>
+                        {/* Detalhamento de Perfil dos Solicitantes & Recursos */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200 shadow-sm space-y-4">
+                                <h3 className="font-bold text-gray-900 text-lg flex items-center gap-2">
+                                    <FaUsers className="text-[#1254A3]" /> Perfil Genérico dos Solicitantes ({atual.exercicio})
+                                </h3>
+                                <p className="text-xs text-gray-500 leading-relaxed">
+                                    Conforme exigência do Critério 12.7 do PNTP, divulgação agregada e anonimizada da natureza jurídica e demografia dos requerentes de informação pública.
+                                </p>
+
+                                <div className="space-y-4 pt-2">
+                                    <div>
+                                        <div className="flex justify-between text-xs font-bold text-gray-700 mb-1">
+                                            <span>Pessoa Física (Cidadão)</span>
+                                            <span>{atual.perfilSolicitantes.pessoaFisica} pedidos</span>
+                                        </div>
+                                        <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+                                            <div
+                                                className="bg-[#1254A3] h-full rounded-full transition-all duration-500"
+                                                style={{
+                                                    width: `${
+                                                        atual.totalRecebidos > 0
+                                                            ? Math.round((atual.perfilSolicitantes.pessoaFisica / atual.totalRecebidos) * 100)
+                                                            : 100
+                                                    }%`
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <div className="flex justify-between text-xs font-bold text-gray-700 mb-1">
+                                            <span>Pessoa Jurídica (Empresas / Entidades)</span>
+                                            <span>{atual.perfilSolicitantes.pessoaJuridica} pedidos</span>
+                                        </div>
+                                        <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+                                            <div
+                                                className="bg-amber-500 h-full rounded-full transition-all duration-500"
+                                                style={{
+                                                    width: `${
+                                                        atual.totalRecebidos > 0
+                                                            ? Math.round((atual.perfilSolicitantes.pessoaJuridica / atual.totalRecebidos) * 100)
+                                                            : 0
+                                                    }%`
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200 shadow-sm space-y-4">
+                                <h3 className="font-bold text-gray-900 text-lg flex items-center gap-2">
+                                    <FaBalanceScale className="text-[#1254A3]" /> Recursos e Instâncias Recursais
+                                </h3>
+                                <p className="text-xs text-gray-500 leading-relaxed">
+                                    Monitoramento de recursos interpostos por solicitantes perante a autoridade hierárquica e autoridade de reavaliação.
+                                </p>
+
+                                <div className="grid grid-cols-2 gap-4 pt-2">
+                                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 space-y-1">
+                                        <span className="text-[11px] font-bold text-gray-500 uppercase">1ª Instância</span>
+                                        <p className="text-2xl font-black text-gray-800">{atual.recursos.primeiraInstancia}</p>
+                                        <span className="text-[10px] text-gray-400">Recursos ao Secretário</span>
+                                    </div>
+
+                                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 space-y-1">
+                                        <span className="text-[11px] font-bold text-gray-500 uppercase">2ª Instância</span>
+                                        <p className="text-2xl font-black text-gray-800">{atual.recursos.segundaInstancia}</p>
+                                        <span className="text-[10px] text-gray-400">Recursos ao Prefeito</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Série Histórica Consolidada (2021 a 2026) */}
+                        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200 shadow-sm space-y-4">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <h3 className="font-bold text-gray-900 text-lg">Série Histórica Oficial de Atendimento à LAI</h3>
+                                    <p className="text-xs text-gray-500">Comparativo anual dos exercícios de 2021 a 2026.</p>
+                                </div>
+                            </div>
+
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left text-sm">
+                                    <thead>
+                                        <tr className="bg-gray-50 text-gray-500 text-xs font-bold uppercase tracking-wider border-b border-gray-200">
+                                            <th className="py-4 px-4">Exercício</th>
+                                            <th className="py-4 px-4 text-center">Recebidos</th>
+                                            <th className="py-4 px-4 text-center">Atendidos</th>
+                                            <th className="py-4 px-4 text-center">Indeferidos</th>
+                                            <th className="py-4 px-4 text-center">Em Tramitação</th>
+                                            <th className="py-4 px-4 text-center">Taxa (%)</th>
+                                            <th className="py-4 px-4 text-center">Tempo Médio</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-100">
+                                        {stats.map((s) => (
+                                            <tr
+                                                key={s.exercicio}
+                                                className={`hover:bg-blue-50/40 transition-colors ${
+                                                    s.exercicio === exercicioSelecionado ? "bg-blue-50/60 font-semibold" : ""
+                                                }`}
+                                            >
+                                                <td className="py-4 px-4 font-bold text-[#1254A3]">{s.exercicio}</td>
+                                                <td className="py-4 px-4 text-center font-bold text-gray-800">{s.totalRecebidos}</td>
+                                                <td className="py-4 px-4 text-center text-emerald-700 font-bold">{s.atendidos}</td>
+                                                <td className="py-4 px-4 text-center text-rose-700 font-bold">{s.indeferidos}</td>
+                                                <td className="py-4 px-4 text-center text-amber-700 font-bold">{s.emTramitacao}</td>
+                                                <td className="py-4 px-4 text-center font-bold text-emerald-700">{s.taxaAtendimento}%</td>
+                                                <td className="py-4 px-4 text-center text-gray-600">
+                                                    {s.tempoMedioDias > 0 ? `${s.tempoMedioDias} dias` : "Imediato"}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     );

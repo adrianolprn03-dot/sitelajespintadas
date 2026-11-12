@@ -38,6 +38,18 @@ interface CriterioItem {
     statusEvidencia: string;
     statusValidacao: string;
     resultadoAvaliacaoExterna: string;
+    resultadoCiclo?: {
+        ciclo: string;
+        classe?: string;
+        disponibilidade: string;
+        atualidade: string;
+        serieHistorica: string;
+        gravacaoRelatorio: string;
+        filtro: string;
+        evidenciaRadar?: string;
+        evidenciaObs?: string;
+        encaminhamento?: string;
+    };
     evidenciaUrl?: string | null;
     observacoes?: string | null;
     ultimaAtualizacaoConteudo?: string | null;
@@ -152,6 +164,11 @@ export default function AdminPNTPPage() {
     }, [carregarDados]);
 
     const handleConferirSemAlteracao = async (criterio: CriterioItem) => {
+        if (!criterio.evidenciaUrl) {
+            toast.error("Para homologar a conferência, registre a URL da evidência pública testada.");
+            setEditingItem(criterio);
+            return;
+        }
         try {
             const res = await fetch("/api/admin/pntp", {
                 method: "POST",
@@ -159,6 +176,7 @@ export default function AdminPNTPPage() {
                 body: JSON.stringify({
                     codigo: criterio.codigo,
                     acao: "conferir",
+                    evidenciaUrl: criterio.evidenciaUrl,
                 }),
             });
             if (res.ok) {
@@ -176,6 +194,10 @@ export default function AdminPNTPPage() {
     const handleSalvarCriterio = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!editingItem) return;
+        if (editingItem.statusValidacao === "validado" && !editingItem.evidenciaUrl) {
+            toast.error("É obrigatório registrar o link da evidência pública testada para homologar a validação.");
+            return;
+        }
         try {
             const res = await fetch("/api/admin/pntp", {
                 method: "POST",
@@ -550,9 +572,26 @@ export default function AdminPNTPPage() {
                                         </td>
 
                                         <td className="px-4 py-3.5">
-                                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-gray-100 text-gray-700">
-                                                {c.resultadoAvaliacaoExterna}
-                                            </span>
+                                            {c.resultadoCiclo ? (
+                                                <div className="space-y-1">
+                                                    <div className="flex items-center gap-1 font-mono text-[9px]">
+                                                        <span title="Disponibilidade" className={`px-1 py-0.5 rounded font-black ${c.resultadoCiclo.disponibilidade === 'S' ? 'bg-emerald-100 text-emerald-800' : c.resultadoCiclo.disponibilidade === 'N' ? 'bg-rose-100 text-rose-800' : 'bg-gray-100 text-gray-500'}`}>D:{c.resultadoCiclo.disponibilidade}</span>
+                                                        <span title="Atualidade" className={`px-1 py-0.5 rounded font-black ${c.resultadoCiclo.atualidade === 'S' ? 'bg-emerald-100 text-emerald-800' : c.resultadoCiclo.atualidade === 'N' ? 'bg-rose-100 text-rose-800' : 'bg-gray-100 text-gray-500'}`}>A:{c.resultadoCiclo.atualidade}</span>
+                                                        <span title="Série Histórica" className={`px-1 py-0.5 rounded font-black ${c.resultadoCiclo.serieHistorica === 'S' ? 'bg-emerald-100 text-emerald-800' : c.resultadoCiclo.serieHistorica === 'N' ? 'bg-rose-100 text-rose-800' : 'bg-gray-100 text-gray-500'}`}>H:{c.resultadoCiclo.serieHistorica}</span>
+                                                        <span title="Gravação de Relatórios" className={`px-1 py-0.5 rounded font-black ${c.resultadoCiclo.gravacaoRelatorio === 'S' ? 'bg-emerald-100 text-emerald-800' : c.resultadoCiclo.gravacaoRelatorio === 'N' ? 'bg-rose-100 text-rose-800' : 'bg-gray-100 text-gray-500'}`}>R:{c.resultadoCiclo.gravacaoRelatorio}</span>
+                                                        <span title="Filtro" className={`px-1 py-0.5 rounded font-black ${c.resultadoCiclo.filtro === 'S' ? 'bg-emerald-100 text-emerald-800' : c.resultadoCiclo.filtro === 'N' ? 'bg-rose-100 text-rose-800' : 'bg-gray-100 text-gray-500'}`}>F:{c.resultadoCiclo.filtro}</span>
+                                                    </div>
+                                                    {c.resultadoCiclo.evidenciaObs && (
+                                                        <div className="text-[10px] text-gray-500 max-w-[180px] truncate italic" title={c.resultadoCiclo.evidenciaObs}>
+                                                            {c.resultadoCiclo.evidenciaObs}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-gray-100 text-gray-700">
+                                                    {c.resultadoAvaliacaoExterna}
+                                                </span>
+                                            )}
                                         </td>
 
                                         <td className="px-4 py-3.5">
@@ -656,6 +695,27 @@ export default function AdminPNTPPage() {
                         <h3 className="text-base font-bold text-gray-800">
                             Atualizar Critério {editingItem.codigo} — {editingItem.titulo}
                         </h3>
+
+                        {editingItem.resultadoCiclo && (
+                            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs space-y-1.5">
+                                <div className="font-bold text-slate-800 flex items-center justify-between">
+                                    <span>Auditoria Ciclo Oficial (Radar PNTP 2026):</span>
+                                    <div className="flex gap-1 font-mono text-[9px]">
+                                        <span title="Disponibilidade" className={`px-1.5 py-0.5 rounded font-black ${editingItem.resultadoCiclo.disponibilidade === 'S' ? 'bg-emerald-100 text-emerald-800' : editingItem.resultadoCiclo.disponibilidade === 'N' ? 'bg-rose-100 text-rose-800' : 'bg-gray-100 text-gray-500'}`}>D:{editingItem.resultadoCiclo.disponibilidade}</span>
+                                        <span title="Atualidade" className={`px-1.5 py-0.5 rounded font-black ${editingItem.resultadoCiclo.atualidade === 'S' ? 'bg-emerald-100 text-emerald-800' : editingItem.resultadoCiclo.atualidade === 'N' ? 'bg-rose-100 text-rose-800' : 'bg-gray-100 text-gray-500'}`}>A:{editingItem.resultadoCiclo.atualidade}</span>
+                                        <span title="Série Histórica" className={`px-1.5 py-0.5 rounded font-black ${editingItem.resultadoCiclo.serieHistorica === 'S' ? 'bg-emerald-100 text-emerald-800' : editingItem.resultadoCiclo.serieHistorica === 'N' ? 'bg-rose-100 text-rose-800' : 'bg-gray-100 text-gray-500'}`}>H:{editingItem.resultadoCiclo.serieHistorica}</span>
+                                        <span title="Gravação de Relatório" className={`px-1.5 py-0.5 rounded font-black ${editingItem.resultadoCiclo.gravacaoRelatorio === 'S' ? 'bg-emerald-100 text-emerald-800' : editingItem.resultadoCiclo.gravacaoRelatorio === 'N' ? 'bg-rose-100 text-rose-800' : 'bg-gray-100 text-gray-500'}`}>R:{editingItem.resultadoCiclo.gravacaoRelatorio}</span>
+                                        <span title="Filtro" className={`px-1.5 py-0.5 rounded font-black ${editingItem.resultadoCiclo.filtro === 'S' ? 'bg-emerald-100 text-emerald-800' : editingItem.resultadoCiclo.filtro === 'N' ? 'bg-rose-100 text-rose-800' : 'bg-gray-100 text-gray-500'}`}>F:{editingItem.resultadoCiclo.filtro}</span>
+                                    </div>
+                                </div>
+                                {editingItem.resultadoCiclo.evidenciaObs && (
+                                    <p className="text-slate-600 text-[11px] italic">“{editingItem.resultadoCiclo.evidenciaObs}”</p>
+                                )}
+                                {editingItem.resultadoCiclo.encaminhamento && (
+                                    <p className="text-blue-700 font-semibold text-[11px]">Encaminhamento Oficial: {editingItem.resultadoCiclo.encaminhamento}</p>
+                                )}
+                            </div>
+                        )}
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>

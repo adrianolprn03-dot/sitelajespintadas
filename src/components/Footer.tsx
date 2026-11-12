@@ -52,7 +52,7 @@ const footerLinks = [
             { label: "Consulta de Protocolo", href: "/servicos/consulta-protocolo" },
             { label: "Medicamentos SUS", href: "/transparencia/medicamentos-sus" },
             { label: "Central de Regulação", href: "/transparencia/central-regulacao" },
-            { label: "Fila de Creches", href: "/transparencia/educacao" },
+            { label: "Fila de Creches", href: "/transparencia/fila-creches" },
             { label: "Política de Privacidade (LGPD)", href: "/privacidade" },
             { label: "Mapa do Site", href: "/mapa-do-site" },
         ],

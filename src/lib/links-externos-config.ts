@@ -252,3 +252,4 @@ export function getModuloAlvoLabel(moduloAlvo?: string | null): string {
     );
     return found ? found.label : `Módulo: ${moduloAlvo}`;
 }
+

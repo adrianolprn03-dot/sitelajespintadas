@@ -68,7 +68,7 @@ const navItems = [
             { label: "Contracheque Online", href: "/servicos/contracheque" },
             { label: "Medicamentos SUS nas UBS", href: "/transparencia/medicamentos-sus" },
             { label: "Central de Regulação", href: "/transparencia/central-regulacao" },
-            { label: "Fila de Creches", href: "/transparencia/educacao" },
+            { label: "Fila de Creches", href: "/transparencia/fila-creches" },
         ],
     },
     {

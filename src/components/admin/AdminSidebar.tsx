@@ -12,7 +12,7 @@ import {
     FaHandshake, FaPlane, FaHammer, FaQuestionCircle, FaBook,
     FaUserFriends, FaUpload, FaFile, FaExternalLinkAlt, FaUserShield,
     FaUserGraduate, FaUserTie, FaCog, FaTheaterMasks, FaHeartbeat,
-    FaShieldAlt, FaHistory
+    FaShieldAlt, FaHistory, FaGraduationCap
 } from "react-icons/fa";
 
 type MenuItem = {
@@ -73,6 +73,7 @@ const menuCategories: MenuCategory[] = [
             { label: "Obras Públicas", href: "/admin/obras", icon: FaHammer, roles: ALL_TRANSPARENCY_ROLES },
             { label: "Saúde / Medicamentos", href: "/admin/saude", icon: FaBook, roles: ALL_TRANSPARENCY_ROLES },
             { label: "Regulação / Filas SUS", href: "/admin/central-regulacao", icon: FaHeartbeat, roles: ALL_TRANSPARENCY_ROLES },
+            { label: "Fila de Creches (19.2)", href: "/admin/creches", icon: FaGraduationCap, roles: ALL_TRANSPARENCY_ROLES },
             { label: "Unidades e Horários", href: "/admin/unidades", icon: FaBuilding, roles: ALL_TRANSPARENCY_ROLES },
             { label: "Conselhos Municipais", href: "/admin/conselhos", icon: FaUserFriends, roles: ALL_TRANSPARENCY_ROLES },
             { label: "Carta de Serviços", href: "/admin/carta-servicos", icon: FaFile, roles: ALL_TRANSPARENCY_ROLES },

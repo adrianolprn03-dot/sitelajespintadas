@@ -58,6 +58,13 @@ export default function PDFViewer({ url, titulo, onClose }: PDFViewerProps) {
                         setViewerUrl(targetUrl);
                     }
                 });
+        } else if (url.includes("drive.google.com")) {
+            const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+            if (match && match[1]) {
+                setViewerUrl(`https://drive.google.com/file/d/${match[1]}/preview`);
+            } else {
+                setViewerUrl(url);
+            }
         } else {
             setViewerUrl(`/api/pdf-proxy?url=${encodeURIComponent(targetUrl)}`);
         }
@@ -109,7 +116,16 @@ export default function PDFViewer({ url, titulo, onClose }: PDFViewerProps) {
 
                     <div className="flex items-center gap-2 shrink-0">
                         <a
-                            href={url.startsWith("data:") ? viewerUrl : url}
+                            href={
+                                url.startsWith("data:") 
+                                    ? viewerUrl 
+                                    : url.includes("drive.google.com") 
+                                        ? (() => {
+                                            const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+                                            return match && match[1] ? `https://drive.google.com/uc?export=download&id=${match[1]}` : url;
+                                          })()
+                                        : url
+                            }
                             download={url.startsWith("data:") ? `${titulo}.pdf` : undefined}
                             target={url.startsWith("data:") ? undefined : "_blank"}
                             rel={url.startsWith("data:") ? undefined : "noopener noreferrer"}
