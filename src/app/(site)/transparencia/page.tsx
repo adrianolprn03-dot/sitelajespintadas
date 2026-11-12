@@ -439,11 +439,11 @@ export default function TransparenciaPage() {
                 {/* =====================================================================
                     2. BARRA DE FILTROS POR ÁREA TEMÁTICA E CRITÉRIO
                    ===================================================================== */}
-                <section className="bg-white rounded-2xl p-4 sm:p-5 border border-[#DCE4EE] shadow-gov space-y-4">
+                <section className="bg-white rounded-2xl p-4 sm:p-5 border border-[#DDE3EA] shadow-sm space-y-4">
                     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-                        {/* Pílulas de Critério Unificadas em Azul & Amarelo */}
+                        {/* Pílulas de Critério Unificadas no Padrão Principal */}
                         <div className="flex flex-wrap items-center gap-2">
-                            <span className="text-xs font-extrabold text-[#526B84] mr-1">
+                            <span className="text-xs font-extrabold text-[#5B738B] mr-1">
                                 Filtrar por classificação:
                             </span>
                             {[
@@ -457,8 +457,8 @@ export default function TransparenciaPage() {
                                     onClick={() => setSelectedCriterio(crit.id)}
                                     className={`px-3.5 py-1.5 rounded-full text-xs font-extrabold transition-all cursor-pointer ${
                                         selectedCriterio === crit.id
-                                            ? "bg-[#0072CE] text-white shadow-sm"
-                                            : "bg-[#F4F7FB] hover:bg-slate-200/70 text-[#526B84]"
+                                            ? "bg-[#1254A3] text-white shadow-sm"
+                                            : "bg-[#F5F7FA] hover:bg-slate-200/70 text-[#5B738B]"
                                     }`}
                                 >
                                     {crit.label}
@@ -472,7 +472,7 @@ export default function TransparenciaPage() {
                                 value={selectedCategory}
                                 onChange={(e) => setSelectedCategory(e.target.value)}
                                 aria-label="Filtrar por Área Temática"
-                                className="w-full bg-[#F4F7FB] border border-[#DCE4EE] rounded-xl px-3.5 py-2 text-xs font-bold text-[#0F2942] outline-none focus:ring-2 focus:ring-[#0072CE]/20 cursor-pointer"
+                                className="w-full bg-[#F5F7FA] border border-[#DDE3EA] rounded-xl px-3.5 py-2 text-xs font-bold text-[#12304A] outline-none focus:ring-2 focus:ring-[#1254A3]/20 cursor-pointer"
                             >
                                 <option value="TODAS">Todas as Áreas ({countTotalModulos} módulos)</option>
                                 {categoriasDeModulos.map((cat) => (
@@ -485,20 +485,20 @@ export default function TransparenciaPage() {
                     </div>
 
                     {/* Navegação Rápida Horizontal por Categorias */}
-                    <div className="pt-3 border-t border-slate-100 flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-0.5">
+                    <div className="pt-3 border-t border-[#DDE3EA] flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-0.5">
                         <button
                             onClick={() => setSelectedCategory("TODAS")}
                             className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-extrabold whitespace-nowrap transition-all shrink-0 cursor-pointer ${
                                 selectedCategory === "TODAS"
-                                    ? "bg-[#0072CE] text-white shadow-sm"
-                                    : "bg-[#F4F7FB] hover:bg-slate-100 text-[#0F2942] border border-[#DCE4EE]"
+                                    ? "bg-[#1254A3] text-white shadow-sm"
+                                    : "bg-[#F5F7FA] hover:bg-slate-100 text-[#12304A] border border-[#DDE3EA]"
                             }`}
                         >
                             <span>Todas as Áreas</span>
                             <span
-                                className={`text-[10px] px-2 py-0.5 rounded-full ${
+                                className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
                                     selectedCategory === "TODAS"
-                                        ? "bg-[#FACC15] text-[#0F2942]"
+                                        ? "bg-[#F39A32] text-[#12304A]"
                                         : "bg-slate-200 text-slate-700"
                                 }`}
                             >
@@ -515,8 +515,8 @@ export default function TransparenciaPage() {
                                     onClick={() => setSelectedCategory(cat.tituloCategoria)}
                                     className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-extrabold whitespace-nowrap transition-all shrink-0 cursor-pointer ${
                                         isSelected
-                                            ? "bg-[#0072CE] text-white shadow-sm"
-                                            : "bg-[#F4F7FB] hover:bg-slate-100 text-[#0F2942] border border-[#DCE4EE]"
+                                            ? "bg-[#1254A3] text-white shadow-sm"
+                                            : "bg-[#F5F7FA] hover:bg-slate-100 text-[#12304A] border border-[#DDE3EA]"
                                     }`}
                                 >
                                     <CatIcon size={14} />
@@ -591,10 +591,10 @@ export default function TransparenciaPage() {
                                     key={categoria.tituloCategoria}
                                     className="bg-white rounded-[24px] border border-[#DCE4EE] shadow-gov overflow-hidden"
                                 >
-                                    {/* Cabeçalho Institucional em Azul (Principal) e Amarelo (Secundária) */}
-                                    <div className="bg-gradient-to-r from-[#002B5C] via-[#003B73] to-[#0072CE] px-6 py-4.5 sm:py-5 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b-2 border-[#FACC15]">
+                                    {/* Cabeçalho Institucional no Padrão Principal */}
+                                    <div className="bg-gradient-to-r from-[#002654] via-[#003B73] to-[#1254A3] px-6 py-4.5 sm:py-5 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b-2 border-[#F39A32]">
                                         <div className="flex items-center gap-3.5">
-                                            <div className="w-11 h-11 rounded-xl bg-white/15 border border-[#FACC15]/60 flex items-center justify-center text-[#FACC15] shrink-0">
+                                            <div className="w-11 h-11 rounded-xl bg-white/15 border border-[#F39A32]/60 flex items-center justify-center text-[#F39A32] shrink-0">
                                                 <CatIcon size={21} />
                                             </div>
                                             <div>
@@ -602,7 +602,7 @@ export default function TransparenciaPage() {
                                                     <h2 className="text-base sm:text-lg font-black font-heading tracking-tight text-white">
                                                         {categoria.tituloCategoria}
                                                     </h2>
-                                                    <span className="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-[#FACC15] text-[#0F2942]">
+                                                    <span className="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-[#F39A32] text-[#12304A]">
                                                         {categoria.modulos.length}{" "}
                                                         {categoria.modulos.length === 1 ? "módulo" : "módulos"}
                                                     </span>
@@ -648,42 +648,42 @@ export default function TransparenciaPage() {
                                                                     ? "noopener noreferrer"
                                                                     : undefined
                                                             }
-                                                            className="group relative flex flex-col justify-between h-full bg-[#F8FAFC] hover:bg-white rounded-2xl border border-[#DCE4EE] border-t-4 border-t-[#0072CE] hover:border-t-[#FACC15] hover:shadow-gov-hover p-5 transition-all duration-300 hover:-translate-y-0.5"
+                                                            className="group relative flex flex-col justify-between h-full bg-white hover:bg-[#F8FAFC] rounded-2xl border border-[#DDE3EA] border-t-4 border-t-[#1254A3] hover:border-t-[#F39A32] shadow-sm hover:shadow-md p-5 transition-all duration-300 hover:-translate-y-0.5"
                                                         >
                                                             <div>
                                                                 <div className="flex items-center justify-between mb-3.5">
-                                                                    <div className="w-10 h-10 rounded-xl bg-[#F0F7FF] border border-[#DCE4EE] text-[#0072CE] group-hover:bg-[#0072CE] group-hover:text-[#FACC15] group-hover:border-[#0072CE] flex items-center justify-center transition-all shadow-sm">
+                                                                    <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 text-[#1254A3] group-hover:bg-[#1254A3] group-hover:text-white group-hover:border-[#1254A3] flex items-center justify-center transition-all shadow-xs">
                                                                         <ModIcon size={18} />
                                                                     </div>
                                                                     <div className="flex items-center gap-1.5">
-                                                                        <span className="text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-[#F0F7FF] text-[#0072CE] border border-[#DCE4EE]">
+                                                                        <span className="text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-blue-50 text-[#1254A3] border border-blue-100">
                                                                             {m.tipoCriterio}
                                                                         </span>
-                                                                        <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-white border border-slate-200 text-[#526B84]">
+                                                                        <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#F5F7FA] border border-[#DDE3EA] text-[#5B738B]">
                                                                             {m.badge}
                                                                         </span>
                                                                     </div>
                                                                 </div>
 
-                                                                <h3 className="text-sm font-extrabold text-[#0F2942] group-hover:text-[#0072CE] transition-colors leading-snug mb-1.5">
+                                                                <h3 className="text-sm font-extrabold text-[#12304A] group-hover:text-[#1254A3] transition-colors leading-snug mb-1.5">
                                                                     {highlightText(m.titulo, searchTerm)}
                                                                 </h3>
-                                                                <p className="text-xs text-[#526B84] leading-relaxed line-clamp-2">
+                                                                <p className="text-xs text-[#5B738B] leading-relaxed line-clamp-2">
                                                                     {highlightText(m.desc, searchTerm)}
                                                                 </p>
                                                             </div>
 
-                                                            <div className="mt-4 pt-3 border-t border-slate-200/70 flex items-center justify-between">
+                                                            <div className="mt-4 pt-3 border-t border-[#DDE3EA] flex items-center justify-between">
                                                                 {isExternal ? (
-                                                                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#0072CE] bg-sky-50 px-2 py-0.5 rounded">
+                                                                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#1254A3] bg-blue-50 px-2 py-0.5 rounded border border-blue-100">
                                                                         <ExternalLink size={10} /> Sistema Integrado
                                                                     </span>
                                                                 ) : (
-                                                                    <span className="text-[11px] font-bold text-[#526B84] group-hover:text-[#0072CE] transition-colors">
+                                                                    <span className="text-[11px] font-bold text-[#5B738B] group-hover:text-[#1254A3] transition-colors">
                                                                         Acessar dados
                                                                     </span>
                                                                 )}
-                                                                <div className="w-7 h-7 rounded-full bg-white border border-[#DCE4EE] group-hover:bg-[#0072CE] group-hover:border-[#0072CE] text-[#526B84] group-hover:text-[#FACC15] flex items-center justify-center transition-all group-hover:translate-x-0.5">
+                                                                <div className="w-7 h-7 rounded-full bg-[#F5F7FA] border border-[#DDE3EA] group-hover:bg-[#1254A3] group-hover:border-[#1254A3] text-[#5B738B] group-hover:text-white flex items-center justify-center transition-all group-hover:translate-x-0.5">
                                                                     {isExternal ? (
                                                                         <ArrowUpRight size={13} />
                                                                     ) : (

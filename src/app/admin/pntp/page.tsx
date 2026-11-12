@@ -13,6 +13,7 @@ import {
     FaClipboardCheck,
     FaPlus,
     FaFileAlt,
+    FaSearch,
 } from "react-icons/fa";
 
 interface CriterioItem {
@@ -97,6 +98,31 @@ export default function AdminPNTPPage() {
         secretaria: "Controladoria Geral",
         documentoUrl: "",
     });
+
+    const [buscaAdmin, setBuscaAdmin] = useState("");
+
+    const DIMENSOES_PNTP = [
+        "Todas",
+        "Informações Prioritárias",
+        "Informações Institucionais",
+        "Receita",
+        "Despesa",
+        "Convênios e Transferências",
+        "Recursos Humanos",
+        "Diárias",
+        "Licitações",
+        "Contratos",
+        "Obras",
+        "Planejamento e Prestação de Contas",
+        "SIC",
+        "Acessibilidade",
+        "Ouvidoria",
+        "LGPD e Governo Digital",
+        "Renúncia de Receita",
+        "Emendas Parlamentares",
+        "Saúde",
+        "Educação e Assistência Social"
+    ];
 
     const carregarDados = useCallback(async () => {
         setLoading(true);
@@ -322,85 +348,101 @@ export default function AdminPNTPPage() {
             )}
 
             {/* Filtros */}
-            <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div>
-                    <label htmlFor="f-classificacao" className="block text-[10px] font-black text-gray-400 uppercase mb-1">
-                        Classificação PNTP
-                    </label>
-                    <select
-                        id="f-classificacao"
-                        value={classificacao}
-                        onChange={(e) => setClassificacao(e.target.value)}
-                        className="input-field text-xs"
-                    >
-                        <option value="Todas">Todas (Essencial, Obrigatório, Recomendado)</option>
-                        <option value="ESSENCIAL">Essenciais (Peso 2.0)</option>
-                        <option value="OBRIGATORIO">Obrigatórios (Peso 1.5)</option>
-                        <option value="RECOMENDADO">Recomendados (Peso 1.0)</option>
-                    </select>
+            <div className="bg-white rounded-2xl p-5 border border-[#DDE3EA] shadow-sm space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                    <div className="lg:col-span-2">
+                        <label htmlFor="f-busca" className="block text-[10px] font-black text-[#5B738B] uppercase mb-1">
+                            Buscar Critério ou Termo
+                        </label>
+                        <div className="relative">
+                            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={12} />
+                            <input
+                                id="f-busca"
+                                type="text"
+                                value={buscaAdmin}
+                                onChange={(e) => setBuscaAdmin(e.target.value)}
+                                placeholder="Filtrar por código (1.1, 7.2), título..."
+                                className="w-full pl-9 pr-3 py-2 bg-[#F5F7FA] border border-[#DDE3EA] rounded-xl text-xs font-medium text-[#12304A] outline-none focus:border-[#1254A3]"
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label htmlFor="f-dimensao" className="block text-[10px] font-black text-[#5B738B] uppercase mb-1">
+                            Dimensão PNTP
+                        </label>
+                        <select
+                            id="f-dimensao"
+                            value={dimensao}
+                            onChange={(e) => setDimensao(e.target.value)}
+                            className="w-full px-3 py-2 bg-[#F5F7FA] border border-[#DDE3EA] rounded-xl text-xs font-bold text-[#12304A] outline-none focus:border-[#1254A3] cursor-pointer"
+                        >
+                            {DIMENSOES_PNTP.map((d) => (
+                                <option key={d} value={d}>{d}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label htmlFor="f-classificacao" className="block text-[10px] font-black text-[#5B738B] uppercase mb-1">
+                            Classificação PNTP
+                        </label>
+                        <select
+                            id="f-classificacao"
+                            value={classificacao}
+                            onChange={(e) => setClassificacao(e.target.value)}
+                            className="w-full px-3 py-2 bg-[#F5F7FA] border border-[#DDE3EA] rounded-xl text-xs font-bold text-[#12304A] outline-none focus:border-[#1254A3] cursor-pointer"
+                        >
+                            <option value="Todas">Todas</option>
+                            <option value="ESSENCIAL">Essenciais</option>
+                            <option value="OBRIGATORIO">Obrigatórios</option>
+                            <option value="RECOMENDADO">Recomendados</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label htmlFor="f-filtro" className="block text-[10px] font-black text-[#5B738B] uppercase mb-1">
+                            Filtro Operacional
+                        </label>
+                        <select
+                            id="f-filtro"
+                            value={filtro}
+                            onChange={(e) => setFiltro(e.target.value)}
+                            className="w-full px-3 py-2 bg-[#F5F7FA] border border-[#DDE3EA] rounded-xl text-xs font-bold text-[#12304A] outline-none focus:border-[#1254A3] cursor-pointer"
+                        >
+                            <option value="todos">Todos</option>
+                            <option value="essenciais_pendentes">Essenciais Pendentes</option>
+                            <option value="vencidos">Prazos Vencidos</option>
+                            <option value="aguardando_revisao">Aguardando Revisão</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div>
-                    <label htmlFor="f-filtro" className="block text-[10px] font-black text-gray-400 uppercase mb-1">
-                        Filtro Operacional
-                    </label>
-                    <select
-                        id="f-filtro"
-                        value={filtro}
-                        onChange={(e) => setFiltro(e.target.value)}
-                        className="input-field text-xs"
-                    >
-                        <option value="todos">Todos os Critérios</option>
-                        <option value="essenciais_pendentes">Pendências dos Critérios Essenciais</option>
-                        <option value="vencidos">Prazos de Atualização/Conferência Vencidos</option>
-                        <option value="aguardando_revisao">Conteúdos Aguardando Revisão</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label htmlFor="f-secretaria" className="block text-[10px] font-black text-gray-400 uppercase mb-1">
-                        Secretaria Responsável
-                    </label>
-                    <select
-                        id="f-secretaria"
-                        value={secretaria}
-                        onChange={(e) => setSecretaria(e.target.value)}
-                        className="input-field text-xs"
-                    >
-                        <option value="Todas">Todas as Secretarias</option>
-                        <option value="Secretaria de Finanças">Secretaria de Finanças</option>
-                        <option value="Secretaria de Administração">Secretaria de Administração</option>
-                        <option value="Setor de Licitações e Contratos">Setor de Licitações e Contratos</option>
-                        <option value="Secretaria de Obras e Infraestrutura">Secretaria de Obras e Infraestrutura</option>
-                        <option value="Secretaria de Saúde">Secretaria de Saúde</option>
-                        <option value="Secretaria de Educação">Secretaria de Educação</option>
-                        <option value="Secretaria de Assistência Social">Secretaria de Assistência Social</option>
-                        <option value="Controladoria Geral">Controladoria Geral</option>
-                        <option value="Gabinete do Prefeito">Gabinete do Prefeito</option>
-                    </select>
-                </div>
-
-                <div className="flex items-end">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-slate-100 text-xs">
+                    <span className="text-[#5B738B] font-medium">
+                        Exibindo <strong>{items.filter(c => !buscaAdmin || c.codigo.includes(buscaAdmin) || c.titulo.toLowerCase().includes(buscaAdmin.toLowerCase()) || c.dimensao.toLowerCase().includes(buscaAdmin.toLowerCase())).length}</strong> critérios
+                    </span>
                     <button
                         type="button"
                         onClick={() => {
+                            setBuscaAdmin("");
                             setDimensao("Todas");
                             setClassificacao("Todas");
                             setSecretaria("Todas");
                             setFiltro("todos");
                         }}
-                        className="w-full py-2.5 px-4 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold"
+                        className="text-[#1254A3] font-bold hover:underline cursor-pointer"
                     >
-                        Limpar Filtros
+                        Limpar todos os filtros
                     </button>
                 </div>
             </div>
 
             {/* Tabela de Critérios */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+            <div className="bg-white rounded-2xl border border-[#DDE3EA] shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-xs">
-                        <thead className="bg-gray-50 text-gray-500 uppercase font-bold border-b border-gray-100">
+                        <thead className="bg-[#F8FAFC] text-[#5B738B] uppercase font-bold border-b border-[#DDE3EA]">
                             <tr>
                                 <th className="px-4 py-3.5">Critério</th>
                                 <th className="px-4 py-3.5">Classificação / Peso</th>
@@ -413,21 +455,23 @@ export default function AdminPNTPPage() {
                                 <th className="px-4 py-3.5 text-right">Ações</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100">
+                        <tbody className="divide-y divide-[#DDE3EA]">
                             {loading ? (
                                 <tr>
-                                    <td colSpan={9} className="px-6 py-12 text-center text-gray-400">
+                                    <td colSpan={9} className="px-6 py-12 text-center text-[#5B738B]">
                                         Carregando matriz PNTP 2026...
                                     </td>
                                 </tr>
                             ) : items.length === 0 ? (
                                 <tr>
-                                    <td colSpan={9} className="px-6 py-12 text-center text-gray-400">
+                                    <td colSpan={9} className="px-6 py-12 text-center text-[#5B738B]">
                                         Nenhum critério encontrado para o filtro selecionado.
                                     </td>
                                 </tr>
                             ) : (
-                                items.map((c) => (
+                                items
+                                    .filter(c => !buscaAdmin || c.codigo.includes(buscaAdmin) || c.titulo.toLowerCase().includes(buscaAdmin.toLowerCase()) || c.dimensao.toLowerCase().includes(buscaAdmin.toLowerCase()))
+                                    .map((c) => (
                                     <tr key={c.codigo} className="hover:bg-gray-50/80">
                                         <td className="px-4 py-3.5 max-w-xs">
                                             <div className="font-black text-gray-900">
@@ -453,13 +497,13 @@ export default function AdminPNTPPage() {
 
                                         <td className="px-4 py-3.5">
                                             <span
-                                                className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-black uppercase ${
-                                                    c.classificacao === "ESSENCIAL"
-                                                        ? "bg-rose-100 text-rose-800"
-                                                        : c.classificacao === "OBRIGATORIO"
+
+                                                className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-black uppercase ${c.classificacao === "ESSENCIAL"
+                                                    ? "bg-rose-100 text-rose-800"
+                                                    : c.classificacao === "OBRIGATORIO"
                                                         ? "bg-amber-100 text-amber-800"
                                                         : "bg-blue-100 text-blue-800"
-                                                }`}
+                                                    }`}
                                             >
                                                 {c.classificacao}
                                             </span>
@@ -481,13 +525,12 @@ export default function AdminPNTPPage() {
 
                                         <td className="px-4 py-3.5">
                                             <span
-                                                className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                                                    c.statusConteudo === "atualizado"
-                                                        ? "bg-emerald-100 text-emerald-700"
-                                                        : c.statusConteudo === "nao_ocorrencia" || c.statusConteudo === "nao_aplicavel"
+                                                className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${c.statusConteudo === "atualizado"
+                                                    ? "bg-emerald-100 text-emerald-700"
+                                                    : c.statusConteudo === "nao_ocorrencia" || c.statusConteudo === "nao_aplicavel"
                                                         ? "bg-slate-100 text-slate-700"
                                                         : "bg-amber-100 text-amber-800"
-                                                }`}
+                                                    }`}
                                             >
                                                 {c.statusConteudo}
                                             </span>
@@ -495,13 +538,12 @@ export default function AdminPNTPPage() {
 
                                         <td className="px-4 py-3.5">
                                             <span
-                                                className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                                                    c.statusValidacao === "validado"
-                                                        ? "bg-emerald-100 text-emerald-700"
-                                                        : c.statusValidacao === "aguardando_revisao"
+                                                className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${c.statusValidacao === "validado"
+                                                    ? "bg-emerald-100 text-emerald-700"
+                                                    : c.statusValidacao === "aguardando_revisao"
                                                         ? "bg-indigo-100 text-indigo-700"
                                                         : "bg-gray-100 text-gray-600"
-                                                }`}
+                                                    }`}
                                             >
                                                 {c.statusValidacao}
                                             </span>
