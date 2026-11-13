@@ -85,3 +85,4 @@ export default function RelatoriosGraficosClient({ esic, ouvidoria }: Relatorios
         </div>
     );
 }
+
