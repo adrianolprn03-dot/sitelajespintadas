@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PageHeader from "@/components/PageHeader";
 import {
     FaSearch,
@@ -52,9 +52,8 @@ export default function ConsultaProtocoloPage() {
     const [recursoText, setRecursoText] = useState("");
     const [sendingRecurso, setSendingRecurso] = useState(false);
 
-    const handleSearch = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!protocolo.trim()) return;
+    const buscarProtocolo = async (proto: string, verif?: string) => {
+        if (!proto.trim()) return;
 
         setLoading(true);
         setData(null);
@@ -62,8 +61,8 @@ export default function ConsultaProtocoloPage() {
         setShowRecursoForm(false);
 
         try {
-            const params = new URLSearchParams({ protocolo: protocolo.trim() });
-            if (verificador.trim()) params.set("verificador", verificador.trim());
+            const params = new URLSearchParams({ protocolo: proto.trim() });
+            if (verif?.trim()) params.set("verificador", verif.trim());
 
             const res = await fetch(`/api/consulta?${params.toString()}`);
             const result = await res.json();
@@ -79,6 +78,20 @@ export default function ConsultaProtocoloPage() {
         } finally {
             setLoading(false);
         }
+    };
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const protoParam = params.get("protocolo");
+        if (protoParam?.trim()) {
+            setProtocolo(protoParam.trim());
+            buscarProtocolo(protoParam.trim());
+        }
+    }, []);
+
+    const handleSearch = async (e: React.FormEvent) => {
+        e.preventDefault();
+        await buscarProtocolo(protocolo, verificador);
     };
 
     const isSegundaInstanciaDisponivel =
@@ -134,12 +147,13 @@ export default function ConsultaProtocoloPage() {
     };
 
     const canFileAppeal =
-        (data?.status === "concluido" && !data?.recurso) || isSegundaInstanciaDisponivel;
+        ((data?.status === "concluido" || data?.status === "indeferido") && !data?.recurso) || isSegundaInstanciaDisponivel;
 
     const statusMap: Record<string, { label: string; color: string }> = {
         aberto: { label: "Aguardando Análise", color: "bg-gray-100 text-gray-700 border-gray-200" },
         "em-analise": { label: "Em Análise Setorial", color: "bg-blue-100 text-blue-800 border-blue-200" },
-        concluido: { label: "Respondido", color: "bg-emerald-100 text-emerald-800 border-emerald-200" },
+        concluido: { label: "Atendido / Respondido", color: "bg-emerald-100 text-emerald-800 border-emerald-200" },
+        indeferido: { label: "Indeferido (Negado)", color: "bg-rose-100 text-rose-800 border-rose-200" },
         "em-recurso": { label: "Em Recurso (Em Julgamento)", color: "bg-orange-100 text-orange-800 border-orange-200" },
         encerrado: { label: "Encerrado / Julgado", color: "bg-purple-100 text-purple-800 border-purple-200" },
     };

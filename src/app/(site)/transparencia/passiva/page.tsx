@@ -60,36 +60,36 @@ const categoriasSIC = [
         titulo: "Relatórios Estatísticos e Classificação de Sigilo",
         modulos: [
             {
-                icon: FileStack,
-                titulo: "Relatório Anual de Solicitações",
-                desc: "Listagem anonimizada de pedidos protocolados, situações e respostas.",
-                href: "/transparencia/passiva/relatorios",
-                cor: "from-rose-500 to-red-700",
-                badge: "Geral",
+                icon: BarChart3,
+                titulo: "Relatório Anual Estatístico",
+                desc: "Pedidos recebidos, atendidos, indeferidos e informações genéricas sobre os solicitantes.",
+                href: "/transparencia/passiva/relatorios/estatisticas",
+                cor: "from-blue-600 to-indigo-700",
+                badge: "Anual",
             },
             {
                 icon: ShieldCheck,
-                titulo: "Rol de Informações Classificadas",
-                desc: "Relação de documentos classificados em grau de sigilo ou declaração formal.",
+                titulo: "Documentos Classificados (Sigilo)",
+                desc: "Lista por grau de sigilo com assunto, categoria, dispositivo legal e respectivo prazo.",
                 href: "/transparencia/passiva/relatorios/com-sigilo",
                 cor: "from-purple-600 to-indigo-800",
                 badge: "Sigilo",
             },
             {
                 icon: Eye,
-                titulo: "Informações Desclassificadas",
-                desc: "Relação de documentos desclassificados nos últimos 12 meses e de acesso público.",
+                titulo: "Desclassificadas (Últimos 12 Meses)",
+                desc: "Relação das informações desclassificadas nos últimos 12 meses ou declaração formal.",
                 href: "/transparencia/passiva/relatorios/sem-sigilo",
                 cor: "from-cyan-500 to-blue-600",
-                badge: "Público",
+                badge: "12 Meses",
             },
             {
-                icon: BarChart3,
-                titulo: "Gráficos e Estatísticas",
-                desc: "Indicadores reais de desempenho, pedidos atendidos, recursos e prazos do e-SIC.",
-                href: "/transparencia/passiva/graficos",
+                icon: FileStack,
+                titulo: "Central de Relatórios e Gráficos",
+                desc: "Painel consolidado de relatórios do e-SIC, séries históricas e indicadores.",
+                href: "/transparencia/passiva/relatorios",
                 cor: "from-teal-400 to-emerald-500",
-                badge: "Dados",
+                badge: "Painel",
             },
         ],
     },
@@ -105,34 +105,19 @@ export default function TransparenciaPassivaPage() {
     });
 
     useEffect(() => {
-        fetch("/api/esic")
+        fetch("/api/transparencia/esic-relatorios?tipo=estatisticas")
             .then((r) => r.json())
-            .then((items) => {
-                if (!Array.isArray(items)) return;
-                const recebidos = items.length;
-                const atendidos = items.filter(
-                    (i) => i.status === "concluido" || i.status === "encerrado"
-                ).length;
-                const tramitacao = items.filter(
-                    (i) => i.status === "aberto" || i.status === "em-analise" || i.status === "em-recurso"
-                ).length;
-
-                const respondidosComData = items.filter((i) => i.respondidoEm && i.criadoEm);
-                let media = "—";
-                if (respondidosComData.length > 0) {
-                    const somaDias = respondidosComData.reduce((acc, i) => {
-                        const diffMs =
-                            new Date(i.respondidoEm).getTime() - new Date(i.criadoEm).getTime();
-                        return acc + Math.max(1, diffMs / (1000 * 60 * 60 * 24));
-                    }, 0);
-                    media = (somaDias / respondidosComData.length).toFixed(1);
+            .then((data) => {
+                const c = data?.consolidadoHistorico;
+                if (!c) {
+                    setStats((prev) => ({ ...prev, carregado: true }));
+                    return;
                 }
-
                 setStats({
-                    recebidos,
-                    atendidos,
-                    tramitacao,
-                    tempoMedioDias: media,
+                    recebidos: c.totalRecebidos ?? 0,
+                    atendidos: c.atendidos ?? 0,
+                    tramitacao: c.emTramitacao ?? 0,
+                    tempoMedioDias: c.tempoMedioDias > 0 ? String(c.tempoMedioDias) : "—",
                     carregado: true,
                 });
             })

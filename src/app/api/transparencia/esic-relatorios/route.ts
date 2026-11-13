@@ -1,215 +1,622 @@
 export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { MUNICIPIO } from "@/config/municipio";
+
+const MESES_PT = [
+    "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
+    "Jul", "Ago", "Set", "Out", "Nov", "Dez",
+];
+
+type DistribuicaoItem = {
+    label: string;
+    quantidade: number;
+    percentual: number;
+};
+
+function calcularDistribuicao(
+    valores: Array<string | null | undefined>,
+    fallback = "Não informado",
+    maxItens?: number
+): DistribuicaoItem[] {
+    const total = valores.length;
+    if (total === 0) return [];
+
+    const contagem = new Map<string, number>();
+    for (const raw of valores) {
+        const chave = raw && raw.trim() ? raw.trim() : fallback;
+        contagem.set(chave, (contagem.get(chave) || 0) + 1);
+    }
+
+    let lista = Array.from(contagem.entries())
+        .map(([label, quantidade]) => ({
+            label,
+            quantidade,
+            percentual: Math.round((quantidade / total) * 1000) / 10,
+        }))
+        .sort((a, b) => b.quantidade - a.quantidade);
+
+    if (maxItens && lista.length > maxItens) {
+        const principais = lista.slice(0, maxItens);
+        const outrosQtd = lista.slice(maxItens).reduce((acc, i) => acc + i.quantidade, 0);
+        if (outrosQtd > 0) {
+            principais.push({
+                label: "Outros",
+                quantidade: outrosQtd,
+                percentual: Math.round((outrosQtd / total) * 1000) / 10,
+            });
+        }
+        lista = principais;
+    }
+
+    return lista;
+}
+
+function classificarTipoSolicitante(p: {
+    nome?: string | null;
+    email?: string | null;
+    cidadao?: { tipoPessoa?: string | null; cnpj?: string | null } | null;
+}): "PF" | "PJ" | "ANONIMO" {
+    if (p.cidadao) {
+        const tp = (p.cidadao.tipoPessoa || "").toLowerCase();
+        if (tp.includes("jur") || tp === "pj" || Boolean(p.cidadao.cnpj)) {
+            return "PJ";
+        }
+        return "PF";
+    }
+
+    const nomeLower = (p.nome || "").trim().toLowerCase();
+    const emailLower = (p.email || "").trim().toLowerCase();
+    if (
+        !nomeLower ||
+        nomeLower.includes("anônim") ||
+        nomeLower.includes("anonim") ||
+        nomeLower.includes("não identificad") ||
+        emailLower.includes("anonim")
+    ) {
+        return "ANONIMO";
+    }
+    return "PF";
+}
+
+function extrairCategoriaEOrgao(orgaoRaw?: string | null): { categoria: string; orgao: string; combinado: string } {
+    const texto = (orgaoRaw || "").trim();
+    if (!texto) {
+        return {
+            categoria: "Administração Pública",
+            orgao: `Prefeitura Municipal de ${MUNICIPIO.nome}`,
+            combinado: "Administração Pública",
+        };
+    }
+
+    const matchPrefixo = texto.match(/^\[([^\]]+)\]\s*[-–|]?\s*(.*)$/);
+    if (matchPrefixo) {
+        const categoria = matchPrefixo[1].trim() || "Administração Pública";
+        const orgao = matchPrefixo[2].trim() || `Prefeitura Municipal de ${MUNICIPIO.nome}`;
+        return {
+            categoria,
+            orgao,
+            combinado: `${categoria} • ${orgao}`,
+        };
+    }
+
+    return {
+        categoria: texto,
+        orgao: texto,
+        combinado: texto,
+    };
+}
+
+function prazoMaximoPorGrau(grau?: string | null): number {
+    const g = (grau || "").toLowerCase();
+    if (g.includes("ultrassecreto")) return 25;
+    if (g.includes("secreto")) return 15;
+    return 5;
+}
+
+function calcularPrazoClassificacao(p: {
+    protocolo: string;
+    grauSigilo: string;
+    dataClassificacao: Date | null;
+    criadoEm: Date;
+    prazo: Date | null;
+}): {
+    dataClass: Date;
+    prazoRestricaoAnos: number;
+    dataPrevistaDesclassificacao: Date;
+    prazoTexto: string;
+} {
+    const dataClass = p.dataClassificacao || p.criadoEm;
+    const isDocumentoInterno = p.protocolo.startsWith("CIDIC-");
+
+    let prazoAnos = prazoMaximoPorGrau(p.grauSigilo);
+    let dataPrevista = new Date(dataClass);
+    dataPrevista.setFullYear(dataPrevista.getFullYear() + prazoAnos);
+
+    if (isDocumentoInterno && p.prazo && p.prazo.getTime() > dataClass.getTime()) {
+        dataPrevista = p.prazo;
+        const diffAnos = Math.max(
+            1,
+            Math.round((p.prazo.getTime() - dataClass.getTime()) / (1000 * 60 * 60 * 24 * 365.25))
+        );
+        prazoAnos = Math.min(25, diffAnos);
+    }
+
+    const prazoTexto = `${prazoAnos} ${prazoAnos === 1 ? "ano" : "anos"} (até ${dataPrevista.toLocaleDateString("pt-BR")})`;
+    return {
+        dataClass,
+        prazoRestricaoAnos: prazoAnos,
+        dataPrevistaDesclassificacao: dataPrevista,
+        prazoTexto,
+    };
+}
+
+function calcularEstatisticasGrupo(
+    pedidos: Array<{
+        status: string;
+        orgao: string | null;
+        formaRetorno: string;
+        nome: string | null;
+        email: string | null;
+        respondidoEm: Date | null;
+        criadoEm: Date;
+        recurso: string | null;
+        respostaRecurso: string | null;
+        recursoSegundaInstancia: string | null;
+        respostaRecursoSegunda: string | null;
+        cidadao: {
+            tipoPessoa: string;
+            cnpj: string | null;
+            sexo: string | null;
+            escolaridade: string | null;
+            profissao: string | null;
+            cidade: string | null;
+            uf: string | null;
+        } | null;
+    }>
+) {
+    const totalRecebidos = pedidos.length;
+
+    const statusIndeferidos = new Set(["indeferido", "negado", "rejeitado"]);
+    const statusAtendidos = new Set(["concluido", "encerrado", "deferido", "atendido"]);
+
+    const indeferidos = pedidos.filter((p) =>
+        statusIndeferidos.has((p.status || "").trim().toLowerCase())
+    ).length;
+
+    const atendidos = pedidos.filter((p) => {
+        const st = (p.status || "").trim().toLowerCase();
+        if (statusIndeferidos.has(st)) return false;
+        return statusAtendidos.has(st) || p.respondidoEm !== null;
+    }).length;
+
+    const emTramitacao = Math.max(0, totalRecebidos - atendidos - indeferidos);
+
+    let somaDias = 0;
+    let comResposta = 0;
+    for (const p of pedidos) {
+        if (p.respondidoEm && p.criadoEm) {
+            const diffDias = (p.respondidoEm.getTime() - p.criadoEm.getTime()) / (1000 * 60 * 60 * 24);
+            if (diffDias >= 0) {
+                somaDias += diffDias;
+                comResposta++;
+            }
+        }
+    }
+
+    const tempoMedioDias = comResposta > 0 ? Math.round((somaDias / comResposta) * 10) / 10 : 0;
+    const taxaAtendimento = totalRecebidos > 0 ? Math.round((atendidos / totalRecebidos) * 100) : 0;
+    const taxaResolucao =
+        totalRecebidos > 0 ? Math.round(((atendidos + indeferidos) / totalRecebidos) * 100) : 0;
+
+    let pessoaFisica = 0;
+    let pessoaJuridica = 0;
+    let anonimoNaoIdentificado = 0;
+
+    for (const p of pedidos) {
+        const tipo = classificarTipoSolicitante(p);
+        if (tipo === "PJ") pessoaJuridica++;
+        else if (tipo === "ANONIMO") anonimoNaoIdentificado++;
+        else pessoaFisica++;
+    }
+
+    const primeiraInstancia = pedidos.filter((p) => Boolean(p.recurso)).length;
+    const segundaInstancia = pedidos.filter((p) => Boolean(p.recursoSegundaInstancia)).length;
+    const recursosInterpostos = pedidos.filter(
+        (p) => Boolean(p.recurso) || Boolean(p.recursoSegundaInstancia)
+    ).length;
+    const recursosRespondidos = pedidos.filter(
+        (p) => Boolean(p.respostaRecurso) || Boolean(p.respostaRecursoSegunda)
+    ).length;
+    const recursosPendentes = Math.max(0, recursosInterpostos - recursosRespondidos);
+
+    const porMes = MESES_PT.map((nomeMes, idx) => {
+        const noMes = pedidos.filter((p) => new Date(p.criadoEm).getMonth() === idx);
+        const indefMes = noMes.filter((p) =>
+            statusIndeferidos.has((p.status || "").trim().toLowerCase())
+        ).length;
+        const atendMes = noMes.filter((p) => {
+            const st = (p.status || "").trim().toLowerCase();
+            if (statusIndeferidos.has(st)) return false;
+            return statusAtendidos.has(st) || p.respondidoEm !== null;
+        }).length;
+
+        return {
+            mes: idx + 1,
+            nomeMes,
+            recebidos: noMes.length,
+            atendidos: atendMes,
+            indeferidos: indefMes,
+            emTramitacao: Math.max(0, noMes.length - atendMes - indefMes),
+        };
+    });
+
+    const detalhamento = {
+        porTipoPessoa: [
+            {
+                label: "Pessoa Física",
+                quantidade: pessoaFisica,
+                percentual: totalRecebidos > 0 ? Math.round((pessoaFisica / totalRecebidos) * 1000) / 10 : 0,
+            },
+            {
+                label: "Pessoa Jurídica",
+                quantidade: pessoaJuridica,
+                percentual: totalRecebidos > 0 ? Math.round((pessoaJuridica / totalRecebidos) * 1000) / 10 : 0,
+            },
+            {
+                label: "Anônimo / Identificação Simplificada",
+                quantidade: anonimoNaoIdentificado,
+                percentual:
+                    totalRecebidos > 0 ? Math.round((anonimoNaoIdentificado / totalRecebidos) * 1000) / 10 : 0,
+            },
+        ].filter((item) => item.quantidade > 0 || totalRecebidos === 0),
+        porEscolaridade: calcularDistribuicao(
+            pedidos.map((p) => p.cidadao?.escolaridade),
+            "Não informado",
+            6
+        ),
+        porGenero: calcularDistribuicao(
+            pedidos.map((p) => p.cidadao?.sexo),
+            "Não informado",
+            5
+        ),
+        porOcupacao: calcularDistribuicao(
+            pedidos.map((p) => p.cidadao?.profissao),
+            "Não informado",
+            6
+        ),
+        porLocalidade: calcularDistribuicao(
+            pedidos.map((p) =>
+                p.cidadao?.cidade
+                    ? `${p.cidadao.cidade}${p.cidadao.uf ? `/${p.cidadao.uf}` : ""}`
+                    : null
+            ),
+            "Não informado",
+            6
+        ),
+        porFormaRetorno: calcularDistribuicao(
+            pedidos.map((p) => p.formaRetorno),
+            "Sistema Eletrônico / E-mail",
+            5
+        ),
+        porOrgao: calcularDistribuicao(
+            pedidos.map((p) => extrairCategoriaEOrgao(p.orgao).orgao),
+            "Secretaria Geral / Gabinete",
+            8
+        ),
+    };
+
+    return {
+        totalRecebidos,
+        atendidos,
+        indeferidos,
+        emTramitacao,
+        tempoMedioDias,
+        taxaAtendimento,
+        taxaResolucao,
+        perfilSolicitantes: {
+            pessoaFisica,
+            pessoaJuridica,
+            anonimoNaoIdentificado,
+            detalhamento,
+        },
+        recursos: {
+            interpostos: recursosInterpostos,
+            primeiraInstancia,
+            segundaInstancia,
+            respondidos: recursosRespondidos,
+            pendentes: recursosPendentes,
+            deferidos: recursosRespondidos,
+        },
+        porMes,
+    };
+}
 
 export async function GET(req: NextRequest) {
     try {
         const { searchParams } = new URL(req.url);
-        const tipo = searchParams.get("tipo") || "estatisticas"; // estatisticas | classificadas | desclassificadas
-        const ano = searchParams.get("ano");
+        const tipo = searchParams.get("tipo") || "estatisticas";
+        const anoParam = searchParams.get("ano");
+        const grauParam = searchParams.get("grau");
 
         if (tipo === "estatisticas") {
-            const exercicios = [2021, 2022, 2023, 2024, 2025, 2026];
-            const allPedidos = await prisma.esic.findMany({
+            const anoAtual = Math.max(2026, new Date().getFullYear());
+            const allRegistros = await prisma.esic.findMany({
                 orderBy: { criadoEm: "desc" },
-                include: { cidadao: true }
+                include: {
+                    cidadao: {
+                        select: {
+                            tipoPessoa: true,
+                            cnpj: true,
+                            sexo: true,
+                            escolaridade: true,
+                            profissao: true,
+                            cidade: true,
+                            uf: true,
+                        },
+                    },
+                },
             });
 
-            // Agrupar por ano
+            // Registros iniciados por CIDIC- representam documentos internos classificados no rol
+            // e não pedidos de acesso protocolados por cidadãos.
+            const allPedidos = allRegistros.filter((p) => !p.protocolo.startsWith("CIDIC-"));
+
+            const anosSet = new Set<number>();
+            for (let y = 2021; y <= anoAtual; y++) anosSet.add(y);
+            for (const p of allPedidos) {
+                anosSet.add(new Date(p.criadoEm).getFullYear());
+            }
+            const exercicios = Array.from(anosSet).sort((a, b) => a - b);
+
             const statsPorExercicio = exercicios.map((ex) => {
-                const pedidosAno = allPedidos.filter((p) => {
-                    const y = new Date(p.criadoEm).getFullYear();
-                    return y === ex;
-                });
-
-                const totalRecebidos = pedidosAno.length;
-                const atendidos = pedidosAno.filter((p) => p.status === "concluido" || p.respondidoEm !== null).length;
-                const indeferidos = pedidosAno.filter((p) => p.status === "indeferido").length;
-                const emTramitacao = totalRecebidos - atendidos - indeferidos;
-
-                // Perfil genérico dos solicitantes
-                const pessoaFisica = pedidosAno.filter((p) => !p.cidadao?.tipoPessoa || p.cidadao?.tipoPessoa === "PF" || !p.cidadao?.cnpj).length;
-                const pessoaJuridica = totalRecebidos - pessoaFisica;
-
-                // Tempo médio de resposta
-                const respondidosComTempo = pedidosAno.filter((p) => p.respondidoEm && p.criadoEm);
-                let tempoMedioDias = 0;
-                if (respondidosComTempo.length > 0) {
-                    const soma = respondidosComTempo.reduce((acc, curr) => {
-                        const diff = (new Date(curr.respondidoEm!).getTime() - new Date(curr.criadoEm).getTime()) / (1000 * 60 * 60 * 24);
-                        return acc + Math.max(0, diff);
-                    }, 0);
-                    tempoMedioDias = Math.round(soma / respondidosComTempo.length);
-                } else if (totalRecebidos > 0) {
-                    tempoMedioDias = 6; // Tempo médio regulamentar de atendimento
-                }
-
+                const pedidosAno = allPedidos.filter((p) => new Date(p.criadoEm).getFullYear() === ex);
                 return {
                     exercicio: ex,
-                    totalRecebidos,
-                    atendidos,
-                    indeferidos,
-                    emTramitacao: Math.max(0, emTramitacao),
-                    taxaAtendimento: totalRecebidos > 0 ? Math.round((atendidos / totalRecebidos) * 100) : 100,
-                    tempoMedioDias,
-                    perfilSolicitantes: {
-                        pessoaFisica,
-                        pessoaJuridica,
-                        generoNaoInformado: totalRecebidos
-                    },
-                    recursos: {
-                        primeiraInstancia: 0,
-                        segundaInstancia: 0,
-                        providos: 0,
-                        negados: 0
-                    }
+                    ...calcularEstatisticasGrupo(pedidosAno),
                 };
             });
 
+            const consolidadoHistorico = calcularEstatisticasGrupo(allPedidos);
+
             return NextResponse.json({
-                sucesso: true,
-                criterioPntp: "12.7",
-                statsPorExercicio,
-                totalGeral: allPedidos.length,
-                pedidosRecentes: allPedidos.slice(0, 10).map((p) => ({
-                    protocolo: p.protocolo,
-                    orgao: p.orgao,
-                    status: p.status,
-                    criadoEm: p.criadoEm,
-                    grauSigilo: p.grauSigilo
-                }))
+                stats: statsPorExercicio,
+                exerciciosDisponiveis: exercicios,
+                consolidadoHistorico,
+                resumoExecutivo: {
+                    totalGeralRecebidos: allPedidos.length,
+                    totalGeralAtendidos: consolidadoHistorico.atendidos,
+                    totalGeralIndeferidos: consolidadoHistorico.indeferidos,
+                    totalGeralEmTramitacao: consolidadoHistorico.emTramitacao,
+                    exercicioAtual: anoAtual,
+                    ultimaAtualizacao: new Date().toISOString(),
+                },
             });
         }
 
         if (tipo === "classificadas") {
-            // Critério 12.8: Rol de Informações Classificadas
-            const pedidosClassificados = await prisma.esic.findMany({
+            const todosClassificados = await prisma.esic.findMany({
                 where: {
-                    NOT: { grauSigilo: "Sem Sigilo" }
+                    NOT: { grauSigilo: "Sem Sigilo" },
+                    dataDesclassificacao: null,
                 },
-                orderBy: { criadoEm: "desc" }
+                orderBy: [{ dataClassificacao: "desc" }, { criadoEm: "desc" }],
             });
 
-            // Buscar se há declaração oficial de inexistência de sigilo
-            const declaracao = await prisma.declaracaoTransparencia.findFirst({
-                where: {
-                    OR: [
-                        { modulo: "esic_classificadas", ativa: true },
-                        { criterioPntp: "12.8", ativa: true }
-                    ]
-                },
-                orderBy: { criadoEm: "desc" }
-            });
+            const anosSet = new Set<number>([new Date().getFullYear()]);
+            for (const p of todosClassificados) {
+                anosSet.add(new Date(p.dataClassificacao || p.criadoEm).getFullYear());
+            }
 
-            const itens = pedidosClassificados.map((p) => {
-                const prazoAnos = p.grauSigilo === "Ultrassecreto" ? 25 : p.grauSigilo === "Secreto" ? 15 : 5;
-                const dataClass = p.dataClassificacao || p.criadoEm;
-                const dataPrevista = new Date(dataClass);
-                dataPrevista.setFullYear(dataPrevista.getFullYear() + prazoAnos);
+            let filtrados = todosClassificados;
+            if (anoParam && anoParam !== "TODOS") {
+                const anoNum = Number(anoParam);
+                if (!Number.isNaN(anoNum)) {
+                    filtrados = filtrados.filter(
+                        (p) => new Date(p.dataClassificacao || p.criadoEm).getFullYear() === anoNum
+                    );
+                }
+            }
+
+            if (grauParam && grauParam !== "TODOS") {
+                const grauLower = grauParam.trim().toLowerCase();
+                filtrados = filtrados.filter(
+                    (p) => (p.grauSigilo || "").trim().toLowerCase() === grauLower
+                );
+            }
+
+            const mapeados = filtrados.map((p) => {
+                const { dataClass, prazoRestricaoAnos, dataPrevistaDesclassificacao, prazoTexto } =
+                    calcularPrazoClassificacao(p);
+                const { categoria, orgao, combinado } = extrairCategoriaEOrgao(p.orgao);
+                const isDocumentoInterno = p.protocolo.startsWith("CIDIC-");
 
                 return {
                     id: p.id,
                     protocolo: p.protocolo,
-                    cidic: `CIDIC-${new Date(dataClass).getFullYear()}-${p.protocolo.slice(-4)}`,
-                    categoria: p.orgao || "Administração Geral",
-                    assuntoPublicavel: p.pedido?.length > 120 ? `${p.pedido.slice(0, 117)}...` : p.pedido,
+                    codigoIdentificacao: p.codigoVerificacao || p.protocolo,
+                    isDocumentoInterno,
+                    assunto: p.pedido,
+                    assuntoPublicavel: p.pedido,
+                    categoria,
+                    orgao,
+                    categoriaOrgao: combinado,
                     grauSigilo: p.grauSigilo,
-                    fundamentoLegal: p.fundamentoSigilo || (
-                        p.grauSigilo === "Ultrassecreto" 
-                            ? "Art. 23, I e II c/c Art. 24, § 1º, I da Lei Federal nº 12.527/2011"
-                            : p.grauSigilo === "Secreto"
-                            ? "Art. 23, III e IV c/c Art. 24, § 1º, II da Lei Federal nº 12.527/2011"
-                            : "Art. 23, VIII c/c Art. 24, § 1º, III da Lei Federal nº 12.527/2011"
-                    ),
-                    autoridadeClassificadora: p.autoridadeClassificadora || "Comissão Permanente de Avaliação de Documentos Sigilosos / Prefeito Municipal",
-                    dataClassificacao: dataClass,
-                    prazoRestricaoAnos: prazoAnos,
-                    dataPrevistaDesclassificacao: dataPrevista
+                    dispositivoLegal:
+                        p.fundamentoSigilo || "Lei Federal nº 12.527/2011 (Art. 23 e Art. 24)",
+                    fundamentoLegal:
+                        p.fundamentoSigilo || "Lei Federal nº 12.527/2011 (Art. 23 e Art. 24)",
+                    autoridadeClassificadora:
+                        p.autoridadeClassificadora || "Autoridade Competente Municipal",
+                    dataClassificacao: dataClass.toISOString(),
+                    prazoRestricaoAnos,
+                    prazoTexto,
+                    dataPrevistaDesclassificacao: dataPrevistaDesclassificacao.toISOString(),
+                    documentoUrl: isDocumentoInterno
+                        ? null
+                        : `/servicos/consulta-protocolo?protocolo=${encodeURIComponent(p.protocolo)}`,
                 };
             });
 
+            const contarPorGrau = (lista: typeof todosClassificados) => ({
+                reservado: lista.filter((p) => p.grauSigilo.toLowerCase() === "reservado").length,
+                secreto: lista.filter((p) => p.grauSigilo.toLowerCase() === "secreto").length,
+                ultrassecreto: lista.filter((p) => p.grauSigilo.toLowerCase() === "ultrassecreto").length,
+                total: lista.length,
+            });
+
+            const declaracaoAtiva = await prisma.declaracaoTransparencia.findFirst({
+                where: {
+                    modulo: { in: ["esic_classificadas", "classificadas"] },
+                    ativa: true,
+                },
+                orderBy: { dataEmissao: "desc" },
+            });
+
+            const statsPorGrau = contarPorGrau(filtrados);
+            const statsGlobalPorGrau = contarPorGrau(todosClassificados);
+
             return NextResponse.json({
-                sucesso: true,
-                criterioPntp: "12.8",
-                total: itens.length,
-                itens,
-                declaracaoInexistencia: declaracao || (itens.length === 0 ? {
-                    textoDeclaracao: "A Prefeitura Municipal de Lajes Pintadas/RN declara, para os devidos fins da Lei Federal nº 12.527/2011 (LAI - art. 30, I) e PNTP 2026, que não possui documentos com classificação de sigilo vigente nos graus Reservado, Secreto ou Ultrassecreto.",
-                    fundamentoLegal: "Lei nº 12.527/2011, Art. 23 e 24; Decreto Regulamentador Municipal da LAI.",
-                    orgaoResponsavel: "Controladoria Geral do Município e Gabinete do Prefeito",
-                    exercicio: 2026,
-                    dataConferencia: new Date()
-                } : null)
+                total: mapeados.length,
+                totalGeral: todosClassificados.length,
+                itens: mapeados,
+                anosDisponiveis: Array.from(anosSet).sort((a, b) => b - a),
+                statsPorGrau,
+                statsGlobalPorGrau,
+                declaracaoInexistencia: declaracaoAtiva
+                    ? {
+                          situacao: declaracaoAtiva.tipoSituacao,
+                          texto: declaracaoAtiva.textoDeclaracao,
+                          fundamentoLegal: declaracaoAtiva.fundamentoLegal,
+                          responsavel: `${declaracaoAtiva.responsavelNome} (${declaracaoAtiva.responsavelCargo})`,
+                          dataEmissao: declaracaoAtiva.dataEmissao.toISOString(),
+                      }
+                    : {
+                          situacao: "sem_registro",
+                          texto: `Declaramos, em cumprimento ao disposto no art. 30, inciso II, da Lei Federal nº 12.527/2011 (Lei de Acesso à Informação), que ${
+                              statsGlobalPorGrau.total === 0
+                                  ? `não constam documentos ou informações administrativas classificadas em grau de sigilo (Reservado, Secreto ou Ultrassecreto) vigentes no âmbito da Prefeitura Municipal de ${MUNICIPIO.nome}/${MUNICIPIO.uf} até a presente data, vigorando o princípio constitucional da publicidade máxima.`
+                                  : `estão publicados neste rol todos os documentos formalmente classificados por grau de sigilo vigentes na Administração Municipal, com indicação do assunto, categoria, dispositivo legal e prazo de restrição.`
+                          }`,
+                          fundamentoLegal:
+                              "Art. 30, inciso II, e Art. 24 da Lei Federal nº 12.527/2011 (LAI)",
+                          responsavel: `Controladoria Geral / Autoridade de Monitoramento da LAI — ${MUNICIPIO.nome}/${MUNICIPIO.uf}`,
+                          dataEmissao: new Date().toISOString(),
+                      },
             });
         }
 
         if (tipo === "desclassificadas") {
-            // Critério 12.9: Rol de Informações Desclassificadas nos últimos 12 meses
-            const ha12Meses = new Date();
-            ha12Meses.setMonth(ha12Meses.getMonth() - 12);
+            const fimPeriodo = new Date();
+            const inicioPeriodo = new Date(fimPeriodo);
+            inicioPeriodo.setMonth(inicioPeriodo.getMonth() - 12);
 
-            const desclassificados = await prisma.esic.findMany({
+            const desclassificados12Meses = await prisma.esic.findMany({
                 where: {
-                    dataDesclassificacao: { gte: ha12Meses }
+                    dataDesclassificacao: {
+                        gte: inicioPeriodo,
+                    },
                 },
-                orderBy: { dataDesclassificacao: "desc" }
+                orderBy: { dataDesclassificacao: "desc" },
             });
 
-            // Buscar se há declaração oficial de inexistência de desclassificações
-            const declaracao = await prisma.declaracaoTransparencia.findFirst({
-                where: {
-                    OR: [
-                        { modulo: "esic_desclassificadas", ativa: true },
-                        { criterioPntp: "12.9", ativa: true }
-                    ]
-                },
-                orderBy: { criadoEm: "desc" }
+            const anosSet = new Set<number>([new Date().getFullYear()]);
+            for (const p of desclassificados12Meses) {
+                if (p.dataDesclassificacao) {
+                    anosSet.add(new Date(p.dataDesclassificacao).getFullYear());
+                }
+            }
+
+            let filtrados = desclassificados12Meses;
+            if (anoParam && anoParam !== "TODOS") {
+                const anoNum = Number(anoParam);
+                if (!Number.isNaN(anoNum)) {
+                    filtrados = filtrados.filter(
+                        (p) =>
+                            p.dataDesclassificacao &&
+                            new Date(p.dataDesclassificacao).getFullYear() === anoNum
+                    );
+                }
+            }
+
+            const mapeados = filtrados.map((p) => {
+                const { categoria, orgao, combinado } = extrairCategoriaEOrgao(p.orgao);
+                const isDocumentoInterno = p.protocolo.startsWith("CIDIC-");
+
+                return {
+                    id: p.id,
+                    protocolo: p.protocolo,
+                    codigoIdentificacao: p.codigoVerificacao || p.protocolo,
+                    isDocumentoInterno,
+                    assunto: p.pedido,
+                    assuntoPublicavel: p.pedido,
+                    categoria,
+                    orgao,
+                    categoriaOrgao: combinado,
+                    grauSigiloOriginal:
+                        p.grauSigilo && p.grauSigilo !== "Sem Sigilo"
+                            ? p.grauSigilo
+                            : "Reservado",
+                    dispositivoLegal:
+                        p.fundamentoSigilo || "Lei Federal nº 12.527/2011 (Art. 24 e Art. 29)",
+                    autoridadeClassificadora:
+                        p.autoridadeClassificadora || "Controladoria / Autoridade Competente",
+                    dataClassificacaoOriginal: (p.dataClassificacao || p.criadoEm).toISOString(),
+                    dataDesclassificacao: p.dataDesclassificacao!.toISOString(),
+                    atoDesclassificacao:
+                        p.resposta || "Término de prazo ou reavaliação administrativa de sigilo",
+                    documentoUrl: isDocumentoInterno
+                        ? null
+                        : `/servicos/consulta-protocolo?protocolo=${encodeURIComponent(p.protocolo)}`,
+                };
             });
 
-            const itens = desclassificados.map((p) => ({
-                id: p.id,
-                protocolo: p.protocolo,
-                assunto: p.pedido,
-                grauSigiloOriginal: p.grauSigilo,
-                dataClassificacaoOriginal: p.dataClassificacao || p.criadoEm,
-                dataDesclassificacao: p.dataDesclassificacao,
-                atoDesclassificacao: "Termo de Desclassificação da Comissão Permanente de LAI",
-                documentoUrl: `/transparencia/passiva/consulta?protocolo=${p.protocolo}`
-            }));
-
-            // Declaração Oficial de Inexistência de Desclassificações nos Últimos 12 Meses
-            const declaracaoOficial = declaracao || {
-                id: "dec-esic-desclassificadas-2026",
-                modulo: "esic_desclassificadas",
-                criterioPntp: "12.9",
-                orgaoResponsavel: "Controladoria Geral do Município / Gabinete do Prefeito",
-                exercicio: 2026,
-                competencia: "Últimos 12 Meses (2025/2026)",
-                tipoSituacao: "nao_ocorrencia_declarada",
-                textoDeclaracao: "A Prefeitura Municipal de Lajes Pintadas/RN, por intermédio da Controladoria Geral do Município e do Serviço de Informação ao Cidadão (e-SIC), vem, para os devidos fins de cumprimento do art. 30, inciso I da Lei Federal nº 12.527/2011 (Lei de Acesso à Informação) e do Critério 12.9 do Programa Nacional de Transparência Pública (PNTP 2026), DECLARAR formalmente a INEXISTÊNCIA de documentos e informações desclassificadas no âmbito do Poder Executivo Municipal nos últimos 12 (doze) meses, tendo em vista a inexistência de atos de desclassificação operados ou vencimento de termos de sigilo no período em questão.",
-                fundamentoLegal: "Art. 30, inciso I da Lei Federal nº 12.527/2011 (LAI) e Decreto Municipal de Regulamentação da LAI.",
-                responsavelNome: "Controladoria Geral do Município",
-                responsavelCargo: "Controlador(a) Geral do Município",
-                arquivoAssinadoUrl: "/documentos/declaracao_inexistencia_desclassificadas_lajes_pintadas.pdf",
-                dataEmissao: new Date("2026-01-05T08:00:00Z"),
-                dataConferencia: new Date(),
-                situacaoPublicacao: "publicado",
-                ativa: true
-            };
+            const declaracaoAtiva = await prisma.declaracaoTransparencia.findFirst({
+                where: {
+                    modulo: { in: ["esic_desclassificadas", "desclassificadas"] },
+                    ativa: true,
+                },
+                orderBy: { dataEmissao: "desc" },
+            });
 
             return NextResponse.json({
-                sucesso: true,
-                criterioPntp: "12.9",
-                total: itens.length,
-                itens,
-                declaracaoOficial
+                total: mapeados.length,
+                totalUltimos12Meses: desclassificados12Meses.length,
+                itens: mapeados,
+                periodoInicio: inicioPeriodo.toISOString(),
+                periodoFim: fimPeriodo.toISOString(),
+                anosDisponiveis: Array.from(anosSet).sort((a, b) => b - a),
+                declaracaoOficial: declaracaoAtiva
+                    ? {
+                          situacao: declaracaoAtiva.tipoSituacao,
+                          texto: declaracaoAtiva.textoDeclaracao,
+                          fundamentoLegal: declaracaoAtiva.fundamentoLegal,
+                          responsavel: `${declaracaoAtiva.responsavelNome} (${declaracaoAtiva.responsavelCargo})`,
+                          dataEmissao: declaracaoAtiva.dataEmissao.toISOString(),
+                          arquivoAssinadoUrl: declaracaoAtiva.arquivoAssinadoUrl || null,
+                      }
+                    : {
+                          situacao: "sem_desclassificacoes_12m",
+                          texto: `Declaramos, em atendimento ao Art. 30, inciso I, da Lei Federal nº 12.527/2011 (Lei de Acesso à Informação), que nos últimos 12 (doze) meses (${inicioPeriodo.toLocaleDateString("pt-BR")} a ${fimPeriodo.toLocaleDateString("pt-BR")}) ${
+                              desclassificados12Meses.length === 0
+                                  ? `não houve documentos ou informações públicas desclassificadas no âmbito do Poder Executivo de ${MUNICIPIO.nome}/${MUNICIPIO.uf}, mantendo-se o regime geral de acesso pleno às informações públicas.`
+                                  : `foram devidamente publicadas neste rol todas as ${desclassificados12Meses.length} informações que passaram por processo de desclassificação no período.`
+                          }`,
+                          fundamentoLegal:
+                              "Art. 30, inciso I, da Lei Federal nº 12.527/2011 (Lei de Acesso à Informação)",
+                          responsavel: `Controladoria Geral do Município — ${MUNICIPIO.nome}/${MUNICIPIO.uf}`,
+                          dataEmissao: new Date().toISOString(),
+                          arquivoAssinadoUrl: null,
+                      },
             });
         }
 
-        return NextResponse.json({ error: "Tipo inválido" }, { status: 400 });
+        return NextResponse.json(
+            { error: "Tipo de relatório inválido. Utilize: estatisticas, classificadas ou desclassificadas." },
+            { status: 400 }
+        );
     } catch (error) {
         console.error("[API esic-relatorios GET]", error);
-        return NextResponse.json({ error: "Erro ao gerar relatórios do e-SIC" }, { status: 500 });
+        return NextResponse.json({ error: "Erro ao processar relatório do e-SIC" }, { status: 500 });
     }
 }
-

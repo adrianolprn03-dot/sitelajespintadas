@@ -109,7 +109,9 @@ export default function DetalhesEsicPage() {
     if (!item) return <div className="py-20 text-center text-red-500 font-bold">Pedido não encontrado.</div>;
 
     const dataPrazo = item.prazo ? new Date(item.prazo) : null;
-    const isVencido = dataPrazo ? new Date() > dataPrazo && item.status !== "concluido" && item.status !== "encerrado" : false;
+    const isVencido = dataPrazo
+        ? new Date() > dataPrazo && item.status !== "concluido" && item.status !== "encerrado" && item.status !== "indeferido"
+        : false;
 
     return (
         <div className="max-w-4xl mx-auto space-y-6 pb-12">
@@ -175,17 +177,26 @@ export default function DetalhesEsicPage() {
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">Decisão / Situação</label>
                                 <div className="flex flex-wrap gap-3">
-                                    {["aberto", "em-analise", "concluido", "em-recurso", "encerrado"].map((s) => (
+                                    {[
+                                        { value: "aberto", label: "Aberto" },
+                                        { value: "em-analise", label: "Em Análise" },
+                                        { value: "concluido", label: "Atendido / Concluído" },
+                                        { value: "indeferido", label: "Indeferido (Negado)" },
+                                        { value: "em-recurso", label: "Em Recurso" },
+                                        { value: "encerrado", label: "Encerrado" },
+                                    ].map((opt) => (
                                         <button
-                                            key={s}
+                                            key={opt.value}
                                             type="button"
-                                            onClick={() => setStatus(s)}
-                                            className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all border ${status === s
-                                                    ? "bg-primary-500 text-white border-primary-600 shadow-md"
-                                                    : "bg-white text-gray-400 border-gray-100 hover:border-primary-200"
+                                            onClick={() => setStatus(opt.value)}
+                                            className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all border ${status === opt.value
+                                                    ? opt.value === "indeferido"
+                                                        ? "bg-rose-600 text-white border-rose-700 shadow-md"
+                                                        : "bg-primary-500 text-white border-primary-600 shadow-md"
+                                                    : "bg-white text-gray-500 border-gray-200 hover:border-primary-200"
                                                 }`}
                                         >
-                                            {s.replace("-", " ")}
+                                            {opt.label}
                                         </button>
                                     ))}
                                 </div>
@@ -194,11 +205,17 @@ export default function DetalhesEsicPage() {
                             {item.status !== 'em-recurso' && item.status !== 'encerrado' && (
                                 <>
                                     <div>
-                                        <label className="block text-sm font-semibold text-gray-700 mb-2">Texto da Resposta *</label>
+                                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                            {status === "indeferido" ? "Justificativa Legal do Indeferimento *" : "Texto da Resposta *"}
+                                        </label>
                                         <textarea
-                                            required={status === 'concluido'}
+                                            required={status === 'concluido' || status === 'indeferido'}
                                             rows={8}
-                                            placeholder="Escreva a resposta fundamentada com a informação pública solicitada..."
+                                            placeholder={
+                                                status === "indeferido"
+                                                    ? "Informe as razões de fato e o dispositivo legal que fundamentam a negativa do pedido (Lei nº 12.527/2011)..."
+                                                    : "Escreva a resposta fundamentada com a informação pública solicitada..."
+                                            }
                                             className="w-full bg-gray-50 text-sm text-gray-700 rounded-xl px-4 py-3 border border-gray-200 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all resize-none shadow-inner"
                                             value={resposta}
                                             onChange={(e) => setResposta(e.target.value)}

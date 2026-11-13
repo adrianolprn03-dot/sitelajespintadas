@@ -39,8 +39,10 @@ const sitemapData = [
         links: [
             { label: "e-SIC (Pedido de Informação)", href: "/servicos/esic" },
             { label: "Ouvidoria Municipal", href: "/servicos/ouvidoria" },
-            { label: "Acompanhar Pedido", href: "/servicos/esic/acompanhar" },
-            { label: "Relatórios Estatísticos SIC", href: "/transparencia/passiva/relatorios" },
+            { label: "Consultar Protocolo", href: "/servicos/consulta-protocolo" },
+            { label: "Relatório Estatístico Anual e-SIC", href: "/transparencia/passiva/relatorios/estatisticas" },
+            { label: "Documentos Classificados (Sigilo)", href: "/transparencia/passiva/relatorios/com-sigilo" },
+            { label: "Desclassificadas (Últimos 12 Meses)", href: "/transparencia/passiva/relatorios/sem-sigilo" },
             { label: "FAQ (Dúvidas)", href: "/transparencia/faq" },
             { label: "Glossário", href: "/transparencia/glossario" },
         ]

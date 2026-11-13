@@ -217,9 +217,9 @@ export default function ESICPage() {
     const sidebarItems = [
         { id: "sic", label: "Informações do SIC", icon: FaInfoCircle, internal: true },
         { id: "faq", label: "e-SIC Perguntas e Respostas", icon: FaQuestionCircle, href: "/transparencia/passiva/perguntas" },
-        { id: "relatorios", label: "Relatório estatístico SIC", icon: FaChartBar, href: "/transparencia/passiva/relatorios/estatisticas" },
-        { id: "sigilo", label: "Solicitação Grau de Sigilo", icon: FaLock, href: "/transparencia/passiva/relatorios/com-sigilo" },
-        { id: "nao-sigiloso", label: "Solicitação não sigilosa", icon: FaBook, href: "/transparencia/passiva/relatorios/sem-sigilo" },
+        { id: "relatorios", label: "Relatório Estatístico Anual", icon: FaChartBar, href: "/transparencia/passiva/relatorios/estatisticas" },
+        { id: "sigilo", label: "Documentos Classificados (Sigilo)", icon: FaLock, href: "/transparencia/passiva/relatorios/com-sigilo" },
+        { id: "nao-sigiloso", label: "Desclassificadas (12 Meses)", icon: FaBook, href: "/transparencia/passiva/relatorios/sem-sigilo" },
         { id: "prazos", label: "Prazos de Respostas SIC", icon: FaClock, internal: true },
         { id: "regulamentacao", label: "Regulamentação da LAI", icon: FaGavel, href: "/transparencia/passiva/regulamentacao" },
     ];

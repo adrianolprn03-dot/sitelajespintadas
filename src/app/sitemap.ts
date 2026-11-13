@@ -119,5 +119,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
         // === TRANSPARÊNCIA PASSIVA ===
         { url: `${base}/transparencia/passiva`, lastModified: now, priority: 0.8 },
         { url: `${base}/transparencia/passiva/institucional`, lastModified: now, priority: 0.7 },
+        { url: `${base}/transparencia/passiva/relatorios`, lastModified: now, priority: 0.8 },
+        { url: `${base}/transparencia/passiva/relatorios/estatisticas`, lastModified: now, priority: 0.9 },
+        { url: `${base}/transparencia/passiva/relatorios/com-sigilo`, lastModified: now, priority: 0.8 },
+        { url: `${base}/transparencia/passiva/relatorios/sem-sigilo`, lastModified: now, priority: 0.8 },
     ];
 }

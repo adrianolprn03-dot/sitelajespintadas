@@ -65,12 +65,15 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
             });
         }
 
-        if (body.status === "concluido" && body.resposta && !atual.respondidoEm) {
+        if ((body.status === "concluido" || body.status === "indeferido") && body.resposta && !atual.respondidoEm) {
             updateData.respondidoEm = new Date();
             historico.push({
                 data: new Date().toISOString(),
-                evento: "Resposta Oficial Emitida",
-                detalhe: `Respondido por ${auth.user.nome} (${atual.orgao})`,
+                evento:
+                    body.status === "indeferido"
+                        ? "Pedido Indeferido Fundamentadamente"
+                        : "Resposta Oficial Emitida",
+                detalhe: `${body.status === "indeferido" ? "Indeferido" : "Respondido"} por ${auth.user.nome} (${atual.orgao})`,
             });
         }
 
