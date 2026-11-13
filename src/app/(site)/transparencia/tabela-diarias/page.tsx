@@ -65,7 +65,7 @@ export default function TabelaDiariasPage() {
                 <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-xs">
                     <div className="flex items-center gap-2 font-bold text-[#12304A]">
                         <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                        <span>Critério 7.2 – Cartilha PNTP 2026 (ATRICON)</span>
+                        <span>Critério PNTP 2026 (ATRICON)</span>
                         <span className="hidden sm:inline text-[#5B738B]">· Histórico Integral de 2021 a 2026</span>
                     </div>
                     <div className="flex items-center gap-2">

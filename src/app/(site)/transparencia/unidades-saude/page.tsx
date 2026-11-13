@@ -166,7 +166,7 @@ export default function UnidadesSaudePage() {
                     "Telefone": u.telefone || "-",
                     "Profissional": p.nome,
                     "Cargo": p.cargo,
-                    "Especialidade (18.2)": p.especialidade,
+                    "Especialidade": p.especialidade,
                     "Registro Profissional": p.registroProfissional,
                     "Horário / Escala de Atendimento": p.diasHorarios
                 });
@@ -174,7 +174,7 @@ export default function UnidadesSaudePage() {
         });
 
         const filename = `servicos_saude_profissionais_lajes_pintadas`;
-        const title = `Relação de Unidades, Especialidades e Profissionais de Saúde – Lajes Pintadas/RN (Critério 18.2)`;
+        const title = `Relação de Unidades, Especialidades e Profissionais de Saúde – Lajes Pintadas/RN (Critério PNTP)`;
 
         if (format === "csv") exportToCSV(rows, filename);
         else if (format === "json") exportToJSON(rows, filename);
@@ -186,7 +186,7 @@ export default function UnidadesSaudePage() {
         <div className="min-h-screen bg-[#F5F7FA]">
             <PageHeader
                 title="Serviços e Unidades de Saúde"
-                subtitle="Consulta pública às unidades municipais de saúde, endereços, horários de funcionamento, especialidades médicas atendidas e equipe profissional (Critério PNTP 18.2)."
+                subtitle="Consulta pública às unidades municipais de saúde, endereços, horários de funcionamento, especialidades médicas atendidas e equipe profissional (Critério PNTP)."
                 icon={<FaHospital />}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
@@ -200,7 +200,7 @@ export default function UnidadesSaudePage() {
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-2">
                         <span className="text-[10px] font-black uppercase tracking-wider text-[#1254A3] bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
-                            PNTP Critério 18.2 • Transparência Ativa da Saúde
+                            Critério PNTP • Transparência Ativa da Saúde
                         </span>
                     </div>
 
@@ -210,7 +210,7 @@ export default function UnidadesSaudePage() {
                             onClick={() => handleExport("pdf")}
                             className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[#DDE3EA] text-[#12304A] rounded-lg text-xs font-bold hover:border-[#1254A3] transition-all shadow-sm cursor-pointer"
                         >
-                            <FaDownload size={10} /> PDF (18.2)
+                            <FaDownload size={10} /> PDF
                         </button>
                         <button
                             onClick={() => handleExport("xlsx")}
@@ -289,7 +289,7 @@ export default function UnidadesSaudePage() {
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                                         <div className="bg-[#F5F7FA] p-3.5 rounded-xl border border-[#DDE3EA]">
                                             <span className="text-[10px] font-bold text-[#5B738B] uppercase block mb-1 flex items-center gap-1">
-                                                <FaMapPin className="text-[#1254A3]" /> Localização / Endereço (18.2)
+                                                <FaMapPin className="text-[#1254A3]" /> Localização / Endereço
                                             </span>
                                             <span className="font-bold text-[#12304A]">{u.endereco}</span>
                                         </div>
@@ -302,10 +302,10 @@ export default function UnidadesSaudePage() {
                                         </div>
                                     </div>
 
-                                    {/* Especialidades Médicas Atendidas (Critério 18.2) */}
+                                    {/* Especialidades Médicas Atendidas */}
                                     <div>
                                         <span className="text-[10px] font-black uppercase tracking-wider text-[#5B738B] block mb-2">
-                                            Especialidades e Atendimentos Disponíveis (Critério 18.2):
+                                            Especialidades e Atendimentos Disponíveis:
                                         </span>
                                         <div className="flex flex-wrap gap-1.5">
                                             {u.especialidades.map((esp, idx) => (
@@ -319,10 +319,10 @@ export default function UnidadesSaudePage() {
                                         </div>
                                     </div>
 
-                                    {/* Equipe Profissional e Escala (Critério 18.2) */}
+                                    {/* Equipe Profissional e Escala */}
                                     <div>
                                         <span className="text-[10px] font-black uppercase tracking-wider text-[#5B738B] block mb-2">
-                                            Profissionais de Saúde e Escala de Atendimento (Critério 18.2):
+                                            Profissionais de Saúde e Escala de Atendimento:
                                         </span>
                                         <div className="overflow-x-auto border border-[#DDE3EA] rounded-xl">
                                             <table className="w-full text-left text-xs">

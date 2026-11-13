@@ -59,9 +59,9 @@ const modalidadeLabel: Record<string, string> = {
     concorrencia: "Concorrência",
     "tomada-precos": "Tomada de Preços",
     convite: "Convite",
-    dispensa: "Dispensa de Licitação (8.4)",
-    inexigibilidade: "Inexigibilidade (8.4)",
-    adesao: "Adesão a Registro de Preços - Carona (8.5)",
+    dispensa: "Dispensa de Licitação",
+    inexigibilidade: "Inexigibilidade",
+    adesao: "Adesão a Registro de Preços (Carona)",
     leilao: "Leilão Eletrônico",
     credenciamento: "Credenciamento"
 };
@@ -685,7 +685,7 @@ export default function LicitacoesClient() {
                                     </h4>
                                     {selectedLicitacao.adesaoArp ? (
                                         <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
-                                            Ata de Adesão / Carona (PNTP 8.5)
+                                            Ata de Adesão / Carona (PNTP)
                                         </span>
                                     ) : selectedLicitacao.ataRegistroPreco ? (
                                         <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">
@@ -694,12 +694,12 @@ export default function LicitacoesClient() {
                                     ) : null}
                                 </div>
 
-                                {/* Edital Integral (Critério 8.2) */}
+                                {/* Edital Integral */}
                                 {(selectedLicitacao.editalUrl || selectedLicitacao.arquivo) && (
                                     <div className="p-4 rounded-2xl bg-blue-50 border border-blue-200 mb-4 flex items-center justify-between">
                                         <div>
                                             <span className="text-[10px] font-black uppercase text-blue-800 tracking-wider block">
-                                                Critério PNTP 8.2 • Instrumento Convocatório
+                                                Critério PNTP • Instrumento Convocatório
                                             </span>
                                             <span className="font-bold text-slate-800 text-xs">Íntegra do Edital de Licitação / Termo Convocatório</span>
                                         </div>

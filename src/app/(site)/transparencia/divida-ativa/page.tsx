@@ -47,13 +47,13 @@ export default function DividaAtivaPage() {
 
                         <div className="bg-slate-800/70 backdrop-blur-md rounded-2xl p-6 md:p-8 border border-slate-700/60 shadow-inner">
                             <p className="text-slate-200 font-medium text-base md:text-lg leading-relaxed">
-                                O Município de Lajes Pintadas/RN informa que, após consulta aos registros tributários, contábeis e administrativos, não foram identificadas pessoas físicas ou jurídicas com débitos inscritos em dívida ativa municipal, tributária ou não tributária, nos exercícios de 2024, 2025 e 2026, até a presente data. Caso ocorram futuras inscrições, as informações serão publicadas nesta página conforme o critério 3.3 do PNTP 2026.
+                                O Município de Lajes Pintadas/RN informa que, após consulta aos registros tributários, contábeis e administrativos, não foram identificadas pessoas físicas ou jurídicas com débitos inscritos em dívida ativa municipal, tributária ou não tributária, nos exercícios de 2024, 2025 e 2026, até a presente data. Caso ocorram futuras inscrições, as informações serão publicadas nesta página conforme as diretrizes do PNTP 2026.
                             </p>
                         </div>
 
                         <div className="mt-6 flex items-center justify-between text-xs text-emerald-300/80 font-semibold tracking-wide">
                             <span>Prefeitura Municipal de Lajes Pintadas / RN</span>
-                            <span>Critério 3.3 - PNTP 2026</span>
+                            <span>Matriz PNTP 2026</span>
                         </div>
                     </div>
                 </div>
@@ -127,7 +127,7 @@ export default function DividaAtivaPage() {
                         </div>
                         <div>
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">PNTP 2026</p>
-                            <p className="text-sm font-bold text-slate-700 uppercase tracking-tight">Conformidade com Item de Transparência (Critério 3.3)</p>
+                            <p className="text-sm font-bold text-slate-700 uppercase tracking-tight">Conformidade com Item de Transparência (Critério PNTP)</p>
                         </div>
                     </div>
                 </div>

@@ -147,7 +147,7 @@ export default function DespesasPage() {
         const title = `Relatório de Execução da Despesa Pública – ${MUNICIPIO.nome}/${MUNICIPIO.uf} (${ano})`;
         const context = {
             titulo: title,
-            fonte: "Sistema Integrado de Administração Financeira e Controle (SIAFIC) — Critério PNTP 4.1",
+            fonte: "Sistema Integrado de Administração Financeira e Controle (SIAFIC) — Critério PNTP",
             periodo: `${mes ? mesesLabels[Number(mes) - 1] + "/" : ""}${ano}`,
             filtros: `Ano: ${ano} | Mês: ${mes || "Todos"} | Secretaria: ${secretaria || "Todas"} | Categoria: ${categoria || "Todas"} | Busca: ${busca || "-"}`,
         };
@@ -243,7 +243,7 @@ export default function DespesasPage() {
                                     Empenho · Liquidação · Pagamento
                                 </span>
                                 <span className="flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[11px] font-black uppercase tracking-wider border border-emerald-100">
-                                    <FaCircleCheck size={11} /> LC 131/2009 · PNTP 4.1
+                                    <FaCircleCheck size={11} /> LC 131/2009 · PNTP
                                 </span>
                             </div>
 

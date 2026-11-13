@@ -105,7 +105,7 @@ export default function SICRelatoriosClassificadosPage() {
     return (
         <div className="min-h-screen bg-[#F8FAFC]">
             <PageHeader
-                title="Rol de Informações Classificadas (12.8)"
+                title="Rol de Informações Classificadas"
                 subtitle="Relação de documentos com restrição temporária de acesso nos graus Reservado, Secreto ou Ultrassecreto (Lei nº 12.527/2011)."
                 icon={<FaShieldAlt className="w-8 h-8 text-[#1254A3]" />}
                 breadcrumbs={[

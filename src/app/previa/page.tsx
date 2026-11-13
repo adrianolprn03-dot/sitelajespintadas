@@ -164,8 +164,8 @@ export default async function PreviaHomePage() {
                             </div>
 
                             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-[#12304A] font-heading tracking-tight leading-[1.1]">
-                                Sua cidade. <br />
-                                <span className="text-[#1254A3]">Mais perto de você.</span>
+                                Lajes Pintadas, <br />
+                                <span className="text-[#1254A3]">mais perto de você.</span>
                             </h1>
 
                             <div className="h-1.5 w-20 bg-[#F39A32] rounded-full" />
@@ -214,33 +214,15 @@ export default async function PreviaHomePage() {
                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                                     />
                                     {/* Gradiente suave para contraste e leitura */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-[#0B2545]/90 via-[#0B2545]/30 to-transparent pointer-events-none" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-[#0B2545]/60 via-transparent to-transparent pointer-events-none" />
                                 </div>
 
-                                {/* Card de Destaque sobreposto: Acesso à Informação */}
-                                <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 bg-white/95 backdrop-blur-md p-4 sm:p-5 rounded-[10px] border border-white/60 shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                    <div className="space-y-1">
-                                        <div className="flex items-center gap-2">
-                                            <span className="w-2 h-2 rounded-full bg-[#F39A32]" />
-                                            <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#1254A3]">
-                                                Lei de Acesso à Informação
-                                            </span>
-                                        </div>
-                                        <h3 className="text-sm sm:text-base font-extrabold text-[#12304A] font-heading leading-tight">
-                                            Acesso à Informação e Transparência Passiva
-                                        </h3>
-                                        <p className="text-xs text-[#5B738B] hidden sm:block">
-                                            Abra pedidos e consulte protocolos pelo e-SIC oficial.
-                                        </p>
-                                    </div>
-
-                                    <Link
-                                        href="/servicos/esic"
-                                        className="bg-[#1254A3] hover:bg-[#0d4282] text-white text-xs font-bold px-4 py-2.5 rounded-[8px] transition-colors flex items-center justify-center gap-2 shrink-0 shadow-sm"
-                                    >
-                                        <span>Solicitar Informação</span>
-                                        <FaArrowRight size={11} />
-                                    </Link>
+                                {/* Badge Superior no Vídeo */}
+                                <div className="absolute top-4 left-4 z-10">
+                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/45 backdrop-blur-md border border-white/20 text-white text-[11px] font-bold">
+                                        <span className="w-2 h-2 rounded-full bg-[#F39A32] animate-pulse" />
+                                        <span>Vídeo Oficial • Lajes Pintadas/RN</span>
+                                    </span>
                                 </div>
                             </div>
                         </div>

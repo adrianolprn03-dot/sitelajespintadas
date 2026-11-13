@@ -109,7 +109,7 @@ export default function SICRelatoriosDesclassificadosPage() {
     return (
         <div className="min-h-screen bg-[#F8FAFC]">
             <PageHeader
-                title="Rol de Informações Desclassificadas (12.9)"
+                title="Rol de Informações Desclassificadas"
                 subtitle="Relação de documentos e informações cujo prazo de sigilo expirou ou foram reavaliados e desclassificados nos últimos 12 meses."
                 icon={<FaLockOpen className="w-8 h-8 text-[#1254A3]" />}
                 breadcrumbs={[
@@ -142,7 +142,7 @@ export default function SICRelatoriosDesclassificadosPage() {
                                     </div>
                                     <div>
                                         <span className="text-[11px] font-black uppercase tracking-widest text-amber-300 block">
-                                            Lei de Acesso à Informação • Art. 30, Inciso I • Critério PNTP 12.9
+                                            Lei de Acesso à Informação • Art. 30, Inciso I • Critério PNTP
                                         </span>
                                         <h2 className="text-xl sm:text-2xl font-black text-white">
                                             Declaração Oficial: Rol de Informações Desclassificadas

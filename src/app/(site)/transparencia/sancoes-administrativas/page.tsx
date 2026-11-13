@@ -28,7 +28,7 @@ export default function SancoesAdministrativasPage() {
         ];
 
         const filename = `declaracao_sancoes_${ano}_lajes_pintadas`;
-        const title = `Declaração de Sanções Administrativas – Exercício ${ano} – Lajes Pintadas/RN (Critério 8.7)`;
+        const title = `Declaração de Sanções Administrativas – Exercício ${ano} – Lajes Pintadas/RN (Critério PNTP)`;
 
         if (format === "csv") exportToCSV(payload, filename);
         else if (format === "json") exportToJSON(payload, filename);
@@ -40,7 +40,7 @@ export default function SancoesAdministrativasPage() {
         <div className="min-h-screen bg-[#F5F7FA]">
             <PageHeader
                 title="Sanções Administrativas a Fornecedores"
-                subtitle="Consulta pública de sanções administrativas, advertências, multas, impedimentos de licitar e declarações de inidoneidade aplicadas pela Administração Municipal (Art. 156 da Lei nº 14.133/2021 e Critério 8.7 do PNTP)."
+                subtitle="Consulta pública de sanções administrativas, advertências, multas, impedimentos de licitar e declarações de inidoneidade aplicadas pela Administração Municipal (Art. 156 da Lei nº 14.133/2021 e Critério PNTP)."
                 icon={<FaGavel />}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
@@ -73,7 +73,7 @@ export default function SancoesAdministrativasPage() {
                             onClick={() => handleExport("pdf")}
                             className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[#DDE3EA] text-[#12304A] rounded-lg text-xs font-bold hover:border-[#1254A3] transition-all shadow-sm cursor-pointer"
                         >
-                            <FaDownload size={10} /> Exportar Declaração PDF (8.7)
+                            <FaDownload size={10} /> Exportar Declaração PDF
                         </button>
                         <button
                             onClick={() => handleExport("xlsx")}
@@ -84,7 +84,7 @@ export default function SancoesAdministrativasPage() {
                     </div>
                 </div>
 
-                {/* Card Oficial de Declaração de Inexistência / Regularidade (Critério 8.7) */}
+                {/* Card Oficial de Declaração de Inexistência / Regularidade (Critério PNTP) */}
                 <div className="bg-white rounded-3xl p-8 sm:p-10 border border-[#DDE3EA] shadow-sm space-y-6">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-100 pb-6">
                         <div className="flex items-center gap-4">
@@ -93,7 +93,7 @@ export default function SancoesAdministrativasPage() {
                             </div>
                             <div>
                                 <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100 px-3 py-0.5 rounded-full">
-                                    Critério PNTP 8.7 • Transparência Ativa
+                                    Critério PNTP • Transparência Ativa
                                 </span>
                                 <h3 className="text-xl font-black text-[#12304A] mt-1">
                                     Declaração Oficial de Inexistência de Sanções Administrativas Vigentes
@@ -114,7 +114,7 @@ export default function SancoesAdministrativasPage() {
 
                     <div className="bg-[#F5F7FA] rounded-2xl p-6 border border-[#DDE3EA] space-y-4">
                         <p className="text-sm text-[#12304A] leading-relaxed font-medium">
-                            A <strong>{MUNICIPIO.nomeCompleto}</strong>, no uso de suas atribuições legais e em cumprimento ao disposto no <strong>art. 156 da Lei Federal nº 14.133/2021 (Nova Lei de Licitações)</strong> e às diretrizes da <strong>Matriz de Fiscalização PNTP 2026 (Critério 8.7)</strong>, declara para os devidos fins de direito e controle público que:
+                            A <strong>{MUNICIPIO.nomeCompleto}</strong>, no uso de suas atribuições legais e em cumprimento ao disposto no <strong>art. 156 da Lei Federal nº 14.133/2021 (Nova Lei de Licitações)</strong> e às diretrizes da <strong>Matriz de Fiscalização PNTP 2026 (Critério PNTP)</strong>, declara para os devidos fins de direito e controle público que:
                         </p>
                         <blockquote className="bg-white p-5 rounded-xl border-l-4 border-emerald-500 text-sm font-semibold text-slate-800 italic shadow-xs">
                             "No exercício de {ano}, não constam sanções administrativas vigentes (advertência, multa rescisória, impedimento de licitar ou contratar, ou declaração de inidoneidade) aplicadas pela Administração Direta a fornecedores, pessoas físicas ou jurídicas licitantes."
@@ -126,7 +126,7 @@ export default function SancoesAdministrativasPage() {
                             </div>
                             <div className="bg-white p-3.5 rounded-xl border border-[#DDE3EA]">
                                 <span className="text-[10px] font-bold text-[#5B738B] uppercase block mb-0.5">Fundamentação:</span>
-                                <span className="font-bold text-[#12304A]">Art. 156 da Lei nº 14.133/21 • PNTP 8.7</span>
+                                <span className="font-bold text-[#12304A]">Art. 156 da Lei nº 14.133/21 • Critério PNTP</span>
                             </div>
                             <div className="bg-white p-3.5 rounded-xl border border-[#DDE3EA]">
                                 <span className="text-[10px] font-bold text-[#5B738B] uppercase block mb-0.5">Atualização:</span>
@@ -229,3 +229,4 @@ export default function SancoesAdministrativasPage() {
         </div>
     );
 }
+

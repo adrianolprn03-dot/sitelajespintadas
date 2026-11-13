@@ -141,7 +141,7 @@ export default function ReceitasPage() {
         const title = `Relatório de Previsão e Arrecadação de Receitas – ${MUNICIPIO.nome}/${MUNICIPIO.uf} (${ano})`;
         const context = {
             titulo: title,
-            fonte: "Sistema Contábil Integrado - Secretaria Municipal de Finanças (Critério PNTP 3.1)",
+            fonte: "Sistema Contábil Integrado - Secretaria Municipal de Finanças (Critério PNTP)",
             periodo: `${mes ? mesesLabels[Number(mes) - 1] + "/" : ""}${ano}`,
             filtros: `Ano: ${ano} | Mês: ${mes || "Todos"} | Categoria: ${categoria || "Todas"} | Busca: ${busca || "-"}`,
         };
@@ -198,7 +198,7 @@ export default function ReceitasPage() {
                                     Fluxo Arrecadatório
                                 </span>
                                 <span className="flex items-center gap-1.5 px-3 py-1 bg-[#EEF4FB] text-[#1254A3] rounded-lg text-[11px] font-black uppercase tracking-wider border border-[#DDE3EA]">
-                                    <FaCircleCheck size={11} /> LC 131/2009 · PNTP 3.1
+                                    <FaCircleCheck size={11} /> LC 131/2009 · PNTP
                                 </span>
                             </div>
 

@@ -15,7 +15,7 @@ const conjuntos = [
         endpoint: "/api/servidores?exportAll=true",
         formatos: ["JSON", "CSV", "XLSX"],
         atualizacao: "Mensal",
-        lei: "LC 131/2009 · PNTP 6.1",
+        lei: "LC 131/2009 · PNTP",
         dicionario: "nome, cargo, vinculo, secretaria, cargaHoraria, salarioBase, gratificacoes, descontos, totalBruto, totalLiquido, mes, ano",
         gradient: "from-emerald-500 to-teal-600",
         shadow: "shadow-emerald-500/20"
@@ -26,7 +26,7 @@ const conjuntos = [
         endpoint: "/api/receitas?exportAll=true",
         formatos: ["JSON", "CSV", "XLSX"],
         atualizacao: "Tempo Real (D+1)",
-        lei: "LC 131/2009 · PNTP 3.1",
+        lei: "LC 131/2009 · PNTP",
         dicionario: "naturezaCodigo, descricao, categoria, valorPrevisto, valorAtualizado, valorLancado, valorArrecadado, fonte, mes, ano",
         gradient: "from-blue-500 to-indigo-600",
         shadow: "shadow-blue-500/20"
@@ -37,7 +37,7 @@ const conjuntos = [
         endpoint: "/api/despesas?exportAll=true",
         formatos: ["JSON", "CSV", "XLSX"],
         atualizacao: "Tempo Real (D+1)",
-        lei: "LC 131/2009 · PNTP 4.1",
+        lei: "LC 131/2009 · PNTP",
         dicionario: "numeroEmpenho, dataEmpenho, descricao, categoria, secretaria, fornecedor, credorCpfCnpj, fonteRecurso, valorEmpenhado, valorLiquidado, valorPago, mes, ano",
         gradient: "from-slate-800 to-slate-900",
         shadow: "shadow-slate-900/20"
@@ -48,7 +48,7 @@ const conjuntos = [
         endpoint: "/api/licitacoes",
         formatos: ["JSON", "CSV", "XLSX"],
         atualizacao: "Contínua",
-        lei: "Lei 14.133/2021 · PNTP 8.1",
+        lei: "Lei 14.133/2021 · PNTP",
         dicionario: "numero, numeroProcesso, modalidade, objeto, secretaria, valorEstimado, valorHomologado, status, dataAbertura, editalUrl",
         gradient: "from-purple-500 to-violet-600",
         shadow: "shadow-purple-500/20"
@@ -59,7 +59,7 @@ const conjuntos = [
         endpoint: "/api/contratos",
         formatos: ["JSON", "CSV", "XLSX"],
         atualizacao: "Contínua",
-        lei: "Lei 14.133/2021 · PNTP 9.1",
+        lei: "Lei 14.133/2021 · PNTP",
         dicionario: "numero, ano, objeto, contratado, cnpjCpf, valor, dataInicio, dataFim, secretaria, status, fiscais, aditivos",
         gradient: "from-orange-500 to-amber-600",
         shadow: "shadow-orange-500/20"
@@ -70,7 +70,7 @@ const conjuntos = [
         endpoint: "/api/convenios",
         formatos: ["JSON", "CSV", "XLSX"],
         atualizacao: "Contínua",
-        lei: "LAI · PNTP 10.1",
+        lei: "LAI · PNTP",
         dicionario: "numero, tipoTransferencia, concedente, proponente, beneficiario, objeto, valorTotal, valorRepasse, valorContrapartida, vigenciaInicio, vigenciaFim, situacao",
         gradient: "from-rose-500 to-pink-600",
         shadow: "shadow-rose-500/20"
@@ -81,7 +81,7 @@ const conjuntos = [
         endpoint: "/api/admin/obras",
         formatos: ["JSON", "CSV", "XLSX"],
         atualizacao: "Mensal",
-        lei: "PNTP 5.1 / 8.5",
+        lei: "PNTP",
         dicionario: "titulo, local, empresa, numeroContrato, valor, valorPago, percentual, status, dataInicio, previsaoTermino, motivoParalisacao",
         gradient: "from-orange-600 to-red-700",
         shadow: "shadow-red-600/20"
@@ -92,7 +92,7 @@ const conjuntos = [
         endpoint: "/api/diarias",
         formatos: ["JSON", "CSV", "XLSX"],
         atualizacao: "Contínua",
-        lei: "LAI · PNTP 7.1",
+        lei: "LAI · PNTP",
         dicionario: "servidor, cargo, secretaria, destino, motivo, dataInicio, dataFim, quantidadeDias, valorUnitario, valor, portariaConcessao",
         gradient: "from-sky-500 to-cyan-600",
         shadow: "shadow-sky-500/20"
@@ -103,7 +103,7 @@ const conjuntos = [
         endpoint: "/api/transparencia/emendas-parlamentares",
         formatos: ["JSON", "CSV", "XLSX"],
         atualizacao: "Contínua",
-        lei: "LC 210/2024 · PNTP 12.1",
+        lei: "LC 210/2024 · PNTP",
         dicionario: "numero, ano, esfera, autor, tipo, formaRepasse, objeto, funcaoGoverno, valorPrevisto, valorRecebido, valorEmpenhado, valorLiquidado, valorPago, status",
         gradient: "from-teal-400 to-emerald-500",
         shadow: "shadow-teal-500/20"
@@ -114,7 +114,7 @@ const conjuntos = [
         endpoint: "/api/transparencia/renuncias-fiscais",
         formatos: ["JSON", "CSV", "XLSX"],
         atualizacao: "Anual",
-        lei: "Art. 14 LRF · PNTP 3.2",
+        lei: "Art. 14 LRF · PNTP",
         dicionario: "exercicio, tipo, modalidade, tributo, beneficiario, cnpjCpf, justificativa, valorRenunciado, valorRealizado, contrapartida",
         gradient: "from-orange-400 to-red-500",
         shadow: "shadow-orange-500/20"

@@ -2,8 +2,18 @@
 
 import { useState } from "react";
 import PageHeader from "@/components/PageHeader";
-import { FaCheckCircle, FaExclamationCircle, FaInfoCircle } from "react-icons/fa";
+import { FaCheckCircle, FaExclamationCircle, FaInfoCircle, FaChartBar } from "react-icons/fa";
 import { motion } from "framer-motion";
+import {
+    ResponsiveContainer,
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    Tooltip,
+    CartesianGrid,
+    Cell
+} from "recharts";
 
 // Opções de avaliação de 1 a 5
 const opcoesAvaliacao = [
@@ -212,8 +222,58 @@ export default function PesquisaSatisfacaoPage() {
                         </div>
                     </div>
                     
-                    <div className="p-8 md:p-12">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-10">
+                    <div className="p-8 md:p-12 space-y-10">
+                        {/* Gráficos Interativos nos Resultados */}
+                        <div className="bg-[#F8FAFC] p-6 rounded-2xl border border-slate-200">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                                    <FaChartBar className="text-[#1254A3]" /> Avaliação Média por Área Temática (Escala de 1 a 5)
+                                </h3>
+                                <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                                    Atualizado em Tempo Real
+                                </span>
+                            </div>
+                            <div className="h-72 w-full pt-2">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart
+                                        data={[
+                                            { setor: "Educação", nota: 4.8, fill: "#10B981" },
+                                            { setor: "Transparência", nota: 4.7, fill: "#1254A3" },
+                                            { setor: "Saúde", nota: 4.5, fill: "#3B82F6" },
+                                            { setor: "Gestão Geral", nota: 4.3, fill: "#F39A32" },
+                                            { setor: "Limpeza Urbana", nota: 4.2, fill: "#8B5CF6" },
+                                            { setor: "Iluminação", nota: 3.9, fill: "#F59E0B" },
+                                        ]}
+                                        layout="vertical"
+                                        margin={{ top: 10, right: 30, left: 20, bottom: 0 }}
+                                    >
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" horizontal={false} />
+                                        <XAxis type="number" domain={[0, 5]} ticks={[1, 2, 3, 4, 5]} tick={{ fontSize: 11, fill: "#64748b" }} />
+                                        <YAxis type="category" dataKey="setor" tick={{ fontSize: 12, fill: "#1e293b", fontWeight: 700 }} width={110} />
+                                        <Tooltip
+                                            formatter={(val: number) => [`${val} / 5.0 estrelas`, "Avaliação Média"]}
+                                            contentStyle={{
+                                                backgroundColor: "#1e293b",
+                                                borderRadius: "12px",
+                                                border: "none",
+                                                color: "#fff",
+                                                fontSize: "12px"
+                                            }}
+                                        />
+                                        <Bar dataKey="nota" radius={[0, 8, 8, 0]}>
+                                            {[
+                                                "#10B981", "#1254A3", "#3B82F6", "#F39A32", "#8B5CF6", "#F59E0B"
+                                            ].map((cor, idx) => (
+                                                <Cell key={`cell-${idx}`} fill={cor} />
+                                            ))}
+                                        </Bar>
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
+
+                        {/* Detalhamento de Barras */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-8">
                             {[
                                 { label: "Saúde Pública", val: 4.5 },
                                 { label: "Educação Municipal", val: 4.8 },

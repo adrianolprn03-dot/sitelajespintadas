@@ -4,10 +4,25 @@ import {
     FaSearch, FaFilter, FaTimes, FaDownload, 
     FaExternalLinkAlt, FaChevronRight, FaFileInvoiceDollar, 
     FaCalendar, FaUserTie, FaTags, FaSyncAlt, FaCheckCircle,
-    FaLandmark, FaExchangeAlt
+    FaLandmark, FaExchangeAlt, FaTable, FaChartLine, FaChartPie
 } from "react-icons/fa";
 import { FaBuildingColumns } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+    ResponsiveContainer,
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    Tooltip,
+    Legend,
+    CartesianGrid,
+    PieChart,
+    Pie,
+    Cell
+} from "recharts";
+
+const CHART_COLORS = ["#1254A3", "#F39A32", "#10B981", "#8B5CF6", "#EC4899", "#06B6D4", "#F59E0B"];
 
 type Emenda = {
     id: string;
@@ -100,6 +115,52 @@ export default function EmendasClientPage({ initialData }: { initialData: Emenda
         });
     }, [initialData, filtroAno, filtroEsfera, filtroFormaRepasse, filtroAutor, filtroTipo, filtroFuncao, filtroSituacao, busca]);
 
+    const [visualizacao, setVisualizacao] = useState<"tabela" | "grafico">("tabela");
+
+    const totalPrevistoFiltrado = useMemo(() => filtered.reduce((s, e) => s + (e.valorPrevisto || 0), 0), [filtered]);
+    const totalRecebidoFiltrado = useMemo(() => filtered.reduce((s, e) => s + (e.valorRecebido || e.valorPrevisto || 0), 0), [filtered]);
+    const totalEmpenhadoFiltrado = useMemo(() => filtered.reduce((s, e) => s + (e.valorEmpenhado || 0), 0), [filtered]);
+    const totalLiquidadoFiltrado = useMemo(() => filtered.reduce((s, e) => s + (e.valorLiquidado || 0), 0), [filtered]);
+    const totalPagoFiltrado = useMemo(() => filtered.reduce((s, e) => s + (e.valorPago || 0), 0), [filtered]);
+
+    const dadosExecucao = useMemo(() => [
+        { fase: "Previsto", valor: totalPrevistoFiltrado },
+        { fase: "Recebido", valor: totalRecebidoFiltrado },
+        { fase: "Empenhado", valor: totalEmpenhadoFiltrado },
+        { fase: "Liquidado", valor: totalLiquidadoFiltrado },
+        { fase: "Pago", valor: totalPagoFiltrado },
+    ], [totalPrevistoFiltrado, totalRecebidoFiltrado, totalEmpenhadoFiltrado, totalLiquidadoFiltrado, totalPagoFiltrado]);
+
+    const dadosPorEsfera = useMemo(() => {
+        const counts: Record<string, number> = {};
+        filtered.forEach((e) => {
+            const k = e.esfera || "Federal";
+            counts[k] = (counts[k] || 0) + (e.valorPago || e.valorPrevisto || 0);
+        });
+        return Object.entries(counts).map(([name, value]) => ({ name, value }));
+    }, [filtered]);
+
+    const dadosPorModalidade = useMemo(() => {
+        const counts: Record<string, number> = {};
+        filtered.forEach((e) => {
+            const k = e.formaRepasse || "Transferência Especial (PIX)";
+            counts[k] = (counts[k] || 0) + (e.valorPago || e.valorPrevisto || 0);
+        });
+        return Object.entries(counts).map(([name, value]) => ({ name, value }));
+    }, [filtered]);
+
+    const dadosPorFuncao = useMemo(() => {
+        const counts: Record<string, number> = {};
+        filtered.forEach((e) => {
+            const k = e.funcaoGoverno || "Geral";
+            counts[k] = (counts[k] || 0) + (e.valorPago || e.valorPrevisto || 0);
+        });
+        return Object.entries(counts)
+            .map(([funcao, valor]) => ({ funcao, valor }))
+            .sort((a, b) => b.valor - a.valor)
+            .slice(0, 6);
+    }, [filtered]);
+
     const hasFilters = filtroAno || filtroEsfera || filtroFormaRepasse || filtroAutor || filtroTipo || filtroFuncao || filtroSituacao || busca;
     const clearFilters = () => {
         setFiltroAno(""); setFiltroEsfera(""); setFiltroFormaRepasse(""); setFiltroAutor(""); setFiltroTipo(""); setFiltroFuncao(""); setFiltroSituacao(""); setBusca("");
@@ -147,7 +208,7 @@ export default function EmendasClientPage({ initialData }: { initialData: Emenda
                                 <div>
                                     <div className="flex items-center gap-2 mb-2">
                                         <span className="px-3 py-1 bg-blue-50 text-[#1254A3] rounded-full text-[10px] font-black uppercase tracking-wider border border-blue-200 flex items-center gap-1.5">
-                                            <FaFileInvoiceDollar /> PNTP Critérios 17.1 a 17.3
+                                            <FaFileInvoiceDollar /> Critério PNTP
                                         </span>
                                         <span className="px-2.5 py-0.5 bg-slate-100 text-slate-700 rounded-full text-[10px] font-bold uppercase">
                                             {detalhe.esfera || "Federal"}
@@ -196,7 +257,7 @@ export default function EmendasClientPage({ initialData }: { initialData: Emenda
                                 {/* Execução Orçamentária e Financeira (Critério 17.2) */}
                                 <div className="space-y-2">
                                     <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
-                                        Execução Orçamentária e Financeira (Critério 17.2)
+                                        Execução Orçamentária e Financeira
                                     </span>
                                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                                         <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
@@ -221,7 +282,7 @@ export default function EmendasClientPage({ initialData }: { initialData: Emenda
                                 {/* Classificação Adicional */}
                                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                                     <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-                                        <span className="text-[9px] font-bold text-slate-400 uppercase block mb-1">Forma de Repasse (17.1)</span>
+                                        <span className="text-[9px] font-bold text-slate-400 uppercase block mb-1">Forma de Repasse</span>
                                         <span className="font-bold text-slate-800">{detalhe.formaRepasse || "Transferência Especial (PIX)"}</span>
                                     </div>
                                     <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
@@ -270,7 +331,7 @@ export default function EmendasClientPage({ initialData }: { initialData: Emenda
                         <div>
                             <div className="flex items-center gap-2 mb-1.5">
                                 <span className="text-[10px] font-black uppercase tracking-wider text-[#1254A3] bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
-                                    PNTP Critérios 17.1 a 17.3
+                                    Critério PNTP
                                 </span>
                             </div>
                             <h3 className="text-xl sm:text-2xl font-black text-[#12304A] tracking-tight">
@@ -282,6 +343,30 @@ export default function EmendasClientPage({ initialData }: { initialData: Emenda
                         </div>
 
                         <div className="flex flex-wrap gap-2.5 items-center">
+                            {/* Alternador de Modo: Tabela vs Gráficos */}
+                            <div className="flex items-center bg-white p-1 rounded-xl border border-[#DDE3EA] shadow-sm">
+                                <button
+                                    onClick={() => setVisualizacao("tabela")}
+                                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                                        visualizacao === "tabela"
+                                            ? "bg-[#1254A3] text-white shadow-xs"
+                                            : "text-[#5B738B] hover:text-[#12304A]"
+                                    }`}
+                                >
+                                    <FaTable size={12} /> Tabela
+                                </button>
+                                <button
+                                    onClick={() => setVisualizacao("grafico")}
+                                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                                        visualizacao === "grafico"
+                                            ? "bg-[#1254A3] text-white shadow-xs"
+                                            : "text-[#5B738B] hover:text-[#12304A]"
+                                    }`}
+                                >
+                                    <FaChartLine size={12} /> Gráficos nos Resultados
+                                </button>
+                            </div>
+
                             <div className="relative flex-1 sm:w-72">
                                 <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
                                 <input
@@ -360,7 +445,7 @@ export default function EmendasClientPage({ initialData }: { initialData: Emenda
                                         </select>
                                     </div>
                                     <div>
-                                        <label className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Esfera (17.1)</label>
+                                        <label className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Esfera</label>
                                         <select 
                                             value={filtroEsfera} 
                                             onChange={e => setFiltroEsfera(e.target.value)} 
@@ -371,7 +456,7 @@ export default function EmendasClientPage({ initialData }: { initialData: Emenda
                                         </select>
                                     </div>
                                     <div>
-                                        <label className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Repasse (17.1)</label>
+                                        <label className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Modalidade de Repasse</label>
                                         <select 
                                             value={filtroFormaRepasse} 
                                             onChange={e => setFiltroFormaRepasse(e.target.value)} 
@@ -393,7 +478,7 @@ export default function EmendasClientPage({ initialData }: { initialData: Emenda
                                         </select>
                                     </div>
                                     <div>
-                                        <label className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Função (17.1)</label>
+                                        <label className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Função de Governo</label>
                                         <select 
                                             value={filtroFuncao} 
                                             onChange={e => setFiltroFuncao(e.target.value)} 
@@ -427,95 +512,248 @@ export default function EmendasClientPage({ initialData }: { initialData: Emenda
                     </AnimatePresence>
                 </div>
 
-                {/* Tabela de Resultados */}
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left text-xs">
-                        <thead className="bg-[#F5F7FA] text-slate-600 uppercase text-[10px] font-bold">
-                            <tr>
-                                <th className="px-6 py-4">Parlamentar / Identificador (17.1)</th>
-                                <th className="px-4 py-4 text-center">Esfera & Ano (17.1)</th>
-                                <th className="px-6 py-4">Objeto & Finalidade</th>
-                                <th className="px-6 py-4">Previsto / Repasse</th>
-                                <th className="px-6 py-4">Execução Paga (17.2)</th>
-                                <th className="px-4 py-4 text-center">Situação</th>
-                                <th className="px-6 py-4 text-right">Ação</th>
-                            </tr>
-                        </thead>
-                        <motion.tbody 
-                            variants={tableVariants}
-                            initial="hidden"
-                            animate="visible"
-                            className="divide-y divide-[#DDE3EA]"
-                        >
-                            {filtered.length === 0 ? (
-                                <tr>
-                                    <td colSpan={7} className="px-6 py-16 text-center text-slate-400">
-                                        Nenhuma emenda parlamentar encontrada para os filtros selecionados.
-                                    </td>
-                                </tr>
-                            ) : (
-                                filtered.map((e) => (
-                                    <motion.tr 
-                                        key={e.id}
-                                        variants={rowVariants}
-                                        className="hover:bg-blue-50/40 transition-colors group cursor-pointer"
-                                        onClick={() => setDetalheId(e.id)}
-                                    >
-                                        <td className="px-6 py-4">
-                                            <div className="font-bold text-[#12304A] text-xs group-hover:text-[#1254A3] transition-colors">{e.autorNome}</div>
-                                            <div className="text-[10px] font-mono text-slate-400 mt-0.5">
-                                                {e.codigoEmenda} {e.numeroEmenda ? `• Nº ${e.numeroEmenda}` : ""}
-                                            </div>
-                                        </td>
-                                        <td className="px-4 py-4 text-center">
-                                            <span className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-full border ${
-                                                e.esfera === "Estadual"
-                                                    ? "bg-purple-50 text-purple-700 border-purple-200"
-                                                    : e.esfera === "Municipal"
-                                                    ? "bg-amber-50 text-amber-700 border-amber-200"
-                                                    : "bg-blue-50 text-blue-700 border-blue-200"
-                                            }`}>
-                                                {e.esfera || "Federal"} • {e.anoEmenda}
-                                            </span>
-                                            <span className="block text-[9px] text-slate-400 mt-0.5">
-                                                {e.formaRepasse || e.tipoEmenda || "Transferência"}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 max-w-xs">
-                                            <p className="text-xs text-slate-700 font-medium line-clamp-2">
-                                                {e.objeto || "Não especificado"}
-                                            </p>
-                                            <span className="text-[10px] font-bold text-emerald-700 block mt-0.5 uppercase">
-                                                {e.funcaoGoverno || "Saúde / Geral"}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className="font-bold text-slate-900 block">{fmt(e.valorPrevisto)}</span>
-                                            <span className="text-[10px] text-slate-400">Rec.: {fmt(e.valorRecebido || e.valorPrevisto)}</span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className="font-bold text-emerald-700 block">{fmt(e.valorPago)}</span>
-                                            <span className="text-[10px] text-blue-600">Emp.: {fmt(e.valorEmpenhado || e.valorPago)}</span>
-                                        </td>
-                                        <td className="px-4 py-4 text-center">
-                                            <span className="inline-block text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                                {e.situacaoExecucao || "Pago"}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <button
-                                                onClick={(evt) => { evt.stopPropagation(); setDetalheId(e.id); }}
-                                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 text-[#1254A3] hover:bg-[#1254A3] hover:text-white transition-all text-xs font-bold cursor-pointer"
+                {/* Alternância: Gráficos nos Resultados vs Tabela */}
+                {visualizacao === "grafico" ? (
+                    <div className="p-6 sm:p-8 space-y-8 bg-[#F5F7FA]/50 animate-in fade-in duration-300">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            {/* Gráfico 1: Execução Orçamentária e Financeira */}
+                            <div className="bg-white rounded-2xl p-6 border border-[#DDE3EA] shadow-sm space-y-3">
+                                <div className="flex items-center justify-between">
+                                    <h3 className="text-xs font-bold text-[#12304A] uppercase tracking-wider flex items-center gap-2">
+                                        <FaChartLine className="text-[#1254A3]" /> Execução Orçamentária e Financeira (R$)
+                                    </h3>
+                                    <span className="text-[10px] text-slate-500 font-bold bg-slate-100 px-2.5 py-0.5 rounded-full">
+                                        Fases Contábeis
+                                    </span>
+                                </div>
+                                <div className="h-64 w-full pt-2">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <BarChart data={dadosExecucao} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                                            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                                            <XAxis dataKey="fase" tick={{ fontSize: 11, fill: "#64748b" }} />
+                                            <YAxis tick={{ fontSize: 10, fill: "#64748b" }} tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`} />
+                                            <Tooltip
+                                                formatter={(val: number) => fmt(val)}
+                                                contentStyle={{
+                                                    backgroundColor: "#1e293b",
+                                                    borderRadius: "12px",
+                                                    border: "none",
+                                                    color: "#fff",
+                                                    fontSize: "12px"
+                                                }}
+                                            />
+                                            <Bar dataKey="valor" fill="#1254A3" radius={[6, 6, 0, 0]} name="Valor (R$)" />
+                                        </BarChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            </div>
+
+                            {/* Gráfico 2: Distribuição por Esfera */}
+                            <div className="bg-white rounded-2xl p-6 border border-[#DDE3EA] shadow-sm space-y-3">
+                                <div>
+                                    <h3 className="text-xs font-bold text-[#12304A] uppercase tracking-wider flex items-center gap-2">
+                                        <FaChartPie className="text-[#F39A32]" /> Distribuição por Esfera Federativa
+                                    </h3>
+                                    <p className="text-[11px] text-gray-500">Origem das emendas parlamentares no recorte selecionado</p>
+                                </div>
+                                <div className="h-64 w-full flex items-center justify-center">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <PieChart>
+                                            <Pie
+                                                data={dadosPorEsfera}
+                                                cx="50%"
+                                                cy="50%"
+                                                innerRadius={45}
+                                                outerRadius={75}
+                                                paddingAngle={4}
+                                                dataKey="value"
+                                                nameKey="name"
+                                                label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
                                             >
-                                                Detalhes <FaChevronRight size={9} />
-                                            </button>
+                                                {dadosPorEsfera.map((_, index) => (
+                                                    <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                                                ))}
+                                            </Pie>
+                                            <Tooltip
+                                                formatter={(val: number) => fmt(val)}
+                                                contentStyle={{
+                                                    backgroundColor: "#1e293b",
+                                                    borderRadius: "12px",
+                                                    border: "none",
+                                                    color: "#fff",
+                                                    fontSize: "12px"
+                                                }}
+                                            />
+                                        </PieChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            </div>
+
+                            {/* Gráfico 3: Modalidade de Repasse */}
+                            <div className="bg-white rounded-2xl p-6 border border-[#DDE3EA] shadow-sm space-y-3">
+                                <div>
+                                    <h3 className="text-xs font-bold text-[#12304A] uppercase tracking-wider flex items-center gap-2">
+                                        <FaChartPie className="text-[#10B981]" /> Forma de Repasse (Modalidades)
+                                    </h3>
+                                    <p className="text-[11px] text-gray-500">Transferência Especial (PIX), Convênios e Fundo a Fundo</p>
+                                </div>
+                                <div className="h-64 w-full flex items-center justify-center">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <PieChart>
+                                            <Pie
+                                                data={dadosPorModalidade}
+                                                cx="50%"
+                                                cy="50%"
+                                                innerRadius={40}
+                                                outerRadius={75}
+                                                paddingAngle={4}
+                                                dataKey="value"
+                                                nameKey="name"
+                                                label={({ name, percent }) => `${name.slice(0, 14)} (${(percent * 100).toFixed(0)}%)`}
+                                            >
+                                                {dadosPorModalidade.map((_, index) => (
+                                                    <Cell key={`cell-mod-${index}`} fill={CHART_COLORS[(index + 2) % CHART_COLORS.length]} />
+                                                ))}
+                                            </Pie>
+                                            <Tooltip
+                                                formatter={(val: number) => fmt(val)}
+                                                contentStyle={{
+                                                    backgroundColor: "#1e293b",
+                                                    borderRadius: "12px",
+                                                    border: "none",
+                                                    color: "#fff",
+                                                    fontSize: "12px"
+                                                }}
+                                            />
+                                        </PieChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            </div>
+
+                            {/* Gráfico 4: Principais Funções de Governo */}
+                            <div className="bg-white rounded-2xl p-6 border border-[#DDE3EA] shadow-sm space-y-3">
+                                <div className="flex items-center justify-between">
+                                    <h3 className="text-xs font-bold text-[#12304A] uppercase tracking-wider flex items-center gap-2">
+                                        <FaChartLine className="text-[#8B5CF6]" /> Recursos por Função de Governo
+                                    </h3>
+                                    <span className="text-[10px] text-slate-500 font-bold bg-slate-100 px-2.5 py-0.5 rounded-full">
+                                        Top Áreas
+                                    </span>
+                                </div>
+                                <div className="h-64 w-full pt-2">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <BarChart data={dadosPorFuncao} layout="vertical" margin={{ top: 10, right: 10, left: 30, bottom: 0 }}>
+                                            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
+                                            <XAxis type="number" tick={{ fontSize: 10, fill: "#64748b" }} tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`} />
+                                            <YAxis type="category" dataKey="funcao" tick={{ fontSize: 11, fill: "#64748b" }} width={80} />
+                                            <Tooltip
+                                                formatter={(val: number) => fmt(val)}
+                                                contentStyle={{
+                                                    backgroundColor: "#1e293b",
+                                                    borderRadius: "12px",
+                                                    border: "none",
+                                                    color: "#fff",
+                                                    fontSize: "12px"
+                                                }}
+                                            />
+                                            <Bar dataKey="valor" fill="#8B5CF6" radius={[0, 6, 6, 0]} name="Valor (R$)" />
+                                        </BarChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                    /* Tabela de Resultados */
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left text-xs">
+                            <thead className="bg-[#F5F7FA] text-slate-600 uppercase text-[10px] font-bold">
+                                <tr>
+                                    <th className="px-6 py-4">Parlamentar / Identificador</th>
+                                    <th className="px-4 py-4 text-center">Esfera & Ano</th>
+                                    <th className="px-6 py-4">Objeto & Finalidade</th>
+                                    <th className="px-6 py-4">Previsto / Repasse</th>
+                                    <th className="px-6 py-4">Execução Paga</th>
+                                    <th className="px-4 py-4 text-center">Situação</th>
+                                    <th className="px-6 py-4 text-right">Ação</th>
+                                </tr>
+                            </thead>
+                            <motion.tbody 
+                                variants={tableVariants}
+                                initial="hidden"
+                                animate="visible"
+                                className="divide-y divide-[#DDE3EA]"
+                            >
+                                {filtered.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={7} className="px-6 py-16 text-center text-slate-400">
+                                            Nenhuma emenda parlamentar encontrada para os filtros selecionados.
                                         </td>
-                                    </motion.tr>
-                                ))
-                            )}
-                        </motion.tbody>
-                    </table>
-                </div>
+                                    </tr>
+                                ) : (
+                                    filtered.map((e) => (
+                                        <motion.tr 
+                                            key={e.id}
+                                            variants={rowVariants}
+                                            className="hover:bg-blue-50/40 transition-colors group cursor-pointer"
+                                            onClick={() => setDetalheId(e.id)}
+                                        >
+                                            <td className="px-6 py-4">
+                                                <div className="font-bold text-[#12304A] text-xs group-hover:text-[#1254A3] transition-colors">{e.autorNome}</div>
+                                                <div className="text-[10px] font-mono text-slate-400 mt-0.5">
+                                                    {e.codigoEmenda} {e.numeroEmenda ? `• Nº ${e.numeroEmenda}` : ""}
+                                                </div>
+                                            </td>
+                                            <td className="px-4 py-4 text-center">
+                                                <span className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                                                    e.esfera === "Estadual"
+                                                        ? "bg-purple-50 text-purple-700 border-purple-200"
+                                                        : e.esfera === "Municipal"
+                                                        ? "bg-amber-50 text-amber-700 border-amber-200"
+                                                        : "bg-blue-50 text-blue-700 border-blue-200"
+                                                }`}>
+                                                    {e.esfera || "Federal"} • {e.anoEmenda}
+                                                </span>
+                                                <span className="block text-[9px] text-slate-400 mt-0.5">
+                                                    {e.formaRepasse || e.tipoEmenda || "Transferência"}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4 max-w-xs">
+                                                <p className="text-xs text-slate-700 font-medium line-clamp-2">
+                                                    {e.objeto || "Não especificado"}
+                                                </p>
+                                                <span className="text-[10px] font-bold text-emerald-700 block mt-0.5 uppercase">
+                                                    {e.funcaoGoverno || "Saúde / Geral"}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className="font-bold text-slate-900 block">{fmt(e.valorPrevisto)}</span>
+                                                <span className="text-[10px] text-slate-400">Rec.: {fmt(e.valorRecebido || e.valorPrevisto)}</span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className="font-bold text-emerald-700 block">{fmt(e.valorPago)}</span>
+                                                <span className="text-[10px] text-blue-600">Emp.: {fmt(e.valorEmpenhado || e.valorPago)}</span>
+                                            </td>
+                                            <td className="px-4 py-4 text-center">
+                                                <span className="inline-block text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                                    {e.situacaoExecucao || "Pago"}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4 text-right">
+                                                <button
+                                                    onClick={(evt) => { evt.stopPropagation(); setDetalheId(e.id); }}
+                                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 text-[#1254A3] hover:bg-[#1254A3] hover:text-white transition-all text-xs font-bold cursor-pointer"
+                                                >
+                                                    Detalhes <FaChevronRight size={9} />
+                                                </button>
+                                            </td>
+                                        </motion.tr>
+                                    ))
+                                )}
+                            </motion.tbody>
+                        </table>
+                    </div>
+                )}
 
                 {/* Resumo Final Dinâmico refletindo o recorte ativo */}
                 {filtered.length > 0 && (
@@ -536,7 +774,7 @@ export default function EmendasClientPage({ initialData }: { initialData: Emenda
                             </div>
                         </div>
                         <p className="text-[11px] text-slate-300 italic text-center sm:text-right max-w-sm">
-                            * Recorte dinâmico conforme critérios 17.1 e 17.2 da Matriz PNTP 2026.
+                            * Recorte dinâmico conforme diretrizes da Matriz PNTP 2026.
                         </p>
                     </div>
                 )}

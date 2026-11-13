@@ -222,7 +222,7 @@ export default function DiariasPage() {
                                     Missões Autorizadas
                                 </span>
                                 <span className="flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[11px] font-black uppercase tracking-wider border border-emerald-100">
-                                    <FaCircleCheck size={11} /> LAI · PNTP 7.1
+                                    <FaCircleCheck size={11} /> LAI · PNTP
                                 </span>
                             </div>
 

@@ -225,7 +225,7 @@ export default function FilaCrechesPage() {
                                         </div>
                                         <div>
                                             <span className="text-[11px] font-black uppercase tracking-widest text-amber-300 block">
-                                                Programa Nacional de Transparência Pública • Critério 19.2
+                                                Programa Nacional de Transparência Pública • Critério PNTP
                                             </span>
                                             <h2 className="text-xl sm:text-2xl font-black text-white">
                                                 Declaração Oficial de Inexistência de Fila de Espera
@@ -496,3 +496,4 @@ export default function FilaCrechesPage() {
         </div>
     );
 }
+

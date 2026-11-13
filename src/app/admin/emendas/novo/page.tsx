@@ -342,3 +342,4 @@ export default function NovaEmendaPage() {
         </div>
     );
 }
+

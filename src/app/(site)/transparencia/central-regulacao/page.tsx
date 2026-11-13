@@ -82,7 +82,7 @@ export default async function CentralRegulacaoPage() {
                     <FaInfoCircle className="text-blue-500 mt-1 shrink-0" size={20} />
                     <div>
                         <p className="font-black text-blue-800 text-sm uppercase tracking-wide mb-1">
-                            Transparência Ativa e Proteção de Dados Sensíveis (Critério PNTP 18.3 / LGPD)
+                            Transparência Ativa e Proteção de Dados Sensíveis (Critério PNTP / LGPD)
                         </p>
                         <p className="text-blue-700 text-sm font-medium leading-relaxed">
                             A divulgação das filas públicas de regulação observa estritamente a anonimização e o uso de protocolo/CNS mascarado, sem expor diagnósticos clínicos ou dados pessoais indevidos.

@@ -5,7 +5,24 @@ import PageHeader from "@/components/PageHeader";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
 import { exportToCSV, exportToJSON, exportToPDF, exportToXLSX } from "@/lib/exportUtils";
 import {
+    ResponsiveContainer,
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    Tooltip,
+    Legend,
+    CartesianGrid,
+    PieChart,
+    Pie,
+    Cell,
+    AreaChart,
+    Area,
+} from "recharts";
+import {
     FaChartBar,
+    FaChartPie,
+    FaChartLine,
     FaFileAlt,
     FaCheckCircle,
     FaTimesCircle,
@@ -15,7 +32,8 @@ import {
     FaCalendarAlt,
     FaFilePdf,
     FaSpinner,
-    FaBalanceScale
+    FaBalanceScale,
+    FaTable
 } from "react-icons/fa";
 
 type ExercicioStats = {
@@ -39,10 +57,20 @@ type ExercicioStats = {
     };
 };
 
+const CHART_COLORS = {
+    recebidos: "#1254A3",
+    atendidos: "#10B981",
+    indeferidos: "#F43F5E",
+    tramitacao: "#F59E0B",
+    pessoaFisica: "#1254A3",
+    pessoaJuridica: "#F39A32",
+};
+
 export default function SICEstatisticasPage() {
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState<ExercicioStats[]>([]);
     const [exercicioSelecionado, setExercicioSelecionado] = useState(2026);
+    const [abaVisualizacao, setAbaVisualizacao] = useState<"graficos" | "tabela">("graficos");
 
     useEffect(() => {
         const fetchData = async () => {
@@ -88,7 +116,7 @@ export default function SICEstatisticasPage() {
         }));
 
         const filename = `relatorio_estatistico_anual_esic_lajes_pintadas`;
-        const title = `Relatório Estatístico Anual de Atendimento à LAI (PNTP 12.7) – Lajes Pintadas/RN`;
+        const title = `Relatório Estatístico Anual de Atendimento à LAI – Lajes Pintadas/RN`;
 
         if (format === "csv") exportToCSV(payload, filename);
         else if (format === "json") exportToJSON(payload, filename);
@@ -96,10 +124,35 @@ export default function SICEstatisticasPage() {
         else exportToPDF(payload, filename, title);
     };
 
+    // Dados para os gráficos
+    const statusPieData = [
+        { name: "Atendidos / Deferidos", value: atual.atendidos, color: CHART_COLORS.atendidos },
+        { name: "Indeferidos", value: atual.indeferidos, color: CHART_COLORS.indeferidos },
+        { name: "Em Tramitação", value: atual.emTramitacao, color: CHART_COLORS.tramitacao },
+    ].filter(item => item.value > 0);
+
+    const perfilPieData = [
+        { name: "Pessoa Física (Cidadão)", value: atual.perfilSolicitantes.pessoaFisica, color: CHART_COLORS.pessoaFisica },
+        { name: "Pessoa Jurídica (Empresas/OSC)", value: atual.perfilSolicitantes.pessoaJuridica, color: CHART_COLORS.pessoaJuridica },
+    ].filter(item => item.value > 0);
+
+    const evolucaoBarData = stats.map(s => ({
+        exercicio: s.exercicio.toString(),
+        Recebidos: s.totalRecebidos,
+        Atendidos: s.atendidos,
+        Indeferidos: s.indeferidos,
+    }));
+
+    const tempoMedioData = stats.map(s => ({
+        exercicio: s.exercicio.toString(),
+        "Tempo Médio (Dias)": s.tempoMedioDias,
+        "Limite Legal LAI": 20,
+    }));
+
     return (
         <div className="min-h-screen bg-[#F8FAFC]">
             <PageHeader
-                title="Relatório Estatístico Anual do e-SIC (12.7)"
+                title="Relatório Estatístico Anual do e-SIC"
                 subtitle="Consolidado anual de pedidos recebidos, atendidos, indeferidos, perfil dos solicitantes e tempo de resposta (Lei nº 12.527/2011)."
                 icon={<FaChartBar className="w-8 h-8 text-[#1254A3]" />}
                 breadcrumbs={[
@@ -114,12 +167,11 @@ export default function SICEstatisticasPage() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
                 {/* Banner de Conformidade PNTP */}
                 <BannerPNTP
-                    criterio="12.7"
                     requisito="Divulga relatório estatístico contendo a quantidade de pedidos de informação recebidos, atendidos e indeferidos, bem como informações genéricas sobre os solicitantes?"
                     status="Atende com Série Histórica e Indicadores Oficiais"
                 />
 
-                {/* Seletor de Exercício e Exportação */}
+                {/* Seletor de Exercício, Modo de Visualização e Exportação */}
                 <div className="bg-white rounded-3xl p-6 border border-gray-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
                         <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Exercício de Referência:</span>
@@ -128,7 +180,7 @@ export default function SICEstatisticasPage() {
                                 <button
                                     key={ano}
                                     onClick={() => setExercicioSelecionado(ano)}
-                                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                                         exercicioSelecionado === ano
                                             ? "bg-[#1254A3] text-white shadow-md shadow-blue-900/10"
                                             : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -141,11 +193,35 @@ export default function SICEstatisticasPage() {
                     </div>
 
                     <div className="flex items-center gap-2">
+                        {/* Alternador de Visualização */}
+                        <div className="flex items-center bg-gray-100 p-1 rounded-xl">
+                            <button
+                                onClick={() => setAbaVisualizacao("graficos")}
+                                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                                    abaVisualizacao === "graficos"
+                                        ? "bg-white text-[#1254A3] shadow-xs"
+                                        : "text-gray-600 hover:text-gray-900"
+                                }`}
+                            >
+                                <FaChartLine size={13} /> Gráficos nos Resultados
+                            </button>
+                            <button
+                                onClick={() => setAbaVisualizacao("tabela")}
+                                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                                    abaVisualizacao === "tabela"
+                                        ? "bg-white text-[#1254A3] shadow-xs"
+                                        : "text-gray-600 hover:text-gray-900"
+                                }`}
+                            >
+                                <FaTable size={13} /> Tabela
+                            </button>
+                        </div>
+
                         <button
                             onClick={() => handleExport("pdf")}
-                            className="inline-flex items-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition-colors shadow-sm"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition-colors shadow-sm cursor-pointer"
                         >
-                            <FaFilePdf /> Baixar Relatório Anual (PDF)
+                            <FaFilePdf /> Baixar Relatório (PDF)
                         </button>
                     </div>
                 </div>
@@ -202,6 +278,185 @@ export default function SICEstatisticasPage() {
                             </div>
                         </div>
 
+                        {/* SEÇÃO DE GRÁFICOS NOS RESULTADOS */}
+                        {abaVisualizacao === "graficos" && (
+                            <div className="space-y-8 animate-in fade-in duration-500">
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    {/* Gráfico 1: Evolução Histórica (BarChart) */}
+                                    <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200 shadow-sm space-y-4">
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <h3 className="font-bold text-gray-900 text-base flex items-center gap-2">
+                                                    <FaChartBar className="text-[#1254A3]" /> Evolução Anual de Solicitações (2021-2026)
+                                                </h3>
+                                                <p className="text-xs text-gray-500">Comparativo de pedidos recebidos, atendidos e indeferidos</p>
+                                            </div>
+                                        </div>
+                                        <div className="h-72 w-full pt-4">
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <BarChart data={evolucaoBarData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                                                    <XAxis dataKey="exercicio" tick={{ fontSize: 11, fill: "#64748b" }} />
+                                                    <YAxis tick={{ fontSize: 11, fill: "#64748b" }} allowDecimals={false} />
+                                                    <Tooltip
+                                                        contentStyle={{
+                                                            backgroundColor: "#1e293b",
+                                                            borderRadius: "12px",
+                                                            border: "none",
+                                                            color: "#fff",
+                                                            fontSize: "12px"
+                                                        }}
+                                                    />
+                                                    <Legend wrapperStyle={{ fontSize: "11px", paddingTop: "10px" }} />
+                                                    <Bar dataKey="Recebidos" fill={CHART_COLORS.recebidos} radius={[4, 4, 0, 0]} />
+                                                    <Bar dataKey="Atendidos" fill={CHART_COLORS.atendidos} radius={[4, 4, 0, 0]} />
+                                                    <Bar dataKey="Indeferidos" fill={CHART_COLORS.indeferidos} radius={[4, 4, 0, 0]} />
+                                                </BarChart>
+                                            </ResponsiveContainer>
+                                        </div>
+                                    </div>
+
+                                    {/* Gráfico 2: Desfecho das Solicitações no Exercício (PieChart) */}
+                                    <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200 shadow-sm space-y-4">
+                                        <div>
+                                            <h3 className="font-bold text-gray-900 text-base flex items-center gap-2">
+                                                <FaChartPie className="text-[#10B981]" /> Situação das Solicitações ({atual.exercicio})
+                                            </h3>
+                                            <p className="text-xs text-gray-500">Percentual de resolutividade no exercício selecionado</p>
+                                        </div>
+                                        <div className="h-72 w-full flex items-center justify-center">
+                                            {statusPieData.length > 0 ? (
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <PieChart>
+                                                        <Pie
+                                                            data={statusPieData}
+                                                            cx="50%"
+                                                            cy="50%"
+                                                            innerRadius={60}
+                                                            outerRadius={85}
+                                                            paddingAngle={4}
+                                                            dataKey="value"
+                                                            label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                                                            labelLine={false}
+                                                        >
+                                                            {statusPieData.map((entry, index) => (
+                                                                <Cell key={`cell-status-${index}`} fill={entry.color} />
+                                                            ))}
+                                                        </Pie>
+                                                        <Tooltip
+                                                            contentStyle={{
+                                                                backgroundColor: "#1e293b",
+                                                                borderRadius: "12px",
+                                                                border: "none",
+                                                                color: "#fff",
+                                                                fontSize: "12px"
+                                                            }}
+                                                        />
+                                                    </PieChart>
+                                                </ResponsiveContainer>
+                                            ) : (
+                                                <p className="text-xs text-gray-400 italic">Sem solicitações registradas no ano.</p>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Gráfico 3: Perfil dos Solicitantes (PieChart / Donut) */}
+                                    <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200 shadow-sm space-y-4">
+                                        <div>
+                                            <h3 className="font-bold text-gray-900 text-base flex items-center gap-2">
+                                                <FaUsers className="text-[#1254A3]" /> Perfil dos Solicitantes ({atual.exercicio})
+                                            </h3>
+                                            <p className="text-xs text-gray-500">Distribuição entre Pessoa Física e Pessoa Jurídica</p>
+                                        </div>
+                                        <div className="h-64 w-full flex items-center justify-center">
+                                            {perfilPieData.length > 0 ? (
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <PieChart>
+                                                        <Pie
+                                                            data={perfilPieData}
+                                                            cx="50%"
+                                                            cy="50%"
+                                                            innerRadius={50}
+                                                            outerRadius={75}
+                                                            paddingAngle={5}
+                                                            dataKey="value"
+                                                        >
+                                                            {perfilPieData.map((entry, index) => (
+                                                                <Cell key={`cell-perfil-${index}`} fill={entry.color} />
+                                                            ))}
+                                                        </Pie>
+                                                        <Tooltip
+                                                            contentStyle={{
+                                                                backgroundColor: "#1e293b",
+                                                                borderRadius: "12px",
+                                                                border: "none",
+                                                                color: "#fff",
+                                                                fontSize: "12px"
+                                                            }}
+                                                        />
+                                                        <Legend wrapperStyle={{ fontSize: "11px", paddingTop: "10px" }} />
+                                                    </PieChart>
+                                                </ResponsiveContainer>
+                                            ) : (
+                                                <p className="text-xs text-gray-400 italic">Sem solicitações registradas.</p>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Gráfico 4: Tempo Médio de Resposta (AreaChart) */}
+                                    <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200 shadow-sm space-y-4">
+                                        <div>
+                                            <h3 className="font-bold text-gray-900 text-base flex items-center gap-2">
+                                                <FaClock className="text-amber-500" /> Tempo Médio de Resposta (Dias)
+                                            </h3>
+                                            <p className="text-xs text-gray-500">Histórico de agilidade em relação ao prazo legal da LAI (20 dias)</p>
+                                        </div>
+                                        <div className="h-64 w-full pt-2">
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <AreaChart data={tempoMedioData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                                    <defs>
+                                                        <linearGradient id="colorTempo" x1="0" y1="0" x2="0" y2="1">
+                                                            <stop offset="5%" stopColor="#1254A3" stopOpacity={0.4} />
+                                                            <stop offset="95%" stopColor="#1254A3" stopOpacity={0} />
+                                                        </linearGradient>
+                                                    </defs>
+                                                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                                                    <XAxis dataKey="exercicio" tick={{ fontSize: 11, fill: "#64748b" }} />
+                                                    <YAxis tick={{ fontSize: 11, fill: "#64748b" }} />
+                                                    <Tooltip
+                                                        contentStyle={{
+                                                            backgroundColor: "#1e293b",
+                                                            borderRadius: "12px",
+                                                            border: "none",
+                                                            color: "#fff",
+                                                            fontSize: "12px"
+                                                        }}
+                                                    />
+                                                    <Legend wrapperStyle={{ fontSize: "11px", paddingTop: "10px" }} />
+                                                    <Area
+                                                        type="monotone"
+                                                        dataKey="Tempo Médio (Dias)"
+                                                        stroke="#1254A3"
+                                                        strokeWidth={2}
+                                                        fillOpacity={1}
+                                                        fill="url(#colorTempo)"
+                                                    />
+                                                    <Area
+                                                        type="monotone"
+                                                        dataKey="Limite Legal LAI"
+                                                        stroke="#ef4444"
+                                                        strokeWidth={1.5}
+                                                        strokeDasharray="4 4"
+                                                        fill="none"
+                                                    />
+                                                </AreaChart>
+                                            </ResponsiveContainer>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
                         {/* Detalhamento de Perfil dos Solicitantes & Recursos */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200 shadow-sm space-y-4">
@@ -209,7 +464,7 @@ export default function SICEstatisticasPage() {
                                     <FaUsers className="text-[#1254A3]" /> Perfil Genérico dos Solicitantes ({atual.exercicio})
                                 </h3>
                                 <p className="text-xs text-gray-500 leading-relaxed">
-                                    Conforme exigência do Critério 12.7 do PNTP, divulgação agregada e anonimizada da natureza jurídica e demografia dos requerentes de informação pública.
+                                    Conforme exigência do Critério PNTP, divulgação agregada e anonimizada da natureza jurídica e demografia dos requerentes de informação pública.
                                 </p>
 
                                 <div className="space-y-4 pt-2">

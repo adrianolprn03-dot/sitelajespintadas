@@ -212,3 +212,4 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: "Erro ao gerar relatórios do e-SIC" }, { status: 500 });
     }
 }
+

@@ -44,3 +44,4 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: "Erro ao consultar sanções" }, { status: 500 });
     }
 }
+

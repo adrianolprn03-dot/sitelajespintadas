@@ -285,7 +285,7 @@ export default function ObrasPublicasPage() {
                             </span>
                         </div>
                         <h3 className="text-2xl font-black text-emerald-600 tracking-tight">{loading ? "..." : fmt(totalPago)}</h3>
-                        <p className="text-xs text-[#5B738B] mt-2 pt-2 border-t border-[#DDE3EA]">Medições liquidadas e pagas (10.3)</p>
+                        <p className="text-xs text-[#5B738B] mt-2 pt-2 border-t border-[#DDE3EA]">Medições liquidadas e pagas</p>
                     </div>
 
                     <div className="bg-white rounded-2xl p-6 border border-[#DDE3EA] shadow-sm">
@@ -296,7 +296,7 @@ export default function ObrasPublicasPage() {
                             </span>
                         </div>
                         <h3 className="text-2xl font-black text-emerald-600 tracking-tight">{loading ? "..." : obrasConcluidas}</h3>
-                        <p className="text-xs text-[#5B738B] mt-2 pt-2 border-t border-[#DDE3EA]">Entregues com data efetiva (10.1)</p>
+                        <p className="text-xs text-[#5B738B] mt-2 pt-2 border-t border-[#DDE3EA]">Entregues com data efetiva</p>
                     </div>
 
                     <div className="bg-white rounded-2xl p-6 border border-[#DDE3EA] shadow-sm">
@@ -314,7 +314,7 @@ export default function ObrasPublicasPage() {
                                 </span>
                             )}
                         </div>
-                        <p className="text-xs text-[#5B738B] mt-2 pt-2 border-t border-[#DDE3EA]">Critérios PNTP 10.1 a 10.4</p>
+                        <p className="text-xs text-[#5B738B] mt-2 pt-2 border-t border-[#DDE3EA]">Critério PNTP (Obras e Medições)</p>
                     </div>
                 </motion.div>
 
@@ -348,8 +348,8 @@ export default function ObrasPublicasPage() {
                             >
                                 <option value="">Todas as Situações</option>
                                 <option value="em-andamento">Em Andamento</option>
-                                <option value="concluida">Concluída (Critério 10.1)</option>
-                                <option value="paralisada">Paralisada (Critério 10.4)</option>
+                                <option value="concluida">Concluída</option>
+                                <option value="paralisada">Paralisada</option>
                                 <option value="planejada">Planejada</option>
                             </select>
                         </div>
@@ -511,7 +511,7 @@ export default function ObrasPublicasPage() {
                                                         <div className="w-[1px] h-6 bg-[#DDE3EA]" />
                                                         <div>
                                                             <span className="text-[9px] font-semibold text-[#5B738B] block">
-                                                                {isConcluida ? "Conclusão (10.1)" : isParalisada ? "Prev. Reinício" : "Previsão"}
+                                                                {isConcluida ? "Conclusão" : isParalisada ? "Prev. Reinício" : "Previsão"}
                                                             </span>
                                                             <span className="text-xs font-bold text-[#1254A3]">
                                                                 {isParalisada && o.previsaoReinicio 
@@ -564,7 +564,7 @@ export default function ObrasPublicasPage() {
                                 <FaInfoCircle size={22} />
                             </div>
                             <div>
-                                <h4 className="text-sm font-bold text-[#12304A]">Critérios PNTP de Obras (10.1 a 10.4)</h4>
+                                <h4 className="text-sm font-bold text-[#12304A]">Critérios PNTP de Obras</h4>
                                 <p className="text-xs text-[#5B738B] leading-relaxed max-w-md">
                                     Disponibilização da data efetiva de conclusão, quantitativos e preços contratados, medições físicas, valores efetivamente pagos e justificativas de paralisação.
                                 </p>
@@ -647,7 +647,7 @@ export default function ObrasPublicasPage() {
                                             </div>
                                             <div>
                                                 <span className="text-[10px] font-black uppercase tracking-wider text-rose-800 bg-rose-200/80 px-2 py-0.5 rounded-full">
-                                                    Critério 10.4 PNTP
+                                                    Critério PNTP
                                                 </span>
                                                 <h4 className="text-sm font-black text-rose-900 uppercase">
                                                     Detalhamento Oficial da Inexecução Temporária
@@ -710,7 +710,7 @@ export default function ObrasPublicasPage() {
                                             <div>
                                                 <span className="text-[#5B738B] block">
                                                     {selectedObra.status?.toLowerCase() === "concluida" 
-                                                        ? "Data Efetiva de Conclusão (10.1):" 
+                                                        ? "Data Efetiva de Conclusão:" 
                                                         : "Previsão de Término:"}
                                                 </span>
                                                 <span className="font-bold text-[#1254A3]">
@@ -734,7 +734,7 @@ export default function ObrasPublicasPage() {
                                         <p className="text-base font-black text-[#12304A]">{fmt(selectedObra.valor)}</p>
                                     </div>
                                     <div className="bg-white p-4 rounded-xl border border-[#DDE3EA]">
-                                        <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider block mb-1">Valor Efetivamente Pago (10.3)</span>
+                                        <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider block mb-1">Valor Efetivamente Pago</span>
                                         <p className="text-base font-black text-emerald-700">{fmt(selectedObra.valorPago || 0)}</p>
                                     </div>
                                     <div className="bg-white p-4 rounded-xl border border-[#DDE3EA]">
@@ -755,7 +755,7 @@ export default function ObrasPublicasPage() {
                                     <div className="flex items-center justify-between">
                                         <h3 className="text-xs font-bold text-[#12304A] uppercase tracking-wider flex items-center gap-2">
                                             <FaListOl className="text-indigo-600" />
-                                            Itens da Planilha Orçamentária Contratada (Critério 10.2)
+                                            Itens da Planilha Orçamentária Contratada
                                         </h3>
                                         <span className="text-[10px] font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-200">
                                             Quantitativos e Preços Unitários
@@ -805,7 +805,7 @@ export default function ObrasPublicasPage() {
                                     <div className="flex items-center justify-between">
                                         <h3 className="text-xs font-bold text-[#12304A] uppercase tracking-wider flex items-center gap-2">
                                             <FaMoneyCheckAlt className="text-emerald-600" />
-                                            Boletins de Medição e Pagamentos Realizados (Critério 10.3)
+                                            Boletins de Medição e Pagamentos Realizados
                                         </h3>
                                         <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
                                             Quantitativos Executados e Pagos

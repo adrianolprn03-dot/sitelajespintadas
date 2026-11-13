@@ -29,7 +29,7 @@ export default async function MedicamentosSUSPage() {
         <div className="min-h-screen bg-[#f8fafc] font-['Montserrat',sans-serif] pb-24">
             <PageHeader
                 title="Medicamentos SUS e Estoque (REMUME)"
-                subtitle="Relação Municipal de Medicamentos Essenciais, estoque por unidade de saúde (atualização máxima a cada 15 dias - Critério PNTP 13.4) e orientações de acesso."
+                subtitle="Relação Municipal de Medicamentos Essenciais, estoque por unidade de saúde (atualização máxima a cada 15 dias - Critério PNTP) e orientações de acesso."
                 variant="premium"
                 icon={<FaPrescriptionBottleMedical />}
                 breadcrumbs={[

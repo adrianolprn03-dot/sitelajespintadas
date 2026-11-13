@@ -5,12 +5,26 @@ import {
     FaHandshake, FaSpinner, FaBuilding, FaCalendar, 
     FaMoneyBillWave, FaArrowRight, FaHistory, FaCheckCircle, 
     FaTimesCircle, FaInfoCircle, FaFileSignature, FaLayerGroup,
-    FaFileAlt, FaExternalLinkAlt, FaSearch, FaDownload, FaFilePdf
+    FaFileAlt, FaExternalLinkAlt, FaSearch, FaDownload, FaFilePdf,
+    FaChartLine, FaChartPie, FaTable
 } from "react-icons/fa";
 import { 
     FaMagnifyingGlass, FaBuildingColumns, FaShieldHalved,
     FaArrowTrendUp, FaFileLines
 } from "react-icons/fa6";
+import {
+    ResponsiveContainer,
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    Tooltip,
+    Legend,
+    CartesianGrid,
+    PieChart,
+    Pie,
+    Cell
+} from "recharts";
 import { motion, AnimatePresence } from "framer-motion";
 import PageHeader from "@/components/PageHeader";
 import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
@@ -67,6 +81,7 @@ export default function ConveniosPage() {
     const [ano, setAno] = useState(new Date().getFullYear().toString());
     const [status, setStatus] = useState("");
     const [abaTipo, setAbaTipo] = useState<"todos" | "concedido" | "recebido">("todos");
+    const [visualizacao, setVisualizacao] = useState<"tabela" | "grafico">("tabela");
 
     useEffect(() => {
         const fetchConvenios = async () => {
@@ -102,7 +117,7 @@ export default function ConveniosPage() {
         const payload = convenios.map(c => {
             const isConcedido = c.tipoConvenio === "concedido" || c.tipoConvenio === "realizado";
             return {
-                "Operação": isConcedido ? "Transferência Concedida (5.2)" : "Transferência Recebida",
+                "Operação": isConcedido ? "Transferência Concedida" : "Transferência Recebida",
                 "Número": c.numero,
                 "Exercício": c.ano || (c.dataInicio ? new Date(c.dataInicio).getFullYear() : "-"),
                 "Partícipe": isConcedido ? (c.beneficiario || "Beneficiário") : c.concedente,
@@ -118,7 +133,7 @@ export default function ConveniosPage() {
         });
 
         const filename = `convenios_transferencias_lajes_pintadas`;
-        const title = `Relatório de Convênios e Transferências – Prefeitura de Lajes Pintadas/RN (Critério 5.2)`;
+        const title = `Relatório de Convênios e Transferências – Prefeitura de Lajes Pintadas/RN (Critério PNTP)`;
 
         if (format === "csv") exportToCSV(payload, filename);
         else if (format === "json") exportToJSON(payload, filename);
@@ -131,11 +146,53 @@ export default function ConveniosPage() {
     const totalConcedidas = useMemo(() => convenios.filter(c => c.tipoConvenio === "concedido" || c.tipoConvenio === "realizado").length, [convenios]);
     const totalRecebidas = useMemo(() => convenios.filter(c => c.tipoConvenio === "recebido").length, [convenios]);
 
+    const dadosGraficoStatus = useMemo(() => {
+        const counts: Record<string, number> = {};
+        convenios.forEach(c => {
+            const st = (c.status || "Outros").toUpperCase();
+            counts[st] = (counts[st] || 0) + 1;
+        });
+        const colors = ["#10B981", "#1254A3", "#F43F5E", "#F59E0B"];
+        return Object.entries(counts).map(([name, value], i) => ({ name, value, color: colors[i % colors.length] }));
+    }, [convenios]);
+
+    const dadosComparativoTipo = useMemo(() => {
+        let concedidoPrevisto = 0;
+        let concedidoLiberado = 0;
+        let recebidoPrevisto = 0;
+        let recebidoLiberado = 0;
+
+        convenios.forEach(c => {
+            const isConcedido = c.tipoConvenio === "concedido" || c.tipoConvenio === "realizado";
+            if (isConcedido) {
+                concedidoPrevisto += c.valor || 0;
+                concedidoLiberado += c.valorLiberado || 0;
+            } else {
+                recebidoPrevisto += c.valor || 0;
+                recebidoLiberado += c.valorLiberado || 0;
+            }
+        });
+
+        return [
+            { tipo: "Concedidas (Município → Entidade)", "Previsto": Math.round(concedidoPrevisto), "Liberado": Math.round(concedidoLiberado) },
+            { tipo: "Recebidas (União/Estado → Município)", "Previsto": Math.round(recebidoPrevisto), "Liberado": Math.round(recebidoLiberado) },
+        ];
+    }, [convenios]);
+
+    const dadosTopParceiros = useMemo(() => {
+        return convenios
+            .slice(0, 6)
+            .map(c => ({
+                nome: (c.tipoConvenio === "concedido" ? (c.beneficiario || c.numero) : (c.concedente || c.numero)).slice(0, 20),
+                valor: Math.round(c.valor || 0)
+            }));
+    }, [convenios]);
+
     return (
         <div className="min-h-screen bg-[#F5F7FA]">
             <PageHeader
                 title="Convênios e Transferências"
-                subtitle="Transparência sobre transferências concedidas (município para OSCs e entidades parceiras - Critério 5.2) e transferências recebidas dos governos federal e estadual."
+                subtitle="Transparência sobre transferências concedidas (município para OSCs e entidades parceiras - Critério PNTP) e transferências recebidas dos governos federal e estadual."
                 icon={<FaHandshake />}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
@@ -166,7 +223,7 @@ export default function ConveniosPage() {
                                     : "text-[#5B738B] hover:text-[#12304A]"
                             }`}
                         >
-                            Transferências Concedidas (Critério 5.2)
+                            Transferências Concedidas
                         </button>
                         <button
                             onClick={() => setAbaTipo("recebido")}
@@ -181,6 +238,30 @@ export default function ConveniosPage() {
                     </div>
 
                     <div className="flex items-center gap-2 flex-wrap">
+                        {/* Alternador de Modo: Lista vs Gráficos */}
+                        <div className="flex items-center bg-white p-1 rounded-xl border border-[#DDE3EA] shadow-sm">
+                            <button
+                                onClick={() => setVisualizacao("tabela")}
+                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                                    visualizacao === "tabela"
+                                        ? "bg-[#1254A3] text-white shadow-xs"
+                                        : "text-[#5B738B] hover:text-[#12304A]"
+                                }`}
+                            >
+                                <FaTable size={12} /> Lista
+                            </button>
+                            <button
+                                onClick={() => setVisualizacao("grafico")}
+                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                                    visualizacao === "grafico"
+                                        ? "bg-[#1254A3] text-white shadow-xs"
+                                        : "text-[#5B738B] hover:text-[#12304A]"
+                                }`}
+                            >
+                                <FaChartLine size={12} /> Gráficos nos Resultados
+                            </button>
+                        </div>
+
                         <span className="text-[11px] font-bold text-[#5B738B] mr-1 hidden md:inline">Exportar Relatório:</span>
                         <button
                             onClick={() => handleExport("pdf")}
@@ -220,7 +301,7 @@ export default function ConveniosPage() {
                     <div className="bg-white rounded-2xl p-6 border border-[#DDE3EA] shadow-sm">
                         <span className="text-xs font-bold text-pink-700 uppercase tracking-wider block mb-2">Transferências Concedidas</span>
                         <h3 className="text-2xl font-black text-pink-700 tracking-tight">{loading ? "..." : totalConcedidas}</h3>
-                        <p className="text-xs text-[#5B738B] mt-2 pt-2 border-t border-[#DDE3EA]">Critério PNTP 5.2 (OSCs e consórcios)</p>
+                        <p className="text-xs text-[#5B738B] mt-2 pt-2 border-t border-[#DDE3EA]">Critério PNTP (OSCs e consórcios)</p>
                     </div>
 
                     <div className="bg-white rounded-2xl p-6 border border-[#DDE3EA] shadow-sm">
@@ -283,6 +364,88 @@ export default function ConveniosPage() {
                     </div>
                 </div>
 
+                {/* Gráficos nos Resultados */}
+                {visualizacao === "grafico" && (
+                    <div className="space-y-6 mb-8 animate-in fade-in duration-500">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            {/* Gráfico 1: Comparativo Financeiro */}
+                            <div className="bg-white rounded-2xl p-6 border border-[#DDE3EA] shadow-sm space-y-3">
+                                <div className="flex items-center justify-between">
+                                    <h3 className="text-xs font-bold text-[#12304A] uppercase tracking-wider flex items-center gap-2">
+                                        <FaChartLine className="text-[#1254A3]" /> Comparativo Financeiro: Concedidas vs Recebidas
+                                    </h3>
+                                </div>
+                                <div className="h-64 w-full pt-2">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <BarChart data={dadosComparativoTipo} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+                                            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                                            <XAxis dataKey="tipo" tick={{ fontSize: 10, fill: "#64748b" }} />
+                                            <YAxis tick={{ fontSize: 10, fill: "#64748b" }} tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`} />
+                                            <Tooltip
+                                                formatter={(val: number) => fmt(val)}
+                                                contentStyle={{
+                                                    backgroundColor: "#1e293b",
+                                                    borderRadius: "12px",
+                                                    border: "none",
+                                                    color: "#fff",
+                                                    fontSize: "12px"
+                                                }}
+                                            />
+                                            <Legend wrapperStyle={{ fontSize: "11px", paddingTop: "8px" }} />
+                                            <Bar dataKey="Valor Previsto" fill="#1254A3" radius={[4, 4, 0, 0]} />
+                                            <Bar dataKey="Valor Liberado" fill="#10B981" radius={[4, 4, 0, 0]} />
+                                        </BarChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            </div>
+
+                            {/* Gráfico 2: Situação / Status */}
+                            <div className="bg-white rounded-2xl p-6 border border-[#DDE3EA] shadow-sm space-y-3">
+                                <div>
+                                    <h3 className="text-xs font-bold text-[#12304A] uppercase tracking-wider flex items-center gap-2">
+                                        <FaChartPie className="text-[#10B981]" /> Situação dos Instrumentos Vigentes
+                                    </h3>
+                                    <p className="text-[11px] text-gray-500">Distribuição por status cadastral no exercício</p>
+                                </div>
+                                <div className="h-64 w-full flex items-center justify-center">
+                                    {dadosGraficoStatus.length > 0 ? (
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <PieChart>
+                                                <Pie
+                                                    data={dadosGraficoStatus}
+                                                    cx="50%"
+                                                    cy="50%"
+                                                    innerRadius={50}
+                                                    outerRadius={75}
+                                                    paddingAngle={5}
+                                                    dataKey="value"
+                                                    label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                                                    labelLine={false}
+                                                >
+                                                    {dadosGraficoStatus.map((entry, index) => (
+                                                        <Cell key={`cell-conv-status-${index}`} fill={entry.color} />
+                                                    ))}
+                                                </Pie>
+                                                <Tooltip
+                                                    contentStyle={{
+                                                        backgroundColor: "#1e293b",
+                                                        borderRadius: "12px",
+                                                        border: "none",
+                                                        color: "#fff",
+                                                        fontSize: "12px"
+                                                    }}
+                                                />
+                                            </PieChart>
+                                        </ResponsiveContainer>
+                                    ) : (
+                                        <p className="text-xs text-gray-400 italic">Sem registros no filtro selecionado.</p>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 {/* Conteúdo: Lista de Instrumentos ou Declaração Oficial de Inexistência */}
                 <AnimatePresence mode="wait">
                     {loading ? (
@@ -296,13 +459,13 @@ export default function ConveniosPage() {
                                 <FaFileAlt />
                             </div>
                             <span className="text-[10px] font-black uppercase tracking-wider text-amber-800 bg-amber-100 px-3 py-1 rounded-full">
-                                Declaração Oficial de Inexistência • Critério 5.2
+                                Declaração Oficial de Inexistência • Critério PNTP
                             </span>
                             <h4 className="text-xl font-black text-[#12304A]">
                                 Não Houve Transferências Concedidas no Exercício Selecionado
                             </h4>
                             <p className="text-xs text-[#5B738B] max-w-xl mx-auto leading-relaxed">
-                                A Prefeitura Municipal de Lajes Pintadas/RN declara formalmente, para fins de transparência pública ativa e cumprimento do Critério 5.2 do PNTP, que não realizou transferências voluntárias ou termos de fomento concedidos a entidades no período consultado ({ano}).
+                                A Prefeitura Municipal de Lajes Pintadas/RN declara formalmente, para fins de transparência pública ativa e cumprimento do Critério PNTP, que não realizou transferências voluntárias ou termos de fomento concedidos a entidades no período consultado ({ano}).
                             </p>
                             <div className="pt-2 flex justify-center gap-3">
                                 <button
@@ -341,7 +504,7 @@ export default function ConveniosPage() {
                                                             ? "bg-pink-50 text-pink-700 border-pink-200"
                                                             : "bg-blue-50 text-blue-700 border-blue-200"
                                                     }`}>
-                                                        {isConcedido ? "Transferência Concedida (Critério 5.2)" : "Transferência Recebida"}
+                                                        {isConcedido ? "Transferência Concedida" : "Transferência Recebida"}
                                                     </span>
                                                     <span className={`text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full border ${getStatusStyles(c.status)}`}>
                                                         {c.status}
@@ -383,7 +546,7 @@ export default function ConveniosPage() {
                                         <div className="space-y-4">
                                             <div>
                                                 <span className="text-[10px] font-bold text-[#5B738B] uppercase tracking-wider block mb-1">
-                                                    Objeto e Finalidade Pública (Critério 5.2)
+                                                    Objeto e Finalidade Pública
                                                 </span>
                                                 <p className="text-sm text-[#12304A] bg-[#F5F7FA] p-4 rounded-2xl border border-[#DDE3EA] leading-relaxed">
                                                     "{c.objeto}"
@@ -404,7 +567,7 @@ export default function ConveniosPage() {
                                                             className="inline-flex items-center gap-2 bg-[#1254A3] hover:bg-[#0d4282] text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-all shadow-sm"
                                                         >
                                                             <FaFilePdf size={12} />
-                                                            Inteiro Teor do Instrumento (Critério 5.2)
+                                                            Inteiro Teor do Instrumento
                                                             <FaExternalLinkAlt size={10} />
                                                         </a>
                                                     ) : (

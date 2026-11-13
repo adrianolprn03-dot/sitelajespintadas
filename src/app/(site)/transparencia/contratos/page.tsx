@@ -228,7 +228,7 @@ export default function ContratosPage() {
                          <div className="pt-5 border-t border-[#DDE3EA] flex items-center justify-between text-xs font-bold text-[#5B738B]">
                              <div className="flex items-center gap-2">
                                  <div className="w-2 h-2 rounded-full bg-[#1254A3] animate-pulse" />
-                                 <span>PNTP Critérios 9.2 e 9.3</span>
+                                 <span>Critério PNTP</span>
                              </div>
                              <FaCheckCircle className="text-emerald-500" />
                          </div>
@@ -519,7 +519,7 @@ export default function ContratosPage() {
                             <div className="flex items-start justify-between border-b border-slate-100 pb-4">
                                 <div>
                                     <span className="text-[10px] font-black uppercase tracking-widest text-orange-600 block mb-1">
-                                        Instrumento Contratual • PNTP 9.1 / 9.2 / 9.3
+                                        Instrumento Contratual • Critério PNTP
                                     </span>
                                     <h3 className="text-2xl font-black text-slate-900">
                                         Contrato Nº {selectedContrato.numero}
@@ -567,7 +567,7 @@ export default function ContratosPage() {
                             </div>
 
                             <div>
-                                <h4 className="text-xs font-black text-slate-500 uppercase mb-2">Fiscais Designados (Critério 9.3)</h4>
+                                <h4 className="text-xs font-black text-slate-500 uppercase mb-2">Fiscais Designados (Fiscalização Contratual)</h4>
                                 {Array.isArray(selectedContrato.fiscais) && selectedContrato.fiscais.length > 0 ? (
                                     <div className="space-y-2">
                                         {selectedContrato.fiscais.map((f, idx) => (
@@ -588,7 +588,7 @@ export default function ContratosPage() {
                             </div>
 
                             <div>
-                                <h4 className="text-xs font-black text-slate-500 uppercase mb-2">Termos Aditivos e Apostilamentos (Critério 9.2)</h4>
+                                <h4 className="text-xs font-black text-slate-500 uppercase mb-2">Termos Aditivos e Apostilamentos</h4>
                                 {Array.isArray(selectedContrato.aditivos) && selectedContrato.aditivos.length > 0 ? (
                                     <div className="space-y-2">
                                         {selectedContrato.aditivos.map((ad, idx) => (
@@ -616,7 +616,7 @@ export default function ContratosPage() {
                             </div>
 
                             <div>
-                                <h4 className="text-xs font-black text-slate-500 uppercase mb-2">Inteiro Teor do Contrato (Critério 9.2)</h4>
+                                <h4 className="text-xs font-black text-slate-500 uppercase mb-2">Inteiro Teor do Contrato</h4>
                                 {(selectedContrato.instrumentoIntegralUrl || selectedContrato.arquivo) ? (
                                     <a
                                         href={selectedContrato.instrumentoIntegralUrl || selectedContrato.arquivo || "#"}
