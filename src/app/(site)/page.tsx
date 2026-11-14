@@ -195,8 +195,8 @@ export default async function Home() {
                         <div className="absolute top-0 left-0 right-0 h-1.5 heraldic-stripe" />
 
                         <div className="space-y-5">
-                            <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-[#1254A3] bg-blue-50 border border-blue-200/70 px-3 py-1 rounded-full">
-                                <FaFlag size={12} />
+                            <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-[#854D0E] bg-amber-50 border border-amber-300/80 px-3 py-1 rounded-full">
+                                <FaFlag size={12} className="text-[#CA8A04]" />
                                 <span>Identidade Laje-Pintadense</span>
                             </div>
 
@@ -231,10 +231,10 @@ export default async function Home() {
                                 </div>
                             </div>
 
-                            {/* Estatísticas Rápidas em Azul e Amarelo */}
+                            {/* Estatísticas Rápidas em Amarelo Primário e Azul Secundário */}
                             <div className="grid grid-cols-3 gap-2.5 pt-1 text-center">
                                 <div className="bg-[#F8FAFC] rounded-xl p-2.5 border border-slate-200/80">
-                                    <span className="block text-sm sm:text-base font-black text-[#1254A3]">
+                                    <span className="block text-sm sm:text-base font-black text-[#003B73]">
                                         {MUNICIPIO.estatisticas.fundacao}
                                     </span>
                                     <span className="block text-[10px] font-bold text-[#5B738B] uppercase">
@@ -242,7 +242,7 @@ export default async function Home() {
                                     </span>
                                 </div>
                                 <div className="bg-[#F8FAFC] rounded-xl p-2.5 border border-slate-200/80">
-                                    <span className="block text-sm sm:text-base font-black text-[#1254A3]">
+                                    <span className="block text-sm sm:text-base font-black text-[#003B73]">
                                         {MUNICIPIO.estatisticas.area}
                                     </span>
                                     <span className="block text-[10px] font-bold text-[#5B738B] uppercase">
@@ -250,7 +250,7 @@ export default async function Home() {
                                     </span>
                                 </div>
                                 <div className="bg-[#F8FAFC] rounded-xl p-2.5 border border-slate-200/80">
-                                    <span className="block text-sm sm:text-base font-black text-[#1254A3]">
+                                    <span className="block text-sm sm:text-base font-black text-[#003B73]">
                                         {MUNICIPIO.uf}
                                     </span>
                                     <span className="block text-[10px] font-bold text-[#5B738B] uppercase">
@@ -263,14 +263,14 @@ export default async function Home() {
                         <div className="pt-5 mt-5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
                             <Link
                                 href="/a-prefeitura/historia"
-                                className="text-xs font-extrabold text-[#1254A3] hover:underline flex items-center gap-1.5"
+                                className="text-xs font-extrabold text-[#003B73] hover:text-[#CA8A04] hover:underline flex items-center gap-1.5 transition-colors"
                             >
                                 <FaLandmark size={12} />
                                 <span>Conhecer a História da Cidade</span>
                             </Link>
                             <Link
                                 href="/municipio/simbolos"
-                                className="text-xs font-extrabold text-[#1254A3] hover:underline flex items-center gap-1.5"
+                                className="text-xs font-extrabold text-[#003B73] hover:text-[#CA8A04] hover:underline flex items-center gap-1.5 transition-colors"
                             >
                                 <span>Ver Símbolos e Hino →</span>
                             </Link>
@@ -282,7 +282,7 @@ export default async function Home() {
                         <div>
                             <div className="flex items-center justify-between gap-4 mb-6">
                                 <div>
-                                    <span className="block text-xs font-extrabold uppercase tracking-wider text-[#1254A3]">
+                                    <span className="block text-xs font-extrabold uppercase tracking-wider text-[#CA8A04]">
                                         ESTRUTURA ADMINISTRATIVA
                                     </span>
                                     <h2 className="text-2xl font-black text-[#12304A] font-heading tracking-tight">
@@ -291,7 +291,7 @@ export default async function Home() {
                                 </div>
                                 <Link
                                     href="/secretarias"
-                                    className="text-xs font-extrabold text-[#1254A3] hover:underline flex items-center gap-1.5 shrink-0"
+                                    className="text-xs font-extrabold text-[#003B73] hover:text-[#CA8A04] hover:underline flex items-center gap-1.5 shrink-0 transition-colors"
                                 >
                                     <span>Todas as secretarias</span>
                                     <FaArrowRight size={11} />
@@ -305,13 +305,13 @@ export default async function Home() {
                                         <Link
                                             key={idx}
                                             href={sec.href}
-                                            className="group bg-[#F8FAFC] hover:bg-white rounded-2xl p-4 border border-slate-200/80 border-b-4 border-b-[#1254A3] hover:border-b-[#10B981] hover:shadow-md transition-all flex items-start gap-3.5"
+                                            className="group bg-[#F8FAFC] hover:bg-white rounded-2xl p-4 border border-slate-200/80 border-b-4 border-b-[#EAB308] hover:border-b-[#003B73] hover:shadow-md transition-all flex items-start gap-3.5"
                                         >
-                                            <div className="w-11 h-11 rounded-xl bg-blue-50 text-[#1254A3] border border-blue-100 group-hover:bg-[#1254A3] group-hover:text-white group-hover:border-[#1254A3] flex items-center justify-center text-lg shrink-0 transition-all shadow-sm">
+                                            <div className="w-11 h-11 rounded-xl bg-amber-50 text-[#CA8A04] border border-amber-200 group-hover:bg-[#EAB308] group-hover:text-[#002B5C] group-hover:border-[#EAB308] flex items-center justify-center text-lg shrink-0 transition-all shadow-sm">
                                                 <Icon />
                                             </div>
                                             <div className="min-w-0 flex-1">
-                                                <h3 className="text-sm font-extrabold text-[#12304A] font-heading group-hover:text-[#1254A3] transition-colors">
+                                                <h3 className="text-sm font-extrabold text-[#12304A] font-heading group-hover:text-[#003B73] transition-colors">
                                                     {sec.nome}
                                                 </h3>
                                                 <p className="text-[11px] text-[#5B738B] leading-snug mt-0.5 line-clamp-2">
@@ -330,7 +330,7 @@ export default async function Home() {
                             </span>
                             <Link
                                 href="/a-prefeitura/estrutura"
-                                className="font-extrabold text-[#1254A3] hover:underline"
+                                className="font-extrabold text-[#003B73] hover:text-[#CA8A04] hover:underline transition-colors"
                             >
                                 Consultar Organograma Completo →
                             </Link>

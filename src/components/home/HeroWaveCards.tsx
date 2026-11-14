@@ -37,6 +37,7 @@ export default function HeroWaveCards({ linksExternos = [] }: HeroWaveCardsProps
     const linkTributacao = getLink(["home-tributario", "tributario", "tributacao", "iptu"], "/servicos/tributario");
 
     // 4 Cards Flutuantes Solicitados: Transparência, Ouvidoria, Servidor, Tributação
+    // Paleta Alinhada: Amarelo Ouro (Primário) & Azul Safira (Secundário)
     const profileCards = [
         {
             id: "perfil-transparencia",
@@ -45,12 +46,12 @@ export default function HeroWaveCards({ linksExternos = [] }: HeroWaveCardsProps
             href: linkTransparencia.href,
             isExternal: linkTransparencia.isExternal,
             icon: FaShieldHalved,
-            corTexto: "text-[#1254A3]",
-            corBorda: "border-[#1254A3]",
-            corIconeBg: "bg-blue-50 text-[#1254A3] border-blue-200",
-            corHoverBg: "group-hover:border-[#1254A3]",
-            botaoCor: "bg-blue-50 text-[#1254A3] group-hover:bg-[#1254A3] group-hover:text-white",
-            tag: "Contas Públicas",
+            corTexto: "text-[#854D0E]",
+            corBorda: "border-[#EAB308]",
+            corIconeBg: "bg-amber-50 text-[#CA8A04] border-amber-300",
+            corHoverBg: "group-hover:border-[#EAB308]",
+            botaoCor: "bg-amber-100 text-[#78350F] group-hover:bg-[#EAB308] group-hover:text-[#002B5C]",
+            tag: "Destaque Cívico",
         },
         {
             id: "perfil-ouvidoria",
@@ -59,11 +60,11 @@ export default function HeroWaveCards({ linksExternos = [] }: HeroWaveCardsProps
             href: linkOuvidoria.href,
             isExternal: linkOuvidoria.isExternal,
             icon: FaBullhorn,
-            corTexto: "text-emerald-700",
-            corBorda: "border-emerald-500",
-            corIconeBg: "bg-emerald-50 text-emerald-600 border-emerald-200",
-            corHoverBg: "group-hover:border-emerald-600",
-            botaoCor: "bg-emerald-50 text-emerald-700 group-hover:bg-emerald-600 group-hover:text-white",
+            corTexto: "text-[#003B73]",
+            corBorda: "border-[#0072CE]",
+            corIconeBg: "bg-blue-50 text-[#0072CE] border-blue-200",
+            corHoverBg: "group-hover:border-[#0072CE]",
+            botaoCor: "bg-blue-100 text-[#003B73] group-hover:bg-[#003B73] group-hover:text-white",
             tag: "Fale Conosco",
         },
         {
@@ -73,11 +74,11 @@ export default function HeroWaveCards({ linksExternos = [] }: HeroWaveCardsProps
             href: linkServidor.href,
             isExternal: linkServidor.isExternal,
             icon: FaIdCard,
-            corTexto: "text-sky-700",
-            corBorda: "border-sky-500",
-            corIconeBg: "bg-sky-50 text-sky-600 border-sky-200",
-            corHoverBg: "group-hover:border-sky-500",
-            botaoCor: "bg-sky-50 text-sky-700 group-hover:bg-sky-600 group-hover:text-white",
+            corTexto: "text-[#92400E]",
+            corBorda: "border-[#F59E0B]",
+            corIconeBg: "bg-amber-50 text-[#D97706] border-amber-200",
+            corHoverBg: "group-hover:border-[#F59E0B]",
+            botaoCor: "bg-amber-100 text-[#92400E] group-hover:bg-[#F59E0B] group-hover:text-[#002B5C]",
             tag: "Portal do Servidor",
         },
         {
@@ -87,11 +88,11 @@ export default function HeroWaveCards({ linksExternos = [] }: HeroWaveCardsProps
             href: linkTributacao.href,
             isExternal: linkTributacao.isExternal,
             icon: FaReceipt,
-            corTexto: "text-amber-700",
-            corBorda: "border-amber-500",
-            corIconeBg: "bg-amber-50 text-amber-600 border-amber-200",
-            corHoverBg: "group-hover:border-amber-500",
-            botaoCor: "bg-amber-50 text-amber-700 group-hover:bg-amber-600 group-hover:text-white",
+            corTexto: "text-[#002B5C]",
+            corBorda: "border-[#003B73]",
+            corIconeBg: "bg-sky-50 text-[#003B73] border-sky-200",
+            corHoverBg: "group-hover:border-[#003B73]",
+            botaoCor: "bg-sky-100 text-[#002B5C] group-hover:bg-[#002B5C] group-hover:text-white",
             tag: "IPTU & Tributos",
         },
     ];
@@ -137,15 +138,15 @@ export default function HeroWaveCards({ linksExternos = [] }: HeroWaveCardsProps
                             Acesse com facilidade todos os serviços do cidadão, notícias oficiais e acompanhe as contas públicas no Portal da Transparência.
                         </p>
 
-                        {/* Barra de Pesquisa Rápida (Sem as pílulas de busca frequente) */}
+                        {/* Barra de Pesquisa Rápida (Amarelo Primário com Azul Secundário) */}
                         <div className="pt-2">
                             <form
                                 action="/transparencia"
                                 method="GET"
-                                className="bg-white/95 backdrop-blur-md p-1.5 sm:p-2 rounded-2xl sm:rounded-full border border-white/40 shadow-2xl flex flex-col sm:flex-row items-center gap-2 focus-within:ring-4 focus-within:ring-blue-400/40 transition-all max-w-2xl"
+                                className="bg-white/95 backdrop-blur-md p-1.5 sm:p-2 rounded-2xl sm:rounded-full border border-white/40 shadow-2xl flex flex-col sm:flex-row items-center gap-2 focus-within:ring-4 focus-within:ring-[#EAB308]/40 transition-all max-w-2xl"
                             >
                                 <div className="flex items-center gap-3 w-full px-4 text-[#12304A]">
-                                    <HiMagnifyingGlass className="text-[#1254A3] text-2xl shrink-0" />
+                                    <HiMagnifyingGlass className="text-[#CA8A04] text-2xl shrink-0" />
                                     <input
                                         type="text"
                                         name="q"
@@ -158,7 +159,7 @@ export default function HeroWaveCards({ linksExternos = [] }: HeroWaveCardsProps
                                 </div>
                                 <button
                                     type="submit"
-                                    className="w-full sm:w-auto bg-[#1254A3] hover:bg-[#0e4485] active:bg-[#0b3568] text-white font-bold text-sm px-7 py-3 rounded-xl sm:rounded-full transition-colors flex items-center justify-center gap-2 shadow-md shrink-0"
+                                    className="w-full sm:w-auto bg-[#EAB308] hover:bg-[#CA8A04] active:bg-[#A16207] text-[#002B5C] font-black text-sm px-7 py-3 rounded-xl sm:rounded-full transition-colors flex items-center justify-center gap-2 shadow-md shrink-0 focus:outline-none focus:ring-2 focus:ring-[#003B73]"
                                 >
                                     <span>Buscar</span>
                                     <FaArrowRight size={12} />
@@ -169,7 +170,7 @@ export default function HeroWaveCards({ linksExternos = [] }: HeroWaveCardsProps
                 </div>
 
                 {/* ========================================================= */}
-                {/* DIVISOR EM CURVA ORGÂNICA (WAVE SVG)                      */}
+                {/* DIVISOR EM CURVA ORGÂNICA (AMARELO OURO & AZUL SAFIRA)    */}
                 {/* ========================================================= */}
                 <div className="absolute bottom-0 left-0 right-0 w-full overflow-hidden leading-none z-10 pointer-events-none">
                     <svg
@@ -178,17 +179,17 @@ export default function HeroWaveCards({ linksExternos = [] }: HeroWaveCardsProps
                         xmlns="http://www.w3.org/2000/svg"
                         className="relative block w-full h-14 sm:h-20 lg:h-24 text-white preserve-3d"
                     >
-                        {/* Onda de fundo translúcida em tom ciano/verde suave */}
+                        {/* Onda de fundo translúcida em tom amarelo ouro primário */}
                         <path
                             d="M0,32L60,42.7C120,53,240,75,360,80C480,85,600,75,720,58.7C840,43,960,21,1080,21.3C1200,21,1320,43,1380,53.3L1440,64L1440,120L1380,120C1320,120,1200,120,1080,120C960,120,840,120,720,120C600,120,480,120,360,120C240,120,120,120,60,120L0,120Z"
-                            fill="#10B981"
-                            fillOpacity="0.25"
+                            fill="#FACC15"
+                            fillOpacity="0.45"
                         />
-                        {/* Onda intermediária em tom azul institucional */}
+                        {/* Onda intermediária em tom azul secundário institucional */}
                         <path
                             d="M0,64L48,69.3C96,75,192,85,288,80C384,75,480,53,576,48C672,43,768,53,864,64C960,75,1056,85,1152,80C1248,75,1344,53,1392,42.7L1440,32L1440,120L1392,120C1344,120,1248,120,1152,120C1056,120,960,120,864,120C768,120,672,120,576,120C480,120,384,120,288,120C192,120,96,120,48,120L0,120Z"
-                            fill="#1254A3"
-                            fillOpacity="0.3"
+                            fill="#003B73"
+                            fillOpacity="0.35"
                         />
                         {/* Onda principal sólida que fecha com a cor de fundo do site */}
                         <path

@@ -5,16 +5,17 @@
 @tailwind utilities;
 
 :root {
-  --primary: #0072CE;
-  --primary-light: #36AAF5;
-  --primary-dark: #003B73;
-  --secondary: #FACC15;
-  --secondary-light: #FDE047;
+  --primary: #EAB308;
+  --primary-light: #FDE047;
+  --primary-dark: #CA8A04;
+  --secondary: #003B73;
+  --secondary-light: #0072CE;
+  --secondary-dark: #002B5C;
   --ouro: #FACC15;
-  --accent: #FACC15;
+  --accent: #003B73;
   --gov-navy: #002B5C;
   --gov-text: #0F2942;
-  --gov-bg: #F4F7FB;
+  --gov-bg: #F8FAFC;
   --gov-border: #DCE4EE;
   --gov-radius: 14px;
   --font-size-base: 15px;
@@ -96,12 +97,12 @@ html.font-xlarge {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #0072CE;
+  background: #EAB308;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #003B73;
+  background: #CA8A04;
 }
 
 .no-scrollbar::-webkit-scrollbar {
@@ -112,29 +113,29 @@ html.font-xlarge {
   scrollbar-width: none;
 }
 
-/* === FILETE INSTITUCIONAL AZUL & AMARELO === */
+/* === FILETE INSTITUCIONAL AMARELO (OURO) & AZUL (SAFIRA) === */
 .heraldic-stripe {
   background: linear-gradient(
     90deg,
-    #002B5C 0%,
-    #0072CE 40%,
-    #FACC15 70%,
-    #0072CE 100%
+    #EAB308 0%,
+    #FDE047 30%,
+    #0072CE 70%,
+    #002B5C 100%
   );
 }
 
 /* === UTILITÁRIOS E COMPONENTES === */
 @layer components {
   .btn-primary {
-    @apply bg-[#0072CE] hover:bg-[#005bb5] text-white font-bold px-6 py-3 rounded-[12px] transition-all duration-200 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#FACC15] focus:ring-offset-2;
+    @apply bg-[#EAB308] hover:bg-[#CA8A04] active:bg-[#A16207] text-[#002B5C] font-extrabold px-6 py-3 rounded-[12px] transition-all duration-200 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#003B73] focus:ring-offset-2;
   }
 
   .btn-secondary {
-    @apply bg-[#FACC15] hover:bg-[#EAB308] text-[#0F2942] font-bold px-6 py-3 rounded-[12px] transition-all duration-200 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#FACC15] focus:ring-offset-2;
+    @apply bg-[#003B73] hover:bg-[#002B5C] active:bg-[#001D3D] text-white font-bold px-6 py-3 rounded-[12px] transition-all duration-200 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#EAB308] focus:ring-offset-2;
   }
 
   .btn-outline {
-    @apply border-2 border-[#0072CE] text-[#0072CE] hover:bg-[#0072CE] hover:text-white font-bold px-6 py-3 rounded-[12px] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#0072CE] focus:ring-offset-2;
+    @apply border-2 border-[#EAB308] text-[#854D0E] hover:bg-[#EAB308] hover:text-[#002B5C] font-extrabold px-6 py-3 rounded-[12px] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#003B73] focus:ring-offset-2;
   }
 
   .card {
@@ -155,7 +156,7 @@ html.font-xlarge {
   }
 
   .input-field {
-    @apply w-full px-4 py-2.5 border border-[#DCE4EE] rounded-[10px] focus:outline-none focus:ring-2 focus:ring-[#0072CE]/20 focus:border-[#0072CE] transition-colors bg-[#F4F7FB] hover:bg-white text-xs font-medium text-[#0F2942];
+    @apply w-full px-4 py-2.5 border border-[#DCE4EE] rounded-[10px] focus:outline-none focus:ring-2 focus:ring-[#EAB308]/30 focus:border-[#EAB308] transition-colors bg-[#F8FAFC] hover:bg-white text-xs font-medium text-[#0F2942];
   }
 
   .table-header {

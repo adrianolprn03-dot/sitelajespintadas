@@ -70,8 +70,8 @@ export default function RadarTransparenciaPNTP() {
 
                 <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-8 border-b border-white/15">
                     <div>
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-bold text-amber-300 mb-3">
-                            <FaAward className="text-amber-300" />
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-bold text-[#FACC15] mb-3">
+                            <FaAward className="text-[#FACC15]" />
                             <span>Compromisso com a Transparência Pública • Matriz PNTP</span>
                         </div>
                         <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black font-heading tracking-tight leading-tight">
@@ -84,7 +84,7 @@ export default function RadarTransparenciaPNTP() {
 
                     <Link
                         href="/transparencia"
-                        className="inline-flex items-center justify-center gap-2 bg-[#F39A32] hover:bg-[#e08924] active:bg-[#c97519] text-[#12304A] font-black text-sm px-7 py-3.5 rounded-full transition-all shadow-lg hover:scale-105 shrink-0"
+                        className="inline-flex items-center justify-center gap-2 bg-[#FACC15] hover:bg-[#EAB308] active:bg-[#CA8A04] text-[#002B5C] font-black text-sm px-7 py-3.5 rounded-full transition-all shadow-lg hover:scale-105 shrink-0 focus:outline-none focus:ring-2 focus:ring-[#003B73]"
                     >
                         <span>Acessar Portal Completo</span>
                         <FaArrowRight size={12} />
@@ -99,17 +99,17 @@ export default function RadarTransparenciaPNTP() {
                             <Link
                                 key={idx}
                                 href={pilar.href}
-                                className="group bg-white/10 hover:bg-white/15 backdrop-blur-md rounded-2xl p-5 border border-white/15 hover:border-white/30 transition-all duration-300 flex items-start gap-4 hover:-translate-y-1"
+                                className="group bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-2xl p-5 border border-white/15 hover:border-[#FACC15]/60 transition-all duration-300 flex items-start gap-4 hover:-translate-y-1"
                             >
-                                <div className="w-12 h-12 rounded-xl bg-white/15 text-white flex items-center justify-center text-xl shrink-0 group-hover:bg-[#10B981] group-hover:text-white transition-colors shadow-sm">
+                                <div className="w-12 h-12 rounded-xl bg-white/15 text-white flex items-center justify-center text-xl shrink-0 group-hover:bg-[#EAB308] group-hover:text-[#002B5C] transition-colors shadow-sm">
                                     <Icon />
                                 </div>
                                 <div className="min-w-0 flex-1">
                                     <div className="flex items-center justify-between gap-2 mb-1">
-                                        <h3 className="text-sm font-bold text-white group-hover:text-amber-300 transition-colors truncate">
+                                        <h3 className="text-sm font-bold text-white group-hover:text-[#FDE047] transition-colors truncate">
                                             {pilar.titulo}
                                         </h3>
-                                        <span className="text-[9px] font-black uppercase tracking-wider text-slate-300 bg-black/25 px-2 py-0.5 rounded">
+                                        <span className="text-[9px] font-black uppercase tracking-wider text-[#FACC15] bg-black/30 px-2 py-0.5 rounded">
                                             {pilar.tag}
                                         </span>
                                     </div>
