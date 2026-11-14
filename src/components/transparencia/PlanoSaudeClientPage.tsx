@@ -38,7 +38,7 @@ export default function PlanoSaudeClientPage({ categoriaInicial = "todos" }: { c
         const fetchDocumentos = async () => {
             setLoading(true);
             try {
-                const res = await fetch("/api/transparencia/saude");
+                const res = await fetch("/api/transparencia/saude", { cache: "no-store" });
                 if (res.ok) {
                     const data = await res.json();
                     if (Array.isArray(data)) {

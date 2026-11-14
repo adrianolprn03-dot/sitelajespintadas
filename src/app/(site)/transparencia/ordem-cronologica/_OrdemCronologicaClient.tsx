@@ -26,27 +26,6 @@ const statusConfig: Record<string, { label: string; cor: string }> = {
     suspenso: { label: "Suspenso", cor: "bg-red-100 text-red-700 border-red-200" },
 };
 
-const MOCK_DATA: Pagamento[] = [
-    {
-        id: "1", ordem: 1, fornecedor: "Distribuidora de Materiais LTDA", cnpj: "00.000.000/0001-00",
-        descricao: "Aquisição de material de expediente", valor: 4500.00,
-        dataEmpenho: "2026-01-05", dataLiquidacao: "2026-01-12", dataPagamento: "2026-01-15",
-        secretaria: "Administração", status: "pago"
-    },
-    {
-        id: "2", ordem: 2, fornecedor: "Construtora Norte Sul EIRELI", cnpj: "00.000.001/0001-11",
-        descricao: "Execução de serviços de manutenção predial", valor: 18300.00,
-        dataEmpenho: "2026-01-08", dataLiquidacao: "2026-01-20", dataPagamento: null,
-        secretaria: "Obras e Infraestrutura", status: "pendente"
-    },
-    {
-        id: "3", ordem: 3, fornecedor: "Farmácia Saúde Popular ME", cnpj: "00.000.002/0001-22",
-        descricao: "Aquisição de medicamentos básicos", valor: 12780.50,
-        dataEmpenho: "2026-01-10", dataLiquidacao: "2026-01-22", dataPagamento: "2026-01-28",
-        secretaria: "Saúde", status: "pago"
-    },
-];
-
 function fmt(v: number) {
     return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
@@ -69,7 +48,7 @@ export default function OrdemCronologicaClient() {
                     status: statusFiltro,
                     query: busca,
                 });
-                const res = await fetch(`/api/transparencia/ordem-cronologica?${params}`);
+                const res = await fetch(`/api/transparencia/ordem-cronologica?${params}`, { cache: "no-store" });
                 const data = await res.json();
                 if (data.items) {
                     setPagamentos(data.items);

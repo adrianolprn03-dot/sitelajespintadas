@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { jsonNoStore, revalidatePaths, REVALIDATE_GROUPS } from "@/lib/revalidate-site";
 
 export const dynamic = "force-dynamic";
 
@@ -10,12 +13,13 @@ export async function GET(request: Request) {
         const categoria = searchParams.get("categoria");
         const ano = searchParams.get("ano");
 
-        const where: any = {};
+        const where: Record<string, unknown> = {};
         if (categoria && categoria !== "todos") {
             where.categoria = categoria;
         }
         if (ano) {
-            where.anoExercicio = parseInt(ano);
+            const parsedAno = parseInt(ano, 10);
+            if (!Number.isNaN(parsedAno)) where.anoExercicio = parsedAno;
         }
 
         const documentos = await prisma.documentoSaude.findMany({
@@ -26,7 +30,7 @@ export async function GET(request: Request) {
             ]
         });
 
-        return NextResponse.json(documentos);
+        return jsonNoStore(documentos);
     } catch (error) {
         console.error("Erro ao listar documentos da saúde:", error);
         return NextResponse.json({ error: "Erro ao buscar documentos da saúde" }, { status: 500 });
@@ -35,6 +39,11 @@ export async function GET(request: Request) {
 
 // POST /api/admin/saude - Criar novo documento da saúde (PMS, PAS, RAG, RDQA)
 export async function POST(request: Request) {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+        return NextResponse.json({ error: "Não autorizado. Faça login novamente." }, { status: 401 });
+    }
+
     try {
         const body = await request.json();
         const { titulo, categoria, anoExercicio, periodoVigencia, statusConselho, numeroResolucao, descricao, linkDocumento, ativo } = body;
@@ -45,9 +54,9 @@ export async function POST(request: Request) {
 
         const novoDoc = await prisma.documentoSaude.create({
             data: {
-                titulo,
-                categoria, // "pms", "pas", "rag", "rdqa"
-                anoExercicio: parseInt(anoExercicio),
+                titulo: String(titulo).trim(),
+                categoria: String(categoria).trim(),
+                anoExercicio: parseInt(String(anoExercicio), 10),
                 periodoVigencia: periodoVigencia || null,
                 statusConselho: statusConselho || "Aprovado pelo Conselho Municipal de Saúde (CMS)",
                 numeroResolucao: numeroResolucao || null,
@@ -57,6 +66,7 @@ export async function POST(request: Request) {
             }
         });
 
+        revalidatePaths(REVALIDATE_GROUPS.saudeDocumentos);
         return NextResponse.json(novoDoc, { status: 201 });
     } catch (error) {
         console.error("Erro ao criar documento da saúde:", error);

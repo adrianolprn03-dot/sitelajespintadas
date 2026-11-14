@@ -4,6 +4,9 @@ import { Building2, User, MapPin, Phone, Mail, Clock, ShieldCheck, Info } from "
 import { prisma } from "@/lib/prisma";
 import { motion } from "framer-motion";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata: Metadata = {
     title: "Institucional do SIC | Portal da Transparência",
     description: "Informações sobre o Serviço de Informação ao Cidadão (SIC) de Lajes Pintadas – RN.",

@@ -1,9 +1,10 @@
 export const dynamic = "force-dynamic";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireServerAuth } from "@/lib/rbac";
 import { registrarHistoricoAlteracao } from "@/lib/audit";
 import { MUNICIPIO } from "@/config/municipio";
+import { jsonNoStore, revalidatePaths, REVALIDATE_GROUPS } from "@/lib/revalidate-site";
 
 const GRAUS_VALIDOS = new Set(["Reservado", "Secreto", "Ultrassecreto"]);
 
@@ -88,7 +89,7 @@ export async function GET() {
             (d) => d.dataDesclassificacao && d.dataDesclassificacao >= ha12Meses
         );
 
-        return NextResponse.json({
+        return jsonNoStore({
             declaracoes,
             pedidos,
             classificados,
@@ -97,7 +98,7 @@ export async function GET() {
         });
     } catch (error) {
         console.error("[API admin esic/relatorios GET]", error);
-        return NextResponse.json({ error: "Erro ao carregar dados administrativos do e-SIC." }, { status: 500 });
+        return jsonNoStore({ error: "Erro ao carregar dados administrativos do e-SIC." }, { status: 500 });
     }
 }
 
@@ -123,7 +124,7 @@ export async function POST(req: NextRequest) {
             } = body;
 
             if (!modulo || !textoDeclaracao) {
-                return NextResponse.json(
+                return jsonNoStore(
                     { error: "Módulo e texto da declaração são obrigatórios." },
                     { status: 400 }
                 );
@@ -161,7 +162,8 @@ export async function POST(req: NextRequest) {
                 user: auth.user,
             });
 
-            return NextResponse.json({ declaracao: criada });
+            revalidatePaths(REVALIDATE_GROUPS.institucional);
+            return jsonNoStore({ declaracao: criada });
         }
 
         // 2. Registrar novo documento classificado diretamente no Rol (sem necessidade de pedido prévio)
@@ -179,7 +181,7 @@ export async function POST(req: NextRequest) {
             } = body;
 
             if (!assunto?.trim() || !fundamentoSigilo?.trim()) {
-                return NextResponse.json(
+                return jsonNoStore(
                     { error: "Assunto da informação e dispositivo legal que fundamenta o sigilo são obrigatórios." },
                     { status: 400 }
                 );
@@ -248,7 +250,8 @@ export async function POST(req: NextRequest) {
                 user: auth.user,
             });
 
-            return NextResponse.json({ item: criado });
+            revalidatePaths(REVALIDATE_GROUPS.institucional);
+            return jsonNoStore({ item: criado });
         }
 
         // 3. Classificar pedido existente ou atualizar classificação
@@ -266,7 +269,7 @@ export async function POST(req: NextRequest) {
             } = body;
 
             if (!id || !fundamentoSigilo?.trim()) {
-                return NextResponse.json(
+                return jsonNoStore(
                     { error: "Registro e dispositivo legal fundamentador são obrigatórios." },
                     { status: 400 }
                 );
@@ -274,7 +277,7 @@ export async function POST(req: NextRequest) {
 
             const atual = await prisma.esic.findUnique({ where: { id } });
             if (!atual) {
-                return NextResponse.json({ error: "Registro não encontrado." }, { status: 404 });
+                return jsonNoStore({ error: "Registro não encontrado." }, { status: 404 });
             }
 
             const grauFinal = GRAUS_VALIDOS.has(grauSigilo) ? grauSigilo : "Reservado";
@@ -331,19 +334,20 @@ export async function POST(req: NextRequest) {
                 user: auth.user,
             });
 
-            return NextResponse.json({ item: updated });
+            revalidatePaths(REVALIDATE_GROUPS.institucional);
+            return jsonNoStore({ item: updated });
         }
 
         // 4. Desclassificar informação ou documento (passa a integrar a lista dos últimos 12 meses)
         if (body.tipoOperacao === "desclassificar") {
             const { id, dataDesclassificacao, justificativa } = body;
             if (!id) {
-                return NextResponse.json({ error: "Identificador do registro é obrigatório." }, { status: 400 });
+                return jsonNoStore({ error: "Identificador do registro é obrigatório." }, { status: 400 });
             }
 
             const atual = await prisma.esic.findUnique({ where: { id } });
             if (!atual) {
-                return NextResponse.json({ error: "Registro não encontrado." }, { status: 404 });
+                return jsonNoStore({ error: "Registro não encontrado." }, { status: 404 });
             }
 
             const dataDesc = dataDesclassificacao ? new Date(dataDesclassificacao) : new Date();
@@ -374,12 +378,13 @@ export async function POST(req: NextRequest) {
                 user: auth.user,
             });
 
-            return NextResponse.json({ item: updated });
+            revalidatePaths(REVALIDATE_GROUPS.institucional);
+            return jsonNoStore({ item: updated });
         }
 
-        return NextResponse.json({ error: "Operação inválida." }, { status: 400 });
+        return jsonNoStore({ error: "Operação inválida." }, { status: 400 });
     } catch (error) {
         console.error("[API admin esic/relatorios POST]", error);
-        return NextResponse.json({ error: "Erro ao salvar operação do e-SIC." }, { status: 500 });
+        return jsonNoStore({ error: "Erro ao salvar operação do e-SIC." }, { status: 500 });
     }
 }

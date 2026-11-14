@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { jsonNoStore } from "@/lib/revalidate-site";
 
 export const dynamic = "force-dynamic";
 
@@ -10,14 +11,15 @@ export async function GET(request: Request) {
         const categoria = searchParams.get("categoria");
         const ano = searchParams.get("ano");
 
-        const where: any = { ativo: true };
+        const where: Record<string, unknown> = { ativo: true };
 
         if (categoria && categoria !== "todos") {
             where.categoria = categoria;
         }
 
         if (ano && ano !== "todos") {
-            where.anoExercicio = parseInt(ano);
+            const parsedAno = parseInt(ano, 10);
+            if (!Number.isNaN(parsedAno)) where.anoExercicio = parsedAno;
         }
 
         const documentos = await prisma.documentoSaude.findMany({
@@ -28,7 +30,7 @@ export async function GET(request: Request) {
             ]
         });
 
-        return NextResponse.json(documentos);
+        return jsonNoStore(documentos);
     } catch (error) {
         console.error("Erro ao buscar documentos da transparência da saúde:", error);
         return NextResponse.json({ error: "Erro interno ao consultar documentos da saúde" }, { status: 500 });

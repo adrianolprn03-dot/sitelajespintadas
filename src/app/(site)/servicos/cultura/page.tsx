@@ -8,6 +8,9 @@ import {
     HiOutlinePaintBrush
 } from "react-icons/hi2";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata: Metadata = {
     title: "Cultura, Esporte e Lazer | Prefeitura de Lajes Pintadas – RN",
     description: "Equipamentos culturais e esportivos disponíveis à população de Lajes Pintadas",
@@ -15,7 +18,7 @@ export const metadata: Metadata = {
 
 export default async function CulturaPage() {
     const unidades = await (prisma as any).unidadeAtendimento.findMany({
-        where: { tipo: "Cultura", ativa: true },
+        where: { tipo: { in: ["Cultura", "cultura", "CULTURA"] }, ativa: true },
         orderBy: { nome: 'asc' }
     });
 

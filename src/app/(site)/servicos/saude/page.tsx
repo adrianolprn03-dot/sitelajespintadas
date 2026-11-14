@@ -23,7 +23,7 @@ export default function SaudePage() {
     useEffect(() => {
         const fetchUnidades = async () => {
             try {
-                const res = await fetch("/api/unidades?tipo=saude");
+                const res = await fetch("/api/unidades?tipo=saude", { cache: "no-store" });
                 if (res.ok) {
                     const data = await res.json();
                     setUnidades(data);

@@ -6,6 +6,9 @@ import ExportButtons from "@/components/transparencia/ExportButtons";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata: Metadata = {
     title: "Perguntas Frequentes | Transparência Premium — Lajes Pintadas",
     description: "Respostas para as dúvidas mais comuns dos cidadãos de Lajes Pintadas – RN, em conformidade com o PNTP 2026.",

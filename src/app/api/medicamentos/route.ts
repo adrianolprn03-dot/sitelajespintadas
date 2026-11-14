@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { jsonNoStore } from "@/lib/revalidate-site";
 
 export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
@@ -8,7 +9,7 @@ export async function GET(req: NextRequest) {
     const status = searchParams.get("status");
     const categoria = searchParams.get("categoria");
 
-    const where: any = {
+    const where: Record<string, unknown> = {
         ativo: true // Apenas medicamentos ativos na listagem pública
     };
     
@@ -34,7 +35,7 @@ export async function GET(req: NextRequest) {
             orderBy: { nome: "asc" },
         });
         
-        return NextResponse.json({ 
+        return jsonNoStore({ 
             items,
             total: items.length,
             timestamp: new Date().toISOString()

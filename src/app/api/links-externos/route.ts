@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { jsonNoStore } from "@/lib/revalidate-site";
 
 const db = prisma as any;
 
@@ -16,10 +17,9 @@ export async function GET(req: NextRequest) {
             },
             orderBy: [{ ordem: "asc" }, { criadoEm: "desc" }],
         });
-        return NextResponse.json(links);
+        return jsonNoStore(links);
     } catch (err) {
         console.error("Erro ao buscar links externos:", err);
-        return NextResponse.json({ error: "Erro ao buscar links" }, { status: 500 });
+        return jsonNoStore({ error: "Erro ao buscar links" }, { status: 500 });
     }
 }
-

@@ -11,6 +11,9 @@ import {
     HiOutlineChevronRight
 } from "react-icons/hi2";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata: Metadata = {
     title: "Conselhos Municipais | Prefeitura de Lajes Pintadas",
     description: "Espaço de participação social e controle da gestão pública municipal em Lajes Pintadas – RN.",

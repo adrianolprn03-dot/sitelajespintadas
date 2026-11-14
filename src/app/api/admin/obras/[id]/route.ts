@@ -1,20 +1,26 @@
 export const dynamic = "force-dynamic";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { jsonNoStore, revalidatePaths, REVALIDATE_GROUPS } from "@/lib/revalidate-site";
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
     try {
         const item = await prisma.obra.findUnique({
             where: { id: params.id }
         });
-        if (!item) return NextResponse.json({ error: "Obra não encontrada" }, { status: 404 });
-        return NextResponse.json(item);
-    } catch (error) {
-        return NextResponse.json({ error: "Erro ao buscar obra" }, { status: 500 });
+        if (!item) return jsonNoStore({ error: "Obra não encontrada" }, { status: 404 });
+        return jsonNoStore(item);
+    } catch {
+        return jsonNoStore({ error: "Erro ao buscar obra" }, { status: 500 });
     }
 }
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+    const session = await getServerSession(authOptions);
+    if (!session) return jsonNoStore({ error: "Não autorizado" }, { status: 401 });
+
     try {
         const body = await req.json();
         const {
@@ -70,14 +76,18 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
                 dataAtualizacaoEfetiva: new Date()
             },
         });
-        return NextResponse.json(obra);
+        revalidatePaths(REVALIDATE_GROUPS.obras);
+        return jsonNoStore(obra);
     } catch (error) {
         console.error("[API admin obras PUT]", error);
-        return NextResponse.json({ error: "Erro ao atualizar obra" }, { status: 500 });
+        return jsonNoStore({ error: "Erro ao atualizar obra" }, { status: 500 });
     }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
+    const session = await getServerSession(authOptions);
+    if (!session) return jsonNoStore({ error: "Não autorizado" }, { status: 401 });
+
     try {
         // Busca o registro para obter a URL da imagem antes de deletar
         const item = await prisma.obra.findUnique({ where: { id: params.id } });
@@ -86,8 +96,9 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
             await deleteFileFromR2(item.imagem);
         }
         await prisma.obra.delete({ where: { id: params.id } });
-        return NextResponse.json({ message: "Obra excluída com sucesso" });
-    } catch (error) {
-        return NextResponse.json({ error: "Erro ao excluir obra" }, { status: 500 });
+        revalidatePaths(REVALIDATE_GROUPS.obras);
+        return jsonNoStore({ message: "Obra excluída com sucesso" });
+    } catch {
+        return jsonNoStore({ error: "Erro ao excluir obra" }, { status: 500 });
     }
 }

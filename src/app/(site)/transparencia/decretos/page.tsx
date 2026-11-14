@@ -4,6 +4,9 @@ import LegislacaoClient from "../legislacao/_LegislacaoClient";
 import { prisma } from "@/lib/prisma";
 import { FaExternalLinkAlt, FaGlobe, FaGavel } from "react-icons/fa";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata: Metadata = {
     title: "Decretos do Executivo | Prefeitura de Lajes Pintadas – RN",
     description: "Consulta aos Decretos do poder executivo da Prefeitura de Lajes Pintadas – RN.",

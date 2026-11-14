@@ -1,10 +1,16 @@
 export const dynamic = "force-dynamic";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { jsonNoStore, revalidatePaths, REVALIDATE_GROUPS } from "@/lib/revalidate-site";
 
 const db = prisma as any;
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+    const session = await getServerSession(authOptions);
+    if (!session) return jsonNoStore({ error: "Não autorizado" }, { status: 401 });
+
     try {
         const { id } = params;
         const body = await req.json();
@@ -21,19 +27,24 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
                 moduloAlvo: body.moduloAlvo,
             },
         });
-        return NextResponse.json(data);
+        revalidatePaths([...REVALIDATE_GROUPS.institucional, "/admin/links-externos"]);
+        return jsonNoStore(data);
     } catch (err) {
         console.error("Erro ao atualizar link:", err);
-        return NextResponse.json({ error: "Erro ao atualizar link" }, { status: 500 });
+        return jsonNoStore({ error: "Erro ao atualizar link" }, { status: 500 });
     }
 }
 
 export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
+    const session = await getServerSession(authOptions);
+    if (!session) return jsonNoStore({ error: "Não autorizado" }, { status: 401 });
+
     try {
         await db.linkExterno.delete({ where: { id: params.id } });
-        return NextResponse.json({ ok: true });
+        revalidatePaths([...REVALIDATE_GROUPS.institucional, "/admin/links-externos"]);
+        return jsonNoStore({ ok: true });
     } catch (err) {
         console.error("Erro ao excluir link:", err);
-        return NextResponse.json({ error: "Erro ao excluir link" }, { status: 500 });
+        return jsonNoStore({ error: "Erro ao excluir link" }, { status: 500 });
     }
 }

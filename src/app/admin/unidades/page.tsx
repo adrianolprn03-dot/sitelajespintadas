@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { FaPlus, FaEdit, FaTrash, FaHospital, FaHandsHelping, FaGraduationCap, FaPalette } from "react-icons/fa";
+import toast from "react-hot-toast";
 
 type UnidadeAtendimento = {
     id: string;
@@ -15,8 +16,17 @@ type UnidadeAtendimento = {
     ativa: boolean;
 };
 
+const normalizeTipoKey = (tipo: string) => {
+    const t = (tipo || "").toLowerCase();
+    if (t.includes("saud") || t.includes("saúd")) return "saude";
+    if (t.includes("socia")) return "social";
+    if (t.includes("educa")) return "educacao";
+    if (t.includes("cultur")) return "cultura";
+    return t;
+};
+
 const getTipoIcon = (tipo: string) => {
-    switch (tipo) {
+    switch (normalizeTipoKey(tipo)) {
         case "saude": return <FaHospital className="text-red-500" />;
         case "social": return <FaHandsHelping className="text-orange-500" />;
         case "educacao": return <FaGraduationCap className="text-blue-500" />;
@@ -26,7 +36,7 @@ const getTipoIcon = (tipo: string) => {
 };
 
 const getTipoLabel = (tipo: string) => {
-    switch (tipo) {
+    switch (normalizeTipoKey(tipo)) {
         case "saude": return "Saúde";
         case "social": return "Social";
         case "educacao": return "Educação";
@@ -42,10 +52,10 @@ export default function ListarUnidadesAtendimento() {
 
     const fetchUnidades = async () => {
         try {
-            const res = await fetch("/api/unidades");
+            const res = await fetch("/api/unidades?all=true", { cache: "no-store" });
             if (!res.ok) throw new Error("Erro ao buscar unidades");
             const data = await res.json();
-            setUnidades(data);
+            setUnidades(Array.isArray(data) ? data : []);
         } catch (err: any) {
             setError(err.message);
         } finally {
@@ -60,11 +70,14 @@ export default function ListarUnidadesAtendimento() {
     const handleDelete = async (id: string) => {
         if (!confirm("Tem certeza que deseja excluir esta unidade?")) return;
         try {
-            const res = await fetch(`/api/unidades/${id}`, { method: "DELETE" });
-            if (!res.ok) throw new Error("Erro ao excluir");
+            const res = await fetch(`/api/unidades/${id}`, { method: "DELETE", cache: "no-store" });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(data.error || "Erro ao excluir unidade");
+            setUnidades((prev) => prev.filter((u) => u.id !== id));
+            toast.success("Unidade removida com sucesso!");
             fetchUnidades();
         } catch (err: any) {
-            alert(err.message);
+            toast.error(err.message || "Erro ao excluir unidade");
         }
     };
 
@@ -116,7 +129,14 @@ export default function ListarUnidadesAtendimento() {
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <div className="font-bold text-gray-900">{unidade.nome}</div>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="font-bold text-gray-900">{unidade.nome}</span>
+                                                    {!unidade.ativa && (
+                                                        <span className="px-2 py-0.5 text-[10px] font-bold uppercase rounded-full bg-gray-100 text-gray-500">
+                                                            Inativa
+                                                        </span>
+                                                    )}
+                                                </div>
                                                 <div className="text-xs text-gray-500 max-w-xs truncate">{unidade.descricao}</div>
                                             </td>
                                             <td className="px-6 py-4 text-sm text-gray-600 max-w-xs truncate">

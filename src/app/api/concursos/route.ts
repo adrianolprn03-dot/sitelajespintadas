@@ -1,5 +1,7 @@
+export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { jsonNoStore } from "@/lib/revalidate-site";
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
@@ -56,7 +58,7 @@ export async function GET(request: Request) {
             orderBy: { dataPublicacao: "desc" },
         });
 
-        return NextResponse.json({ items });
+        return jsonNoStore({ items });
     } catch (error) {
         console.error("Erro na API de concursos:", error);
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

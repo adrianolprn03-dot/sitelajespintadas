@@ -5,6 +5,9 @@ import SiconfiDashboard from "@/components/transparencia/integracao/SiconfiDashb
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
 import RelatoriosGraficosClient from "@/components/transparencia/RelatoriosGraficosClient";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function RelatoriosPage() {
     // Busca estatísticas reais para PNTP
     const [esicStats, ouvidoriaStats, linksExternos] = await Promise.all([

@@ -2,6 +2,9 @@ import { prisma } from "@/lib/prisma";
 import type { Metadata } from "next";
 import ConcursosClient from "./_ConcursosClient";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata: Metadata = {
     title: "Concursos e Seleções | Portal da Transparência",
     description: "Acompanhe todos os editais de concursos públicos e processos seletivos da Prefeitura de Lajes Pintadas.",

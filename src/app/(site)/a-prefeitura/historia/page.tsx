@@ -4,6 +4,9 @@ import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { MUNICIPIO } from "@/config/municipio";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata: Metadata = {
     title: `Nossa História | ${MUNICIPIO.nomeCompleto}`,
     description: `Conheça a história, origens e o desenvolvimento do município de ${MUNICIPIO.nome} – ${MUNICIPIO.uf}.`,

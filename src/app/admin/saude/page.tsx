@@ -203,12 +203,17 @@ export default function AdminSaudePage() {
         if (!confirm("Tem certeza que deseja excluir este documento da gestão da saúde?")) return;
         setDeletingId(id);
         try {
-            const res = await fetch(`/api/admin/saude/${id}`, { method: "DELETE" });
+            const res = await fetch(`/api/admin/saude/${id}`, {
+                method: "DELETE",
+                cache: "no-store",
+            });
+            const data = await res.json().catch(() => ({}));
             if (res.ok) {
+                setDocumentos((prev) => prev.filter((doc) => doc.id !== id));
                 setFeedback({ tipo: "sucesso", mensagem: "Documento removido com sucesso." });
                 fetchDocumentos();
             } else {
-                setFeedback({ tipo: "erro", mensagem: "Erro ao excluir documento." });
+                setFeedback({ tipo: "erro", mensagem: data.error || "Erro ao excluir documento." });
             }
         } catch (error) {
             setFeedback({ tipo: "erro", mensagem: "Falha na requisição de exclusão." });

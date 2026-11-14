@@ -95,11 +95,10 @@ export default function NovoConvenioPage() {
                         Tipo de Operação * (Critério PNTP 5.2)
                     </label>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <label className={`p-4 rounded-xl border flex items-center gap-3 cursor-pointer transition-all ${
-                            form.tipoConvenio === "recebido"
-                                ? "bg-white border-blue-600 ring-2 ring-blue-500/10 shadow-sm"
-                                : "bg-white/60 border-gray-200 hover:border-gray-300"
-                        }`}>
+                        <label className={`p-4 rounded-xl border flex items-center gap-3 cursor-pointer transition-all ${form.tipoConvenio === "recebido"
+                            ? "bg-white border-blue-600 ring-2 ring-blue-500/10 shadow-sm"
+                            : "bg-white/60 border-gray-200 hover:border-gray-300"
+                            }`}>
                             <input
                                 type="radio"
                                 name="tipoConvenio"
@@ -114,11 +113,10 @@ export default function NovoConvenioPage() {
                             </div>
                         </label>
 
-                        <label className={`p-4 rounded-xl border flex items-center gap-3 cursor-pointer transition-all ${
-                            form.tipoConvenio === "concedido"
-                                ? "bg-white border-pink-600 ring-2 ring-pink-500/10 shadow-sm"
-                                : "bg-white/60 border-gray-200 hover:border-gray-300"
-                        }`}>
+                        <label className={`p-4 rounded-xl border flex items-center gap-3 cursor-pointer transition-all ${form.tipoConvenio === "concedido"
+                            ? "bg-white border-pink-600 ring-2 ring-pink-500/10 shadow-sm"
+                            : "bg-white/60 border-gray-200 hover:border-gray-300"
+                            }`}>
                             <input
                                 type="radio"
                                 name="tipoConvenio"

@@ -10,6 +10,9 @@ import {
     HiOutlineCalendar
 } from "react-icons/hi2";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata: Metadata = {
     title: "Unidades Escolares | Prefeitura de Lajes Pintadas – RN",
     description: "Creches e Escolas da rede básica de ensino no município.",
@@ -17,7 +20,7 @@ export const metadata: Metadata = {
 
 export default async function UnidadesEscolaresPage() {
     const unidades = await (prisma as any).unidadeAtendimento.findMany({
-        where: { tipo: "Educação", ativa: true },
+        where: { tipo: { in: ["Educação", "educacao", "EDUCAÇÃO", "EDUCACAO", "Educacao"] }, ativa: true },
         orderBy: { nome: 'asc' }
     });
 

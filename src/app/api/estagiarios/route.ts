@@ -1,5 +1,7 @@
+export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { jsonNoStore } from "@/lib/revalidate-site";
 
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
@@ -48,7 +50,7 @@ export async function GET(req: Request) {
             orderBy: { nome: "asc" }
         });
 
-        return NextResponse.json({ items });
+        return jsonNoStore({ items });
     } catch (error) {
         return NextResponse.json({ error: "Erro ao buscar estagiários" }, { status: 500 });
     }

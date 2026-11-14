@@ -25,6 +25,8 @@ type Ata = {
     dataVencimento: string;
     secretaria: string;
     status: "vigente" | "vencida" | "cancelada";
+    arquivoUrl?: string | null;
+    hrefDetalhes?: string | null;
 };
 
 const statusConfig: Record<string, { label: string; cor: string }> = {
@@ -33,29 +35,25 @@ const statusConfig: Record<string, { label: string; cor: string }> = {
     cancelada: { label: "Cancelada", cor: "bg-rose-50 text-rose-700 border-rose-100" },
 };
 
-const MOCK_ATA: Ata[] = [
-    {
-        id: "1", numero: "001/2026", objeto: "Registro de preços para aquisição de gêneros alimentícios destinados à merenda escolar da rede municipal.",
-        fornecedor: "Distribuidora Alimentos Norte LTDA", cnpj: "12.345.678/0001-99",
-        valor: 95000, dataRegistro: "2026-01-10", dataVencimento: "2027-01-10",
-        secretaria: "Educação", status: "vigente"
-    },
-    {
-        id: "2", numero: "002/2026", objeto: "Registro de preços para material de limpeza, higienização e descartáveis diversos.",
-        fornecedor: "Produtos de Limpeza Sul EIRELI", cnpj: "98.765.432/0001-11",
-        valor: 38500, dataRegistro: "2026-01-25", dataVencimento: "2027-01-25",
-        secretaria: "Administração", status: "vigente"
-    },
-    {
-        id: "3", numero: "005/2025", objeto: "Registro de preços para aquisição de combustíveis (Gasolina e Diesel) para frota municipal.",
-        fornecedor: "Posto de Combustíveis Central ME", cnpj: "11.222.333/0001-44",
-        valor: 180000, dataRegistro: "2025-03-01", dataVencimento: "2026-02-28",
-        secretaria: "Obras e Infraestrutura", status: "vencida"
-    },
-];
-
 function fmt(v: number) {
     return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
+
+function extrairPrimeiroArquivoLicitacao(lic: any): string | null {
+    if (lic.contratos?.[0]?.instrumentoIntegralUrl) return lic.contratos[0].instrumentoIntegralUrl;
+    if (lic.editalUrl) return lic.editalUrl;
+    for (const raw of [lic.fasesDocumentos, lic.documentos]) {
+        if (!raw) continue;
+        try {
+            const arr = typeof raw === "string" ? JSON.parse(raw) : raw;
+            if (Array.isArray(arr) && arr.length > 0 && arr[0]?.url) {
+                return arr[0].url;
+            }
+        } catch {
+            // Ignora JSON inválido
+        }
+    }
+    return null;
 }
 
 export default function AtasRegistroClient() {
@@ -66,12 +64,113 @@ export default function AtasRegistroClient() {
     const [statusFiltro, setStatusFiltro] = useState("");
 
     useEffect(() => {
-        setLoading(true);
-        setTimeout(() => {
-            setAtas(MOCK_ATA);
-            setLoading(false);
-        }, 800);
-    }, [ano, statusFiltro]);
+        let ativo = true;
+        async function fetchAtas() {
+            setLoading(true);
+            try {
+                const licParams = new URLSearchParams({ ataRegistroPreco: "true" });
+                const docParams = new URLSearchParams({ tipo: "Ata de Registro de Preços,Ata SRP" });
+                if (ano) {
+                    licParams.set("ano", ano);
+                    docParams.set("ano", ano);
+                }
+
+                const [resLic, resDoc] = await Promise.all([
+                    fetch(`/api/licitacoes?${licParams.toString()}`, { cache: "no-store" }),
+                    fetch(`/api/documentos?${docParams.toString()}`, { cache: "no-store" }),
+                ]);
+
+                const mapped: Ata[] = [];
+
+                if (resLic.ok) {
+                    const dataLic = await resLic.json();
+                    const listaLic = Array.isArray(dataLic.items) ? dataLic.items : [];
+                    for (const lic of listaLic) {
+                        const contrato = lic.contratos?.[0];
+                        const statusNorm = String(lic.status || "").toLowerCase();
+                        let status: "vigente" | "vencida" | "cancelada" = "vigente";
+                        if (["cancelada", "revogada", "anulada", "fracassada", "deserta"].includes(statusNorm)) {
+                            status = "cancelada";
+                        } else if (
+                            contrato?.dataFim &&
+                            new Date(contrato.dataFim).getTime() < Date.now()
+                        ) {
+                            status = "vencida";
+                        } else if (["encerrada", "concluida"].includes(statusNorm) && !contrato) {
+                            status = "vencida";
+                        }
+
+                        const dataInicio =
+                            contrato?.dataInicio ||
+                            lic.dataHomologacao ||
+                            lic.dataPublicacao ||
+                            lic.dataAbertura ||
+                            lic.criadoEm;
+                        const dataFim =
+                            contrato?.dataFim ||
+                            lic.dataEncerramento ||
+                            new Date(
+                                new Date(dataInicio).getTime() + 365 * 24 * 60 * 60 * 1000
+                            ).toISOString();
+
+                        mapped.push({
+                            id: `lic-${lic.id}`,
+                            numero: `${lic.numero}/${lic.ano}`,
+                            objeto: lic.objeto,
+                            fornecedor: contrato?.fornecedor || lic.resultado || "Fornecedor homologado no processo",
+                            cnpj: contrato?.cnpjFornecedor || "Conforme processo licitatório",
+                            valor: Number(contrato?.valor ?? lic.valorHomologado ?? lic.valorEstimado ?? lic.valor ?? 0),
+                            dataRegistro: dataInicio,
+                            dataVencimento: dataFim,
+                            secretaria: lic.secretaria || "Setor de Licitações",
+                            status,
+                            arquivoUrl: extrairPrimeiroArquivoLicitacao(lic),
+                            hrefDetalhes: `/transparencia/licitacoes`,
+                        });
+                    }
+                }
+
+                if (resDoc.ok) {
+                    const dataDoc = await resDoc.json();
+                    const listaDoc = Array.isArray(dataDoc) ? dataDoc : [];
+                    for (const doc of listaDoc) {
+                        if (doc.ativo === false) continue;
+                        const docAno = doc.ano || new Date(doc.criadoEm).getFullYear();
+                        const dataRegistro = doc.criadoEm || new Date().toISOString();
+                        const dataVencimento = new Date(
+                            new Date(dataRegistro).getTime() + 365 * 24 * 60 * 60 * 1000
+                        ).toISOString();
+
+                        mapped.push({
+                            id: `doc-${doc.id}`,
+                            numero: doc.competencia || `${docAno}`,
+                            objeto: doc.descricao ? `${doc.titulo} — ${doc.descricao}` : doc.titulo,
+                            fornecedor: doc.orgaoResponsavel || "Registro Oficial Publicado",
+                            cnpj: "Documento Anexo",
+                            valor: 0,
+                            dataRegistro,
+                            dataVencimento,
+                            secretaria: doc.secretaria || "Administração Municipal",
+                            status: "vigente",
+                            arquivoUrl: doc.arquivo || doc.documentUrl || null,
+                            hrefDetalhes: doc.arquivo || doc.documentUrl || null,
+                        });
+                    }
+                }
+
+                if (ativo) setAtas(mapped);
+            } catch (error) {
+                console.error("Erro ao carregar Atas de Registro de Preços:", error);
+                if (ativo) setAtas([]);
+            } finally {
+                if (ativo) setLoading(false);
+            }
+        }
+        fetchAtas();
+        return () => {
+            ativo = false;
+        };
+    }, [ano]);
 
     const filtradas = atas.filter(a => {
         const b = busca.toLowerCase();
@@ -305,12 +404,31 @@ export default function AtasRegistroClient() {
                                                 </div>
 
                                                 <div className="flex items-center justify-end gap-4">
-                                                    <button className="h-14 px-8 bg-white text-slate-500 border border-slate-200 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center gap-2">
-                                                        <FaDownload size={12} /> Baixar Ata
-                                                    </button>
-                                                    <button className="h-14 w-14 flex items-center justify-center bg-indigo-600 text-white rounded-2xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-500/20 group/btn">
-                                                        <FaArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
-                                                    </button>
+                                                    {a.arquivoUrl ? (
+                                                        <a
+                                                            href={a.arquivoUrl}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="h-14 px-8 bg-white text-slate-600 border border-slate-200 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center gap-2"
+                                                        >
+                                                            <FaDownload size={12} /> Baixar Ata
+                                                        </a>
+                                                    ) : (
+                                                        <span className="h-14 px-6 bg-slate-50 text-slate-400 border border-slate-100 rounded-2xl text-[10px] font-bold uppercase tracking-widest flex items-center">
+                                                            Sem anexo
+                                                        </span>
+                                                    )}
+                                                    {a.hrefDetalhes && (
+                                                        <a
+                                                            href={a.hrefDetalhes}
+                                                            target={a.hrefDetalhes.startsWith("http") ? "_blank" : undefined}
+                                                            rel={a.hrefDetalhes.startsWith("http") ? "noopener noreferrer" : undefined}
+                                                            aria-label={`Ver detalhes da ARP ${a.numero}`}
+                                                            className="h-14 w-14 flex items-center justify-center bg-indigo-600 text-white rounded-2xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-500/20 group/btn"
+                                                        >
+                                                            <FaArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
+                                                        </a>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>

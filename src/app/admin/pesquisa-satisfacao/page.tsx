@@ -5,6 +5,8 @@ import { prisma } from "@/lib/prisma";
 import PageHeader from "@/components/PageHeader";
 import { FaChartBar, FaStar, FaUsers } from "react-icons/fa";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
     title: "Relatório de Pesquisa de Satisfação - Admin",
 };

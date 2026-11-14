@@ -2,6 +2,9 @@ import { prisma } from "@/lib/prisma";
 import FrotaClient from "./_FrotaClient";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata: Metadata = {
     title: "Frota Municipal | Portal da Transparência",
     description: "Relação de veículos e máquinas pesadas pertencentes ao patrimônio do município de Lajes Pintadas – RN.",

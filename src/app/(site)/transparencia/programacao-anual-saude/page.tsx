@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
 import PlanoSaudeClientPage from "@/components/transparencia/PlanoSaudeClientPage";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata: Metadata = {
     title: "Programação Anual de Saúde (PAS) | Prefeitura de Lajes Pintadas – RN",
     description: "Programação Anual de Saúde (PAS) com metas, ações e alocação de recursos do SUS no município de Lajes Pintadas – RN.",

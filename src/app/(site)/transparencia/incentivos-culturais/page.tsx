@@ -11,6 +11,7 @@ export const metadata: Metadata = {
     description: "Editais, recursos e resultados dos programas de fomento à cultura, esporte e lazer do município.",
 };
 
+export const dynamic = "force-dynamic";
 export const revalidate = 0; // Garantir dados sempre atualizados em tempo real
 
 const ICON_MAP: Record<string, any> = {

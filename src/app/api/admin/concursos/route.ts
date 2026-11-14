@@ -1,32 +1,29 @@
 export const dynamic = "force-dynamic";
-import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-
+import { jsonNoStore, revalidatePaths, REVALIDATE_GROUPS } from "@/lib/revalidate-site";
 
 export async function GET() {
-
     try {
         const items = await prisma.concurso.findMany({ orderBy: { dataPublicacao: "desc" } });
-        return NextResponse.json(items);
+        return jsonNoStore(items);
     } catch {
-        return NextResponse.json({ error: "Erro" }, { status: 500 });
+        return jsonNoStore({ error: "Erro" }, { status: 500 });
     }
 }
 
 export async function POST(req: Request) {
     const session = await getServerSession(authOptions);
-    if (!session) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+    if (!session) return jsonNoStore({ error: "Não autorizado" }, { status: 401 });
     try {
         const body = await req.json();
-        const { titulo, vagas, dataPublicacao, ...rest } = body;
+        const { titulo, vagas, dataPublicacao } = body;
 
         if (!titulo || titulo.trim() === "") {
-            return NextResponse.json({ error: "O título é obrigatório" }, { status: 400 });
+            return jsonNoStore({ error: "O título é obrigatório" }, { status: 400 });
         }
-        
-        // Gerar slug único
+
         const slug = titulo
             .toLowerCase()
             .normalize("NFD")
@@ -34,7 +31,6 @@ export async function POST(req: Request) {
             .replace(/[^\w\s-]/g, "")
             .replace(/\s+/g, "-");
 
-        // Validar data
         let finalDate = new Date();
         if (dataPublicacao) {
             const parsedDate = new Date(dataPublicacao);
@@ -43,22 +39,34 @@ export async function POST(req: Request) {
             }
         }
 
-        const item = await prisma.concurso.create({ 
+        const item = await prisma.concurso.create({
             data: {
-                ...rest,
-                titulo,
+                titulo: titulo.trim(),
                 slug: `${slug}-${Date.now()}`,
+                tipo: String(body.tipo || "Concurso Público"),
+                status: String(body.status || "aberto"),
                 vagas: String(vagas || ""),
-                dataPublicacao: finalDate
-            } 
+                dataPublicacao: finalDate,
+                linkEdital: body.linkEdital || null,
+                fasesAtos:
+                    typeof body.fasesAtos === "string"
+                        ? body.fasesAtos
+                        : JSON.stringify(body.fasesAtos || []),
+                ativo: body.ativo !== undefined ? Boolean(body.ativo) : true,
+                descricao: body.descricao || null,
+            },
         });
-        return NextResponse.json(item);
+        revalidatePaths(REVALIDATE_GROUPS.concursos);
+        return jsonNoStore(item);
     } catch (error) {
         console.error("Erro ao criar concurso:", error);
-        return NextResponse.json({ 
-            error: "Erro ao salvar concurso no banco de dados.",
-            details: error instanceof Error ? error.message : String(error)
-        }, { status: 500 });
+        return jsonNoStore(
+            {
+                error: "Erro ao salvar concurso no banco de dados.",
+                details: error instanceof Error ? error.message : String(error),
+            },
+            { status: 500 }
+        );
     }
 }
 

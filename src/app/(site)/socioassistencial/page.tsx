@@ -8,6 +8,9 @@ import {
     HiOutlinePhone 
 } from "react-icons/hi2";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata: Metadata = {
     title: "Centros Socioassistenciais | Prefeitura de Lajes Pintadas – RN",
     description: "CRAS, CREAS e Centros de Atenção Social na cidade de Lajes Pintadas",
@@ -15,7 +18,7 @@ export const metadata: Metadata = {
 
 export default async function SocioassistencialPage() {
     const unidades = await (prisma as any).unidadeAtendimento.findMany({
-        where: { tipo: "Socioassistencial", ativa: true },
+        where: { tipo: { in: ["Socioassistencial", "social", "SOCIOASSISTENCIAL", "Social"] }, ativa: true },
         orderBy: { nome: 'asc' }
     });
 

@@ -98,7 +98,7 @@ export default function AdminCentralRegulacaoPage() {
 
     const fetchData = async () => {
         try {
-            const res = await fetch("/api/admin/central-regulacao");
+            const res = await fetch("/api/admin/central-regulacao", { cache: "no-store" });
             const data = await res.json();
             if (data.itens) setItens(data.itens);
             if (data.config) setConfig(data.config);
@@ -168,7 +168,8 @@ export default function AdminCentralRegulacaoPage() {
                 setIsModalOpen(false);
                 fetchData();
             } else {
-                toast.error("Erro ao salvar dados da fila.");
+                const err = await res.json().catch(() => null);
+                toast.error(err?.error || "Erro ao salvar dados da fila.");
             }
         } catch {
             toast.error("Erro de conexão.");
@@ -181,12 +182,17 @@ export default function AdminCentralRegulacaoPage() {
         if (!confirm("Tem certeza que deseja excluir esta fila de regulação?")) return;
         setDeletingId(id);
         try {
-            const res = await fetch(`/api/admin/central-regulacao/${id}`, { method: "DELETE" });
+            const res = await fetch(`/api/admin/central-regulacao/${id}`, {
+                method: "DELETE",
+                cache: "no-store",
+            });
             if (res.ok) {
+                setItens((prev) => prev.filter((item) => item.id !== id));
                 toast.success("Fila removida com sucesso!");
                 fetchData();
             } else {
-                toast.error("Erro ao remover fila.");
+                const err = await res.json().catch(() => null);
+                toast.error(err?.error || "Erro ao remover fila.");
             }
         } catch {
             toast.error("Erro de conexão.");

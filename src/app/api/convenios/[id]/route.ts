@@ -1,20 +1,26 @@
 export const dynamic = "force-dynamic";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { jsonNoStore, revalidatePaths, REVALIDATE_GROUPS } from "@/lib/revalidate-site";
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
     try {
         const item = await prisma.convenio.findUnique({
             where: { id: params.id },
         });
-        if (!item) return NextResponse.json({ error: "Não encontrado" }, { status: 404 });
-        return NextResponse.json(item);
-    } catch (error) {
-        return NextResponse.json({ error: "Erro interno" }, { status: 500 });
+        if (!item) return jsonNoStore({ error: "Não encontrado" }, { status: 404 });
+        return jsonNoStore(item);
+    } catch {
+        return jsonNoStore({ error: "Erro interno" }, { status: 500 });
     }
 }
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+    const session = await getServerSession(authOptions);
+    if (!session) return jsonNoStore({ error: "Não autorizado" }, { status: 401 });
+
     try {
         const body = await req.json();
         const updated = await prisma.convenio.update({
@@ -36,12 +42,14 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
                 status: body.status || undefined,
                 arquivoInteiroTeor: body.arquivoInteiroTeor !== undefined ? (body.arquivoInteiroTeor ? String(body.arquivoInteiroTeor).trim() : null) : undefined,
                 obrigacoes: body.obrigacoes !== undefined ? String(body.obrigacoes).trim() : undefined,
+                dataAtualizacaoEfetiva: new Date(),
             },
         });
-        return NextResponse.json(updated);
+        revalidatePaths(REVALIDATE_GROUPS.convenios);
+        return jsonNoStore(updated);
     } catch (error) {
         console.error("Erro ao atualizar convênio:", error);
-        return NextResponse.json({ error: "Erro interno ao atualizar convênio" }, { status: 500 });
+        return jsonNoStore({ error: "Erro interno ao atualizar convênio" }, { status: 500 });
     }
 }
 
@@ -49,13 +57,17 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     return PUT(req, { params });
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
+    const session = await getServerSession(authOptions);
+    if (!session) return jsonNoStore({ error: "Não autorizado" }, { status: 401 });
+
     try {
         await prisma.convenio.delete({
             where: { id: params.id },
         });
-        return NextResponse.json({ message: "Excluído com sucesso" });
-    } catch (error) {
-        return NextResponse.json({ error: "Erro interno" }, { status: 500 });
+        revalidatePaths(REVALIDATE_GROUPS.convenios);
+        return jsonNoStore({ message: "Excluído com sucesso" });
+    } catch {
+        return jsonNoStore({ error: "Erro interno" }, { status: 500 });
     }
 }

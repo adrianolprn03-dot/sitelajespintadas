@@ -1,41 +1,51 @@
 export const dynamic = "force-dynamic";
-import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { jsonNoStore, revalidatePaths, REVALIDATE_GROUPS } from "@/lib/revalidate-site";
 
 export async function PUT(req: Request, context: { params: any }) {
     const session = await getServerSession(authOptions);
-    if (!session) return NextResponse.json({ error: "Privado" }, { status: 401 });
+    if (!session) return jsonNoStore({ error: "Privado" }, { status: 401 });
     try {
         const params = await context.params;
         const body = await req.json();
-        const { vagas, dataPublicacao, ...rest } = body;
-        
-        const updateData: any = { ...rest };
-        if (vagas !== undefined) updateData.vagas = String(vagas);
-        if (dataPublicacao) updateData.dataPublicacao = new Date(dataPublicacao);
 
-        const item = await prisma.concurso.update({ 
-            where: { id: params.id }, 
-            data: updateData 
+        const updateData: any = {};
+        if (body.titulo !== undefined) updateData.titulo = String(body.titulo).trim();
+        if (body.tipo !== undefined) updateData.tipo = String(body.tipo);
+        if (body.status !== undefined) updateData.status = String(body.status);
+        if (body.vagas !== undefined) updateData.vagas = String(body.vagas);
+        if (body.dataPublicacao) updateData.dataPublicacao = new Date(body.dataPublicacao);
+        if (body.linkEdital !== undefined) updateData.linkEdital = body.linkEdital || null;
+        if (body.fasesAtos !== undefined) {
+            updateData.fasesAtos = typeof body.fasesAtos === "string" ? body.fasesAtos : JSON.stringify(body.fasesAtos || []);
+        }
+        if (body.ativo !== undefined) updateData.ativo = Boolean(body.ativo);
+        if (body.descricao !== undefined) updateData.descricao = body.descricao || null;
+
+        const item = await prisma.concurso.update({
+            where: { id: params.id },
+            data: updateData,
         });
-        return NextResponse.json(item);
-    } catch (error) { 
+        revalidatePaths(REVALIDATE_GROUPS.concursos);
+        return jsonNoStore(item);
+    } catch (error) {
         console.error("Erro ao atualizar:", error);
-        return NextResponse.json({ error: "Erro ao atualizar" }, { status: 500 }); 
+        return jsonNoStore({ error: "Erro ao atualizar" }, { status: 500 });
     }
 }
 
-export async function DELETE(req: Request, context: { params: any }) {
+export async function DELETE(_req: Request, context: { params: any }) {
     const session = await getServerSession(authOptions);
-    if (!session) return NextResponse.json({ error: "Privado" }, { status: 401 });
+    if (!session) return jsonNoStore({ error: "Privado" }, { status: 401 });
     try {
         const params = await context.params;
         await prisma.concurso.delete({ where: { id: params.id } });
-        return NextResponse.json({ success: true });
-    } catch (error) { 
+        revalidatePaths(REVALIDATE_GROUPS.concursos);
+        return jsonNoStore({ success: true });
+    } catch (error) {
         console.error("Erro ao deletar concurso:", error);
-        return NextResponse.json({ error: "Erro" }, { status: 500 }); 
+        return jsonNoStore({ error: "Erro" }, { status: 500 });
     }
 }

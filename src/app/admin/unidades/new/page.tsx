@@ -27,12 +27,23 @@ export default function UnidadeForm() {
         if (isEditing) {
             const fetchUnidade = async () => {
                 try {
-                    const res = await fetch(`/api/unidades/${id}`);
+                    const res = await fetch(`/api/unidades/${id}`, { cache: "no-store" });
                     if (!res.ok) throw new Error("Unidade não encontrada");
                     const data = await res.json();
-                    
+                    const rawTipo = (data.tipo || "").toLowerCase();
+                    const normalizedTipo =
+                        rawTipo.includes("saud") || rawTipo.includes("saúd")
+                            ? "saude"
+                            : rawTipo.includes("socia")
+                              ? "social"
+                              : rawTipo.includes("educa")
+                                ? "educacao"
+                                : rawTipo.includes("cultur")
+                                  ? "cultura"
+                                  : data.tipo || "saude";
+
                     setNome(data.nome);
-                    setTipo(data.tipo);
+                    setTipo(normalizedTipo);
                     setDescricao(data.descricao);
                     setEndereco(data.endereco);
                     setTelefone(data.telefone || "");
@@ -196,6 +207,19 @@ export default function UnidadeForm() {
                                 <strong>Preview:</strong> Se o link for válido, o mapa aparecerá na página pública do cidadão.
                             </div>
                         )}
+                    </div>
+
+                    <div className="col-span-1 md:col-span-2 flex items-center gap-3 pt-2">
+                        <input
+                            type="checkbox"
+                            id="unidadeAtivaCheck"
+                            checked={ativa}
+                            onChange={(e) => setAtiva(e.target.checked)}
+                            className="w-4 h-4 text-blue-600 rounded"
+                        />
+                        <label htmlFor="unidadeAtivaCheck" className="text-sm font-bold text-gray-700 cursor-pointer">
+                            Unidade Ativa e Visível no Site
+                        </label>
                     </div>
                 </div>
 

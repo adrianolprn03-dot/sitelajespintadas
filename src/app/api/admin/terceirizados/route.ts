@@ -1,18 +1,25 @@
+export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { jsonNoStore, revalidatePaths, REVALIDATE_GROUPS } from "@/lib/revalidate-site";
 
 export async function GET() {
     try {
         const items = await prisma.terceirizado.findMany({
             orderBy: { criadoEm: "desc" }
         });
-        return NextResponse.json(items);
-    } catch (error) {
+        return jsonNoStore(items);
+    } catch {
         return NextResponse.json({ error: "Erro ao buscar terceirizados" }, { status: 500 });
     }
 }
 
 export async function POST(req: Request) {
+    const session = await getServerSession(authOptions);
+    if (!session) return NextResponse.json({ error: "Não autorizado. Faça login novamente." }, { status: 401 });
+
     try {
         const body = await req.json();
         const item = await prisma.terceirizado.create({
@@ -26,8 +33,9 @@ export async function POST(req: Request) {
                 status: body.status || "ativo"
             }
         });
+        revalidatePaths(REVALIDATE_GROUPS.pessoal);
         return NextResponse.json(item);
-    } catch (error) {
+    } catch {
         return NextResponse.json({ error: "Erro ao criar terceirizado" }, { status: 500 });
     }
 }

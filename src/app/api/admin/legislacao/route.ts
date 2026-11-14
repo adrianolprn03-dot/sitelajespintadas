@@ -1,6 +1,9 @@
 export const dynamic = "force-dynamic";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { jsonNoStore, revalidatePaths, REVALIDATE_GROUPS } from "@/lib/revalidate-site";
 
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
@@ -24,27 +27,41 @@ export async function GET(request: NextRequest) {
         prisma.legislacao.count({ where }),
     ]);
 
-    return NextResponse.json({ items, total, page, limit });
+    return jsonNoStore({ items, total, page, limit });
 }
 
 export async function POST(request: NextRequest) {
+    const session = await getServerSession(authOptions);
+    if (!session) return jsonNoStore({ error: "Não autorizado" }, { status: 401 });
+
     const body = await request.json();
     const { tipo, numero, ano, ementa, arquivo } = body;
 
     if (!tipo || !numero || !ano || !ementa) {
-        return NextResponse.json({ error: "Campos obrigatórios: tipo, numero, ano, ementa" }, { status: 400 });
+        return jsonNoStore({ error: "Campos obrigatórios: tipo, numero, ano, ementa" }, { status: 400 });
     }
 
     const item = await prisma.legislacao.create({
         data: {
             tipo,
             numero,
-            ano: parseInt(ano),
+            ano: parseInt(String(ano), 10),
             ementa,
             arquivo: arquivo || null,
+            categoria: body.categoria || null,
+            dataAto: body.dataAto ? new Date(body.dataAto) : null,
+            documentUrl: body.documentUrl || null,
+            arquivoEditavelUrl: body.arquivoEditavelUrl || null,
+            situacaoVigencia: body.situacaoVigencia || "vigente",
+            atoRelacionado: body.atoRelacionado || null,
+            orgaoResponsavel: body.orgaoResponsavel || "Gabinete do Prefeito",
+            situacaoPublicacao: body.situacaoPublicacao || "publicado",
+            ativo: body.ativo !== undefined ? Boolean(body.ativo) : true,
+            dataAtualizacaoEfetiva: new Date(),
         },
     });
 
-    return NextResponse.json(item, { status: 201 });
+    revalidatePaths(REVALIDATE_GROUPS.legislacao);
+    return jsonNoStore(item, { status: 201 });
 }
 

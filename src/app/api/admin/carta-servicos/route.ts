@@ -1,34 +1,49 @@
 export const dynamic = "force-dynamic";
-import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { jsonNoStore, revalidatePaths, REVALIDATE_GROUPS } from "@/lib/revalidate-site";
 
 export async function GET() {
     try {
         const items = await prisma.servicoCarta.findMany({ orderBy: { categoria: "asc" } });
-        return NextResponse.json(items);
+        return jsonNoStore(items);
     } catch {
-        return NextResponse.json({ error: "Erro" }, { status: 500 });
+        return jsonNoStore({ error: "Erro" }, { status: 500 });
     }
 }
 
 export async function POST(req: Request) {
     const session = await getServerSession(authOptions);
-    if (!session) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+    if (!session) return jsonNoStore({ error: "Não autorizado" }, { status: 401 });
     try {
         const body = await req.json();
-        const item = await prisma.servicoCarta.create({ 
+        const ordemParsed = body.ordem !== undefined ? parseInt(String(body.ordem), 10) : 0;
+        const item = await prisma.servicoCarta.create({
             data: {
-                ...body,
-                ativo: body.ativo ?? true,
-                ordem: body.ordem ?? 0
-            } 
+                nome: String(body.nome || "").trim(),
+                categoria: String(body.categoria || "").trim(),
+                descricao: String(body.descricao || "").trim(),
+                local: String(body.local || "").trim(),
+                prazo: String(body.prazo || "").trim(),
+                documentos: body.documentos || null,
+                ativo: body.ativo !== undefined ? Boolean(body.ativo) : true,
+                ordem: Number.isNaN(ordemParsed) ? 0 : ordemParsed,
+                etapas: body.etapas || null,
+                formasAcesso: body.formasAcesso || null,
+                linkAvaliacao: body.linkAvaliacao || "/transparencia/carta-servicos/avaliar",
+                previsaoEspera: body.previsaoEspera || null,
+                prioridades: body.prioridades || null,
+                requisitos: body.requisitos || null,
+                statusServico: body.statusServico || null,
+                linkAcesso: body.linkAcesso || null,
+            },
         });
-        return NextResponse.json(item);
+        revalidatePaths(REVALIDATE_GROUPS.institucional);
+        return jsonNoStore(item);
     } catch (error) {
         console.error("Erro ao criar serviço:", error);
-        return NextResponse.json({ error: "Erro ao criar serviço" }, { status: 500 });
+        return jsonNoStore({ error: "Erro ao criar serviço" }, { status: 500 });
     }
 }
 

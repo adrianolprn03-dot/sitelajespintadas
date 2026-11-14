@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
 import PlanoSaudeClientPage from "@/components/transparencia/PlanoSaudeClientPage";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata: Metadata = {
     title: "Plano Municipal de Saúde | Prefeitura de Lajes Pintadas – RN",
     description: "Plano Municipal de Saúde (PMS), Programação Anual (PAS), Relatório Anual de Gestão (RAG) e Relatórios Quadrimestrais (RDQA).",

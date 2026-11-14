@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireServerAuth, canAccessSecretaria } from "@/lib/rbac";
 import { registrarHistoricoAlteracao } from "@/lib/audit";
+import { jsonNoStore, revalidatePaths, REVALIDATE_GROUPS } from "@/lib/revalidate-site";
 
 export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
@@ -12,12 +13,14 @@ export async function GET(req: NextRequest) {
     const ano = searchParams.get("ano");
     const mes = searchParams.get("mes");
     const query = searchParams.get("query");
+    const ataRegistroPreco = searchParams.get("ataRegistroPreco");
 
     const where: any = {};
     if (status) where.status = status;
     if (secretaria) where.secretaria = { contains: secretaria, mode: "insensitive" };
     if (modalidade) where.modalidade = { contains: modalidade, mode: "insensitive" };
     if (ano) where.ano = parseInt(ano, 10);
+    if (ataRegistroPreco === "true") where.ataRegistroPreco = true;
     if (mes && ano) {
         const y = parseInt(ano, 10);
         const m = parseInt(mes, 10);
@@ -38,12 +41,33 @@ export async function GET(req: NextRequest) {
 
     try {
         const [items, total] = await Promise.all([
-            prisma.licitacao.findMany({ where, orderBy: [{ ano: "desc" }, { criadoEm: "desc" }] }),
+            prisma.licitacao.findMany({
+                where,
+                orderBy: [{ ano: "desc" }, { criadoEm: "desc" }],
+                include:
+                    ataRegistroPreco === "true"
+                        ? {
+                              contratos: {
+                                  take: 1,
+                                  orderBy: { criadoEm: "desc" },
+                                  select: {
+                                      fornecedor: true,
+                                      cnpjFornecedor: true,
+                                      dataInicio: true,
+                                      dataFim: true,
+                                      valor: true,
+                                      status: true,
+                                      instrumentoIntegralUrl: true,
+                                  },
+                              },
+                          }
+                        : undefined,
+            }),
             prisma.licitacao.count({ where }),
         ]);
-        return NextResponse.json({ items, total });
+        return jsonNoStore({ items, total });
     } catch {
-        return NextResponse.json({ error: "Erro interno ao consultar licitações" }, { status: 500 });
+        return jsonNoStore({ error: "Erro interno ao consultar licitações" }, { status: 500 });
     }
 }
 
@@ -120,7 +144,8 @@ export async function POST(req: NextRequest) {
             user: auth.user,
         });
 
-        return NextResponse.json(licitacao, { status: 201 });
+        revalidatePaths(REVALIDATE_GROUPS.licitacoes);
+        return jsonNoStore(licitacao, { status: 201 });
     } catch (error) {
         console.error("Erro ao criar licitação:", error);
         return NextResponse.json({ error: "Erro ao salvar licitação no banco de dados" }, { status: 500 });

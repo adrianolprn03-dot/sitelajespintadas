@@ -2,6 +2,9 @@ import { prisma } from "@/lib/prisma";
 import type { Metadata } from "next";
 import ConcursosClient from "../concursos/_ConcursosClient";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata: Metadata = {
     title: "Editais Diversos | Portal da Transparência",
     description: "Acompanhe todos os editais de chamamento, notificações e outros processos públicos da Prefeitura de Lajes Pintadas.",

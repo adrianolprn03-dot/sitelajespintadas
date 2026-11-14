@@ -4,6 +4,9 @@ import LegislacaoClient from "./_LegislacaoClient";
 import { prisma } from "@/lib/prisma";
 import { FaExternalLinkAlt, FaGlobe } from "react-icons/fa";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata: Metadata = {
     title: "Legislação Municipal | Prefeitura de Lajes Pintadas – RN",
     description: "Leis municipais, decretos, portarias e outros atos normativos da Prefeitura de Lajes Pintadas – RN.",

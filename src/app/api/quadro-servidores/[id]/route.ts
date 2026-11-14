@@ -1,9 +1,12 @@
 export const dynamic = "force-dynamic";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { jsonNoStore, revalidatePaths, REVALIDATE_GROUPS } from "@/lib/revalidate-site";
 
 export async function GET(
-    req: NextRequest,
+    _req: NextRequest,
     { params }: { params: { id: string } }
 ) {
     try {
@@ -12,12 +15,12 @@ export async function GET(
         });
 
         if (!quadro) {
-            return NextResponse.json({ error: "Registro não encontrado" }, { status: 404 });
+            return jsonNoStore({ error: "Registro não encontrado" }, { status: 404 });
         }
 
-        return NextResponse.json(quadro);
-    } catch (error) {
-        return NextResponse.json({ error: "Erro interno" }, { status: 500 });
+        return jsonNoStore(quadro);
+    } catch {
+        return jsonNoStore({ error: "Erro interno" }, { status: 500 });
     }
 }
 
@@ -25,9 +28,12 @@ export async function PUT(
     req: NextRequest,
     { params }: { params: { id: string } }
 ) {
+    const session = await getServerSession(authOptions);
+    if (!session) return jsonNoStore({ error: "Não autorizado" }, { status: 401 });
+
     try {
         const body = await req.json();
-        
+
         const vagasLei = parseInt(body.vagasLei) || 0;
         const vagasOcupadas = parseInt(body.vagasOcupadas) || 0;
 
@@ -46,25 +52,30 @@ export async function PUT(
             data,
         });
 
-        return NextResponse.json(quadro);
+        revalidatePaths(REVALIDATE_GROUPS.pessoal);
+        return jsonNoStore(quadro);
     } catch (error) {
         console.error("Erro ao atualizar quadro de servidor:", error);
-        return NextResponse.json({ error: "Erro ao atualizar registro" }, { status: 500 });
+        return jsonNoStore({ error: "Erro ao atualizar registro" }, { status: 500 });
     }
 }
 
 export async function DELETE(
-    req: NextRequest,
+    _req: NextRequest,
     { params }: { params: { id: string } }
 ) {
+    const session = await getServerSession(authOptions);
+    if (!session) return jsonNoStore({ error: "Não autorizado" }, { status: 401 });
+
     try {
         await prisma.quadroServidor.delete({
             where: { id: params.id },
         });
 
-        return NextResponse.json({ message: "Registro removido com sucesso" });
+        revalidatePaths(REVALIDATE_GROUPS.pessoal);
+        return jsonNoStore({ message: "Registro removido com sucesso" });
     } catch (error) {
         console.error("Erro ao remover quadro de servidor:", error);
-        return NextResponse.json({ error: "Erro ao remover registro" }, { status: 500 });
+        return jsonNoStore({ error: "Erro ao remover registro" }, { status: 500 });
     }
 }
