@@ -44,12 +44,12 @@ export default async function InstitucionalPage() {
         simboloBrasao, simboloBandeira, simboloHino, simboloHinoAudio
     ] = await Promise.all([
         getConfig("municipio_nome", "Prefeitura Municipal de Lajes Pintadas"),
-        getConfig("cnpj", "08.106.505/0001-24"),
+        getConfig("cnpj", "08.159.394/0001-37"),
         getConfig("endereco_sede", "Rua São Francisco, nº 275 – Centro"),
         getConfig("cep", "59.235-000"),
         getConfig("horario_funcionamento", "Segunda a Sexta, das 07h às 13h"),
-        getConfig("contato_email", "contato@lajespintadas.rn.gov.br"),
-        getConfig("contato_telefone", "(84) 3000-0000"),
+        getConfig("contato_email", "ouvidoria@lajespintadas.rn.gov.br"),
+        getConfig("contato_telefone", "(84) 9 8748-0287"),
         getConfig("site_url", "www.lajespintadas.rn.gov.br"),
         getConfig("prefeito_nome", "Luciano da Cunha"),
         getConfig("vice_nome", "João Maria Silva"),

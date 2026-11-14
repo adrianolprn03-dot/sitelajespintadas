@@ -11,10 +11,10 @@ export const MUNICIPIO = {
     email: "ouvidoria@lajespintadas.rn.gov.br",
     horario: "07:00 às 13:00",
     cores: {
-        primaria: "#0072CE", // Azul Institucional Principal
-        secundaria: "#FACC15", // Amarelo Ouro Secundário
+        primaria: "#EAB308", // Amarelo Ouro Institucional Principal
+        secundaria: "#003B73", // Azul Marinho Institucional Secundário
         ouro: "#FACC15",
-        destaque: "#FACC15",
+        destaque: "#0072CE",
         texto: "#0F2942",
         fundo: "#F4F7FB",
     },
@@ -28,8 +28,8 @@ export const MUNICIPIO = {
     logoBrancaPath: "/images/logo-lajes-pintadas-new.png",
     bandeiraPath: "/images/bandeira-lajes-pintadas.png",
     estatisticas: {
-        populacao: "4.700",
-        area: "311,6 km²",
+        populacao: "4.787",
+        area: "130,2 km²",
         fundacao: "1958",
     },
     cicloAvaliacaoAnos: ["2026", "2025", "2024", "2023", "2022"],

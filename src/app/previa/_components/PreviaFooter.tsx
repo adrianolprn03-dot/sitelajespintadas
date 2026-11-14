@@ -43,7 +43,7 @@ export default function PreviaFooter() {
                         </p>
 
                         <div className="pt-2 text-[11px] text-slate-400">
-                            <span>CNPJ: 01.612.440/0001-08</span>
+                            <span>CNPJ: {MUNICIPIO.cnpj}</span>
                         </div>
                     </div>
 
@@ -53,13 +53,13 @@ export default function PreviaFooter() {
                             <FaLocationDot size={12} /> Sede Administrativa
                         </h4>
                         <div className="text-xs text-slate-300 space-y-2 leading-relaxed">
-                            <p>Palácio Francisco Raimundo da Silva</p>
-                            <p>Rua Severino Ferreira, 81 – Centro</p>
-                            <p>Lajes Pintadas / RN – CEP: 59230-000</p>
+                            <p>{MUNICIPIO.nomeCompleto}</p>
+                            <p>{MUNICIPIO.endereco}</p>
+                            <p>Lajes Pintadas / RN – CEP: {MUNICIPIO.cep}</p>
                         </div>
                         <div className="pt-1 flex items-center gap-2 text-xs text-slate-300">
                             <FaClock size={12} className="text-amber-300 shrink-0" />
-                            <span>Seg. a Sex., 07h às 13h</span>
+                            <span>Seg. a Sex., {MUNICIPIO.horario}</span>
                         </div>
                     </div>
 
@@ -71,11 +71,11 @@ export default function PreviaFooter() {
                         <div className="text-xs text-slate-300 space-y-2.5">
                             <div className="flex items-center gap-2">
                                 <FaPhone size={12} className="text-slate-400" />
-                                <span>(84) 3294-0010</span>
+                                <span>{MUNICIPIO.telefone}</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <FaEnvelope size={12} className="text-slate-400" />
-                                <span className="break-all">contato@lajespintadas.rn.gov.br</span>
+                                <span className="break-all">{MUNICIPIO.email}</span>
                             </div>
                             <div className="pt-2">
                                 <Link

@@ -185,10 +185,10 @@ export default function CentralServicosGrid({ linksExternos = [] }: CentralServi
                             <div className="absolute inset-0 bg-gradient-to-t from-[#002B5C]/90 via-transparent to-transparent flex items-end p-4">
                                 <div>
                                     <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#FACC15]">
-                                        Palácio Municipal
+                                        Sede do Poder Executivo
                                     </span>
                                     <h3 className="text-white text-base sm:text-lg font-black leading-snug">
-                                        Prefeito José Farias
+                                        Prefeitura de {MUNICIPIO.nome}/{MUNICIPIO.uf}
                                     </h3>
                                 </div>
                             </div>
@@ -211,8 +211,8 @@ export default function CentralServicosGrid({ linksExternos = [] }: CentralServi
                                     <FaLocationDot size={13} />
                                 </div>
                                 <div>
-                                    <span className="block font-bold text-[#12304A]">Endereço:</span>
-                                    <span>Rua Severino Ferreira, 153 – Centro</span>
+                                    <span className="block font-bold text-[#12304A]">Endereço Oficial:</span>
+                                    <span>{MUNICIPIO.endereco} – CEP {MUNICIPIO.cep}</span>
                                 </div>
                             </div>
 
