@@ -116,19 +116,22 @@ export default function HeroWaveCards({ linksExternos = [] }: HeroWaveCardsProps
             {/* HERO PANORÂMICO COM IMAGEM REAL E OVERLAY CÍVICO          */}
             {/* ========================================================= */}
             <div className="relative w-full min-h-[460px] sm:min-h-[500px] lg:min-h-[540px] bg-slate-900 flex flex-col justify-between overflow-hidden">
-                {/* Imagem de Fundo Panorâmica */}
-                <div
-                    className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105 transform motion-safe:transition-transform duration-1000"
-                    style={{
-                        backgroundImage: "url('/images/historia-panoramica.jpg')",
-                    }}
-                    role="img"
-                    aria-label={`Vista panorâmica de ${MUNICIPIO.nomeCompleto} - ${MUNICIPIO.uf}`}
-                />
+                {/* Vídeo de Fundo Oficial em Alta Resolução e Luminoso */}
+                <div className="absolute inset-0 w-full h-full overflow-hidden">
+                    <video
+                        src="/video_lajes_pintadas.mp4"
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        poster="/images/historia-panoramica.jpg"
+                        className="w-full h-full object-cover scale-105"
+                    />
+                </div>
 
-                {/* Camada de Gradiente Nobre (Azul Soberano) para Legibilidade Máxima */}
-                <div className="absolute inset-0 bg-gradient-to-r from-[#002654]/95 via-[#003B73]/85 to-[#002654]/60 mix-blend-multiply" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#001D3D] via-transparent to-black/30" />
+                {/* Camada Suave de Proteção (Deixa o Vídeo Totalmente Visível e Mantém a Legibilidade) */}
+                <div className="absolute inset-0 bg-gradient-to-r from-[#001D3D]/60 via-[#002B5C]/35 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#001D3D]/70 via-transparent to-black/20" />
 
                 {/* Conteúdo Central do Hero */}
                 <div className="relative z-10 max-w-[1280px] mx-auto px-4 sm:px-6 pt-10 sm:pt-14 pb-28 lg:pb-36 w-full text-white">
@@ -140,11 +143,11 @@ export default function HeroWaveCards({ linksExternos = [] }: HeroWaveCardsProps
                         </div>
 
                         {/* Título de Boas-Vindas */}
-                        <h1 className="text-3xl sm:text-5xl lg:text-[52px] font-black font-heading tracking-tight leading-[1.12] text-white drop-shadow-md">
+                        <h1 className="text-3xl sm:text-5xl lg:text-[52px] font-black font-heading tracking-tight leading-[1.12] text-white drop-shadow-[0_3px_12px_rgba(0,0,0,0.9)]">
                             Lajes Pintadas mais perto de você.
                         </h1>
 
-                        <p className="text-base sm:text-lg text-slate-100/90 font-medium leading-relaxed max-w-2xl">
+                        <p className="text-base sm:text-lg text-white font-medium leading-relaxed max-w-2xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
                             Acesse com facilidade todos os serviços do cidadão, notícias oficiais e acompanhe as contas públicas no Portal da Transparência.
                         </p>
 
@@ -282,3 +285,4 @@ export default function HeroWaveCards({ linksExternos = [] }: HeroWaveCardsProps
         </div>
     );
 }
+

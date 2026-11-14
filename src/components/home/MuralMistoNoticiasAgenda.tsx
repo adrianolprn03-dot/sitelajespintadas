@@ -77,7 +77,7 @@ export default function MuralMistoNoticiasAgenda({ noticias = [] }: MuralMistoNo
     ];
 
     return (
-        <section className="max-w-[1280px] mx-auto px-4 sm:px-6 pt-14 sm:pt-20">
+        <section id="central-noticias" className="max-w-[1280px] mx-auto px-4 sm:px-6 pt-8 sm:pt-12">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
                 
                 {/* ========================================================= */}
@@ -348,3 +348,4 @@ export default function MuralMistoNoticiasAgenda({ noticias = [] }: MuralMistoNo
         </section>
     );
 }
+

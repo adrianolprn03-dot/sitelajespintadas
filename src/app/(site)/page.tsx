@@ -166,19 +166,19 @@ export default async function Home() {
     return (
         <div className="space-y-12 sm:space-y-16 pb-20">
             {/* =====================================================================
-                1. HERO PANORÂMICO COM ONDAS ORGÂNICAS & 4 CARDS VERTICAIS FLUTUANTES
+                1. HERO COM VÍDEO OFICIAL BEM VISÍVEL & 4 CARDS VERTICAIS FLUTUANTES
                ===================================================================== */}
             <HeroWaveCards linksExternos={linksExternos} />
 
             {/* =====================================================================
-                2. CENTRAL DE SERVIÇOS (DIORAMA DA SEDE + GRADE 5x2 DE SERVIÇOS)
-               ===================================================================== */}
-            <CentralServicosGrid linksExternos={linksExternos} />
-
-            {/* =====================================================================
-                3. LAJES PINTADAS EM FOCO (NOTÍCIAS), REDES SOCIAIS E AGENDA CULTURAL
+                2. CENTRAL DE NOTÍCIAS: LAJES PINTADAS EM FOCO, REDES E AGENDA CULTURAL
                ===================================================================== */}
             <MuralMistoNoticiasAgenda noticias={noticias} />
+
+            {/* =====================================================================
+                3. CENTRAL DE SERVIÇOS (DIORAMA DA SEDE + GRADE 5x2 DE SERVIÇOS)
+               ===================================================================== */}
+            <CentralServicosGrid linksExternos={linksExternos} />
 
             {/* =====================================================================
                 4. RADAR PNTP 2026: COMPROMISSO COM A TRANSPARÊNCIA PÚBLICA
