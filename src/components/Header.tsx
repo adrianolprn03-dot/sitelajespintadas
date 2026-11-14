@@ -117,7 +117,7 @@ export default function Header() {
                     {/* LOGO OFICIAL COLORIDA COM BRASÃO DE LAJES PINTADAS */}
                     <Link
                         href="/"
-                        className="flex items-center group focus:outline-none focus:ring-2 focus:ring-[#EAB308] rounded-lg py-1 shrink-0"
+                        className="flex items-center group focus:outline-none focus:ring-2 focus:ring-[#0072CE] rounded-lg py-1 shrink-0"
                     >
                         <img
                             src="/images/logo-lajes-pintadas-colorida.png"
@@ -146,15 +146,15 @@ export default function Header() {
                                         href={item.href}
                                         className={`px-2.5 xl:px-3 py-1.5 text-xs xl:text-[13px] font-semibold rounded-lg transition-all flex items-center gap-1 whitespace-nowrap ${
                                             isActive
-                                                ? "text-[#002B5C] bg-[#FEF9C3] font-bold border-b-2 border-[#EAB308]"
-                                                : "text-[#0F2942] hover:text-[#854D0E] hover:bg-amber-50/50"
+                                                ? "text-[#0072CE] bg-[#F0F7FF] font-bold"
+                                                : "text-[#0F2942] hover:text-[#0072CE] hover:bg-slate-50"
                                         }`}
                                     >
                                         <span>{item.label}</span>
                                         {item.children && <ChevronDown />}
                                     </Link>
 
-                                    {/* Dropdown Menu Unificado em Amarelo (Primário) e Azul (Secundário) */}
+                                    {/* Dropdown Menu Unificado em Azul e Amarelo */}
                                     {item.children && isDropdownOpen && (
                                         <div className="absolute top-full left-0 pt-1 w-64 animate-in fade-in duration-150 z-50">
                                             <div className="bg-white rounded-xl p-1.5 shadow-xl border border-[#DCE4EE] overflow-hidden space-y-0.5">
@@ -163,9 +163,9 @@ export default function Header() {
                                                     <Link
                                                         key={sIndex}
                                                         href={sub.href}
-                                                        className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-[#0F2942] hover:text-[#002B5C] hover:bg-[#FEF9C3] transition-colors"
+                                                        className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-[#0F2942] hover:text-[#0072CE] hover:bg-[#F0F7FF] transition-colors"
                                                     >
-                                                        <span className="w-1.5 h-1.5 rounded-full bg-[#EAB308] shrink-0" />
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-[#0072CE] shrink-0" />
                                                         <span className="truncate">{sub.label}</span>
                                                     </Link>
                                                 ))}
@@ -177,26 +177,26 @@ export default function Header() {
                         })}
                     </nav>
 
-                    {/* BOTÕES DE AÇÃO COMPACTOS EM LINHA ÚNICA (Amarelo Primário & Azul Secundário) */}
+                    {/* BOTÕES DE AÇÃO COMPACTOS EM LINHA ÚNICA (Azul & Amarelo) */}
                     <div className="flex items-center gap-2 shrink-0">
                         <Link
                             href="/servicos/ouvidoria"
-                            className="hidden xl:inline-flex items-center gap-1.5 whitespace-nowrap border border-[#DCE4EE] hover:border-[#003B73] bg-[#F8FAFC] hover:bg-[#F0F7FF] text-[#003B73] hover:text-[#002B5C] text-xs font-semibold px-3.5 py-2 rounded-full transition-all duration-200"
+                            className="hidden xl:inline-flex items-center gap-1.5 whitespace-nowrap border border-[#DCE4EE] hover:border-[#0072CE] bg-[#F8FAFC] hover:bg-[#F0F7FF] text-[#0F2942] hover:text-[#0072CE] text-xs font-semibold px-3.5 py-2 rounded-full transition-all duration-200"
                         >
-                            <FaRegComments size={12} className="text-[#003B73]" />
+                            <FaRegComments size={12} className="text-[#0072CE]" />
                             <span>e-SIC / Ouvidoria</span>
                         </Link>
 
                         <Link
                             href="/transparencia"
-                            className="inline-flex items-center gap-1.5 whitespace-nowrap bg-[#FACC15] hover:bg-[#EAB308] active:bg-[#CA8A04] text-[#002B5C] text-xs font-black px-4 py-2 rounded-full shadow-sm border border-[#EAB308] transition-all duration-200 hover:scale-[1.01] focus:outline-none focus:ring-2 focus:ring-[#003B73]"
+                            className="inline-flex items-center gap-1.5 whitespace-nowrap bg-[#0072CE] hover:bg-[#005bb5] text-white text-xs font-bold px-3.5 sm:px-4 py-2 rounded-full shadow-sm border border-[#FACC15] transition-all duration-200 hover:scale-[1.01] focus:outline-none"
                         >
                             <span>Portal da Transparência</span>
                         </Link>
 
                         <button
                             onClick={() => setIsSearchOpen(true)}
-                            className="w-9 h-9 flex items-center justify-center rounded-full bg-[#F4F7FB] text-[#0F2942] hover:bg-[#EAB308] hover:text-[#002B5C] transition-colors border border-[#DCE4EE] cursor-pointer shrink-0"
+                            className="w-9 h-9 flex items-center justify-center rounded-full bg-[#F4F7FB] text-[#0F2942] hover:bg-[#0072CE] hover:text-white transition-colors border border-[#DCE4EE] cursor-pointer shrink-0"
                             title="Buscar no portal"
                             aria-label="Buscar no portal"
                         >
@@ -215,7 +215,7 @@ export default function Header() {
                         {/* Botão Hambúrguer Mobile */}
                         <button
                             onClick={() => setMobileOpen(!mobileOpen)}
-                            className="lg:hidden w-9 h-9 flex items-center justify-center rounded-full bg-[#EAB308] text-[#002B5C] hover:bg-[#CA8A04] transition-colors cursor-pointer shrink-0 font-bold"
+                            className="lg:hidden w-9 h-9 flex items-center justify-center rounded-full bg-[#0072CE] text-white hover:bg-[#005bb5] transition-colors cursor-pointer shrink-0"
                             aria-label="Menu de navegação"
                         >
                             {mobileOpen ? <HiOutlineXMark size={18} /> : <HiOutlineBars3 size={18} />}
@@ -230,14 +230,14 @@ export default function Header() {
                             <Link
                                 href="/servicos/esic"
                                 onClick={() => setMobileOpen(false)}
-                                className="flex-1 text-center py-2 px-3 rounded-xl bg-blue-50 text-[#003B73] border border-blue-200 text-xs font-bold"
+                                className="flex-1 text-center py-2 px-3 rounded-xl bg-[#F0F7FF] text-[#0072CE] border border-[#DCE4EE] text-xs font-bold"
                             >
                                 e-SIC (LAI)
                             </Link>
                             <Link
                                 href="/servicos/ouvidoria"
                                 onClick={() => setMobileOpen(false)}
-                                className="flex-1 text-center py-2 px-3 rounded-xl bg-amber-50 text-[#854D0E] border border-amber-300 text-xs font-bold"
+                                className="flex-1 text-center py-2 px-3 rounded-xl bg-amber-50 text-[#0F2942] border border-[#FACC15] text-xs font-bold"
                             >
                                 Ouvidoria Municipal
                             </Link>
@@ -248,20 +248,20 @@ export default function Header() {
                                 <Link
                                     href={item.href}
                                     onClick={() => !item.children && setMobileOpen(false)}
-                                    className="block font-bold text-sm text-[#0F2942] py-1.5 px-2 hover:bg-[#FEF9C3] hover:text-[#002B5C] rounded-lg"
+                                    className="block font-bold text-sm text-[#0F2942] py-1.5 px-2 hover:bg-[#F0F7FF] rounded-lg"
                                 >
                                     {item.label}
                                 </Link>
                                 {item.children && (
-                                    <div className="pl-4 space-y-1 border-l-2 border-[#EAB308] ml-2">
+                                    <div className="pl-4 space-y-1 border-l-2 border-[#0072CE]/20 ml-2">
                                         {item.children.map((sub, sIndex) => (
                                             <Link
                                                 key={sIndex}
                                                 href={sub.href}
                                                 onClick={() => setMobileOpen(false)}
-                                                className="flex items-center gap-2 text-xs font-medium text-slate-600 py-1.5 px-2 hover:text-[#002B5C] hover:bg-[#FEF9C3] rounded"
+                                                className="flex items-center gap-2 text-xs font-medium text-slate-600 py-1.5 px-2 hover:text-[#0072CE]"
                                             >
-                                                <span className="w-1.5 h-1.5 rounded-full bg-[#EAB308]" />
+                                                <span className="w-1.5 h-1.5 rounded-full bg-[#0072CE]" />
                                                 <span>{sub.label}</span>
                                             </Link>
                                         ))}
@@ -273,7 +273,7 @@ export default function Header() {
                             <Link
                                 href="/admin"
                                 onClick={() => setMobileOpen(false)}
-                                className="text-xs font-bold text-slate-600 hover:text-[#003B73] flex items-center gap-1.5 py-2"
+                                className="text-xs font-bold text-slate-600 hover:text-[#0072CE] flex items-center gap-1.5 py-2"
                             >
                                 <FaUserLock size={12} />
                                 <span>Área Restrita / Painel</span>
@@ -285,15 +285,15 @@ export default function Header() {
                 {isSearchOpen && <BuscaGlobal onClose={() => setIsSearchOpen(false)} />}
             </header>
 
-            {/* BARRA DE NAVEGAÇÃO INFERIOR MOBILE-FIRST (Amarelo Primário & Azul Secundário) */}
+            {/* BARRA DE NAVEGAÇÃO INFERIOR MOBILE-FIRST (Azul & Amarelo) */}
             <nav
                 aria-label="Navegação rápida mobile"
-                className="lg:hidden fixed bottom-3 left-3 right-3 z-40 bg-white/95 backdrop-blur-xl border border-[#DCE4EE] rounded-2xl shadow-[0_10px_30px_rgba(0,43,92,0.18)] px-2 py-1.5 flex items-center justify-around no-print"
+                className="lg:hidden fixed bottom-3 left-3 right-3 z-40 bg-white/95 backdrop-blur-xl border border-[#DCE4EE] rounded-2xl shadow-[0_10px_30px_rgba(0,59,115,0.18)] px-2 py-1.5 flex items-center justify-around no-print"
             >
                 <Link
                     href="/"
                     className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl text-[10px] font-bold transition-colors ${
-                        pathname === "/" ? "text-[#CA8A04]" : "text-slate-500 hover:text-[#003B73]"
+                        pathname === "/" ? "text-[#0072CE]" : "text-slate-500 hover:text-[#0072CE]"
                     }`}
                 >
                     <HiOutlineHome size={19} />
@@ -304,8 +304,8 @@ export default function Header() {
                     href="/transparencia/carta-servicos"
                     className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl text-[10px] font-bold transition-colors ${
                         pathname.startsWith("/servicos") || pathname.includes("carta-servicos")
-                            ? "text-[#CA8A04]"
-                            : "text-slate-500 hover:text-[#003B73]"
+                            ? "text-[#0072CE]"
+                            : "text-slate-500 hover:text-[#0072CE]"
                     }`}
                 >
                     <HiOutlineSquares2X2 size={19} />
@@ -314,7 +314,7 @@ export default function Header() {
 
                 <button
                     onClick={() => setIsSearchOpen(true)}
-                    className="flex flex-col items-center justify-center -mt-4 w-11 h-11 rounded-full bg-gradient-to-br from-[#EAB308] to-[#CA8A04] text-[#002B5C] shadow-lg shadow-amber-900/25 ring-2 ring-[#003B73] cursor-pointer"
+                    className="flex flex-col items-center justify-center -mt-4 w-11 h-11 rounded-full bg-gradient-to-br from-[#0072CE] to-[#002B5C] text-white shadow-lg shadow-blue-900/25 ring-2 ring-[#FACC15] cursor-pointer"
                     aria-label="Buscar no portal"
                 >
                     <HiMagnifyingGlass size={20} />
@@ -324,8 +324,8 @@ export default function Header() {
                     href="/transparencia"
                     className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl text-[10px] font-bold transition-colors ${
                         pathname.startsWith("/transparencia") && !pathname.includes("carta-servicos")
-                            ? "text-[#CA8A04]"
-                            : "text-slate-500 hover:text-[#003B73]"
+                            ? "text-[#0072CE]"
+                            : "text-slate-500 hover:text-[#0072CE]"
                     }`}
                 >
                     <HiOutlineShieldCheck size={19} />
@@ -334,7 +334,7 @@ export default function Header() {
 
                 <button
                     onClick={() => setMobileOpen(!mobileOpen)}
-                    className="flex flex-col items-center justify-center py-1 px-2.5 rounded-xl text-[10px] font-bold text-slate-500 hover:text-[#003B73] cursor-pointer"
+                    className="flex flex-col items-center justify-center py-1 px-2.5 rounded-xl text-[10px] font-bold text-slate-500 hover:text-[#0072CE] cursor-pointer"
                 >
                     <HiOutlineBars3 size={19} />
                     <span className="mt-0.5">Menu</span>

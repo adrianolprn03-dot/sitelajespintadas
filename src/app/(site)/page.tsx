@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { MUNICIPIO } from "@/config/municipio";
-import HeroWaveCards from "@/components/home/HeroWaveCards";
-import CentralServicosGrid from "@/components/home/CentralServicosGrid";
-import CentralNoticiasSection from "@/components/home/CentralNoticiasSection";
-import RadarTransparenciaPNTP from "@/components/home/RadarTransparenciaPNTP";
+import HeroPanoramicoModelo3 from "@/components/home/HeroPanoramicoModelo3";
 import {
     FaArrowRight,
+    FaArrowUpRightFromSquare,
+    FaHandshake,
+    FaScaleBalanced,
+    FaDatabase,
+    FaChartPie,
     FaHeartPulse,
     FaGraduationCap,
     FaTrowelBricks,
@@ -17,12 +19,13 @@ import {
     FaLandmark,
     FaFlag,
 } from "react-icons/fa6";
+import { HiOutlineDocumentText } from "react-icons/hi2";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: `${MUNICIPIO.nomeCompleto} – ${MUNICIPIO.uf} | Portal Oficial`,
-    description: `Portal oficial da ${MUNICIPIO.nomeCompleto} – ${MUNICIPIO.uf}. Acesso a serviços ao cidadão, notícias da gestão, transparência pública e informações institucionais.`,
+    title: `${MUNICIPIO.nomeCompleto} – ${MUNICIPIO.uf} | Página Inicial`,
+    description: `Site oficial da ${MUNICIPIO.nomeCompleto} – ${MUNICIPIO.uf}. Transparência, serviços ao cidadão, notícias e informações institucionais.`,
 };
 
 const secretariasHighlight = [
@@ -78,7 +81,7 @@ export default async function Home() {
     try {
         const dbNoticias = await prisma.noticia.findMany({
             where: { publicada: true },
-            take: 6,
+            take: 3,
             orderBy: { publicadoEm: "desc" },
             include: { secretaria: true },
         });
@@ -128,6 +131,21 @@ export default async function Home() {
         // fallback silencioso
     }
 
+    const getLinkOverride = (identifiers: string[], fallbackHref: string) => {
+        const found = linksExternos.find((l) =>
+            l.moduloAlvo && identifiers.some((id) => id.toLowerCase() === l.moduloAlvo?.toLowerCase())
+        );
+        return {
+            href: found ? found.url : fallbackHref,
+            isExternal: !!found,
+        };
+    };
+
+    const licitacoesLink = getLinkOverride(["home-licitacoes", "licitacoes"], "/transparencia/licitacoes");
+    const contratosLink = getLinkOverride(["home-contratos", "contratos"], "/transparencia/contratos");
+    const leisLink = getLinkOverride(["home-leis-decretos", "legislacao", "leis"], "/transparencia/legislacao");
+    const lrfLink = getLinkOverride(["home-prestacao-contas", "lrf", "prestacao-contas"], "/transparencia/lrf");
+
     if (noticias.length === 0) {
         noticias = [
             {
@@ -135,7 +153,7 @@ export default async function Home() {
                 titulo: "Serviços públicos digitais mais perto da população de Lajes Pintadas",
                 resumo:
                     "Portal institucional modernizado amplia o acesso rápido à Ouvidoria, e-SIC, Carta de Serviços e Transparência Ativa.",
-                categoria: "GESTÃO MUNICIPAL",
+                categoria: "GOVERNO DIGITAL",
                 imagem: "/images/historia-panoramica.jpg",
                 slug: "servicos-mais-perto-da-populacao",
                 dataFormatada: "Portal Oficial",
@@ -155,7 +173,7 @@ export default async function Home() {
                 titulo: "Cuidado permanente com a saúde, infraestrutura e bem-estar na cidade",
                 resumo:
                     "Equipes municipais atuam de forma integrada no atendimento básico, manutenção urbana e apoio ao homem do campo.",
-                categoria: "SAÚDE",
+                categoria: "GESTÃO MUNICIPAL",
                 imagem: "/images/hero-bg.jpg",
                 slug: "cuidado-com-a-nossa-cidade",
                 dataFormatada: "Gestão Municipal",
@@ -165,95 +183,307 @@ export default async function Home() {
 
     return (
         <div className="space-y-12 sm:space-y-16 pb-20">
-            {/* =====================================================================
-                1. HERO COM VÍDEO OFICIAL BEM VISÍVEL & 4 CARDS VERTICAIS FLUTUANTES
-               ===================================================================== */}
-            <HeroWaveCards linksExternos={linksExternos} />
+            {/* 1 e 2: Banner Panorâmico com Vídeo na Tela Completa + Acesso Rápido em 6 Atalhos */}
+            <HeroPanoramicoModelo3 />
 
             {/* =====================================================================
-                2. CENTRAL DE NOTÍCIAS EXCLUSIVA (DESTAQUE PRINCIPAL + GRID SECUNDÁRIO)
+                3. ACONTECE EM LAJES PINTADAS (MURAL OFICIAL DE NOTÍCIAS)
                ===================================================================== */}
-            <CentralNoticiasSection noticias={noticias} />
+            <section className="max-w-[1280px] mx-auto px-4 sm:px-6">
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-7">
+                    <div>
+                        <span className="inline-block text-xs font-extrabold uppercase tracking-wider text-[#0072CE] mb-1">
+                            MURAL OFICIAL DA GESTÃO
+                        </span>
+                        <h2 className="text-2xl sm:text-3xl font-black text-[#12304A] font-heading tracking-tight leading-tight">
+                            Acontece em {MUNICIPIO.nome}
+                        </h2>
+                        <div className="h-1.5 w-20 bg-[#F39A32] rounded-full mt-2" />
+                    </div>
+
+                    <Link
+                        href="/noticias"
+                        className="inline-flex items-center gap-2 text-xs font-bold text-[#0072CE] hover:text-[#005bb5] bg-blue-50/70 hover:bg-blue-100/70 px-4 py-2 rounded-full border border-blue-200/70 transition-colors w-fit"
+                    >
+                        <span>Ver todas as notícias</span>
+                        <FaArrowRight size={11} />
+                    </Link>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {noticias.map((item) => (
+                        <article
+                            key={item.id}
+                            className="bg-white rounded-2xl border border-[#DDE3EA] hover:border-[#0072CE] overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 group flex flex-col hover:-translate-y-0.5"
+                        >
+                            <Link
+                                href={`/noticias/${item.slug}`}
+                                className="block relative overflow-hidden aspect-[16/10] bg-slate-100"
+                            >
+                                <img
+                                    src={item.imagem}
+                                    alt={item.titulo}
+                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                />
+                                <div className="absolute top-3 left-3">
+                                    <span className="inline-block bg-[#0072CE] text-white text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
+                                        {item.categoria}
+                                    </span>
+                                </div>
+                            </Link>
+
+                            <div className="p-5 sm:p-6 space-y-2.5 flex-1 flex flex-col justify-between">
+                                <div className="space-y-2">
+                                    <span className="block text-[11px] font-semibold text-[#5B738B]">
+                                        {item.dataFormatada}
+                                    </span>
+                                    <h3 className="text-base sm:text-lg font-extrabold text-[#12304A] font-heading leading-snug group-hover:text-[#0072CE] transition-colors line-clamp-2">
+                                        <Link href={`/noticias/${item.slug}`}>{item.titulo}</Link>
+                                    </h3>
+                                    <p className="text-xs text-[#5B738B] leading-relaxed line-clamp-2">
+                                        {item.resumo}
+                                    </p>
+                                </div>
+
+                                <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-[#0072CE]">
+                                    <Link href={`/noticias/${item.slug}`} className="flex items-center gap-1.5 hover:underline">
+                                        <span>Ler matéria completa</span>
+                                        <FaArrowRight
+                                            size={11}
+                                            className="group-hover:translate-x-1 transition-transform"
+                                        />
+                                    </Link>
+                                </div>
+                            </div>
+                        </article>
+                    ))}
+                </div>
+            </section>
 
             {/* =====================================================================
-                3. CENTRAL DE SERVIÇOS (DIORAMA DA SEDE + GRADE 5x2 DE SERVIÇOS)
+                4. PUBLICAÇÕES OFICIAIS (DESIGN SYSTEM CONFORME PRANCHA APROVADA)
                ===================================================================== */}
-            <CentralServicosGrid linksExternos={linksExternos} />
+            <section className="max-w-[1280px] mx-auto px-4 sm:px-6">
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-7">
+                    <div>
+                        <span className="inline-block text-xs font-extrabold uppercase tracking-wider text-[#0072CE] mb-1">
+                            PUBLICIDADE E TRANSPARÊNCIA ATIVA
+                        </span>
+                        <h2 className="text-2xl sm:text-3xl font-black text-[#12304A] font-heading tracking-tight">
+                            Publicações Oficiais
+                        </h2>
+                        <div className="h-1.5 w-20 bg-[#F39A32] rounded-full mt-2" />
+                    </div>
+
+                    <Link
+                        href="/transparencia"
+                        className="inline-flex items-center gap-2 text-xs font-bold text-[#0072CE] hover:text-[#005bb5] bg-blue-50/70 hover:bg-blue-100/70 px-4 py-2 rounded-full border border-blue-200/70 transition-colors w-fit"
+                    >
+                        <span>Acessar Portal da Transparência</span>
+                        <FaArrowRight size={11} />
+                    </Link>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                    {/* 1. Licitações */}
+                    <Link
+                        href={licitacoesLink.href}
+                        target={licitacoesLink.isExternal ? "_blank" : undefined}
+                        rel={licitacoesLink.isExternal ? "noopener noreferrer" : undefined}
+                        className="bg-white p-6 rounded-2xl border border-[#DDE3EA] hover:border-[#0072CE] shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col justify-between group text-left"
+                    >
+                        <div>
+                            <div className="flex items-start justify-between mb-4">
+                                <div className="w-12 h-12 rounded-xl bg-blue-50 text-[#0072CE] flex items-center justify-center text-xl group-hover:bg-[#0072CE] group-hover:text-white transition-colors">
+                                    <HiOutlineDocumentText />
+                                </div>
+                                <span className="text-[10px] font-bold text-[#0072CE] bg-blue-50 px-2.5 py-1 rounded-full uppercase tracking-wider border border-blue-200/60">
+                                    {licitacoesLink.isExternal ? "Link Externo" : "PNCP Integrado"}
+                                </span>
+                            </div>
+
+                            <h3 className="text-base font-extrabold text-[#12304A] font-heading leading-tight mb-2 group-hover:text-[#0072CE] transition-colors">
+                                Licitações Públicas
+                            </h3>
+
+                            <p className="text-xs text-[#5B738B] leading-relaxed mb-4">
+                                Editais, atas de registro de preços, dispensas e fases em tempo real.
+                            </p>
+                        </div>
+
+                        <div className="flex items-center gap-1.5 text-xs font-bold text-[#0072CE] pt-3 border-t border-slate-100 group-hover:translate-x-1 transition-transform">
+                            <span>{licitacoesLink.isExternal ? "Acessar portal externo" : "Acessar licitações"}</span>
+                            {licitacoesLink.isExternal ? <FaArrowUpRightFromSquare size={10} /> : <FaArrowRight size={10} />}
+                        </div>
+                    </Link>
+
+                    {/* 2. Contratos */}
+                    <Link
+                        href={contratosLink.href}
+                        target={contratosLink.isExternal ? "_blank" : undefined}
+                        rel={contratosLink.isExternal ? "noopener noreferrer" : undefined}
+                        className="bg-white p-6 rounded-2xl border border-[#DDE3EA] hover:border-[#0072CE] shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col justify-between group text-left"
+                    >
+                        <div>
+                            <div className="flex items-start justify-between mb-4">
+                                <div className="w-12 h-12 rounded-xl bg-blue-50 text-[#0072CE] flex items-center justify-center text-xl group-hover:bg-[#0072CE] group-hover:text-white transition-colors">
+                                    <FaHandshake />
+                                </div>
+                                <span className="text-[10px] font-bold text-[#0072CE] bg-blue-50 px-2.5 py-1 rounded-full uppercase tracking-wider border border-blue-200/60">
+                                    {contratosLink.isExternal ? "Link Externo" : "Atualizado"}
+                                </span>
+                            </div>
+
+                            <h3 className="text-base font-extrabold text-[#12304A] font-heading leading-tight mb-2 group-hover:text-[#0072CE] transition-colors">
+                                Contratos Administrativos
+                            </h3>
+
+                            <p className="text-xs text-[#5B738B] leading-relaxed mb-4">
+                                Instrumentos contratuais integrais, termos aditivos e fiscais.
+                            </p>
+                        </div>
+
+                        <div className="flex items-center gap-1.5 text-xs font-bold text-[#0072CE] pt-3 border-t border-slate-100 group-hover:translate-x-1 transition-transform">
+                            <span>{contratosLink.isExternal ? "Acessar portal externo" : "Acessar contratos"}</span>
+                            {contratosLink.isExternal ? <FaArrowUpRightFromSquare size={10} /> : <FaArrowRight size={10} />}
+                        </div>
+                    </Link>
+
+                    {/* 3. Leis e Decretos */}
+                    <Link
+                        href={leisLink.href}
+                        target={leisLink.isExternal ? "_blank" : undefined}
+                        rel={leisLink.isExternal ? "noopener noreferrer" : undefined}
+                        className="bg-white p-6 rounded-2xl border border-[#DDE3EA] hover:border-[#0072CE] shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col justify-between group text-left"
+                    >
+                        <div>
+                            <div className="flex items-start justify-between mb-4">
+                                <div className="w-12 h-12 rounded-xl bg-blue-50 text-[#0072CE] flex items-center justify-center text-xl group-hover:bg-[#0072CE] group-hover:text-white transition-colors">
+                                    <FaScaleBalanced />
+                                </div>
+                                <span className="text-[10px] font-bold text-[#0072CE] bg-blue-50 px-2.5 py-1 rounded-full uppercase tracking-wider border border-blue-200/60">
+                                    {leisLink.isExternal ? "Link Externo" : "Pesquisável"}
+                                </span>
+                            </div>
+
+                            <h3 className="text-base font-extrabold text-[#12304A] font-heading leading-tight mb-2 group-hover:text-[#0072CE] transition-colors">
+                                Leis e Decretos
+                            </h3>
+
+                            <p className="text-xs text-[#5B738B] leading-relaxed mb-4">
+                                Legislação municipal consolidada, decretos e portarias normativas.
+                            </p>
+                        </div>
+
+                        <div className="flex items-center gap-1.5 text-xs font-bold text-[#0072CE] pt-3 border-t border-slate-100 group-hover:translate-x-1 transition-transform">
+                            <span>{leisLink.isExternal ? "Acessar portal externo" : "Acessar legislação"}</span>
+                            {leisLink.isExternal ? <FaArrowUpRightFromSquare size={10} /> : <FaArrowRight size={10} />}
+                        </div>
+                    </Link>
+
+                    {/* 4. Prestação de Contas */}
+                    <Link
+                        href={lrfLink.href}
+                        target={lrfLink.isExternal ? "_blank" : undefined}
+                        rel={lrfLink.isExternal ? "noopener noreferrer" : undefined}
+                        className="bg-white p-6 rounded-2xl border border-[#DDE3EA] hover:border-[#0072CE] shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col justify-between group text-left"
+                    >
+                        <div>
+                            <div className="flex items-start justify-between mb-4">
+                                <div className="w-12 h-12 rounded-xl bg-blue-50 text-[#0072CE] flex items-center justify-center text-xl group-hover:bg-[#0072CE] group-hover:text-white transition-colors">
+                                    <FaChartPie />
+                                </div>
+                                <span className="text-[10px] font-bold text-[#0072CE] bg-blue-50 px-2.5 py-1 rounded-full uppercase tracking-wider border border-blue-200/60">
+                                    {lrfLink.isExternal ? "Link Externo" : "LRF / SICONFI"}
+                                </span>
+                            </div>
+
+                            <h3 className="text-base font-extrabold text-[#12304A] font-heading leading-tight mb-2 group-hover:text-[#0072CE] transition-colors">
+                                Prestação de Contas (LRF)
+                            </h3>
+
+                            <p className="text-xs text-[#5B738B] leading-relaxed mb-4">
+                                Relatórios RGF, RREO, Balanço Geral, PPA, LDO e LOA abertos.
+                            </p>
+                        </div>
+
+                        <div className="flex items-center gap-1.5 text-xs font-bold text-[#0072CE] pt-3 border-t border-slate-100 group-hover:translate-x-1 transition-transform">
+                            <span>{lrfLink.isExternal ? "Acessar demonstrativos externos" : "Acessar demonstrativos"}</span>
+                            {lrfLink.isExternal ? <FaArrowUpRightFromSquare size={10} /> : <FaArrowRight size={10} />}
+                        </div>
+                    </Link>
+                </div>
+            </section>
 
             {/* =====================================================================
-                4. RADAR PNTP 2026: COMPROMISSO COM A TRANSPARÊNCIA PÚBLICA
+                5. NOSSA TERRA, SÍMBOLOS OFICIAIS & SECRETARIAS MUNICIPAIS (AZUL E AMARELO)
                ===================================================================== */}
-            <RadarTransparenciaPNTP />
-
-            {/* =====================================================================
-                5. NOSSA TERRA, SÍMBOLOS OFICIAIS & SECRETARIAS MUNICIPAIS
-               ===================================================================== */}
-            <section className="max-w-[1280px] mx-auto px-4 sm:px-6 pt-4">
+            <section className="max-w-[1280px] mx-auto px-4 sm:px-6">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
                     {/* Card Esquerdo (5 colunas): Identidade e Símbolos de Lajes Pintadas */}
-                    <div className="lg:col-span-5 bg-white rounded-2xl sm:rounded-[26px] border-2 border-slate-100 p-6 sm:p-8 shadow-[0_8px_30px_rgba(0,38,84,0.06)] flex flex-col justify-between relative overflow-hidden">
+                    <div className="lg:col-span-5 bg-white rounded-[26px] border border-[#DCE4EE] p-6 sm:p-8 shadow-gov flex flex-col justify-between relative overflow-hidden">
                         <div className="absolute top-0 left-0 right-0 h-1.5 heraldic-stripe" />
 
                         <div className="space-y-5">
-                            <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-[#854D0E] bg-amber-50 border border-amber-300/80 px-3 py-1 rounded-full">
-                                <FaFlag size={12} className="text-[#CA8A04]" />
+                            <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-[#0072CE] bg-[#F0F7FF] border border-[#DCE4EE] px-3 py-1 rounded-full">
+                                <FaFlag size={12} />
                                 <span>Identidade Laje-Pintadense</span>
                             </div>
 
-                            <h2 className="text-2xl font-black text-[#12304A] font-heading tracking-tight leading-snug">
+                            <h2 className="text-2xl font-black text-[#0F2942] font-heading tracking-tight leading-snug">
                                 Nossa Terra, Nossa História e Símbolos Oficiais
                             </h2>
 
-                            <p className="text-xs sm:text-sm text-[#5B738B] leading-relaxed">
+                            <p className="text-xs sm:text-sm text-[#526B84] leading-relaxed">
                                 Batizada pelas históricas inscrições rupestres em suas lajes de pedra e marcada pela força da serra e da sua gente, {MUNICIPIO.nome}/{MUNICIPIO.uf} celebra sua história desde {MUNICIPIO.estatisticas.fundacao}.
                             </p>
 
                             {/* Brasão e Bandeira Lado a Lado */}
                             <div className="grid grid-cols-2 gap-3 pt-1">
-                                <div className="bg-[#F8FAFC] rounded-2xl p-4 border border-slate-200/80 flex flex-col items-center text-center">
+                                <div className="bg-[#F4F7FB] rounded-2xl p-4 border border-[#DCE4EE] flex flex-col items-center text-center">
                                     <img
                                         src="/images/brasao-lajes-pintadas.png"
                                         alt="Brasão Municipal de Lajes Pintadas"
                                         className="h-20 w-auto object-contain mb-2"
                                     />
-                                    <span className="text-xs font-extrabold text-[#12304A]">Brasão Oficial</span>
-                                    <span className="text-[10px] text-[#5B738B]">Armas do Município</span>
+                                    <span className="text-xs font-extrabold text-[#0F2942]">Brasão Oficial</span>
+                                    <span className="text-[10px] text-[#526B84]">Armas do Município</span>
                                 </div>
 
-                                <div className="bg-[#F8FAFC] rounded-2xl p-4 border border-slate-200/80 flex flex-col items-center text-center">
+                                <div className="bg-[#F4F7FB] rounded-2xl p-4 border border-[#DCE4EE] flex flex-col items-center text-center">
                                     <img
                                         src="/images/bandeira-lajes-pintadas.png"
                                         alt="Bandeira Municipal de Lajes Pintadas"
                                         className="h-20 w-auto object-contain rounded shadow-sm mb-2"
                                     />
-                                    <span className="text-xs font-extrabold text-[#12304A]">Bandeira Oficial</span>
-                                    <span className="text-[10px] text-[#5B738B]">Símbolo Cívico</span>
+                                    <span className="text-xs font-extrabold text-[#0F2942]">Bandeira Oficial</span>
+                                    <span className="text-[10px] text-[#526B84]">Símbolo Cívico</span>
                                 </div>
                             </div>
 
-                            {/* Estatísticas Rápidas em Amarelo Primário e Azul Secundário */}
+                            {/* Estatísticas Rápidas Oficiais de Lajes Pintadas */}
                             <div className="grid grid-cols-3 gap-2.5 pt-1 text-center">
-                                <div className="bg-[#F8FAFC] rounded-xl p-2.5 border border-slate-200/80">
-                                    <span className="block text-sm sm:text-base font-black text-[#003B73]">
+                                <div className="bg-[#F8FAFC] rounded-xl p-2.5 border border-[#DCE4EE]">
+                                    <span className="block text-sm sm:text-base font-black text-[#0072CE]">
                                         {MUNICIPIO.estatisticas.fundacao}
                                     </span>
-                                    <span className="block text-[10px] font-bold text-[#5B738B] uppercase">
+                                    <span className="block text-[10px] font-bold text-[#526B84] uppercase">
                                         Emancipação
                                     </span>
                                 </div>
-                                <div className="bg-[#F8FAFC] rounded-xl p-2.5 border border-slate-200/80">
-                                    <span className="block text-sm sm:text-base font-black text-[#003B73]">
+                                <div className="bg-[#F8FAFC] rounded-xl p-2.5 border border-[#DCE4EE]">
+                                    <span className="block text-sm sm:text-base font-black text-[#0072CE]">
                                         {MUNICIPIO.estatisticas.area}
                                     </span>
-                                    <span className="block text-[10px] font-bold text-[#5B738B] uppercase">
+                                    <span className="block text-[10px] font-bold text-[#526B84] uppercase">
                                         Território
                                     </span>
                                 </div>
-                                <div className="bg-[#F8FAFC] rounded-xl p-2.5 border border-slate-200/80">
-                                    <span className="block text-sm sm:text-base font-black text-[#003B73]">
+                                <div className="bg-[#F8FAFC] rounded-xl p-2.5 border border-[#DCE4EE]">
+                                    <span className="block text-sm sm:text-base font-black text-[#0072CE]">
                                         {MUNICIPIO.uf}
                                     </span>
-                                    <span className="block text-[10px] font-bold text-[#5B738B] uppercase">
+                                    <span className="block text-[10px] font-bold text-[#526B84] uppercase">
                                         Região Trairi
                                     </span>
                                 </div>
@@ -263,35 +493,35 @@ export default async function Home() {
                         <div className="pt-5 mt-5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
                             <Link
                                 href="/a-prefeitura/historia"
-                                className="text-xs font-extrabold text-[#003B73] hover:text-[#CA8A04] hover:underline flex items-center gap-1.5 transition-colors"
+                                className="text-xs font-extrabold text-[#0072CE] hover:underline flex items-center gap-1.5"
                             >
                                 <FaLandmark size={12} />
                                 <span>Conhecer a História da Cidade</span>
                             </Link>
                             <Link
                                 href="/municipio/simbolos"
-                                className="text-xs font-extrabold text-[#003B73] hover:text-[#CA8A04] hover:underline flex items-center gap-1.5 transition-colors"
+                                className="text-xs font-extrabold text-[#0072CE] hover:underline flex items-center gap-1.5"
                             >
                                 <span>Ver Símbolos e Hino →</span>
                             </Link>
                         </div>
                     </div>
 
-                    {/* Coluna Direita (7 colunas): Secretarias Municipais */}
-                    <div className="lg:col-span-7 bg-white rounded-2xl sm:rounded-[26px] border-2 border-slate-100 p-6 sm:p-8 shadow-[0_8px_30px_rgba(0,38,84,0.06)] flex flex-col justify-between">
+                    {/* Coluna Direita (7 colunas): Secretarias Municipais Unificadas em Azul e Amarelo */}
+                    <div className="lg:col-span-7 bg-white rounded-[26px] border border-[#DCE4EE] p-6 sm:p-8 shadow-gov flex flex-col justify-between">
                         <div>
                             <div className="flex items-center justify-between gap-4 mb-6">
                                 <div>
-                                    <span className="block text-xs font-extrabold uppercase tracking-wider text-[#CA8A04]">
+                                    <span className="block text-xs font-extrabold uppercase tracking-wider text-[#0072CE]">
                                         ESTRUTURA ADMINISTRATIVA
                                     </span>
-                                    <h2 className="text-2xl font-black text-[#12304A] font-heading tracking-tight">
+                                    <h2 className="text-2xl font-black text-[#0F2942] font-heading tracking-tight">
                                         Secretarias Municipais
                                     </h2>
                                 </div>
                                 <Link
                                     href="/secretarias"
-                                    className="text-xs font-extrabold text-[#003B73] hover:text-[#CA8A04] hover:underline flex items-center gap-1.5 shrink-0 transition-colors"
+                                    className="text-xs font-extrabold text-[#0072CE] hover:underline flex items-center gap-1.5 shrink-0"
                                 >
                                     <span>Todas as secretarias</span>
                                     <FaArrowRight size={11} />
@@ -305,16 +535,16 @@ export default async function Home() {
                                         <Link
                                             key={idx}
                                             href={sec.href}
-                                            className="group bg-[#F8FAFC] hover:bg-white rounded-2xl p-4 border border-slate-200/80 border-b-4 border-b-[#EAB308] hover:border-b-[#003B73] hover:shadow-md transition-all flex items-start gap-3.5"
+                                            className="group bg-[#F8FAFC] hover:bg-white rounded-2xl p-4 border border-[#DCE4EE] border-b-4 border-b-[#0072CE] hover:border-b-[#FACC15] hover:shadow-md transition-all flex items-start gap-3.5"
                                         >
-                                            <div className="w-11 h-11 rounded-xl bg-amber-50 text-[#CA8A04] border border-amber-200 group-hover:bg-[#EAB308] group-hover:text-[#002B5C] group-hover:border-[#EAB308] flex items-center justify-center text-lg shrink-0 transition-all shadow-sm">
+                                            <div className="w-11 h-11 rounded-xl bg-[#F0F7FF] text-[#0072CE] border border-[#DCE4EE] group-hover:bg-[#0072CE] group-hover:text-[#FACC15] group-hover:border-[#0072CE] flex items-center justify-center text-lg shrink-0 transition-all">
                                                 <Icon />
                                             </div>
                                             <div className="min-w-0 flex-1">
-                                                <h3 className="text-sm font-extrabold text-[#12304A] font-heading group-hover:text-[#003B73] transition-colors">
+                                                <h3 className="text-sm font-extrabold text-[#0F2942] font-heading group-hover:text-[#0072CE] transition-colors">
                                                     {sec.nome}
                                                 </h3>
-                                                <p className="text-[11px] text-[#5B738B] leading-snug mt-0.5 line-clamp-2">
+                                                <p className="text-[11px] text-[#526B84] leading-snug mt-0.5 line-clamp-2">
                                                     {sec.desc}
                                                 </p>
                                             </div>
@@ -324,13 +554,13 @@ export default async function Home() {
                             </div>
                         </div>
 
-                        <div className="mt-6 pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-[#5B738B]">
+                        <div className="mt-6 pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-[#526B84]">
                             <span>
                                 Horário de funcionamento das Secretarias: <strong>{MUNICIPIO.horario}</strong>
                             </span>
                             <Link
                                 href="/a-prefeitura/estrutura"
-                                className="font-extrabold text-[#003B73] hover:text-[#CA8A04] hover:underline transition-colors"
+                                className="font-extrabold text-[#0072CE] hover:underline"
                             >
                                 Consultar Organograma Completo →
                             </Link>

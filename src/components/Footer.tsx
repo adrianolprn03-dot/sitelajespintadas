@@ -15,7 +15,7 @@ import { MUNICIPIO } from "@/config/municipio";
 const footerLinks = [
     {
         title: "Institucional",
-        color: "bg-[#EAB308]",
+        color: "bg-[#0072CE]",
         links: [
             { label: "A Prefeitura", href: "/a-prefeitura" },
             { label: "Prefeito e Vice", href: "/a-prefeitura/prefeito" },
@@ -29,7 +29,7 @@ const footerLinks = [
     },
     {
         title: "Transparência Pública",
-        color: "bg-[#0072CE]",
+        color: "bg-[#FACC15]",
         links: [
             { label: "Portal da Transparência", href: "/transparencia" },
             { label: "Licitações Públicas (PNCP)", href: "/transparencia/licitacoes" },
@@ -44,7 +44,7 @@ const footerLinks = [
     },
     {
         title: "Serviços ao Cidadão",
-        color: "bg-[#EAB308]",
+        color: "bg-[#0072CE]",
         links: [
             { label: "Carta de Serviços", href: "/transparencia/carta-servicos" },
             { label: "Ouvidoria Municipal", href: "/servicos/ouvidoria" },
@@ -158,7 +158,7 @@ export default async function Footer() {
                                         href={s.href}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="w-9 h-9 rounded-xl bg-white/10 hover:bg-[#EAB308] hover:text-[#002B5C] text-white flex items-center justify-center transition-colors"
+                                        className="w-9 h-9 rounded-xl bg-white/10 hover:bg-[#0072CE] text-white flex items-center justify-center transition-colors"
                                         aria-label={s.label}
                                     >
                                         <s.Icon size={15} />
