@@ -515,17 +515,22 @@ model Legislacao {
 }
 
 model UnidadeAtendimento {
-  id           String   @id @default(cuid())
-  nome         String
-  tipo         String
-  descricao    String
-  endereco     String
-  telefone     String?
-  horario      String
-  mapa         String?
-  ativa        Boolean  @default(true)
-  criadoEm     DateTime @default(now())
-  atualizadoEm DateTime @updatedAt
+  id             String   @id @default(cuid())
+  nome           String
+  tipo           String
+  subtipo        String?
+  cnes           String?
+  descricao      String
+  endereco       String
+  telefone       String?
+  horario        String
+  servicos       String?  @db.Text
+  especialidades String   @default("[]") @db.Text
+  equipe         String   @default("[]") @db.Text
+  mapa           String?
+  ativa          Boolean  @default(true)
+  criadoEm       DateTime @default(now())
+  atualizadoEm   DateTime @updatedAt
 }
 
 model Conselho {
@@ -885,17 +890,19 @@ model DocumentoSaude {
 }
 
 model CentralRegulacaoItem {
-  id             String   @id @default(cuid())
-  tipo           String
-  totalPacientes Int      @default(0)
-  tempoEspera    String
-  procedimentos  String?
-  icone          String   @default("FaUserMd")
-  cor            String   @default("from-blue-500 to-indigo-600")
-  ordem          Int      @default(0)
-  ativo          Boolean  @default(true)
-  criadoEm       DateTime @default(now())
-  atualizadoEm   DateTime @updatedAt
+  id              String   @id @default(cuid())
+  tipo            String
+  totalPacientes  Int      @default(0)
+  tempoEspera     String
+  procedimentos   String?
+  competencia     String?
+  protocolosLista String?  @db.Text
+  icone           String   @default("FaUserMd")
+  cor             String   @default("from-blue-500 to-indigo-600")
+  ordem           Int      @default(0)
+  ativo           Boolean  @default(true)
+  criadoEm        DateTime @default(now())
+  atualizadoEm    DateTime @updatedAt
 }
 
 model CentralRegulacaoConfig {

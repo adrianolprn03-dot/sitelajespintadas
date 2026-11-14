@@ -79,7 +79,7 @@ export async function POST(req: Request) {
         }
 
         // Caso contrário, cria novo item de fila
-        const { tipo, totalPacientes, tempoEspera, procedimentos, icone, cor, ordem, ativo } = body;
+        const { tipo, totalPacientes, tempoEspera, procedimentos, competencia, protocolosLista, icone, cor, ordem, ativo } = body;
 
         if (!tipo || !tempoEspera) {
             return NextResponse.json({ error: "Tipo e tempo de espera são obrigatórios." }, { status: 400 });
@@ -91,6 +91,8 @@ export async function POST(req: Request) {
                 totalPacientes: Number(totalPacientes) || 0,
                 tempoEspera,
                 procedimentos: procedimentos || null,
+                competencia: competencia || null,
+                protocolosLista: typeof protocolosLista === "string" ? protocolosLista : protocolosLista ? JSON.stringify(protocolosLista) : null,
                 icone: icone || "FaUserMd",
                 cor: cor || "from-blue-500 to-indigo-600",
                 ordem: Number(ordem) || 0,

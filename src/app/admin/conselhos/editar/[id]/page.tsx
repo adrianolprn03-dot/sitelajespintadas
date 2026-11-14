@@ -25,6 +25,10 @@ export default function EditarConselhoPage({ params }: { params: { id: string } 
     const [composicao, setComposicao] = useState("");
     const [presidente, setPresidente] = useState("");
     const [email, setEmail] = useState("");
+    const [mandatoVigencia, setMandatoVigencia] = useState("");
+    const [atoNomeacao, setAtoNomeacao] = useState("");
+    const [regimentoInternoUrl, setRegimentoInternoUrl] = useState("");
+    const [calendarioReunioes, setCalendarioReunioes] = useState("");
     const [ativo, setAtivo] = useState(true);
     
     // Atas state
@@ -54,6 +58,10 @@ export default function EditarConselhoPage({ params }: { params: { id: string } 
                 setComposicao(data.composicao);
                 setPresidente(data.presidente || "");
                 setEmail(data.email || "");
+                setMandatoVigencia(data.mandatoVigencia || "");
+                setAtoNomeacao(data.atoNomeacao || "");
+                setRegimentoInternoUrl(data.regimentoInternoUrl || "");
+                setCalendarioReunioes(data.calendarioReunioes || "");
                 setAtivo(data.ativo);
 
                 // Formata datas para o input type="date"
@@ -114,7 +122,9 @@ export default function EditarConselhoPage({ params }: { params: { id: string } 
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    nome, sigla, tipo, descricao, composicao, presidente, email, ativo,
+                    nome, sigla, tipo, descricao, composicao, presidente, email,
+                    mandatoVigencia, atoNomeacao, regimentoInternoUrl, calendarioReunioes,
+                    ativo,
                     atas: payloadAtas // Assume que a API em PUT recria ou atualiza as atas
                 })
             });
@@ -182,7 +192,27 @@ export default function EditarConselhoPage({ params }: { params: { id: string } 
                         <div>
                             <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-wider">E-mail do Conselho</label>
                             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                                className="input-field" placeholder="conselho@lajesPintadas.rn.gov.br" />
+                                className="input-field" placeholder="conselho@lajespintadas.rn.gov.br" />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-wider">Mandato / Vigência</label>
+                            <input value={mandatoVigencia} onChange={(e) => setMandatoVigencia(e.target.value)}
+                                className="input-field" placeholder="Ex: Biênio 2025-2027" />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-wider">Ato / Decreto de Nomeação</label>
+                            <input value={atoNomeacao} onChange={(e) => setAtoNomeacao(e.target.value)}
+                                className="input-field" placeholder="Ex: Decreto Municipal nº 012/2025" />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-wider">Calendário / Periodicidade das Reuniões</label>
+                            <input value={calendarioReunioes} onChange={(e) => setCalendarioReunioes(e.target.value)}
+                                className="input-field" placeholder="Ex: Última quinta-feira de cada mês às 09h" />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-wider">URL do Regimento Interno (PDF)</label>
+                            <input value={regimentoInternoUrl} onChange={(e) => setRegimentoInternoUrl(e.target.value)}
+                                className="input-field" placeholder="https://... ou /uploads/..." />
                         </div>
                         <div className="md:col-span-2">
                             <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-wider">Descrição *</label>

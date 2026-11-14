@@ -71,6 +71,7 @@ export default function NovoDocumentoPage() {
                                 <option value="ppa">PPA - Plano Plurianual</option>
                                 <option value="plano-saude">Plano Municipal de Saúde (PMS)</option>
                                 <option value="plano-educacao">Plano Municipal de Educação (PME)</option>
+                                <option value="relatorio-plano-educacao">Relatório de Resultados / Avaliação do PME (19.1)</option>
                             </optgroup>
                             <optgroup label="Relatórios Fiscais">
                                 <option value="rreo">RREO - Relat. Resumido Execução Orçamentária</option>

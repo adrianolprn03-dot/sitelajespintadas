@@ -23,12 +23,24 @@ import {
 } from "react-icons/fa";
 import AdminModal from "@/components/admin/AdminModal";
 
+type ProtocoloRegulacao = {
+    protocolo: string;
+    iniciais: string;
+    dataSolicitacao: string;
+    especialidade: string;
+    unidadeSolicitante: string;
+    prioridade: string;
+    status: string;
+};
+
 type ItemFila = {
     id: string;
     tipo: string;
     totalPacientes: number;
     tempoEspera: string;
     procedimentos: string | null;
+    competencia?: string | null;
+    protocolosLista?: string | null;
     icone: string;
     cor: string;
     ordem: number;
@@ -91,10 +103,21 @@ export default function AdminCentralRegulacaoPage() {
         totalPacientes: 0,
         tempoEspera: "",
         procedimentos: "",
+        competencia: "",
+        protocolosLista: [] as ProtocoloRegulacao[],
         icone: "FaUserMd",
         cor: "from-blue-500 to-indigo-600",
         ordem: 0,
         ativo: true
+    });
+    const [novoProt, setNovoProt] = useState<ProtocoloRegulacao>({
+        protocolo: "",
+        iniciais: "",
+        dataSolicitacao: new Date().toISOString().split("T")[0],
+        especialidade: "",
+        unidadeSolicitante: "",
+        prioridade: "Normal",
+        status: "Aguardando",
     });
 
     const fetchData = async () => {
@@ -116,12 +139,23 @@ export default function AdminCentralRegulacaoPage() {
 
     const handleOpenModal = (item?: ItemFila) => {
         if (item) {
+            let parsedProtocolos: ProtocoloRegulacao[] = [];
+            if (item.protocolosLista) {
+                try {
+                    const p = JSON.parse(item.protocolosLista);
+                    if (Array.isArray(p)) parsedProtocolos = p;
+                } catch {
+                    parsedProtocolos = [];
+                }
+            }
             setEditingItem(item);
             setItemFormData({
                 tipo: item.tipo,
                 totalPacientes: item.totalPacientes,
                 tempoEspera: item.tempoEspera,
                 procedimentos: item.procedimentos || "",
+                competencia: item.competencia || "",
+                protocolosLista: parsedProtocolos,
                 icone: item.icone || "FaUserMd",
                 cor: item.cor || "from-blue-500 to-indigo-600",
                 ordem: item.ordem || 0,
@@ -134,6 +168,8 @@ export default function AdminCentralRegulacaoPage() {
                 totalPacientes: 0,
                 tempoEspera: "",
                 procedimentos: "",
+                competencia: new Date().toLocaleDateString("pt-BR", { month: "long", year: "numeric" }),
+                protocolosLista: [],
                 icone: "FaUserMd",
                 cor: "from-blue-500 to-indigo-600",
                 ordem: itens.length + 1,
@@ -543,15 +579,124 @@ export default function AdminCentralRegulacaoPage() {
                                 </div>
                             </div>
 
-                            <div>
-                                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Exemplos de Procedimentos / Especialidades</label>
-                                <textarea
-                                    value={itemFormData.procedimentos}
-                                    onChange={(e) => setItemFormData({ ...itemFormData, procedimentos: e.target.value })}
-                                    rows={2}
-                                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-rose-500 text-sm resize-none"
-                                    placeholder="Ex: Cardiologia, Ortopedia, Neurologia..."
-                                />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Competência / Mês de Referência</label>
+                                    <input
+                                        value={itemFormData.competencia}
+                                        onChange={(e) => setItemFormData({ ...itemFormData, competencia: e.target.value })}
+                                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-rose-500 text-sm"
+                                        placeholder="Ex: Novembro/2026"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Exemplos de Procedimentos / Especialidades</label>
+                                    <input
+                                        value={itemFormData.procedimentos}
+                                        onChange={(e) => setItemFormData({ ...itemFormData, procedimentos: e.target.value })}
+                                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-rose-500 text-sm"
+                                        placeholder="Ex: Cardiologia, Ortopedia, Ultrassonografia..."
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Lista Anonimizada de Protocolos na Fila (PNTP 18.3 LGPD) */}
+                            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-xs font-bold text-slate-700 uppercase">
+                                        Protocolos Anonimizados na Fila (LGPD - PNTP 18.3)
+                                    </span>
+                                    <span className="text-[11px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full">
+                                        {itemFormData.protocolosLista.length} protocolo(s)
+                                    </span>
+                                </div>
+
+                                {itemFormData.protocolosLista.length > 0 && (
+                                    <div className="max-h-36 overflow-y-auto space-y-1.5 pr-1">
+                                        {itemFormData.protocolosLista.map((p, idx) => (
+                                            <div key={idx} className="flex items-center justify-between gap-2 bg-white p-2 rounded-lg border border-slate-200 text-xs">
+                                                <div className="truncate">
+                                                    <span className="font-mono font-bold text-rose-700">{p.protocolo}</span>
+                                                    {" • "}{p.iniciais || "Paciente"}{" • "}{p.especialidade}
+                                                    {" "}({p.prioridade} / {p.status})
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        setItemFormData((prev) => ({
+                                                            ...prev,
+                                                            protocolosLista: prev.protocolosLista.filter((_, i) => i !== idx),
+                                                        }))
+                                                    }
+                                                    className="text-red-500 hover:text-red-700 px-2 font-bold"
+                                                >
+                                                    ×
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+
+                                <div className="grid grid-cols-2 md:grid-cols-6 gap-2 pt-1">
+                                    <input
+                                        placeholder="Protocolo (ex: REG-001)"
+                                        value={novoProt.protocolo}
+                                        onChange={(e) => setNovoProt({ ...novoProt, protocolo: e.target.value })}
+                                        className="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white text-xs"
+                                    />
+                                    <input
+                                        placeholder="Iniciais (ex: J. S. O.)"
+                                        value={novoProt.iniciais}
+                                        onChange={(e) => setNovoProt({ ...novoProt, iniciais: e.target.value })}
+                                        className="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white text-xs"
+                                    />
+                                    <input
+                                        type="date"
+                                        value={novoProt.dataSolicitacao}
+                                        onChange={(e) => setNovoProt({ ...novoProt, dataSolicitacao: e.target.value })}
+                                        className="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white text-xs"
+                                    />
+                                    <input
+                                        placeholder="Especialidade / Exame"
+                                        value={novoProt.especialidade}
+                                        onChange={(e) => setNovoProt({ ...novoProt, especialidade: e.target.value })}
+                                        className="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white text-xs"
+                                    />
+                                    <select
+                                        value={novoProt.prioridade}
+                                        onChange={(e) => setNovoProt({ ...novoProt, prioridade: e.target.value })}
+                                        className="px-2 py-1.5 rounded-lg border border-slate-200 bg-white text-xs"
+                                    >
+                                        <option value="Normal">Normal</option>
+                                        <option value="Prioritário">Prioritário</option>
+                                        <option value="Urgente">Urgente</option>
+                                    </select>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            if (!novoProt.protocolo || !novoProt.especialidade) {
+                                                toast.error("Informe protocolo e especialidade.");
+                                                return;
+                                            }
+                                            setItemFormData((prev) => ({
+                                                ...prev,
+                                                protocolosLista: [...prev.protocolosLista, novoProt],
+                                            }));
+                                            setNovoProt({
+                                                protocolo: "",
+                                                iniciais: "",
+                                                dataSolicitacao: new Date().toISOString().split("T")[0],
+                                                especialidade: "",
+                                                unidadeSolicitante: "",
+                                                prioridade: "Normal",
+                                                status: "Aguardando",
+                                            });
+                                        }}
+                                        className="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-bold"
+                                    >
+                                        + Incluir
+                                    </button>
+                                </div>
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">

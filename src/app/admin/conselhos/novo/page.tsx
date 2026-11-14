@@ -11,7 +11,10 @@ export default function NovoConselhoPage() {
     const [form, setForm] = useState({
         nome: "", sigla: "", tipo: "saude",
         descricao: "", composicao: "",
-        presidente: "", email: "", ativo: true
+        presidente: "", email: "",
+        mandatoVigencia: "", atoNomeacao: "",
+        regimentoInternoUrl: "", calendarioReunioes: "",
+        ativo: true
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -88,7 +91,27 @@ export default function NovoConselhoPage() {
                     <div>
                         <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-wider">E-mail do Conselho</label>
                         <input name="email" type="email" value={form.email} onChange={handleChange}
-                            className="input-field" placeholder="conselho@lajesPintadas.rn.gov.br" />
+                            className="input-field" placeholder="conselho@lajespintadas.rn.gov.br" />
+                    </div>
+                    <div>
+                        <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-wider">Mandato / Vigência</label>
+                        <input name="mandatoVigencia" value={form.mandatoVigencia} onChange={handleChange}
+                            className="input-field" placeholder="Ex: Biênio 2025-2027" />
+                    </div>
+                    <div>
+                        <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-wider">Ato / Decreto de Nomeação</label>
+                        <input name="atoNomeacao" value={form.atoNomeacao} onChange={handleChange}
+                            className="input-field" placeholder="Ex: Decreto Municipal nº 012/2025" />
+                    </div>
+                    <div>
+                        <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-wider">Calendário / Periodicidade das Reuniões</label>
+                        <input name="calendarioReunioes" value={form.calendarioReunioes} onChange={handleChange}
+                            className="input-field" placeholder="Ex: Última quinta-feira de cada mês às 09h" />
+                    </div>
+                    <div>
+                        <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-wider">URL do Regimento Interno (PDF)</label>
+                        <input name="regimentoInternoUrl" value={form.regimentoInternoUrl} onChange={handleChange}
+                            className="input-field" placeholder="https://... ou /uploads/..." />
                     </div>
                     <div className="md:col-span-2">
                         <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-wider">Descrição *</label>

@@ -14,7 +14,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 
     try {
         const body = await req.json();
-        const { tipo, totalPacientes, tempoEspera, procedimentos, icone, cor, ordem, ativo } = body;
+        const { tipo, totalPacientes, tempoEspera, procedimentos, competencia, protocolosLista, icone, cor, ordem, ativo } = body;
 
         const itemAtualizado = await prisma.centralRegulacaoItem.update({
             where: { id: params.id },
@@ -23,6 +23,15 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
                 totalPacientes: Number(totalPacientes) || 0,
                 tempoEspera,
                 procedimentos: procedimentos || null,
+                competencia: competencia !== undefined ? competencia || null : undefined,
+                protocolosLista:
+                    protocolosLista !== undefined
+                        ? typeof protocolosLista === "string"
+                            ? protocolosLista
+                            : protocolosLista
+                            ? JSON.stringify(protocolosLista)
+                            : null
+                        : undefined,
                 icone,
                 cor,
                 ordem: Number(ordem) || 0,

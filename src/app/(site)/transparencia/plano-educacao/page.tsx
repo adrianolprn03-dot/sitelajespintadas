@@ -1,34 +1,67 @@
+export const dynamic = "force-dynamic";
+
 import type { Metadata } from "next";
+import { FaGraduationCap } from "react-icons/fa";
+import { prisma } from "@/lib/prisma";
 import PageHeader from "@/components/PageHeader";
-import ListaDocumentosClient from "@/components/ListaDocumentosClient";
+import BannerPNTP from "@/components/transparencia/BannerPNTP";
+import PlanoEducacaoClientPage from "@/components/transparencia/PlanoEducacaoClientPage";
 
 export const metadata: Metadata = {
-    title: "Plano Municipal de Educação | Prefeitura de Lajes Pintadas – RN",
-    description: "Plano Municipal de Educação (PME) com metas e diretrizes educacionais.",
+    title: "Plano de Educação e Relatórios de Resultados | Transparência",
+    description:
+        "Plano Municipal de Educação (PME) e Relatórios de Monitoramento e Resultados com série histórica e exportação (Cartilha PNTP 2026 - Item 19.1).",
 };
 
-export default function PlanoEducacaoPage() {
+export default async function PlanoEducacaoPage() {
+    const rawDocs = await prisma.documento.findMany({
+        where: {
+            ativo: true,
+            tipo: { in: ["plano-educacao", "relatorio-plano-educacao"] },
+        },
+        orderBy: [{ ano: "desc" }, { criadoEm: "desc" }],
+    });
+
+    const docs = rawDocs.map((d) => ({
+        id: d.id,
+        titulo: d.titulo,
+        descricao: d.descricao,
+        tipo: d.tipo,
+        orgaoResponsavel: d.orgaoResponsavel,
+        arquivo: d.arquivo,
+        documentUrl: d.documentUrl,
+        arquivoEditavelUrl: d.arquivoEditavelUrl,
+        ano: d.ano,
+        competencia: d.competencia,
+        criadoEm: d.criadoEm.toISOString(),
+        atualizadoEm: d.atualizadoEm.toISOString(),
+    }));
+
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="bg-[#FAFBFD] min-h-screen pb-16">
             <PageHeader
-                title="Plano Municipal de Educação"
-                subtitle="Planejamento estratégico de educação estruturado para o decênio"
+                title="Plano Municipal de Educação e Relatórios de Resultados"
+                subtitle="Acompanhamento das metas, estratégias decenais do PME e respectivos relatórios de monitoramento e avaliação educacional (Cartilha PNTP 2026 - Item 19.1)."
+                icon={<FaGraduationCap />}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
                     { label: "Transparência", href: "/transparencia" },
-                    { label: "Plano de Educação" }
+                    { label: "Educação", href: "/transparencia/educacao" },
+                    { label: "Plano de Educação (PME)" },
                 ]}
             />
-            <div className="bg-[#01b0ef]/10 py-5 px-6 border-b border-blue-100">
-                <div className="max-w-[1200px] mx-auto flex flex-wrap items-center justify-center gap-6 text-[#0088b9] text-[10px] font-black uppercase tracking-widest">
-                    {["LDB – Lei 9.394/1996", "PNE – Lei 13.005/2014", "PNTP 2026"].map((item) => (
-                        <span key={item} className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border border-blue-100">
-                            <span className="text-[#50B749]">✓</span> {item}
-                        </span>
-                    ))}
-                </div>
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-10 space-y-10">
+                <PlanoEducacaoClientPage initialDocs={docs} />
             </div>
-            <ListaDocumentosClient tipoDocumento="plano-educacao" tituloVazio="Nenhum Plano de Educação cadastrado" />
+
+            <div className="mt-14">
+                <BannerPNTP
+                    criterio="19.1"
+                    requisito="Divulgação do Plano Municipal de Educação e do respectivo relatório de resultados com série histórica e pesquisa"
+                    status="Em Conformidade PNTP 2026"
+                />
+            </div>
         </div>
     );
 }

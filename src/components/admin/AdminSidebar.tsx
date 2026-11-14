@@ -72,6 +72,7 @@ const menuCategories: MenuCategory[] = [
             { label: "Concursos e Seleções", href: "/admin/concursos", icon: FaUsers, roles: ALL_TRANSPARENCY_ROLES },
             { label: "Obras Públicas", href: "/admin/obras", icon: FaHammer, roles: ALL_TRANSPARENCY_ROLES },
             { label: "Saúde / Medicamentos", href: "/admin/saude", icon: FaBook, roles: ALL_TRANSPARENCY_ROLES },
+            { label: "Educação / PME (19.1)", href: "/admin/educacao", icon: FaGraduationCap, roles: ALL_TRANSPARENCY_ROLES },
             { label: "Regulação / Filas SUS", href: "/admin/central-regulacao", icon: FaHeartbeat, roles: ALL_TRANSPARENCY_ROLES },
             { label: "Fila de Creches (19.2)", href: "/admin/creches", icon: FaGraduationCap, roles: ALL_TRANSPARENCY_ROLES },
             { label: "Unidades e Horários", href: "/admin/unidades", icon: FaBuilding, roles: ALL_TRANSPARENCY_ROLES },

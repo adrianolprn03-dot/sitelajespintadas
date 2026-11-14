@@ -1,149 +1,96 @@
-"use client";
+export const dynamic = "force-dynamic";
+
+import type { Metadata } from "next";
 import Link from "next/link";
+import { FaCapsules, FaClipboardList, FaFileMedical, FaHeartbeat, FaHospitalAlt, FaUsers } from "react-icons/fa";
 import PageHeader from "@/components/PageHeader";
-import { FaHeartbeat, FaMapMarker, FaPhone, FaClock, FaClipboardList } from "react-icons/fa";
+import UnidadesSaudeCatalog from "@/components/transparencia/UnidadesSaudeCatalog";
+import { getUnidadesSaudeAtivas } from "@/lib/unidades-server";
 
-import { useState, useEffect } from "react";
-
-type Unidade = {
-    id: string;
-    nome: string;
-    descricao: string;
-    endereco: string;
-    telefone: string | null;
-    horario: string;
-    servicos?: string;
-    mapa: string | null;
+export const metadata: Metadata = {
+    title: "Serviços de Saúde | Prefeitura Municipal de Lajes Pintadas",
+    description:
+        "Carta de Serviços da Saúde Municipal, Unidades Básicas (UBS), UMS 24h, equipes médicas e acesso ao SUS em Lajes Pintadas/RN.",
 };
 
-export default function SaudePage() {
-    const [unidades, setUnidades] = useState<Unidade[]>([]);
-    const [loading, setLoading] = useState(true);
+export default async function ServicosSaudePage() {
+    const unidades = await getUnidadesSaudeAtivas();
 
-    useEffect(() => {
-        const fetchUnidades = async () => {
-            try {
-                const res = await fetch("/api/unidades?tipo=saude", { cache: "no-store" });
-                if (res.ok) {
-                    const data = await res.json();
-                    setUnidades(data);
-                }
-            } catch (error) {
-                console.error("Erro ao buscar unidades:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchUnidades();
-    }, []);
+    const atalhosSaude = [
+        {
+            href: "/transparencia/medicamentos-sus",
+            titulo: "Medicamentos SUS (REMUME) & Estoques",
+            desc: "Lista de medicamentos fornecidos pelo SUS, alto custo (CEAF) e estoque atualizado (PNTP 18.4 e 18.5).",
+            icon: FaCapsules,
+        },
+        {
+            href: "/transparencia/central-regulacao",
+            titulo: "Central de Regulação (Filas e Exames)",
+            desc: "Listas de espera para consultas especializadas, exames e cirurgias (PNTP 18.3).",
+            icon: FaHeartbeat,
+        },
+        {
+            href: "/transparencia/plano-saude",
+            titulo: "Plano de Saúde, PAS e Relatório Anual (RAG)",
+            desc: "Instrumentos de planejamento e gestão do SUS aprovados pelo Conselho (PNTP 18.1).",
+            icon: FaFileMedical,
+        },
+        {
+            href: "/transparencia/conselhos",
+            titulo: "Conselho Municipal de Saúde (CMS)",
+            desc: "Composição atualizada, regimento, atas e deliberações do controle social (PNTP 18.6).",
+            icon: FaUsers,
+        },
+    ];
+
     return (
-        <div>
+        <div className="bg-[#FAFBFD] min-h-screen pb-16">
             <PageHeader
-                title="Unidades de Saúde"
-                subtitle="Lista de locais de atendimento à saúde da rede municipal, contatos e localização"
+                title="Serviços Municipais de Saúde (SUS)"
+                subtitle="Atendimento médico, odontológico, imunização, pronto atendimento 24h, assistência farmacêutica e regulação em saúde em Lajes Pintadas/RN."
+                icon={<FaHospitalAlt />}
                 breadcrumbs={[
                     { label: "Início", href: "/" },
-                    { label: "Serviços", href: "#" },
-                    { label: "Saúde" }
+                    { label: "Serviços" },
+                    { label: "Saúde" },
                 ]}
             />
 
-            <div className="py-16 bg-gray-50 min-h-[400px]">
-                <div className="max-w-[1240px] mx-auto px-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {loading ? (
-                            <div className="md:col-span-2 flex justify-center py-10">
-                                <div className="w-8 h-8 border-4 border-[#01b0ef] border-t-transparent rounded-full animate-spin" />
-                            </div>
-                        ) : unidades.length === 0 ? (
-                            <div className="md:col-span-2 text-center py-10 text-gray-500">
-                                Nenhuma unidade de saúde cadastrada no momento.
-                            </div>
-                        ) : unidades.map((unidade) => (
-                            <div key={unidade.id} className="bg-white rounded-[2rem] shadow-xl shadow-gray-200/50 overflow-hidden border border-gray-100 flex flex-col">
-                                <div className="p-8 pb-6 flex items-start gap-4 border-b border-gray-100">
-                                    <div className="w-14 h-14 rounded-2xl bg-red-50 text-red-500 flex items-center justify-center shrink-0">
-                                        <FaHeartbeat className="text-2xl" />
-                                    </div>
-                                    <div>
-                                        <h2 className="text-xl font-black text-gray-800 uppercase tracking-tight">{unidade.nome}</h2>
-                                        <p className="text-gray-500 text-sm mt-1">{unidade.descricao}</p>
-                                    </div>
-                                </div>
-                                <div className="p-8 space-y-4 flex-1">
-                                    <div className="flex items-start gap-3">
-                                        <FaMapMarker className="text-[#01b0ef] text-lg mt-0.5 shrink-0" />
-                                        <div>
-                                            <p className="text-xs font-bold uppercase text-gray-400 mb-0.5 tracking-widest">Endereço</p>
-                                            <p className="text-sm font-medium text-gray-700">{unidade.endereco}</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-start gap-3">
-                                        <FaPhone className="text-[#01b0ef] text-lg mt-0.5 shrink-0" />
-                                        <div>
-                                            <p className="text-xs font-bold uppercase text-gray-400 mb-0.5 tracking-widest">Telefone Público</p>
-                                            <p className="text-sm font-medium text-gray-700">{unidade.telefone}</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-start gap-3">
-                                        <FaClock className="text-[#01b0ef] text-lg mt-0.5 shrink-0" />
-                                        <div>
-                                            <p className="text-xs font-bold uppercase text-gray-400 mb-0.5 tracking-widest">Horário de Atendimento</p>
-                                            <p className="text-sm font-medium text-gray-700">{unidade.horario}</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-start gap-3">
-                                        <FaClipboardList className="text-[#01b0ef] text-lg mt-0.5 shrink-0" />
-                                        <div>
-                                            <p className="text-xs font-bold uppercase text-gray-400 mb-0.5 tracking-widest">Serviços Disponíveis</p>
-                                            <p className="text-sm font-medium text-gray-700">{unidade.servicos || "Odontológicos, Clínico Geral e Enfermagem"}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                {unidade.mapa ? (
-                                    <div className="h-[250px] w-full bg-gray-200 border-t border-gray-100">
-                                        <iframe
-                                            src={unidade.mapa}
-                                            width="100%"
-                                            height="100%"
-                                            style={{ border: 0 }}
-                                            allowFullScreen={false}
-                                            loading="lazy"
-                                            referrerPolicy="no-referrer-when-downgrade"
-                                            title={`Mapa de Localização - ${unidade.nome}`}
-                                        ></iframe>
-                                    </div>
-                                ) : (
-                                    <div className="h-[100px] w-full bg-gray-50 border-t border-gray-100 flex items-center justify-center">
-                                        <span className="text-xs text-gray-400">Mapa não disponível</span>
-                                    </div>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-
-            {/* Documentos e Planejamento */}
-            <div className="pb-24 bg-gray-50">
-                <div className="max-w-[1240px] mx-auto px-6">
-                    <div className="bg-[#0088b9] rounded-[2.5rem] p-10 md:p-16 text-white relative overflow-hidden shadow-2xl shadow-blue-900/20">
-                        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
-                        <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-10">
-                            <div className="max-w-2xl text-center lg:text-left">
-                                <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tighter mb-4">Planejamento e Gestão</h3>
-                                <p className="text-blue-100 font-medium text-sm md:text-base leading-relaxed opacity-80">
-                                    Acesse o Plano Municipal de Saúde (PMS) e outros documentos norteadores que definem as metas e diretrizes da saúde pública em nosso município para os próximos anos.
-                                </p>
-                            </div>
-                            <Link 
-                                href="/transparencia/plano-saude"
-                                className="px-10 py-5 bg-white text-[#0088b9] font-black rounded-2xl hover:bg-[#FDB913] hover:text-white transition-all text-[11px] uppercase tracking-[0.2em] shadow-xl active:scale-95 shrink-0"
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-10 space-y-10">
+                {/* Atalhos para Transparência da Saúde (PNTP 18.1 - 18.6) */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {atalhosSaude.map((item) => {
+                        const Icon = item.icon;
+                        return (
+                            <Link
+                                key={item.href}
+                                href={item.href}
+                                className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md hover:border-[#1254A3]/40 transition group flex flex-col justify-between gap-3"
                             >
-                                Ver Plano Municipal de Saúde
+                                <div className="space-y-2">
+                                    <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#1254A3] flex items-center justify-center group-hover:bg-[#1254A3] group-hover:text-white transition">
+                                        <Icon size={18} />
+                                    </div>
+                                    <h3 className="font-bold text-slate-900 text-sm">{item.titulo}</h3>
+                                    <p className="text-xs text-slate-500 leading-relaxed">{item.desc}</p>
+                                </div>
+                                <span className="text-[11px] font-bold text-[#1254A3] uppercase tracking-wider">
+                                    Acessar →
+                                </span>
                             </Link>
-                        </div>
+                        );
+                    })}
+                </div>
+
+                {/* Catálogo Completo de Unidades, Serviços e Equipes (PNTP 18.2) */}
+                <div className="space-y-4">
+                    <div className="flex items-center gap-2 text-slate-800">
+                        <FaClipboardList className="text-[#1254A3]" />
+                        <h2 className="text-xl font-black tracking-tight">
+                            Rede de Atendimento, Serviços e Profissionais por Unidade
+                        </h2>
                     </div>
+                    <UnidadesSaudeCatalog initialUnidades={unidades} compactNavigation />
                 </div>
             </div>
         </div>
