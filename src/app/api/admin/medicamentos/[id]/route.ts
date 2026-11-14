@@ -1,11 +1,16 @@
 export const dynamic = "force-dynamic";
+
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireServerAuth } from "@/lib/rbac";
+import { registrarHistoricoAlteracao } from "@/lib/audit";
 import { jsonNoStore, revalidatePaths, REVALIDATE_GROUPS } from "@/lib/revalidate-site";
+import { buildMedicamentoData } from "@/lib/assistencia-farmaceutica";
 
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
+    const auth = await requireServerAuth(["admin", "controladoria", "editor", "integracao"]);
+    if (!auth.authorized) return auth.response;
+
     try {
         const item = await prisma.medicamento.findUnique({ where: { id: params.id } });
         if (!item) return NextResponse.json({ error: "Medicamento não encontrado" }, { status: 404 });
@@ -16,38 +21,42 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
 }
 
 export async function PUT(req: Request, { params }: { params: { id: string } }) {
-    const session = await getServerSession(authOptions);
-    if (!session) return NextResponse.json({ error: "Não autorizado. Faça login novamente." }, { status: 401 });
+    const auth = await requireServerAuth(["admin", "controladoria", "editor"]);
+    if (!auth.authorized) return auth.response;
 
     try {
-        const body = await req.json();
-        const qtyRaw = body.quantidadeEstoque;
-        const minRaw = body.estoqueMinimo;
-        const qty = qtyRaw !== undefined && qtyRaw !== null && qtyRaw !== "" ? parseInt(String(qtyRaw), 10) : undefined;
-        const min = minRaw !== undefined && minRaw !== null && minRaw !== "" ? parseInt(String(minRaw), 10) : undefined;
+        const anterior = await prisma.medicamento.findUnique({ where: { id: params.id } });
+        if (!anterior) {
+            return NextResponse.json({ error: "Medicamento não encontrado" }, { status: 404 });
+        }
 
+        const body = await req.json();
+        if (body.nome !== undefined && !String(body.nome).trim()) {
+            return NextResponse.json({ error: "O nome do medicamento não pode ficar em branco." }, { status: 400 });
+        }
+        if (body.categoria !== undefined && !String(body.categoria).trim()) {
+            return NextResponse.json({ error: "A categoria do medicamento não pode ficar em branco." }, { status: 400 });
+        }
+
+        const data = buildMedicamentoData(body, false) as Parameters<typeof prisma.medicamento.update>[0]["data"];
         const item = await prisma.medicamento.update({
             where: { id: params.id },
-            data: {
-                ...(body.nome !== undefined ? { nome: String(body.nome).trim() } : {}),
-                ...(body.principioAtivo !== undefined ? { principioAtivo: body.principioAtivo ? String(body.principioAtivo).trim() : null } : {}),
-                ...(body.apresentacao !== undefined ? { apresentacao: body.apresentacao ? String(body.apresentacao).trim() : "Comprimido / Frasco" } : {}),
-                ...(body.unidadeMedida !== undefined ? { unidadeMedida: body.unidadeMedida ? String(body.unidadeMedida).trim() : "Unidade" } : {}),
-                ...(body.categoria !== undefined ? { categoria: String(body.categoria).trim() } : {}),
-                ...(body.tipoComponente !== undefined ? { tipoComponente: body.tipoComponente ? String(body.tipoComponente).trim() : "Básico (CBAF)" } : {}),
-                ...(qty !== undefined && !Number.isNaN(qty) ? { quantidadeEstoque: qty } : {}),
-                ...(min !== undefined && !Number.isNaN(min) ? { estoqueMinimo: min } : {}),
-                ...(body.unidadeSaude !== undefined ? { unidadeSaude: body.unidadeSaude ? String(body.unidadeSaude).trim() : "CAF / Farmácia Básica Municipal" } : {}),
-                ...(body.loteValidade !== undefined ? { loteValidade: body.loteValidade ? String(body.loteValidade).trim() : null } : {}),
-                ...(body.status !== undefined ? { status: String(body.status).trim() } : {}),
-                ...(body.observacao !== undefined ? { observacao: body.observacao ? String(body.observacao).trim() : null } : {}),
-                ...(body.situacaoPublicacao !== undefined ? { situacaoPublicacao: String(body.situacaoPublicacao).trim() } : {}),
-                ...(body.ativo !== undefined ? { ativo: Boolean(body.ativo) } : {}),
-                dataReferenciaEstoque: new Date(),
-            }
+            data,
         });
+
+        await registrarHistoricoAlteracao({
+            entidade: "Medicamento",
+            entidadeId: item.id,
+            acao: "edicao",
+            resumoAlteracao: `Atualização do medicamento: ${item.nome} (${item.status})`,
+            dadosAnteriores: anterior,
+            dadosNovos: item,
+            secretaria: "Secretaria Municipal de Saúde",
+            user: auth.user,
+        });
+
         revalidatePaths(REVALIDATE_GROUPS.medicamentos);
-        return NextResponse.json(item);
+        return jsonNoStore(item);
     } catch (error) {
         console.error("Erro ao atualizar medicamento:", error);
         return NextResponse.json({ error: "Erro ao atualizar medicamento" }, { status: 500 });
@@ -55,13 +64,29 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 }
 
 export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
-    const session = await getServerSession(authOptions);
-    if (!session) return NextResponse.json({ error: "Não autorizado. Faça login novamente." }, { status: 401 });
+    const auth = await requireServerAuth(["admin", "controladoria", "editor"]);
+    if (!auth.authorized) return auth.response;
 
     try {
+        const anterior = await prisma.medicamento.findUnique({ where: { id: params.id } });
+        if (!anterior) {
+            return NextResponse.json({ error: "Medicamento não encontrado" }, { status: 404 });
+        }
+
         await prisma.medicamento.delete({ where: { id: params.id } });
+
+        await registrarHistoricoAlteracao({
+            entidade: "Medicamento",
+            entidadeId: params.id,
+            acao: "exclusao",
+            resumoAlteracao: `Exclusão do medicamento: ${anterior.nome}`,
+            dadosAnteriores: anterior,
+            secretaria: "Secretaria Municipal de Saúde",
+            user: auth.user,
+        });
+
         revalidatePaths(REVALIDATE_GROUPS.medicamentos);
-        return NextResponse.json({ success: true });
+        return jsonNoStore({ success: true });
     } catch (error) {
         console.error("Erro ao excluir medicamento:", error);
         return NextResponse.json({ error: "Erro ao excluir medicamento" }, { status: 500 });
