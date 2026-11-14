@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { MUNICIPIO } from "@/config/municipio";
 import HeroWaveCards from "@/components/home/HeroWaveCards";
 import CentralServicosGrid from "@/components/home/CentralServicosGrid";
-import MuralMistoNoticiasAgenda from "@/components/home/MuralMistoNoticiasAgenda";
+import CentralNoticiasSection from "@/components/home/CentralNoticiasSection";
 import RadarTransparenciaPNTP from "@/components/home/RadarTransparenciaPNTP";
 import {
     FaArrowRight,
@@ -171,9 +171,9 @@ export default async function Home() {
             <HeroWaveCards linksExternos={linksExternos} />
 
             {/* =====================================================================
-                2. CENTRAL DE NOTÍCIAS: LAJES PINTADAS EM FOCO, REDES E AGENDA CULTURAL
+                2. CENTRAL DE NOTÍCIAS EXCLUSIVA (DESTAQUE PRINCIPAL + GRID SECUNDÁRIO)
                ===================================================================== */}
-            <MuralMistoNoticiasAgenda noticias={noticias} />
+            <CentralNoticiasSection noticias={noticias} />
 
             {/* =====================================================================
                 3. CENTRAL DE SERVIÇOS (DIORAMA DA SEDE + GRADE 5x2 DE SERVIÇOS)

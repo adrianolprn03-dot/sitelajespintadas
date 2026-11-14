@@ -1,22 +1,17 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { MUNICIPIO } from "@/config/municipio";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import {
-    FaUser,
+    FaShieldHalved,
+    FaBullhorn,
     FaIdCard,
-    FaBriefcase,
-    FaCompass,
+    FaReceipt,
     FaArrowRight,
     FaLandmark,
-    FaCheck,
-    FaReceipt,
-    FaFileInvoice,
-    FaStethoscope,
-    FaGavel,
-    FaGraduationCap
+    FaCheck
 } from "react-icons/fa6";
 
 interface HeroWaveCardsProps {
@@ -36,84 +31,75 @@ export default function HeroWaveCards({ linksExternos = [] }: HeroWaveCardsProps
         };
     };
 
-    const linkCidadao = getLink(["home-cidadao", "cidadao", "carta-servicos"], "/transparencia/carta-servicos");
+    const linkTransparencia = getLink(["home-transparencia", "transparencia"], "/transparencia");
+    const linkOuvidoria = getLink(["home-ouvidoria", "ouvidoria", "esic"], "/servicos/ouvidoria");
     const linkServidor = getLink(["home-contracheque", "contracheque", "servidor"], "/servicos/contracheque");
-    const linkEmpresa = getLink(["home-licitacoes", "licitacoes", "empresa"], "/transparencia/licitacoes");
-    const linkTurista = getLink(["home-historia", "turismo", "historia"], "/a-prefeitura/historia");
+    const linkTributacao = getLink(["home-tributario", "tributario", "tributacao", "iptu"], "/servicos/tributario");
 
-    // 4 Cards Flutuantes de Perfis (Conforme Referência Oficial)
+    // 4 Cards Flutuantes Solicitados: Transparência, Ouvidoria, Servidor, Tributação
     const profileCards = [
         {
-            id: "perfil-cidadao",
-            titulo: "Cidadão",
-            descricao: "Serviços essenciais, impostos, saúde e informações para o seu dia a dia.",
-            href: linkCidadao.href,
-            isExternal: linkCidadao.isExternal,
-            icon: FaUser,
-            corTexto: "text-emerald-700",
-            corBorda: "border-emerald-500",
-            corIconeBg: "bg-emerald-50 text-emerald-600 border-emerald-200",
-            corHoverBg: "group-hover:border-emerald-600",
-            botaoCor: "bg-emerald-50 text-emerald-700 group-hover:bg-emerald-600 group-hover:text-white",
-            tag: "Serviços Gerais",
-        },
-        {
-            id: "perfil-servidor",
-            titulo: "Servidor",
-            descricao: "Contracheque online, informe de rendimentos, férias e serviços exclusivos.",
-            href: linkServidor.href,
-            isExternal: linkServidor.isExternal,
-            icon: FaIdCard,
+            id: "perfil-transparencia",
+            titulo: "Transparência",
+            descricao: "Prestação de contas, receitas, despesas, licitações PNCP e contratos públicos.",
+            href: linkTransparencia.href,
+            isExternal: linkTransparencia.isExternal,
+            icon: FaShieldHalved,
             corTexto: "text-[#1254A3]",
             corBorda: "border-[#1254A3]",
             corIconeBg: "bg-blue-50 text-[#1254A3] border-blue-200",
             corHoverBg: "group-hover:border-[#1254A3]",
             botaoCor: "bg-blue-50 text-[#1254A3] group-hover:bg-[#1254A3] group-hover:text-white",
-            tag: "Portal do Servidor",
+            tag: "Contas Públicas",
         },
         {
-            id: "perfil-empresa",
-            titulo: "Empresa",
-            descricao: "Licitações (PNCP), Nota Fiscal Eletrônica (NFS-e), alvarás e certidões.",
-            href: linkEmpresa.href,
-            isExternal: linkEmpresa.isExternal,
-            icon: FaBriefcase,
+            id: "perfil-ouvidoria",
+            titulo: "Ouvidoria",
+            descricao: "Canal direto de manifestação: elogios, sugestões, denúncias e e-SIC.",
+            href: linkOuvidoria.href,
+            isExternal: linkOuvidoria.isExternal,
+            icon: FaBullhorn,
+            corTexto: "text-emerald-700",
+            corBorda: "border-emerald-500",
+            corIconeBg: "bg-emerald-50 text-emerald-600 border-emerald-200",
+            corHoverBg: "group-hover:border-emerald-600",
+            botaoCor: "bg-emerald-50 text-emerald-700 group-hover:bg-emerald-600 group-hover:text-white",
+            tag: "Fale Conosco",
+        },
+        {
+            id: "perfil-servidor",
+            titulo: "Servidor",
+            descricao: "Contracheque online, informe de rendimentos, margem consignável e previdência.",
+            href: linkServidor.href,
+            isExternal: linkServidor.isExternal,
+            icon: FaIdCard,
             corTexto: "text-sky-700",
             corBorda: "border-sky-500",
             corIconeBg: "bg-sky-50 text-sky-600 border-sky-200",
             corHoverBg: "group-hover:border-sky-500",
             botaoCor: "bg-sky-50 text-sky-700 group-hover:bg-sky-600 group-hover:text-white",
-            tag: "Compras & Tributos",
+            tag: "Portal do Servidor",
         },
         {
-            id: "perfil-turista",
-            titulo: "Turista",
-            descricao: "Descubra Lajes Pintadas, a Pedra do Letreiro, inscrições rupestres e eventos.",
-            href: linkTurista.href,
-            isExternal: linkTurista.isExternal,
-            icon: FaCompass,
-            corTexto: "text-purple-700",
-            corBorda: "border-purple-500",
-            corIconeBg: "bg-purple-50 text-purple-600 border-purple-200",
-            corHoverBg: "group-hover:border-purple-500",
-            botaoCor: "bg-purple-50 text-purple-700 group-hover:bg-purple-600 group-hover:text-white",
-            tag: "História & Cultura",
+            id: "perfil-tributacao",
+            titulo: "Tributação",
+            descricao: "2ª via do IPTU, emissão de certidões, taxas municipais, DAM e Nota Fiscal.",
+            href: linkTributacao.href,
+            isExternal: linkTributacao.isExternal,
+            icon: FaReceipt,
+            corTexto: "text-amber-700",
+            corBorda: "border-amber-500",
+            corIconeBg: "bg-amber-50 text-amber-600 border-amber-200",
+            corHoverBg: "group-hover:border-amber-500",
+            botaoCor: "bg-amber-50 text-amber-700 group-hover:bg-amber-600 group-hover:text-white",
+            tag: "IPTU & Tributos",
         },
-    ];
-
-    const sugestoesBusca = [
-        { label: "IPTU 2ª Via", href: "/servicos/tributario" },
-        { label: "Fila de Creches", href: "/transparencia/fila-creches" },
-        { label: "Remédios UBS", href: "/transparencia/medicamentos-sus" },
-        { label: "Licitações", href: "/transparencia/licitacoes" },
-        { label: "Contracheque", href: "/servicos/contracheque" },
-        { label: "Diário Oficial", href: "/transparencia/legislacao" },
     ];
 
     return (
         <div className="relative w-full">
             {/* ========================================================= */}
-            {/* HERO PANORÂMICO COM IMAGEM REAL E OVERLAY CÍVICO          */}
+            {/* HERO PANORÂMICO COM VÍDEO LUMINOSO E OVERLAY LEVE         */}
             {/* ========================================================= */}
             <div className="relative w-full min-h-[460px] sm:min-h-[500px] lg:min-h-[540px] bg-slate-900 flex flex-col justify-between overflow-hidden">
                 {/* Vídeo de Fundo Oficial em Alta Resolução e Luminoso */}
@@ -151,7 +137,7 @@ export default function HeroWaveCards({ linksExternos = [] }: HeroWaveCardsProps
                             Acesse com facilidade todos os serviços do cidadão, notícias oficiais e acompanhe as contas públicas no Portal da Transparência.
                         </p>
 
-                        {/* Barra de Pesquisa Rápida */}
+                        {/* Barra de Pesquisa Rápida (Sem as pílulas de busca frequente) */}
                         <div className="pt-2">
                             <form
                                 action="/transparencia"
@@ -178,20 +164,6 @@ export default function HeroWaveCards({ linksExternos = [] }: HeroWaveCardsProps
                                     <FaArrowRight size={12} />
                                 </button>
                             </form>
-
-                            {/* Pílulas de Sugestão de Busca */}
-                            <div className="flex flex-wrap items-center gap-2 pt-3 text-xs text-white/90">
-                                <span className="font-semibold text-white/80">Buscas frequentes:</span>
-                                {sugestoesBusca.map((sug, i) => (
-                                    <Link
-                                        key={i}
-                                        href={sug.href}
-                                        className="bg-white/15 hover:bg-white/25 active:bg-white/35 backdrop-blur-sm px-3 py-1 rounded-full text-white text-[11px] font-semibold border border-white/20 transition-all hover:scale-105"
-                                    >
-                                        {sug.label}
-                                    </Link>
-                                ))}
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -228,7 +200,7 @@ export default function HeroWaveCards({ linksExternos = [] }: HeroWaveCardsProps
             </div>
 
             {/* ========================================================= */}
-            {/* 4 CARDS VERTICAIS FLUTUANTES (PERFIS DE NAVEGAÇÃO)         */}
+            {/* 4 CARDS VERTICAIS FLUTUANTES (TRANSPARÊNCIA, OUVIDORIA...) */}
             {/* ========================================================= */}
             <div className="relative z-20 max-w-[1280px] mx-auto px-4 sm:px-6 -mt-16 sm:-mt-20 lg:-mt-24">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
@@ -269,7 +241,7 @@ export default function HeroWaveCards({ linksExternos = [] }: HeroWaveCardsProps
 
                                 <div className="pt-5 mt-4 border-t border-slate-100 flex items-center justify-between">
                                     <span className="text-xs font-extrabold text-[#12304A] group-hover:text-[#1254A3] transition-colors">
-                                        Acessar perfil
+                                        Acessar serviço
                                     </span>
                                     <div
                                         className={`w-9 h-9 rounded-full ${card.botaoCor} flex items-center justify-center transition-all group-hover:translate-x-1`}
@@ -285,4 +257,3 @@ export default function HeroWaveCards({ linksExternos = [] }: HeroWaveCardsProps
         </div>
     );
 }
-
