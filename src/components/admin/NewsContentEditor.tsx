@@ -15,6 +15,7 @@ import {
     FaGlobe,
     FaSitemap
 } from "react-icons/fa";
+import AdminModal from "@/components/admin/AdminModal";
 
 interface NewsContentEditorProps {
     value: string;
@@ -306,29 +307,38 @@ export default function NewsContentEditor({
             )}
 
             {/* MODAL LINK EXTERNO */}
-            {showExternalModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-fadeIn">
-                    <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 max-w-md w-full p-6 space-y-5 relative">
-                        <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-                            <div className="flex items-center gap-2 text.emerald-700">
-                                <div className="p-2 bg-emerald-100 rounded-lg text-emerald-600">
-                                    <FaGlobe className="w-5 h-5" />
-                                </div>
-                                <div>
-                                    <h3 className="font-bold text-gray-900 leading-tight">Incluir Link Externo</h3>
-                                    <p className="text-xs text-gray-500">Link direcionando para um site fora do portal</p>
-                                </div>
-                            </div>
-                            <button
-                                type="button"
-                                onClick={() => setShowExternalModal(false)}
-                                className="text-gray-400 hover:text-gray-600 p-1.5 rounded-lg"
-                            >
-                                <FaTimes className="w-5 h-5" />
-                            </button>
-                        </div>
-
-                        <div className="space-y-4">
+            <AdminModal
+                open={showExternalModal}
+                onClose={() => setShowExternalModal(false)}
+                title="Incluir Link Externo"
+                description="Link direcionando para um site fora do portal"
+                maxWidth="md"
+                icon={
+                    <div className="p-2 bg-emerald-100 rounded-lg text-emerald-600">
+                        <FaGlobe className="w-5 h-5" />
+                    </div>
+                }
+                footer={
+                    <div className="flex items-center justify-end gap-2">
+                        <button
+                            type="button"
+                            onClick={() => setShowExternalModal(false)}
+                            className="px-4 py-2 text-xs font-bold text-gray-600 hover:bg-gray-100 rounded-xl transition-all"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            type="button"
+                            onClick={handleConfirmExternalLink}
+                            disabled={!externalUrl.trim()}
+                            className="px-5 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 rounded-xl shadow-md transition-all flex items-center gap-1.5"
+                        >
+                            <FaCheck /> Inserir Link
+                        </button>
+                    </div>
+                }
+            >
+                <div className="space-y-4">
                             <div>
                                 <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
                                     Texto a ser exibido no link *
@@ -368,51 +378,41 @@ export default function NewsContentEditor({
                             </label>
                         </div>
 
-                        <div className="pt-4 border-t border-gray-100 flex items-center justify-end gap-2">
-                            <button
-                                type="button"
-                                onClick={() => setShowExternalModal(false)}
-                                className="px-4 py-2 text-xs font-bold text-gray-600 hover:bg-gray-100 rounded-xl transition-all"
-                            >
-                                Cancelar
-                            </button>
-                            <button
-                                type="button"
-                                onClick={handleConfirmExternalLink}
-                                disabled={!externalUrl.trim()}
-                                className="px-5 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 rounded-xl shadow-md transition-all flex items-center gap-1.5"
-                            >
-                                <FaCheck /> Inserir Link
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            </AdminModal>
 
             {/* MODAL LINK INTERNO */}
-            {showInternalModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-fadeIn">
-                    <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 max-w-lg w-full p-6 space-y-5 relative max-h-[90vh] overflow-y-auto">
-                        <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-                            <div className="flex items-center gap-2 text-[#0088b9]">
-                                <div className="p-2 bg-blue-100 rounded-lg text-[#01b0ef]">
-                                    <FaSitemap className="w-5 h-5" />
-                                </div>
-                                <div>
-                                    <h3 className="font-bold text-gray-900 leading-tight">Incluir Link de Página Interna</h3>
-                                    <p className="text-xs text-gray-500">Selecione uma seção do próprio site institucional</p>
-                                </div>
-                            </div>
-                            <button
-                                type="button"
-                                onClick={() => setShowInternalModal(false)}
-                                className="text-gray-400 hover:text-gray-600 p-1.5 rounded-lg"
-                            >
-                                <FaTimes className="w-5 h-5" />
-                            </button>
-                        </div>
-
-                        <div className="space-y-4">
+            <AdminModal
+                open={showInternalModal}
+                onClose={() => setShowInternalModal(false)}
+                title="Incluir Link de Página Interna"
+                description="Selecione uma seção do próprio site institucional"
+                maxWidth="lg"
+                icon={
+                    <div className="p-2 bg-blue-100 rounded-lg text-[#01b0ef]">
+                        <FaSitemap className="w-5 h-5" />
+                    </div>
+                }
+                footer={
+                    <div className="flex items-center justify-end gap-2">
+                        <button
+                            type="button"
+                            onClick={() => setShowInternalModal(false)}
+                            className="px-4 py-2 text-xs font-bold text-gray-600 hover:bg-gray-100 rounded-xl transition-all"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            type="button"
+                            onClick={handleConfirmInternalLink}
+                            disabled={isCustomPath && !customPath.trim()}
+                            className="px-5 py-2 text-xs font-bold text-white bg-[#0088b9] hover:bg-[#00739d] disabled:opacity-50 rounded-xl shadow-md transition-all flex items-center gap-1.5"
+                        >
+                            <FaCheck /> Inserir Link Interno
+                        </button>
+                    </div>
+                }
+            >
+                <div className="space-y-4">
                             <div>
                                 <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
                                     Texto a ser exibido no link *
@@ -471,26 +471,7 @@ export default function NewsContentEditor({
                             </div>
                         </div>
 
-                        <div className="pt-4 border-t border-gray-100 flex items-center justify-end gap-2">
-                            <button
-                                type="button"
-                                onClick={() => setShowInternalModal(false)}
-                                className="px-4 py-2 text-xs font-bold text-gray-600 hover:bg-gray-100 rounded-xl transition-all"
-                            >
-                                Cancelar
-                            </button>
-                            <button
-                                type="button"
-                                onClick={handleConfirmInternalLink}
-                                disabled={isCustomPath && !customPath.trim()}
-                                className="px-5 py-2 text-xs font-bold text-white bg-[#0088b9] hover:bg-[#00739d] disabled:opacity-50 rounded-xl shadow-md transition-all flex items-center gap-1.5"
-                            >
-                                <FaCheck /> Inserir Link Interno
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            </AdminModal>
         </div>
     );
 }

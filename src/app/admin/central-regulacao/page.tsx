@@ -21,6 +21,7 @@ import {
     FaSlidersH,
     FaList
 } from "react-icons/fa";
+import AdminModal from "@/components/admin/AdminModal";
 
 type ItemFila = {
     id: string;
@@ -481,23 +482,33 @@ export default function AdminCentralRegulacaoPage() {
             )}
 
             {/* MODAL DE CADASTRO / EDIÇÃO DE FILA */}
-            {isModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
-                    <div className="bg-white rounded-3xl max-w-xl w-full p-8 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
-                        <div className="flex items-center justify-between border-b border-gray-100 pb-4">
-                            <h2 className="text-lg font-black text-gray-800 uppercase tracking-tight flex items-center gap-2">
-                                <FaHeartbeat className="text-rose-600" />
-                                {editingItem ? "Editar Fila de Regulação" : "Nova Fila de Regulação"}
-                            </h2>
-                            <button 
-                                onClick={() => setIsModalOpen(false)} 
-                                className="text-gray-400 hover:text-gray-600 text-xl font-bold"
-                            >
-                                &times;
-                            </button>
-                        </div>
-
-                        <form onSubmit={handleSaveItem} className="space-y-4">
+            <AdminModal
+                open={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                icon={<FaHeartbeat className="text-rose-600 text-lg" />}
+                title={editingItem ? "Editar Fila de Regulação" : "Nova Fila de Regulação"}
+                maxWidth="xl"
+                footer={
+                    <>
+                        <button
+                            type="button"
+                            onClick={() => setIsModalOpen(false)}
+                            className="px-5 py-2.5 bg-white border border-gray-200 rounded-xl font-bold text-gray-600 hover:bg-gray-50 text-sm"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            type="submit"
+                            form="form-regulacao-fila"
+                            disabled={savingItem}
+                            className="px-6 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl shadow-md text-sm flex items-center gap-2 disabled:opacity-50"
+                        >
+                            {savingItem ? <FaSpinner className="animate-spin" /> : "Salvar Fila"}
+                        </button>
+                    </>
+                }
+            >
+                        <form id="form-regulacao-fila" onSubmit={handleSaveItem} className="space-y-4">
                             <div>
                                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Nome / Tipo da Fila *</label>
                                 <input
@@ -583,27 +594,8 @@ export default function AdminCentralRegulacaoPage() {
                                     Ativo (Exibir publicamente no portal)
                                 </label>
                             </div>
-
-                            <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
-                                <button
-                                    type="button"
-                                    onClick={() => setIsModalOpen(false)}
-                                    className="px-5 py-2.5 border border-gray-200 rounded-xl font-bold text-gray-600 hover:bg-gray-50 text-sm"
-                                >
-                                    Cancelar
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={savingItem}
-                                    className="px-6 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl shadow-md text-sm flex items-center gap-2 disabled:opacity-50"
-                                >
-                                    {savingItem ? <FaSpinner className="animate-spin" /> : "Salvar Fila"}
-                                </button>
-                            </div>
                         </form>
-                    </div>
-                </div>
-            )}
+            </AdminModal>
         </div>
     );
 }

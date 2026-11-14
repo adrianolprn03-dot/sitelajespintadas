@@ -15,6 +15,7 @@ import {
     FaFileAlt,
     FaSearch,
 } from "react-icons/fa";
+import AdminModal from "@/components/admin/AdminModal";
 
 interface CriterioItem {
     codigo: string;
@@ -686,15 +687,32 @@ export default function AdminPNTPPage() {
             </div>
 
             {/* Modal Editar Critério */}
-            {editingItem && (
-                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+            <AdminModal
+                open={Boolean(editingItem)}
+                onClose={() => setEditingItem(null)}
+                title={editingItem ? `Atualizar Critério ${editingItem.codigo} — ${editingItem.titulo}` : "Atualizar Critério"}
+                maxWidth="lg"
+                footer={
+                    <div className="flex justify-end gap-2">
+                        <button
+                            type="button"
+                            onClick={() => setEditingItem(null)}
+                            className="px-4 py-2 rounded-xl bg-gray-100 text-gray-700 text-xs font-bold hover:bg-gray-200 transition-colors"
+                        >
+                            Cancelar
+                        </button>
+                        <button type="submit" form="form-pntp-criterio" className="btn-primary text-xs">
+                            Salvar e Auditar
+                        </button>
+                    </div>
+                }
+            >
+                {editingItem && (
                     <form
+                        id="form-pntp-criterio"
                         onSubmit={handleSalvarCriterio}
-                        className="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl"
+                        className="space-y-4"
                     >
-                        <h3 className="text-base font-bold text-gray-800">
-                            Atualizar Critério {editingItem.codigo} — {editingItem.titulo}
-                        </h3>
 
                         {editingItem.resultadoCiclo && (
                             <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs space-y-1.5">
@@ -801,32 +819,36 @@ export default function AdminPNTPPage() {
                             />
                         </div>
 
-                        <div className="flex justify-end gap-2 pt-3 border-t">
-                            <button
-                                type="button"
-                                onClick={() => setEditingItem(null)}
-                                className="px-4 py-2 rounded-xl bg-gray-100 text-gray-700 text-xs font-bold"
-                            >
-                                Cancelar
-                            </button>
-                            <button type="submit" className="btn-primary text-xs">
-                                Salvar e Auditar
-                            </button>
-                        </div>
                     </form>
-                </div>
-            )}
+                )}
+            </AdminModal>
 
             {/* Modal Declaração Formal */}
-            {showDeclaracaoModal && (
-                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-                    <form
-                        onSubmit={handleSalvarDeclaracao}
-                        className="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl"
-                    >
-                        <h3 className="text-base font-bold text-gray-800">
-                            Emitir Declaração Formal de Transparência
-                        </h3>
+            <AdminModal
+                open={showDeclaracaoModal}
+                onClose={() => setShowDeclaracaoModal(false)}
+                title="Emitir Declaração Formal de Transparência"
+                maxWidth="lg"
+                footer={
+                    <div className="flex justify-end gap-2">
+                        <button
+                            type="button"
+                            onClick={() => setShowDeclaracaoModal(false)}
+                            className="px-4 py-2 rounded-xl bg-gray-100 text-gray-700 text-xs font-bold hover:bg-gray-200 transition-colors"
+                        >
+                            Cancelar
+                        </button>
+                        <button type="submit" form="form-pntp-declaracao" className="btn-primary text-xs">
+                            Emitir Declaração
+                        </button>
+                    </div>
+                }
+            >
+                <form
+                    id="form-pntp-declaracao"
+                    onSubmit={handleSalvarDeclaracao}
+                    className="space-y-4"
+                >
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
@@ -905,21 +927,8 @@ export default function AdminPNTPPage() {
                             />
                         </div>
 
-                        <div className="flex justify-end gap-2 pt-3 border-t">
-                            <button
-                                type="button"
-                                onClick={() => setShowDeclaracaoModal(false)}
-                                className="px-4 py-2 rounded-xl bg-gray-100 text-gray-700 text-xs font-bold"
-                            >
-                                Cancelar
-                            </button>
-                            <button type="submit" className="btn-primary text-xs">
-                                Emitir Declaração
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            )}
+                </form>
+            </AdminModal>
         </div>
     );
 }

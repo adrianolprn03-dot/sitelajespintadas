@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { FaBuilding, FaPlus, FaEdit, FaTrash, FaSpinner, FaSearch, FaImage, FaMapMarker, FaPhone, FaEnvelope, FaClock, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import toast from "react-hot-toast";
 import ImageUpload from "@/components/admin/ImageUpload";
+import AdminModal from "@/components/admin/AdminModal";
 
 type Secretaria = {
     id: string;
@@ -250,19 +251,31 @@ export default function AdminSecretariasPage() {
             </div>
 
             {/* Modal de Formulário */}
-            {showModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-                    <div className="bg-white rounded-[2.5rem] w-full max-w-3xl p-8 shadow-2xl shadow-black/20 overflow-y-auto max-h-[90vh] animate-in zoom-in-95 duration-200">
-                        <div className="flex items-center justify-between mb-8">
-                            <h2 className="text-xl font-black text-gray-800 uppercase tracking-tighter">
-                                {editingId ? "Editar Secretaria" : "Cadastrar Nova Pasta"}
-                            </h2>
-                            <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-gray-600 p-2">
-                                <FaTimesCircle size={24} />
-                            </button>
-                        </div>
-
-                        <form onSubmit={handleSubmit} className="space-y-6">
+            <AdminModal
+                open={showModal}
+                onClose={() => setShowModal(false)}
+                title={editingId ? "Editar Secretaria" : "Cadastrar Nova Pasta"}
+                maxWidth="3xl"
+                footer={
+                    <div className="flex gap-3 sm:gap-4 w-full">
+                        <button
+                            type="button"
+                            onClick={() => setShowModal(false)}
+                            className="flex-1 px-6 py-3.5 rounded-2xl font-black uppercase tracking-widest text-[10px] text-gray-500 hover:bg-gray-100 transition-all border border-gray-200"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            type="submit"
+                            form="form-secretaria-admin"
+                            className="flex-1 bg-blue-600 text-white px-6 py-3.5 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-xl shadow-blue-200 hover:bg-blue-700 transition-all"
+                        >
+                            Salvar Secretaria
+                        </button>
+                    </div>
+                }
+            >
+                <form id="form-secretaria-admin" onSubmit={handleSubmit} className="space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Nome da Secretaria</label>
@@ -361,25 +374,8 @@ export default function AdminSecretariasPage() {
                                 </div>
                             </div>
 
-                            <div className="flex gap-4 pt-4">
-                                <button 
-                                    type="button"
-                                    onClick={() => setShowModal(false)}
-                                    className="flex-1 px-8 py-5 rounded-2xl font-black uppercase tracking-widest text-[10px] text-gray-400 hover:bg-gray-50 transition-all border border-gray-100"
-                                >
-                                    Cancelar
-                                </button>
-                                <button 
-                                    type="submit"
-                                    className="flex-1 bg-blue-600 text-white px-8 py-5 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-xl shadow-blue-200 hover:bg-blue-700 hover:-translate-y-1 transition-all"
-                                >
-                                    Salvar Secretaria
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
+                </form>
+            </AdminModal>
         </div>
     );
 }

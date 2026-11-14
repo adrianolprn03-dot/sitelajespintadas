@@ -7,6 +7,7 @@ import {
 } from "react-icons/fa";
 import toast from "react-hot-toast";
 import Link from "next/link";
+import AdminModal from "@/components/admin/AdminModal";
 
 type Programa = {
     id: string;
@@ -417,14 +418,31 @@ export default function AdminIncentivosCulturaisPage() {
             </form>
 
             {/* Modal para Editar/Adicionar Programa */}
-            {showProgModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-                    <div className="bg-white rounded-[2rem] w-full max-w-lg p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
-                        <h2 className="text-xl font-black text-gray-800 uppercase mb-6">
-                            {editingProgId ? "Editar Programa" : "Novo Programa em Execução"}
-                        </h2>
-
-                        <form onSubmit={handleSavePrograma} className="space-y-4">
+            <AdminModal
+                open={showProgModal}
+                onClose={() => setShowProgModal(false)}
+                title={editingProgId ? "Editar Programa" : "Novo Programa em Execução"}
+                maxWidth="lg"
+                footer={
+                    <>
+                        <button
+                            type="button"
+                            onClick={() => setShowProgModal(false)}
+                            className="px-5 py-2.5 bg-white border border-gray-200 text-gray-600 font-black uppercase text-xs hover:bg-gray-100 rounded-xl transition-colors"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            type="submit"
+                            form="form-incentivo-programa"
+                            className="px-6 py-2.5 bg-purple-600 text-white font-black uppercase text-xs rounded-xl hover:bg-purple-700 transition-colors shadow-md"
+                        >
+                            Confirmar
+                        </button>
+                    </>
+                }
+            >
+                        <form id="form-incentivo-programa" onSubmit={handleSavePrograma} className="space-y-4">
                             <div className="space-y-1">
                                 <label className="text-[10px] font-black uppercase text-gray-400 ml-2">Título do Programa</label>
                                 <input
@@ -514,26 +532,8 @@ export default function AdminIncentivosCulturaisPage() {
                                     <option value="Planejado">Planejado</option>
                                 </select>
                             </div>
-
-                            <div className="flex gap-3 pt-4">
-                                <button
-                                    type="button"
-                                    onClick={() => setShowProgModal(false)}
-                                    className="flex-1 py-3 text-gray-400 font-black uppercase text-xs hover:bg-gray-100 rounded-xl transition-colors"
-                                >
-                                    Cancelar
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="flex-1 py-3 bg-purple-600 text-white font-black uppercase text-xs rounded-xl hover:bg-purple-700 transition-colors shadow-md"
-                                >
-                                    Confirmar
-                                </button>
-                            </div>
                         </form>
-                    </div>
-                </div>
-            )}
+            </AdminModal>
         </div>
     );
 }

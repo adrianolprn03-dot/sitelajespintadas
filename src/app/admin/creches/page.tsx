@@ -14,6 +14,7 @@ import {
     FaInfoCircle
 } from "react-icons/fa";
 import toast from "react-hot-toast";
+import AdminModal from "@/components/admin/AdminModal";
 
 export default function AdminCrechesPage() {
     const [fila, setFila] = useState<any[]>([]);
@@ -264,11 +265,32 @@ export default function AdminCrechesPage() {
             </div>
 
             {/* Modal Declaração */}
-            {modalDeclaracao && (
-                <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4">
-                        <h2 className="text-xl font-bold text-gray-900">Publicar Declaração Oficial de Inexistência de Fila</h2>
-                        <form onSubmit={handleSalvarDeclaracao} className="space-y-4">
+            <AdminModal
+                open={modalDeclaracao}
+                onClose={() => setModalDeclaracao(false)}
+                title="Publicar Declaração Oficial de Inexistência de Fila"
+                maxWidth="lg"
+                footer={
+                    <>
+                        <button
+                            type="button"
+                            onClick={() => setModalDeclaracao(false)}
+                            className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-semibold hover:bg-gray-50"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            type="submit"
+                            form="form-creche-declaracao"
+                            disabled={salvando}
+                            className="px-5 py-2 bg-amber-500 text-white rounded-xl text-sm font-bold hover:bg-amber-600 disabled:opacity-50"
+                        >
+                            {salvando ? "Publicando..." : "Publicar Declaração"}
+                        </button>
+                    </>
+                }
+            >
+                        <form id="form-creche-declaracao" onSubmit={handleSalvarDeclaracao} className="space-y-4">
                             <div>
                                 <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Exercício</label>
                                 <input
@@ -309,33 +331,36 @@ export default function AdminCrechesPage() {
                                     className="w-full border rounded-xl p-3 text-sm"
                                 />
                             </div>
-                            <div className="flex justify-end gap-3 pt-2">
-                                <button
-                                    type="button"
-                                    onClick={() => setModalDeclaracao(false)}
-                                    className="px-4 py-2 border rounded-xl text-sm font-semibold hover:bg-gray-50"
-                                >
-                                    Cancelar
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={salvando}
-                                    className="px-5 py-2 bg-amber-500 text-white rounded-xl text-sm font-bold hover:bg-amber-600 disabled:opacity-50"
-                                >
-                                    {salvando ? "Publicando..." : "Publicar Declaração"}
-                                </button>
-                            </div>
                         </form>
-                    </div>
-                </div>
-            )}
+            </AdminModal>
 
             {/* Modal Inscrição */}
-            {modalInscricao && (
-                <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
-                        <h2 className="text-xl font-bold text-gray-900">Registrar Inscrição na Fila de Creches</h2>
-                        <form onSubmit={handleSalvarInscricao} className="space-y-4">
+            <AdminModal
+                open={modalInscricao}
+                onClose={() => setModalInscricao(false)}
+                title="Registrar Inscrição na Fila de Creches"
+                maxWidth="lg"
+                footer={
+                    <>
+                        <button
+                            type="button"
+                            onClick={() => setModalInscricao(false)}
+                            className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-semibold hover:bg-gray-50"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            type="submit"
+                            form="form-creche-inscricao"
+                            disabled={salvando}
+                            className="px-5 py-2 bg-[#1254A3] text-white rounded-xl text-sm font-bold hover:bg-blue-800 disabled:opacity-50"
+                        >
+                            {salvando ? "Salvando..." : "Salvar Inscrição"}
+                        </button>
+                    </>
+                }
+            >
+                        <form id="form-creche-inscricao" onSubmit={handleSalvarInscricao} className="space-y-4">
                             <div className="grid grid-cols-2 gap-3">
                                 <div>
                                     <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Iniciais da Criança</label>
@@ -436,26 +461,8 @@ export default function AdminCrechesPage() {
                                     />
                                 </div>
                             </div>
-                            <div className="flex justify-end gap-3 pt-2">
-                                <button
-                                    type="button"
-                                    onClick={() => setModalInscricao(false)}
-                                    className="px-4 py-2 border rounded-xl text-sm font-semibold hover:bg-gray-50"
-                                >
-                                    Cancelar
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={salvando}
-                                    className="px-5 py-2 bg-[#1254A3] text-white rounded-xl text-sm font-bold hover:bg-blue-800 disabled:opacity-50"
-                                >
-                                    {salvando ? "Salvando..." : "Salvar Inscrição"}
-                                </button>
-                            </div>
                         </form>
-                    </div>
-                </div>
-            )}
+            </AdminModal>
         </div>
     );
 }

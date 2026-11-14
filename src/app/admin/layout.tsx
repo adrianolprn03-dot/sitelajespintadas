@@ -27,13 +27,15 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <div className="flex min-h-screen bg-[#f8fafc] font-['Montserrat',sans-serif] text-slate-800 antialiased selection:bg-primary-500 selection:text-white">
             <AdminSidebar userRole={userRole} />
             
-            <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+            <main className="flex-1 flex flex-col min-w-0 relative">
                 {/* Elementos decorativos sutis ao fundo */}
-                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-primary-400/10 to-blue-600/10 rounded-full blur-[140px] pointer-events-none -mr-40 -mt-40" />
-                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-emerald-400/10 to-teal-600/10 rounded-full blur-[120px] pointer-events-none -ml-20 -mb-20" />
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                    <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-primary-400/10 to-blue-600/10 rounded-full blur-[140px] -mr-40 -mt-40" />
+                    <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-emerald-400/10 to-teal-600/10 rounded-full blur-[120px] -ml-20 -mb-20" />
+                </div>
 
                 {/* Top Header Bar */}
-                <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-slate-100 px-6 sm:px-8 py-3.5 flex items-center justify-between shadow-[0_4px_20px_rgba(0,0,0,0.02)] transition-all">
+                <header className="sticky top-0 z-20 bg-white/85 backdrop-blur-xl border-b border-slate-100 px-6 sm:px-8 py-3.5 flex items-center justify-between shadow-[0_4px_20px_rgba(0,0,0,0.02)] transition-all">
                     <div className="flex items-center gap-4">
                         <Breadcrumbs />
                     </div>
@@ -72,10 +74,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                 </header>
 
                 {/* Area de Conteudo Principal */}
-                <div className="flex-1 overflow-auto p-4 sm:p-8 relative z-10 w-full max-w-[1440px] mx-auto scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
-                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 ease-out">
-                        {children}
-                    </div>
+                <div className="flex-1 p-4 sm:p-8 w-full max-w-[1440px] mx-auto relative">
+                    {children}
                 </div>
             </main>
         </div>

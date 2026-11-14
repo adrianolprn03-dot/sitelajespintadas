@@ -28,6 +28,7 @@ import {
     UNIDADES_MEDIDA_SUGESTOES,
 } from "@/lib/assistencia-farmaceutica";
 import OrientacoesMedicamentosEditor from "@/components/admin/OrientacoesMedicamentosEditor";
+import AdminModal from "@/components/admin/AdminModal";
 
 export type MedicamentoAdmin = {
     id: string;
@@ -717,22 +718,32 @@ export default function MedicamentosAdminManager() {
             )}
 
             {/* Modal Cadastro / Edição */}
-            {isModalOpen && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
-                    <div className="bg-white rounded-3xl max-w-2xl w-full p-8 shadow-2xl space-y-5 my-8 border border-gray-100">
-                        <div className="flex items-center justify-between border-b border-gray-100 pb-4">
-                            <h3 className="text-lg font-black text-gray-900 uppercase tracking-tight">
-                                {editingItem ? "Editar Medicamento (REMUME)" : "Novo Medicamento (REMUME)"}
-                            </h3>
-                            <button
-                                type="button"
-                                onClick={() => setIsModalOpen(false)}
-                                className="w-8 h-8 rounded-full bg-gray-100 text-gray-500 font-bold hover:bg-gray-200 flex items-center justify-center"
-                            >
-                                ✕
-                            </button>
-                        </div>
-
+            <AdminModal
+                open={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                subtitle="Assistência Farmacêutica SUS"
+                title={editingItem ? "Editar Medicamento (REMUME)" : "Novo Medicamento (REMUME)"}
+                maxWidth="2xl"
+                footer={
+                    <>
+                        <button
+                            type="button"
+                            onClick={() => setIsModalOpen(false)}
+                            className="px-5 py-2.5 bg-white border border-gray-200 hover:bg-gray-100 text-gray-700 font-bold rounded-xl text-xs uppercase"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            type="submit"
+                            form="form-medicamento-admin"
+                            disabled={saving}
+                            className="px-6 py-2.5 bg-[#003366] hover:bg-[#002244] text-white font-black rounded-xl text-xs uppercase disabled:opacity-50"
+                        >
+                            {saving ? "Salvando..." : editingItem ? "Salvar Alterações" : "Cadastrar"}
+                        </button>
+                    </>
+                }
+            >
                         {formData.tipoComponente === "Especializado (CEAF)" && (
                             <div className="bg-purple-50 border border-purple-200 rounded-2xl p-4 flex items-start gap-3 text-xs text-purple-900">
                                 <FaInfoCircle className="text-purple-700 shrink-0 mt-0.5" size={16} />
@@ -745,7 +756,7 @@ export default function MedicamentosAdminManager() {
                             </div>
                         )}
 
-                        <form onSubmit={handleSave} className="space-y-4">
+                        <form id="form-medicamento-admin" onSubmit={handleSave} className="space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
@@ -954,27 +965,8 @@ export default function MedicamentosAdminManager() {
                                     Medicamento Ativo e Visível no Portal
                                 </label>
                             </div>
-
-                            <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
-                                <button
-                                    type="button"
-                                    onClick={() => setIsModalOpen(false)}
-                                    className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl text-xs uppercase"
-                                >
-                                    Cancelar
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={saving}
-                                    className="px-6 py-2.5 bg-[#003366] hover:bg-[#002244] text-white font-black rounded-xl text-xs uppercase disabled:opacity-50"
-                                >
-                                    {saving ? "Salvando..." : editingItem ? "Salvar Alterações" : "Cadastrar"}
-                                </button>
-                            </div>
                         </form>
-                    </div>
-                </div>
-            )}
+            </AdminModal>
         </div>
     );
 }

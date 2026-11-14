@@ -121,7 +121,7 @@ export default function AdminSidebar({ userRole = "admin" }: { userRole?: string
         <aside
             className={`bg-white/95 backdrop-blur-xl border-r border-gray-100/80 flex flex-col transition-all duration-300 ease-[cubic-bezier(0.25,0.8,0.25,1)] ${
                 collapsed ? "w-20" : "w-64"
-            } min-h-screen sticky top-0 shadow-[4px_0_30px_rgba(0,0,0,0.03)] z-40`}
+            } h-screen sticky top-0 shadow-[4px_0_30px_rgba(0,0,0,0.03)] z-30 shrink-0`}
             aria-label="Menu administrativo"
         >
             {/* Header com Logo & Toggle */}

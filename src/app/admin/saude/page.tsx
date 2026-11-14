@@ -19,6 +19,7 @@ import {
     FaLink,
     FaSpinner
 } from "react-icons/fa";
+import AdminModal from "@/components/admin/AdminModal";
 
 type DocumentoSaude = {
     id: string;
@@ -471,27 +472,33 @@ export default function AdminSaudePage() {
             </div>
 
             {/* Modal Formulário PNTP 2026 */}
-            {isModalOpen && (
-                <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-                    <div className="bg-white rounded-3xl max-w-2xl w-full p-8 shadow-2xl space-y-6 my-8 border border-gray-100 animate-in fade-in zoom-in duration-200">
-                        <div className="flex items-center justify-between border-b border-gray-100 pb-4">
-                            <div>
-                                <span className="text-[10px] font-black uppercase tracking-widest text-[#01b0ef]">
-                                    Cartilha PNTP 2026 • Item Saúde
-                                </span>
-                                <h3 className="text-xl font-black text-gray-900 uppercase tracking-tight">
-                                    {editingDoc ? "Editar Documento da Saúde" : "Novo Documento da Saúde"}
-                                </h3>
-                            </div>
-                            <button
-                                onClick={() => setIsModalOpen(false)}
-                                className="w-8 h-8 rounded-full bg-gray-100 text-gray-500 font-bold hover:bg-gray-200 flex items-center justify-center"
-                            >
-                                ✕
-                            </button>
-                        </div>
-
-                        <form onSubmit={handleSave} className="space-y-5">
+            <AdminModal
+                open={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                subtitle="Cartilha PNTP 2026 • Item Saúde"
+                title={editingDoc ? "Editar Documento da Saúde" : "Novo Documento da Saúde"}
+                maxWidth="2xl"
+                footer={
+                    <>
+                        <button
+                            type="button"
+                            onClick={() => setIsModalOpen(false)}
+                            className="px-5 py-2.5 bg-white border border-gray-200 hover:bg-gray-100 text-gray-700 font-bold rounded-xl text-xs uppercase tracking-wider"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            type="submit"
+                            form="form-saude-documento"
+                            disabled={saving}
+                            className="px-6 py-2.5 bg-[#003366] hover:bg-[#002244] text-white font-black rounded-xl text-xs uppercase tracking-wider shadow-md active:scale-95 disabled:opacity-50"
+                        >
+                            {saving ? "Salvando..." : editingDoc ? "Salvar Alterações" : "Cadastrar Documento"}
+                        </button>
+                    </>
+                }
+            >
+                        <form id="form-saude-documento" onSubmit={handleSave} className="space-y-4">
                             <div>
                                 <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
                                     Título do Documento <span className="text-red-500">*</span>
@@ -681,7 +688,7 @@ export default function AdminSaudePage() {
                                 )}
                             </div>
 
-                            <div className="flex items-center gap-3 pt-2">
+                            <div className="flex items-center gap-3 pt-1">
                                 <input
                                     type="checkbox"
                                     id="ativoCheck"
@@ -693,27 +700,8 @@ export default function AdminSaudePage() {
                                     Documento Ativo e Visível no Portal da Transparência
                                 </label>
                             </div>
-
-                            <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
-                                <button
-                                    type="button"
-                                    onClick={() => setIsModalOpen(false)}
-                                    className="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl text-xs uppercase tracking-wider"
-                                >
-                                    Cancelar
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={saving}
-                                    className="px-8 py-3 bg-[#003366] hover:bg-[#002244] text-white font-black rounded-xl text-xs uppercase tracking-wider shadow-lg active:scale-95 disabled:opacity-50"
-                                >
-                                    {saving ? "Salvando..." : editingDoc ? "Salvar Alterações" : "Cadastrar Documento"}
-                                </button>
-                            </div>
                         </form>
-                    </div>
-                </div>
-            )}
+            </AdminModal>
         </div>
     );
 }

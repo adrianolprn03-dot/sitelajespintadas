@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { FaFilePdf, FaPlus, FaTrash, FaEdit, FaSearch, FaHistory } from "react-icons/fa";
 import toast from "react-hot-toast";
+import AdminModal from "@/components/admin/AdminModal";
 
 type RelatorioFiscal = {
     id: string;
@@ -224,15 +225,32 @@ export default function RelatoriosFiscaisPage() {
             </div>
 
             {/* Modal */}
-            {modalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/40 backdrop-blur-sm animate-fade-in">
-                    <div className="bg-white rounded-[3rem] w-full max-w-2xl shadow-2xl relative overflow-hidden animate-zoom-in">
-                        <div className="p-10">
-                            <h2 className="text-2xl font-black text-gray-800 uppercase tracking-tighter mb-8">
-                                {editItem ? "Editar Relatório" : "Novo Relatório Fiscal"}
-                            </h2>
-                            
-                            <form onSubmit={handleSubmit} className="space-y-6">
+            <AdminModal
+                open={modalOpen}
+                onClose={() => setModalOpen(false)}
+                title={editItem ? "Editar Relatório" : "Novo Relatório Fiscal"}
+                maxWidth="2xl"
+                footer={
+                    <>
+                        <button
+                            type="button"
+                            onClick={() => setModalOpen(false)}
+                            className="px-6 py-2.5 bg-white border border-gray-200 text-gray-600 hover:bg-gray-100 rounded-xl font-black text-xs uppercase tracking-widest transition-all"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            type="submit"
+                            form="form-relatorio-fiscal"
+                            disabled={uploading}
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {uploading ? "Aguarde o envio do PDF..." : "Gravar Relatório"}
+                        </button>
+                    </>
+                }
+            >
+                            <form id="form-relatorio-fiscal" onSubmit={handleSubmit} className="space-y-5">
                                 <div>
                                     <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Título do Documento *</label>
                                     <input 
@@ -362,28 +380,8 @@ export default function RelatoriosFiscaisPage() {
                                         </div>
                                     )}
                                 </div>
-
-                                <div className="flex gap-4 pt-6">
-                                    <button 
-                                        type="submit"
-                                        disabled={uploading}
-                                        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-5 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                                    >
-                                        {uploading ? "Aguarde o envio do PDF..." : "Gravar Relatório"}
-                                    </button>
-                                    <button 
-                                        type="button"
-                                        onClick={() => setModalOpen(false)}
-                                        className="flex-1 px-8 py-5 border-2 border-gray-100 text-gray-400 hover:bg-gray-50 rounded-2xl font-black text-xs uppercase tracking-widest transition-all"
-                                    >
-                                        Cancelar
-                                    </button>
-                                </div>
                             </form>
-                        </div>
-                    </div>
-                </div>
-            )}
+            </AdminModal>
         </div>
     );
 }

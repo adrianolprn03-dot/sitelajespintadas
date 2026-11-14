@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { FaCar, FaPlus, FaEdit, FaTrash, FaSpinner, FaSearch, FaCheckCircle, FaTools } from "react-icons/fa";
 import toast from "react-hot-toast";
+import AdminModal from "@/components/admin/AdminModal";
 
 type Veiculo = {
     id: string;
@@ -200,13 +201,19 @@ export default function AdminFrotaPage() {
             </div>
 
             {/* Modal de Cadastro/Edição */}
-            {showModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-                    <div className="bg-white rounded-[2rem] w-full max-w-lg p-8 shadow-2xl animate-in zoom-in duration-200">
-                        <h2 className="text-xl font-black text-gray-800 uppercase tracking-tighter mb-6">
-                            {editingId ? "Editar Veículo" : "Novo Veículo"}
-                        </h2>
-                        <form onSubmit={handleSubmit} className="space-y-4">
+            <AdminModal
+                open={showModal}
+                onClose={() => setShowModal(false)}
+                title={editingId ? "Editar Veículo" : "Novo Veículo"}
+                maxWidth="lg"
+                footer={
+                    <>
+                        <button type="button" onClick={() => setShowModal(false)} className="px-5 py-2.5 bg-white border border-gray-200 rounded-xl font-black uppercase tracking-widest text-[10px] text-gray-600 hover:bg-gray-100">Cancelar</button>
+                        <button type="submit" form="form-frota-veiculo" className="bg-blue-600 text-white px-6 py-2.5 rounded-xl font-black uppercase tracking-widest text-[10px] shadow-md hover:bg-blue-700">Salvar Veículo</button>
+                    </>
+                }
+            >
+                        <form id="form-frota-veiculo" onSubmit={handleSubmit} className="space-y-4">
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1">
                                     <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Modelo</label>
@@ -244,14 +251,8 @@ export default function AdminFrotaPage() {
                                     <option value="manutencao">Em Manutenção</option>
                                 </select>
                             </div>
-                            <div className="flex gap-3 pt-6">
-                                <button type="button" onClick={() => setShowModal(false)} className="flex-1 px-6 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] text-gray-400">Cancelar</button>
-                                <button type="submit" className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-blue-200">Salvar Veículo</button>
-                            </div>
                         </form>
-                    </div>
-                </div>
-            )}
+            </AdminModal>
         </div>
     );
 }

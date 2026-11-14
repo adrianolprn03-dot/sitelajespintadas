@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { FaBullhorn, FaPlus, FaEdit, FaTrash, FaSpinner, FaSearch, FaBriefcase, FaLock, FaCheckCircle, FaFileUpload, FaLink, FaExternalLinkAlt } from "react-icons/fa";
 import toast from "react-hot-toast";
+import AdminModal from "@/components/admin/AdminModal";
 
 type Concurso = {
     id: string;
@@ -215,11 +216,19 @@ export default function AdminEditaisPage() {
                 </div>
             </div>
 
-            {showModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-                    <div className="bg-white rounded-[2rem] w-full max-w-md p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
-                        <h2 className="text-xl font-black text-gray-800 uppercase mb-6">Cadastro de Edital</h2>
-                        <form onSubmit={handleSubmit} className="space-y-4">
+            <AdminModal
+                open={showModal}
+                onClose={() => setShowModal(false)}
+                title={editingId ? "Editar Edital" : "Cadastro de Edital"}
+                maxWidth="lg"
+                footer={
+                    <>
+                        <button type="button" onClick={() => setShowModal(false)} className="px-5 py-2.5 bg-white border border-gray-200 text-gray-600 font-black uppercase text-[10px] rounded-xl hover:bg-gray-100 transition-colors">Cancelar</button>
+                        <button type="submit" form="form-edital-admin" className="bg-blue-600 text-white px-6 py-2.5 rounded-xl font-black uppercase text-[10px] hover:bg-blue-700 transition-colors shadow-md">Salvar Edital</button>
+                    </>
+                }
+            >
+                        <form id="form-edital-admin" onSubmit={handleSubmit} className="space-y-4">
                             <div className="space-y-1">
                                 <label className="text-[10px] font-black uppercase text-gray-400 ml-2">Título do Edital / Chamamento</label>
                                 <input required placeholder="Ex: Edital PNAB 001/2026 - Fomento à Cultura" value={form.titulo} onChange={(e) => setForm({ ...form, titulo: e.target.value })} className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500/20 transition-all" />
@@ -336,14 +345,8 @@ export default function AdminEditaisPage() {
                                 <option value="aberto">Em Andamento</option>
                                 <option value="encerrado">Finalizado</option>
                             </select>
-                            <div className="flex gap-3 pt-4">
-                                <button type="button" onClick={() => setShowModal(false)} className="flex-1 text-gray-400 font-black uppercase text-[10px] py-3 hover:bg-gray-100 rounded-xl transition-colors">Cancelar</button>
-                                <button type="submit" className="flex-1 bg-blue-600 text-white py-3 rounded-xl font-black uppercase text-[10px] hover:bg-blue-700 transition-colors shadow-md">Salvar Edital</button>
-                            </div>
                         </form>
-                    </div>
-                </div>
-            )}
+            </AdminModal>
         </div>
     );
 }

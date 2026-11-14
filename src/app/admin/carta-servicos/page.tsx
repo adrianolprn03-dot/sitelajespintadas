@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { FaFile, FaPlus, FaEdit, FaTrash, FaSpinner, FaSearch, FaMapMarker, FaClock } from "react-icons/fa";
 import toast from "react-hot-toast";
+import AdminModal from "@/components/admin/AdminModal";
 
 type Servico = {
     id: string;
@@ -164,15 +165,19 @@ export default function AdminCartaServicosPage() {
                 </div>
             )}
 
-            {showModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
-                    <div className="bg-white rounded-[2.5rem] w-full max-w-2xl p-10 shadow-2xl overflow-y-auto max-h-[90vh]">
-                        <div className="flex justify-between items-center mb-8">
-                            <h2 className="text-2xl font-black text-gray-800 uppercase tracking-tighter">Cadastro de Serviço PNTP</h2>
-                            <button onClick={() => setShowModal(false)} className="text-gray-300 hover:text-gray-500">✕</button>
-                        </div>
-                        
-                        <form onSubmit={handleSubmit} className="space-y-6">
+            <AdminModal
+                open={showModal}
+                onClose={() => setShowModal(false)}
+                title="Cadastro de Serviço PNTP"
+                maxWidth="2xl"
+                footer={
+                    <>
+                        <button type="button" onClick={() => setShowModal(false)} className="px-5 py-2.5 bg-white border border-gray-200 text-gray-600 font-black uppercase text-[10px] rounded-xl hover:bg-gray-100 transition-colors">Voltar</button>
+                        <button type="submit" form="form-carta-servico" className="bg-orange-600 text-white px-6 py-2.5 rounded-xl font-black uppercase text-[10px] shadow-md hover:bg-orange-700 transition-all">Salvar na Carta de Serviços</button>
+                    </>
+                }
+            >
+                        <form id="form-carta-servico" onSubmit={handleSubmit} className="space-y-5">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-1">
                                     <label className="text-[10px] font-black uppercase text-gray-400 ml-2">Nome do Serviço</label>
@@ -235,15 +240,8 @@ export default function AdminCartaServicosPage() {
                                     <input placeholder="https://..." value={form.linkAcesso || ""} onChange={(e) => setForm({ ...form, linkAcesso: e.target.value })} className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold outline-none" />
                                 </div>
                             </div>
-
-                            <div className="flex gap-4 pt-6 border-t border-gray-50">
-                                <button type="button" onClick={() => setShowModal(false)} className="flex-1 text-gray-400 font-black uppercase text-[10px] hover:text-gray-600 transition-colors">Voltar</button>
-                                <button type="submit" className="flex-[2] bg-orange-600 text-white py-4 rounded-2xl font-black uppercase text-[10px] shadow-lg shadow-orange-100 hover:bg-orange-700 transition-all">Salvar na Carta de Serviços</button>
-                            </div>
                         </form>
-                    </div>
-                </div>
-            )}
+            </AdminModal>
         </div>
     );
 }

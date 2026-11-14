@@ -18,6 +18,7 @@ import {
     FaExternalLinkAlt
 } from "react-icons/fa";
 import toast from "react-hot-toast";
+import AdminModal from "@/components/admin/AdminModal";
 
 type Esic = {
     id: string;
@@ -648,11 +649,31 @@ export default function AdminEsicPage() {
             )}
 
             {/* Modal Declaração */}
-            {modalDeclaracao && (
-                <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4">
-                        <h2 className="text-xl font-bold text-gray-900">Publicar Declaração Oficial da LAI (PNTP)</h2>
-                        <form onSubmit={handleSalvarDeclaracao} className="space-y-4">
+            <AdminModal
+                open={modalDeclaracao}
+                onClose={() => setModalDeclaracao(false)}
+                title="Publicar Declaração Oficial da LAI (PNTP)"
+                maxWidth="lg"
+                footer={
+                    <div className="flex justify-end gap-3">
+                        <button
+                            type="button"
+                            onClick={() => setModalDeclaracao(false)}
+                            className="px-4 py-2 border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            type="submit"
+                            form="form-esic-declaracao"
+                            className="px-5 py-2 bg-amber-500 text-white rounded-xl text-sm font-bold hover:bg-amber-600 transition-colors"
+                        >
+                            Publicar
+                        </button>
+                    </div>
+                }
+            >
+                <form id="form-esic-declaracao" onSubmit={handleSalvarDeclaracao} className="space-y-4">
                             <div className="grid grid-cols-2 gap-3">
                                 <div>
                                     <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Módulo / Critério</label>
@@ -699,34 +720,43 @@ export default function AdminEsicPage() {
                                     required
                                 />
                             </div>
-                            <div className="flex justify-end gap-3 pt-2">
-                                <button
-                                    type="button"
-                                    onClick={() => setModalDeclaracao(false)}
-                                    className="px-4 py-2 border rounded-xl text-sm font-semibold hover:bg-gray-50"
-                                >
-                                    Cancelar
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="px-5 py-2 bg-amber-500 text-white rounded-xl text-sm font-bold hover:bg-amber-600"
-                                >
-                                    Publicar
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
+                </form>
+            </AdminModal>
 
             {/* Modal Classificar */}
-            {modalClassificar && itemParaClassificar && (
-                <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4">
-                        <h2 className="text-xl font-bold text-gray-900">Classificação de Sigilo (LAI)</h2>
-                        <p className="text-xs text-gray-500 font-mono">Protocolo: {itemParaClassificar.protocolo}</p>
-
-                        <form onSubmit={handleSalvarClassificacao} className="space-y-4">
+            <AdminModal
+                open={Boolean(modalClassificar && itemParaClassificar)}
+                onClose={() => {
+                    setModalClassificar(false);
+                    setItemParaClassificar(null);
+                }}
+                title="Classificação de Sigilo (LAI)"
+                description={itemParaClassificar ? `Protocolo: ${itemParaClassificar.protocolo}` : undefined}
+                maxWidth="lg"
+                footer={
+                    <div className="flex justify-end gap-3">
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setModalClassificar(false);
+                                setItemParaClassificar(null);
+                            }}
+                            className="px-4 py-2 border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            type="submit"
+                            form="form-esic-classificar"
+                            className="px-5 py-2 bg-[#1254A3] text-white rounded-xl text-sm font-bold hover:bg-blue-800 transition-colors"
+                        >
+                            Confirmar Classificação
+                        </button>
+                    </div>
+                }
+            >
+                {itemParaClassificar && (
+                    <form id="form-esic-classificar" onSubmit={handleSalvarClassificacao} className="space-y-4">
                             <div>
                                 <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Grau de Sigilo</label>
                                 <select
@@ -759,39 +789,37 @@ export default function AdminEsicPage() {
                                     required
                                 />
                             </div>
-                            <div className="flex justify-end gap-3 pt-2">
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setModalClassificar(false);
-                                        setItemParaClassificar(null);
-                                    }}
-                                    className="px-4 py-2 border rounded-xl text-sm font-semibold hover:bg-gray-50"
-                                >
-                                    Cancelar
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="px-5 py-2 bg-[#1254A3] text-white rounded-xl text-sm font-bold hover:bg-blue-800"
-                                >
-                                    Confirmar Classificação
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
+                    </form>
+                )}
+            </AdminModal>
 
             {/* Modal Novo Documento Classificado */}
-            {modalNovoDoc && (
-                <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 overflow-y-auto">
-                    <div className="bg-white rounded-3xl max-w-xl w-full p-6 space-y-4 my-8">
-                        <h2 className="text-xl font-bold text-gray-900">Registrar Documento Classificado em Grau de Sigilo</h2>
-                        <p className="text-xs text-gray-500">
-                            Publique documentos administrativos classificados conforme a Lei Federal nº 12.527/2011 (Art. 24 e Art. 30, II).
-                        </p>
-
-                        <form onSubmit={handleRegistrarDocumentoClassificado} className="space-y-4">
+            <AdminModal
+                open={modalNovoDoc}
+                onClose={() => setModalNovoDoc(false)}
+                title="Registrar Documento Classificado em Grau de Sigilo"
+                description="Publique documentos administrativos classificados conforme a Lei Federal nº 12.527/2011 (Art. 24 e Art. 30, II)."
+                maxWidth="xl"
+                footer={
+                    <div className="flex justify-end gap-3">
+                        <button
+                            type="button"
+                            onClick={() => setModalNovoDoc(false)}
+                            className="px-4 py-2 border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            type="submit"
+                            form="form-esic-novo-doc"
+                            className="px-5 py-2 bg-[#1254A3] text-white rounded-xl text-sm font-bold hover:bg-blue-800 transition-colors"
+                        >
+                            Publicar no Rol Classificado
+                        </button>
+                    </div>
+                }
+            >
+                <form id="form-esic-novo-doc" onSubmit={handleRegistrarDocumentoClassificado} className="space-y-4">
                             <div>
                                 <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
                                     Assunto sobre o qual versa a informação *
@@ -896,35 +924,47 @@ export default function AdminEsicPage() {
                                     className="w-full border rounded-xl p-2.5 text-sm"
                                 />
                             </div>
-                            <div className="flex justify-end gap-3 pt-2">
-                                <button
-                                    type="button"
-                                    onClick={() => setModalNovoDoc(false)}
-                                    className="px-4 py-2 border rounded-xl text-sm font-semibold hover:bg-gray-50"
-                                >
-                                    Cancelar
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="px-5 py-2 bg-[#1254A3] text-white rounded-xl text-sm font-bold hover:bg-blue-800"
-                                >
-                                    Publicar no Rol Classificado
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
+                </form>
+            </AdminModal>
 
             {/* Modal Desclassificar Informação */}
-            {modalDesclassificar && itemParaDesclassificar && (
-                <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4">
-                        <h2 className="text-xl font-bold text-gray-900">Registrar Desclassificação (LAI)</h2>
-                        <p className="text-xs text-gray-500">
-                            Protocolo: <strong className="font-mono text-gray-800">{itemParaDesclassificar.protocolo}</strong> ({itemParaDesclassificar.grauSigilo})
-                        </p>
-                        <form onSubmit={handleConfirmarDesclassificacao} className="space-y-4">
+            <AdminModal
+                open={Boolean(modalDesclassificar && itemParaDesclassificar)}
+                onClose={() => {
+                    setModalDesclassificar(false);
+                    setItemParaDesclassificar(null);
+                }}
+                title="Registrar Desclassificação (LAI)"
+                description={
+                    itemParaDesclassificar
+                        ? `Protocolo: ${itemParaDesclassificar.protocolo} (${itemParaDesclassificar.grauSigilo})`
+                        : undefined
+                }
+                maxWidth="lg"
+                footer={
+                    <div className="flex justify-end gap-3">
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setModalDesclassificar(false);
+                                setItemParaDesclassificar(null);
+                            }}
+                            className="px-4 py-2 border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            type="submit"
+                            form="form-esic-desclassificar"
+                            className="px-5 py-2 bg-emerald-600 text-white rounded-xl text-sm font-bold hover:bg-emerald-700 transition-colors"
+                        >
+                            Confirmar Desclassificação
+                        </button>
+                    </div>
+                }
+            >
+                {itemParaDesclassificar && (
+                    <form id="form-esic-desclassificar" onSubmit={handleConfirmarDesclassificacao} className="space-y-4">
                             <div>
                                 <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Data da Desclassificação *</label>
                                 <input
@@ -948,28 +988,9 @@ export default function AdminEsicPage() {
                                     className="w-full border rounded-xl p-2.5 text-sm"
                                 />
                             </div>
-                            <div className="flex justify-end gap-3 pt-2">
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setModalDesclassificar(false);
-                                        setItemParaDesclassificar(null);
-                                    }}
-                                    className="px-4 py-2 border rounded-xl text-sm font-semibold hover:bg-gray-50"
-                                >
-                                    Cancelar
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="px-5 py-2 bg-emerald-600 text-white rounded-xl text-sm font-bold hover:bg-emerald-700"
-                                >
-                                    Confirmar Desclassificação
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
+                    </form>
+                )}
+            </AdminModal>
         </div>
     );
 }
