@@ -491,11 +491,11 @@ export default function TransparenciaPage() {
                         </div>
                     </div>
 
-                    {/* Navegação Rápida Horizontal por Categorias */}
-                    <div className="pt-3 border-t border-[#DDE3EA] flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-0.5">
+                    {/* Navegação Rápida por Categorias */}
+                    <div className="pt-3 border-t border-[#DDE3EA] flex flex-wrap items-center gap-2 py-0.5">
                         <button
                             onClick={() => setSelectedCategory("TODAS")}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-extrabold whitespace-nowrap transition-all shrink-0 cursor-pointer ${
+                            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-extrabold transition-all cursor-pointer ${
                                 selectedCategory === "TODAS"
                                     ? "bg-[#1254A3] text-white shadow-sm"
                                     : "bg-[#F5F7FA] hover:bg-slate-100 text-[#12304A] border border-[#DDE3EA]"
@@ -520,13 +520,13 @@ export default function TransparenciaPage() {
                                 <button
                                     key={cat.tituloCategoria}
                                     onClick={() => setSelectedCategory(cat.tituloCategoria)}
-                                    className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-extrabold whitespace-nowrap transition-all shrink-0 cursor-pointer ${
+                                    className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-extrabold transition-all cursor-pointer ${
                                         isSelected
                                             ? "bg-[#1254A3] text-white shadow-sm"
                                             : "bg-[#F5F7FA] hover:bg-slate-100 text-[#12304A] border border-[#DDE3EA]"
                                     }`}
                                 >
-                                    <CatIcon size={14} />
+                                    <CatIcon size={14} className="shrink-0" />
                                     <span>{cat.tituloCategoria}</span>
                                     <span
                                         className={`text-[10px] px-2 py-0.5 rounded-full ${
@@ -624,6 +624,7 @@ export default function TransparenciaPage() {
                                     {/* Grade de Módulos */}
                                     <div className="p-6 sm:p-7">
                                         <motion.div
+                                            key={`${categoria.tituloCategoria}-${selectedCriterio}-${searchTerm}`}
                                             initial="hidden"
                                             animate="visible"
                                             variants={containerVariants}
