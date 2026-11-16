@@ -71,15 +71,6 @@ const atalhosPrincipais = [
     },
 ];
 
-const buscasFrequentes = [
-    "IPTU 2ª Via",
-    "Fila de Creches",
-    "Remédios UBS",
-    "Licitações",
-    "Contracheque",
-    "Diário Oficial",
-];
-
 export default function HeroPanoramicoModelo3() {
     const [linksExternos, setLinksExternos] = useState<any[]>([]);
     const [isPlaying, setIsPlaying] = useState(true);
@@ -248,22 +239,6 @@ export default function HeroPanoramicoModelo3() {
                                     <span>Buscar</span>
                                 </button>
                             </form>
-
-                            {/* Buscas Frequentes em Chips Glassmorphism com Alto Contraste */}
-                            <div className="flex flex-wrap items-center gap-2 pt-1">
-                                <span className="text-xs font-extrabold uppercase tracking-wider text-[#FACC15] drop-shadow-[0_1px_3px_rgba(0,0,0,0.85)] mr-1">
-                                    Buscas frequentes:
-                                </span>
-                                {buscasFrequentes.map((term) => (
-                                    <Link
-                                        key={term}
-                                        href={`/transparencia?q=${encodeURIComponent(term)}`}
-                                        className="text-xs font-semibold text-white bg-black/50 hover:bg-[#FACC15] hover:text-[#002B5C] backdrop-blur-md border border-white/25 px-3.5 py-1.5 rounded-full transition-all shadow-sm hover:shadow active:scale-95"
-                                    >
-                                        {term}
-                                    </Link>
-                                ))}
-                            </div>
                         </div>
                     </div>
                 </div>
