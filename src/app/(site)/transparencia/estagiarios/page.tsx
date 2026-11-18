@@ -5,6 +5,7 @@ import { Info, FileText, GraduationCap, Briefcase, UserCheck, Loader2 } from "lu
 import { FaInfoCircle, FaSpinner } from "react-icons/fa";
 import Link from "next/link";
 import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
+import DeclaracaoInexistenciaCard from "@/components/transparencia/DeclaracaoInexistenciaCard";
 import { exportToCSV, exportToJSON, exportToPDF, exportToXLSX } from "@/lib/exportUtils";
 
 type Estagiario = {
@@ -135,18 +136,36 @@ export default function EstagiariosPage() {
                         <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Carregando dados...</p>
                     </div>
                 ) : estagiarios.length === 0 ? (
-                    <div className="bg-red-50 border-l-8 border-red-500 rounded-r-3xl p-8 flex flex-col md:flex-row items-center justify-center md:justify-start gap-6 shadow-xl shadow-red-500/10 transition-all hover:bg-red-100">
-                        <FaInfoCircle className="text-red-500 text-5xl shrink-0 drop-shadow-md" />
-                        <div className="text-center md:text-left">
-                            <h3 className="text-red-900 font-black text-xl uppercase tracking-tight mb-2">Comunicação Oficial</h3>
-                            <p className="text-red-700 font-bold text-lg md:text-xl">
-                                {busca || mes !== "" 
-                                    ? "Nenhum estagiário encontrado para os filtros aplicados."
-                                    : `A Prefeitura Municipal de Lajes Pintadas informa que NÃO POSSUÍMOS ESTAGIÁRIOS em nosso quadro de colaboradores para o período selecionado até ${mes ? mes + '/' : '01/06/'}${ano}.`
-                                }
-                            </p>
+                    busca || mes !== "" || status !== "" ? (
+                        <div className="bg-white border border-blue-200 rounded-3xl p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
+                            <div className="flex items-center gap-4">
+                                <FaInfoCircle className="text-[#0072CE] text-3xl shrink-0" />
+                                <div>
+                                    <h3 className="text-slate-900 font-black text-base uppercase tracking-tight">
+                                        Nenhum estagiário encontrado para os filtros aplicados
+                                    </h3>
+                                    <p className="text-slate-600 text-sm">
+                                        Limpe os filtros para consultar todos os registros ou visualizar a declaração oficial do período.
+                                    </p>
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={handleClearFilters}
+                                className="px-4 py-2 rounded-xl bg-[#0072CE] hover:bg-[#005ba6] text-white text-xs font-bold shrink-0 cursor-pointer"
+                            >
+                                Limpar Filtros
+                            </button>
                         </div>
-                    </div>
+                    ) : (
+                        <DeclaracaoInexistenciaCard
+                            modulo="estagiarios"
+                            criterioPntp="6.5"
+                            exercicio={ano}
+                            tituloFallback="Inexistência de Estagiários Vinculados"
+                            textoFallback={`A Prefeitura Municipal de Lajes Pintadas/RN (CNPJ 08.159.394/0001-37) declara oficialmente, em atendimento ao Critério 6.5 do PNTP 2026 e à Lei nº 11.788/2008, que não mantém estagiários vinculados ao quadro do Poder Executivo Municipal no exercício de ${ano}.`}
+                        />
+                    )
                 ) : (
                     <div className="bg-white rounded-[2rem] shadow-2xl shadow-blue-500/5 border border-slate-100 overflow-hidden">
                         <div className="p-8 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">

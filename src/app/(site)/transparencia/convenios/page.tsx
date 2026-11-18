@@ -28,6 +28,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import PageHeader from "@/components/PageHeader";
 import TransparencyFilters from "@/components/transparencia/TransparencyFilters";
+import DeclaracaoInexistenciaCard from "@/components/transparencia/DeclaracaoInexistenciaCard";
 import { exportToCSV, exportToJSON, exportToPDF, exportToXLSX } from "@/lib/exportUtils";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
 import { MUNICIPIO } from "@/config/municipio";
@@ -454,20 +455,19 @@ export default function ConveniosPage() {
                             <p className="text-xs font-bold text-[#5B738B] uppercase tracking-wider">Consultando base de convênios e transferências...</p>
                         </div>
                     ) : convenios.length === 0 ? (
-                        <div className="bg-white rounded-3xl p-12 text-center border-2 border-dashed border-[#DDE3EA] shadow-sm space-y-4">
-                            <div className="w-16 h-16 rounded-2xl bg-amber-50 text-[#F39A32] flex items-center justify-center mx-auto text-2xl">
-                                <FaFileAlt />
-                            </div>
-                            <span className="text-[10px] font-black uppercase tracking-wider text-amber-800 bg-amber-100 px-3 py-1 rounded-full">
-                                Declaração Oficial de Inexistência • Critério PNTP
-                            </span>
-                            <h4 className="text-xl font-black text-[#12304A]">
-                                Não Houve Transferências Concedidas no Exercício Selecionado
-                            </h4>
-                            <p className="text-xs text-[#5B738B] max-w-xl mx-auto leading-relaxed">
-                                A Prefeitura Municipal de Lajes Pintadas/RN declara formalmente, para fins de transparência pública ativa e cumprimento do Critério PNTP, que não realizou transferências voluntárias ou termos de fomento concedidos a entidades no período consultado ({ano}).
-                            </p>
-                            <div className="pt-2 flex justify-center gap-3">
+                        <div className="space-y-4">
+                            <DeclaracaoInexistenciaCard
+                                modulo={abaTipo === "recebido" ? "convenios_recebidos" : "convenios_concedidos"}
+                                criterioPntp={abaTipo === "recebido" ? "5.1" : "5.2"}
+                                exercicio={ano}
+                                tituloFallback={
+                                    abaTipo === "recebido"
+                                        ? "Não Houve Transferências Recebidas no Exercício Selecionado"
+                                        : "Não Houve Transferências Concedidas no Exercício Selecionado"
+                                }
+                                textoFallback={`A Prefeitura Municipal de Lajes Pintadas/RN declara formalmente, para fins de transparência pública ativa e cumprimento do Critério PNTP, que não realizou transferências voluntárias ou termos de fomento para o recorte selecionado no exercício de ${ano}.`}
+                            />
+                            <div className="flex flex-wrap justify-center gap-3">
                                 <button
                                     onClick={handleClearFilters}
                                     className="px-5 py-2.5 bg-[#1254A3] text-white rounded-xl text-xs font-bold hover:bg-[#0d4282] transition-all cursor-pointer"
@@ -478,7 +478,7 @@ export default function ConveniosPage() {
                                     href={`https://portaldatransparencia.gov.br/transferencias/por-municipio?codigoIbge=2406601&anoReferencia=${ano}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition-all flex items-center gap-2"
+                                    className="px-5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-800 rounded-xl text-xs font-bold transition-all flex items-center gap-2"
                                 >
                                     <FaExternalLinkAlt size={11} /> Confirmar no Portal Federal (IBGE 2406601)
                                 </a>

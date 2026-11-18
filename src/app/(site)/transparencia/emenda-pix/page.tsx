@@ -1,5 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import EmendaPixClientPage from "./EmendaPixClientPage";
+import DeclaracaoInexistenciaCard, {
+  type DeclaracaoPublica,
+} from "@/components/transparencia/DeclaracaoInexistenciaCard";
+import { resolverFiltroModuloDeclaracao } from "@/lib/declaracoes-catalogo";
 
 export const dynamic = "force-dynamic";
 
@@ -37,6 +41,30 @@ export default async function EmendaPixPage() {
     orgaoConcedente: e.orgaoConcedente,
   }));
 
+  let declaracaoInicial: DeclaracaoPublica | null = null;
+  try {
+    const { aliases, criterioEfetivo } = resolverFiltroModuloDeclaracao("emendas_pix", "17.2");
+    const found = await prisma.declaracaoTransparencia.findFirst({
+      where: {
+        ativa: true,
+        OR: [
+          { modulo: { in: aliases } },
+          ...(criterioEfetivo ? [{ criterioPntp: criterioEfetivo }] : []),
+        ],
+      },
+      orderBy: [{ exercicio: "desc" }, { dataEmissao: "desc" }],
+    });
+    if (found) {
+      declaracaoInicial = {
+        ...found,
+        dataEmissao: found.dataEmissao.toISOString(),
+        dataConferencia: found.dataConferencia.toISOString(),
+      };
+    }
+  } catch {
+    declaracaoInicial = null;
+  }
+
   return (
     <main className="min-h-screen bg-[#f8fafc] pt-32 pb-20">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
@@ -46,12 +74,26 @@ export default async function EmendaPixPage() {
             <span className="text-[10px] font-black text-teal-600 uppercase tracking-[0.3em]">PNTP Ouro 2025</span>
           </div>
           <h1 className="text-4xl md:text-6xl font-black text-gray-900 uppercase tracking-tighter mb-4">
-            Emendas <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-blue-600">PIX</span>
+            Emendas <span className="text-[#0072CE]">PIX</span>
           </h1>
           <p className="text-gray-500 font-bold max-w-2xl leading-relaxed">
             Consulte o recebimento e a execução das transferências especiais (modalidade PIX) enviadas por parlamentares federais ao município através do sistema TransfereGov.
           </p>
         </header>
+
+        <div className="mb-8">
+          <DeclaracaoInexistenciaCard
+            modulo="emendas_pix"
+            criterioPntp="17.2"
+            declaracaoInicial={declaracaoInicial}
+            ocultarSeVazio={initialData.length > 0 && !declaracaoInicial}
+            textoFallback={
+              initialData.length === 0
+                ? "A Prefeitura Municipal de Lajes Pintadas/RN (CNPJ 08.159.394/0001-37) declara formalmente, em observância ao Critério 17.2 do PNTP 2026 e à ADPF 854/STF, que não recebeu Transferências Especiais (Emendas PIX) registradas no período consultado."
+                : undefined
+            }
+          />
+        </div>
 
         <EmendaPixClientPage initialData={initialData} />
         

@@ -14,8 +14,21 @@ import {
     FaPlus,
     FaFileAlt,
     FaSearch,
+    FaFilePdf,
+    FaArchive,
+    FaTrash,
+    FaMagic,
+    FaStamp,
 } from "react-icons/fa";
 import AdminModal from "@/components/admin/AdminModal";
+import {
+    baixarCertidaoDeclaracaoPDF,
+    type DeclaracaoRegistro,
+} from "@/components/admin/DeclaracaoInexistenciaBanner";
+import {
+    CATALOGO_DECLARACOES_INEXISTENCIA,
+    obterModeloDeclaracao,
+} from "@/lib/declaracoes-catalogo";
 
 interface CriterioItem {
     codigo: string;
@@ -77,13 +90,22 @@ interface DeclaracaoItem {
     modulo: string;
     criterioPntp?: string | null;
     tipoDeclaracao: string;
+    tipoSituacao?: string;
     exercicio: number;
-    competencia?: number | null;
+    competencia?: string | null;
     justificativa: string;
+    textoDeclaracao?: string;
     fundamentoLegal?: string | null;
     secretaria?: string | null;
+    orgaoResponsavel?: string;
     responsavelNome: string;
+    responsavelCargo?: string | null;
+    arquivoAssinadoUrl?: string | null;
     dataDeclaracao: string;
+    dataEmissao?: string;
+    dataConferencia?: string;
+    situacaoPublicacao?: string;
+    ativa?: boolean;
 }
 
 export default function AdminPNTPPage() {
@@ -100,15 +122,17 @@ export default function AdminPNTPPage() {
 
     const [editingItem, setEditingItem] = useState<CriterioItem | null>(null);
     const [showDeclaracaoModal, setShowDeclaracaoModal] = useState(false);
+    const [editingDecId, setEditingDecId] = useState<string | null>(null);
     const [novaDeclaracao, setNovaDeclaracao] = useState({
-        modulo: "Convênios / Obras / Licitações",
-        criterioPntp: "8.1",
+        modulo: "convenios_concedidos",
+        criterioPntp: "5.2",
         tipoDeclaracao: "nao_ocorrencia_declarada",
         exercicio: new Date().getFullYear(),
-        competencia: "",
+        competencia: "Exercício Anual",
         justificativa: "",
         fundamentoLegal: "",
-        secretaria: "Controladoria Geral",
+        secretaria: "Controladoria Geral do Município",
+        responsavelNome: "Controladoria Geral do Município",
         documentoUrl: "",
     });
 
@@ -229,26 +253,122 @@ export default function AdminPNTPPage() {
         }
     };
 
+    const preencherModeloOficialDeclaracao = (slugAlvo = novaDeclaracao.modulo) => {
+        const mod = obterModeloDeclaracao(slugAlvo || novaDeclaracao.criterioPntp);
+        const ano = Number(novaDeclaracao.exercicio) || new Date().getFullYear();
+        const comp = novaDeclaracao.competencia || "Exercício Anual";
+        setNovaDeclaracao((prev) => ({
+            ...prev,
+            modulo: mod.slug !== "geral" ? mod.slug : prev.modulo,
+            criterioPntp: mod.criterioPntp || prev.criterioPntp,
+            secretaria: mod.orgaoResponsavelPadrao,
+            responsavelNome: mod.responsavelNomePadrao,
+            fundamentoLegal: mod.fundamentoLegalPadrao,
+            justificativa: mod.gerarTextoPadrao(ano, comp, mod.orgaoResponsavelPadrao),
+        }));
+    };
+
+    const abrirModalNovaDeclaracao = () => {
+        setEditingDecId(null);
+        const mod = obterModeloDeclaracao("terceirizados");
+        const ano = new Date().getFullYear();
+        setNovaDeclaracao({
+            modulo: mod.slug,
+            criterioPntp: mod.criterioPntp,
+            tipoDeclaracao: "nao_ocorrencia_declarada",
+            exercicio: ano,
+            competencia: "Exercício Anual",
+            justificativa: mod.gerarTextoPadrao(ano, "Exercício Anual", mod.orgaoResponsavelPadrao),
+            fundamentoLegal: mod.fundamentoLegalPadrao,
+            secretaria: mod.orgaoResponsavelPadrao,
+            responsavelNome: mod.responsavelNomePadrao,
+            documentoUrl: "",
+        });
+        setShowDeclaracaoModal(true);
+    };
+
+    const abrirModalEditarDeclaracao = (d: DeclaracaoItem) => {
+        setEditingDecId(d.id);
+        setNovaDeclaracao({
+            modulo: d.modulo,
+            criterioPntp: d.criterioPntp || "",
+            tipoDeclaracao: d.tipoSituacao || d.tipoDeclaracao || "nao_ocorrencia_declarada",
+            exercicio: d.exercicio,
+            competencia: d.competencia ? String(d.competencia) : "Exercício Anual",
+            justificativa: d.textoDeclaracao || d.justificativa || "",
+            fundamentoLegal: d.fundamentoLegal || "",
+            secretaria: d.orgaoResponsavel || d.secretaria || "Controladoria Geral do Município",
+            responsavelNome: d.responsavelNome || "Controladoria Geral",
+            documentoUrl: d.arquivoAssinadoUrl || "",
+        });
+        setShowDeclaracaoModal(true);
+    };
+
+    const handleDesativarDeclaracao = async (id: string) => {
+        try {
+            const res = await fetch(`/api/declaracoes/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ ativa: false }),
+            });
+            if (res.ok) {
+                toast.success("Declaração arquivada e removida da exibição ativa.");
+                carregarDados();
+            } else {
+                toast.error("Não foi possível arquivar a declaração.");
+            }
+        } catch {
+            toast.error("Erro de conexão.");
+        }
+    };
+
+    const handleExcluirDeclaracao = async (id: string) => {
+        if (!confirm("Remover permanentemente esta declaração?")) return;
+        try {
+            const res = await fetch(`/api/declaracoes/${id}`, { method: "DELETE" });
+            if (res.ok) {
+                toast.success("Declaração removida!");
+                carregarDados();
+            } else {
+                toast.error("Não foi possível remover a declaração.");
+            }
+        } catch {
+            toast.error("Erro de conexão.");
+        }
+    };
+
     const handleSalvarDeclaracao = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const res = await fetch("/api/admin/pntp", {
-                method: "POST",
+            const url = editingDecId ? `/api/declaracoes/${editingDecId}` : "/api/declaracoes";
+            const method = editingDecId ? "PUT" : "POST";
+            const res = await fetch(url, {
+                method,
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    tipoOperacao: "declaracao",
-                    ...novaDeclaracao,
+                    modulo: novaDeclaracao.modulo,
+                    criterioPntp: novaDeclaracao.criterioPntp || null,
+                    tipoSituacao: novaDeclaracao.tipoDeclaracao,
+                    exercicio: novaDeclaracao.exercicio,
+                    competencia: novaDeclaracao.competencia || "Exercício Anual",
+                    textoDeclaracao: novaDeclaracao.justificativa,
+                    fundamentoLegal: novaDeclaracao.fundamentoLegal || null,
+                    orgaoResponsavel: novaDeclaracao.secretaria,
+                    responsavelNome: novaDeclaracao.responsavelNome,
+                    arquivoAssinadoUrl: novaDeclaracao.documentoUrl || null,
+                    ativa: true,
+                    substituirAnteriores: true,
                 }),
             });
             const data = await res.json();
             if (res.ok) {
-                toast.success("Declaração formal registrada com sucesso!");
+                toast.success(
+                    editingDecId
+                        ? "Declaração atualizada com sucesso!"
+                        : "Declaração formal registrada com sucesso!"
+                );
                 setShowDeclaracaoModal(false);
-                setNovaDeclaracao({
-                    ...novaDeclaracao,
-                    justificativa: "",
-                    fundamentoLegal: "",
-                });
+                setEditingDecId(null);
                 carregarDados();
             } else {
                 toast.error(data.error || "Erro ao registrar declaração.");
@@ -272,11 +392,17 @@ export default function AdminPNTPPage() {
                 <div className="flex flex-wrap gap-2">
                     <button
                         type="button"
-                        onClick={() => setShowDeclaracaoModal(true)}
+                        onClick={abrirModalNovaDeclaracao}
                         className="btn-primary flex items-center gap-2 text-xs"
                     >
                         <FaPlus /> Declarar Não Ocorrência / Não Aplicabilidade
                     </button>
+                    <Link
+                        href="/admin/declaracoes"
+                        className="px-4 py-2.5 rounded-xl border border-blue-200 bg-blue-50 hover:bg-blue-100 text-xs font-bold text-[#0072CE] flex items-center gap-2"
+                    >
+                        <FaStamp /> Central de Declarações
+                    </Link>
                     <Link
                         href="/admin/historico"
                         className="px-4 py-2.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-xs font-bold text-gray-700 flex items-center gap-2"
@@ -642,7 +768,7 @@ export default function AdminPNTPPage() {
 
             {/* Declarações Formais de Não Ocorrência / Não Aplicabilidade */}
             <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-4">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
                         <h3 className="text-base font-bold text-gray-800">
                             Declarações Formais Vigentes (Não Ocorrência no Período / Não Aplicabilidade)
@@ -650,6 +776,21 @@ export default function AdminPNTPPage() {
                         <p className="text-xs text-gray-500">
                             A ausência de registros no banco ou falha de integração nunca é convertida automaticamente em &ldquo;não houve ocorrência&rdquo;. Toda declaração exige ato formal abaixo.
                         </p>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2 shrink-0">
+                        <Link
+                            href="/admin/declaracoes"
+                            className="px-3.5 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-[#0072CE] text-xs font-bold flex items-center gap-1.5 border border-blue-200"
+                        >
+                            Central de Declarações <FaExternalLinkAlt size={10} />
+                        </Link>
+                        <button
+                            type="button"
+                            onClick={abrirModalNovaDeclaracao}
+                            className="px-3.5 py-2 rounded-xl bg-[#FACC15] hover:bg-[#eab308] text-[#0F2942] text-xs font-black flex items-center gap-1.5 cursor-pointer"
+                        >
+                            <FaPlus /> Nova Declaração
+                        </button>
                     </div>
                 </div>
 
@@ -659,29 +800,85 @@ export default function AdminPNTPPage() {
                     </p>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {declaracoes.map((d) => (
-                            <div key={d.id} className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-                                <div className="flex items-center justify-between">
-                                    <span className="text-xs font-black text-slate-800 uppercase">
-                                        {d.modulo} (Exercício {d.exercicio}
-                                        {d.competencia ? ` / Mês ${d.competencia}` : ""})
-                                    </span>
-                                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-amber-100 text-amber-800">
-                                        {d.tipoDeclaracao}
-                                    </span>
+                        {declaracoes.map((d) => {
+                            const mod = obterModeloDeclaracao(d.modulo || d.criterioPntp);
+                            const reg: DeclaracaoRegistro = {
+                                id: d.id,
+                                modulo: d.modulo,
+                                criterioPntp: d.criterioPntp || null,
+                                orgaoResponsavel: d.orgaoResponsavel || d.secretaria || "Administração",
+                                exercicio: d.exercicio,
+                                competencia: d.competencia ? String(d.competencia) : null,
+                                tipoSituacao: d.tipoSituacao || d.tipoDeclaracao || "nao_ocorrencia_declarada",
+                                textoDeclaracao: d.textoDeclaracao || d.justificativa,
+                                fundamentoLegal: d.fundamentoLegal || null,
+                                responsavelNome: d.responsavelNome,
+                                responsavelCargo: d.responsavelCargo || null,
+                                arquivoAssinadoUrl: d.arquivoAssinadoUrl || null,
+                                dataEmissao: d.dataEmissao || d.dataDeclaracao,
+                                dataConferencia: d.dataConferencia || d.dataDeclaracao,
+                                situacaoPublicacao: d.situacaoPublicacao || "publicado",
+                                ativa: d.ativa ?? true,
+                            };
+                            return (
+                                <div key={d.id} className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2 flex flex-col justify-between">
+                                    <div className="space-y-1.5">
+                                        <div className="flex flex-wrap items-center justify-between gap-2">
+                                            <span className="text-xs font-black text-slate-800 uppercase">
+                                                {mod.slug !== "geral" ? mod.tituloCurto : d.modulo}
+                                                {d.criterioPntp ? ` • Critério ${d.criterioPntp}` : ""} ({d.exercicio}
+                                                {d.competencia ? ` / ${d.competencia}` : ""})
+                                            </span>
+                                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-amber-100 text-amber-800">
+                                                {d.tipoDeclaracao}
+                                            </span>
+                                        </div>
+                                        <p className="text-xs text-slate-600">{d.justificativa}</p>
+                                        {d.fundamentoLegal && (
+                                            <p className="text-[11px] text-slate-500">
+                                                <strong>Fundamento Legal:</strong> {d.fundamentoLegal}
+                                            </p>
+                                        )}
+                                        <p className="text-[10px] text-slate-400">
+                                            Declarado por {d.responsavelNome} ({d.secretaria || "Administração"}) em{" "}
+                                            {new Date(d.dataDeclaracao).toLocaleDateString("pt-BR")}
+                                        </p>
+                                    </div>
+
+                                    <div className="pt-2 border-t border-slate-200/70 flex flex-wrap items-center justify-end gap-1.5">
+                                        <button
+                                            type="button"
+                                            onClick={() => baixarCertidaoDeclaracaoPDF(reg, mod.titulo)}
+                                            className="px-2.5 py-1 rounded-lg bg-blue-50 hover:bg-[#0072CE] text-[#0072CE] hover:text-white text-[10px] font-bold flex items-center gap-1 transition cursor-pointer"
+                                        >
+                                            <FaFilePdf /> PDF
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => abrirModalEditarDeclaracao(d)}
+                                            className="px-2.5 py-1 rounded-lg bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 text-[10px] font-bold flex items-center gap-1 transition cursor-pointer"
+                                        >
+                                            <FaEdit /> Editar
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleDesativarDeclaracao(d.id)}
+                                            className="px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 text-[10px] font-bold flex items-center gap-1 transition cursor-pointer"
+                                        >
+                                            <FaArchive /> Arquivar
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleExcluirDeclaracao(d.id)}
+                                            className="p-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 transition cursor-pointer"
+                                            title="Excluir declaração"
+                                        >
+                                            <FaTrash size={10} />
+                                        </button>
+                                    </div>
                                 </div>
-                                <p className="text-xs text-slate-600">{d.justificativa}</p>
-                                {d.fundamentoLegal && (
-                                    <p className="text-[11px] text-slate-500">
-                                        <strong>Fundamento Legal:</strong> {d.fundamentoLegal}
-                                    </p>
-                                )}
-                                <p className="text-[10px] text-slate-400">
-                                    Declarado por {d.responsavelNome} ({d.secretaria || "Administração"}) em{" "}
-                                    {new Date(d.dataDeclaracao).toLocaleDateString("pt-BR")}
-                                </p>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 )}
             </div>
@@ -827,20 +1024,32 @@ export default function AdminPNTPPage() {
             <AdminModal
                 open={showDeclaracaoModal}
                 onClose={() => setShowDeclaracaoModal(false)}
-                title="Emitir Declaração Formal de Transparência"
-                maxWidth="lg"
+                title={editingDecId ? "Editar Declaração Formal de Transparência" : "Emitir Declaração Formal de Transparência"}
+                maxWidth="xl"
                 footer={
-                    <div className="flex justify-end gap-2">
+                    <div className="flex flex-wrap items-center justify-between w-full gap-2">
                         <button
                             type="button"
-                            onClick={() => setShowDeclaracaoModal(false)}
-                            className="px-4 py-2 rounded-xl bg-gray-100 text-gray-700 text-xs font-bold hover:bg-gray-200 transition-colors"
+                            onClick={() => {
+                                preencherModeloOficialDeclaracao(novaDeclaracao.modulo);
+                                toast.success("Modelo oficial PNTP preenchido!");
+                            }}
+                            className="px-3 py-2 rounded-xl bg-amber-50 hover:bg-[#FACC15] text-amber-900 font-bold text-xs flex items-center gap-1.5 border border-[#FACC15] transition cursor-pointer"
                         >
-                            Cancelar
+                            <FaMagic /> Preencher Modelo Oficial PNTP
                         </button>
-                        <button type="submit" form="form-pntp-declaracao" className="btn-primary text-xs">
-                            Emitir Declaração
-                        </button>
+                        <div className="flex justify-end gap-2">
+                            <button
+                                type="button"
+                                onClick={() => setShowDeclaracaoModal(false)}
+                                className="px-4 py-2 rounded-xl bg-gray-100 text-gray-700 text-xs font-bold hover:bg-gray-200 transition-colors"
+                            >
+                                Cancelar
+                            </button>
+                            <button type="submit" form="form-pntp-declaracao" className="btn-primary text-xs">
+                                {editingDecId ? "Salvar Alterações" : "Emitir Declaração"}
+                            </button>
+                        </div>
                     </div>
                 }
             >
@@ -852,14 +1061,30 @@ export default function AdminPNTPPage() {
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-xs font-bold text-gray-600 mb-1">Módulo / Assunto *</label>
-                                <input
-                                    type="text"
-                                    required
-                                    value={novaDeclaracao.modulo}
-                                    onChange={(e) => setNovaDeclaracao({ ...novaDeclaracao, modulo: e.target.value })}
-                                    className="input-field text-xs"
-                                />
+                                <label className="block text-xs font-bold text-gray-600 mb-1">Módulo / Assunto PNTP *</label>
+                                <select
+                                    value={
+                                        CATALOGO_DECLARACOES_INEXISTENCIA.some((m) => m.slug === novaDeclaracao.modulo)
+                                            ? novaDeclaracao.modulo
+                                            : "geral"
+                                    }
+                                    onChange={(e) => {
+                                        const val = e.target.value;
+                                        if (!editingDecId) {
+                                            preencherModeloOficialDeclaracao(val);
+                                        } else {
+                                            setNovaDeclaracao({ ...novaDeclaracao, modulo: val });
+                                        }
+                                    }}
+                                    className="input-field text-xs font-semibold"
+                                >
+                                    {CATALOGO_DECLARACOES_INEXISTENCIA.map((m) => (
+                                        <option key={m.slug} value={m.slug}>
+                                            {m.criterioPntp ? `Critério ${m.criterioPntp} — ` : ""}
+                                            {m.titulo}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
                             <div>
                                 <label className="block text-xs font-bold text-gray-600 mb-1">Tipo de Declaração *</label>
@@ -870,7 +1095,7 @@ export default function AdminPNTPPage() {
                                     }
                                     className="input-field text-xs"
                                 >
-                                    <option value="nao_ocorrencia_declarada">Não Houve Ocorrência no Período</option>
+                                    <option value="nao_ocorrencia_declarada">Não Houve Ocorrência / Inexistência no Período</option>
                                     <option value="nao_aplicavel">Não Aplicável ao Município</option>
                                 </select>
                             </div>
@@ -895,15 +1120,38 @@ export default function AdminPNTPPage() {
                                         setNovaDeclaracao({ ...novaDeclaracao, criterioPntp: e.target.value })
                                     }
                                     className="input-field text-xs"
-                                    placeholder="Ex: 8.4"
+                                    placeholder="Ex: 6.6"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-gray-600 mb-1">Competência / Período</label>
+                                <input
+                                    type="text"
+                                    value={novaDeclaracao.competencia}
+                                    onChange={(e) =>
+                                        setNovaDeclaracao({ ...novaDeclaracao, competencia: e.target.value })
+                                    }
+                                    className="input-field text-xs"
+                                    placeholder="Ex: Exercício Anual"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-gray-600 mb-1">Órgão Responsável</label>
+                                <input
+                                    type="text"
+                                    value={novaDeclaracao.secretaria}
+                                    onChange={(e) =>
+                                        setNovaDeclaracao({ ...novaDeclaracao, secretaria: e.target.value })
+                                    }
+                                    className="input-field text-xs"
                                 />
                             </div>
                         </div>
 
                         <div>
-                            <label className="block text-xs font-bold text-gray-600 mb-1">Justificativa Formal *</label>
+                            <label className="block text-xs font-bold text-gray-600 mb-1">Texto Oficial / Justificativa Formal *</label>
                             <textarea
-                                rows={3}
+                                rows={4}
                                 required
                                 value={novaDeclaracao.justificativa}
                                 onChange={(e) =>
@@ -914,17 +1162,31 @@ export default function AdminPNTPPage() {
                             />
                         </div>
 
-                        <div>
-                            <label className="block text-xs font-bold text-gray-600 mb-1">Fundamento Legal (quando Não Aplicável)</label>
-                            <input
-                                type="text"
-                                value={novaDeclaracao.fundamentoLegal}
-                                onChange={(e) =>
-                                    setNovaDeclaracao({ ...novaDeclaracao, fundamentoLegal: e.target.value })
-                                }
-                                className="input-field text-xs"
-                                placeholder="Ex: Lei Municipal nº ..."
-                            />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-xs font-bold text-gray-600 mb-1">Fundamento Legal</label>
+                                <input
+                                    type="text"
+                                    value={novaDeclaracao.fundamentoLegal}
+                                    onChange={(e) =>
+                                        setNovaDeclaracao({ ...novaDeclaracao, fundamentoLegal: e.target.value })
+                                    }
+                                    className="input-field text-xs"
+                                    placeholder="Ex: Lei Federal nº 12.527/2011..."
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-gray-600 mb-1">URL PDF Assinado (Opcional)</label>
+                                <input
+                                    type="text"
+                                    value={novaDeclaracao.documentoUrl}
+                                    onChange={(e) =>
+                                        setNovaDeclaracao({ ...novaDeclaracao, documentoUrl: e.target.value })
+                                    }
+                                    className="input-field text-xs"
+                                    placeholder="https://..."
+                                />
+                            </div>
                         </div>
 
                 </form>

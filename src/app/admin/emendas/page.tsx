@@ -6,6 +6,7 @@ import {
     FaUpload, FaDownload, FaFilter, FaTimes, FaSyncAlt, FaPlus, FaCheckCircle, FaExclamationCircle
 } from "react-icons/fa";
 import toast from "react-hot-toast";
+import DeclaracaoInexistenciaBanner from "@/components/admin/DeclaracaoInexistenciaBanner";
 
 type Emenda = {
     id: string;
@@ -159,6 +160,13 @@ export default function AdminEmendasPage() {
                     </Link>
                 </div>
             </div>
+
+            <DeclaracaoInexistenciaBanner
+                modulo="emendas_parlamentares"
+                criterioPntp="17.1"
+                tituloModulo="Emendas Parlamentares"
+                totalRegistrosAtuais={loading ? undefined : items.length}
+            />
 
             {/* Busca e Filtros */}
             <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">

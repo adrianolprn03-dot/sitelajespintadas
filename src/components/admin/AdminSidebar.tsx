@@ -14,6 +14,7 @@ import {
     FaUserGraduate, FaUserTie, FaCog, FaTheaterMasks, FaHeartbeat,
     FaShieldAlt, FaHistory, FaGraduationCap
 } from "react-icons/fa";
+import { FileCheck2 } from "lucide-react";
 
 type MenuItem = {
     label: string;
@@ -37,6 +38,7 @@ const menuCategories: MenuCategory[] = [
         items: [
             { label: "Visão Geral", href: "/admin", icon: FaHome, exact: true, roles: ["admin", "controladoria", "editor", "integracao", "esic", "comunicacao"] },
             { label: "Acompanhamento PNTP", href: "/admin/pntp", icon: FaShieldAlt, roles: ["admin", "controladoria", "editor", "integracao"] },
+            { label: "Declarações de Inexistência", href: "/admin/declaracoes", icon: FileCheck2, roles: ["admin", "controladoria", "editor", "integracao", "esic", "comunicacao"] },
             { label: "Histórico de Alterações", href: "/admin/historico", icon: FaHistory, roles: ["admin", "controladoria", "editor", "integracao"] },
             { label: "Importações & Integrações", href: "/admin/importacao", icon: FaUpload, roles: ["admin", "controladoria", "integracao", "editor"] },
         ]

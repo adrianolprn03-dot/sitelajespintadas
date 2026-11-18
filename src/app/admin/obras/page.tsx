@@ -8,6 +8,7 @@ import {
 } from "react-icons/fa";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import DeclaracaoInexistenciaBanner from "@/components/admin/DeclaracaoInexistenciaBanner";
 
 type Obra = {
     id: string;
@@ -177,6 +178,13 @@ export default function AdminObrasPage() {
                     </Link>
                 </div>
             </div>
+
+            <DeclaracaoInexistenciaBanner
+                modulo="obras_paralisadas"
+                criterioPntp="10.2"
+                tituloModulo="Obras Públicas Paralisadas"
+                totalRegistrosAtuais={loading ? undefined : stats.paralisadas}
+            />
 
             {/* Dashboard / Estatísticas ATRICON */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { FaUsers, FaPlus, FaEdit, FaTrash, FaSpinner, FaSearch, FaBriefcase, FaLock, FaCheckCircle, FaFileUpload, FaLink, FaExternalLinkAlt } from "react-icons/fa";
 import toast from "react-hot-toast";
 import AdminModal from "@/components/admin/AdminModal";
+import DeclaracaoInexistenciaBanner from "@/components/admin/DeclaracaoInexistenciaBanner";
 
 type Concurso = {
     id: string;
@@ -156,6 +157,13 @@ export default function AdminConcursosPage() {
                     <FaPlus /> Novo Edital
                 </button>
             </div>
+
+            <DeclaracaoInexistenciaBanner
+                modulo="concursos_selecoes"
+                criterioPntp="6.4"
+                tituloModulo="Concursos Públicos e Processos Seletivos"
+                totalRegistrosAtuais={loading ? undefined : items.length}
+            />
 
             <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="p-6 border-b border-gray-50">

@@ -8,6 +8,7 @@ import {
 import toast from "react-hot-toast";
 import Link from "next/link";
 import AdminModal from "@/components/admin/AdminModal";
+import DeclaracaoInexistenciaBanner from "@/components/admin/DeclaracaoInexistenciaBanner";
 
 type Programa = {
     id: string;
@@ -216,6 +217,15 @@ export default function AdminIncentivosCulturaisPage() {
                         {saving ? <FaSpinner className="animate-spin" /> : <FaSave />} Salvar Alterações
                     </button>
                 </div>
+            </div>
+
+            <div className="mb-8">
+                <DeclaracaoInexistenciaBanner
+                    modulo="renuncia_receita"
+                    criterioPntp="16.1"
+                    tituloModulo="Renúncias de Receita e Incentivos Fiscais/Culturais"
+                    totalRegistrosAtuais={loading ? undefined : form.programas.length}
+                />
             </div>
 
             <form onSubmit={handleSave} className="space-y-8">

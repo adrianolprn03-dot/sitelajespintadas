@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import PageHeader from "@/components/PageHeader";
 import BannerPNTP from "@/components/transparencia/BannerPNTP";
+import DeclaracaoInexistenciaCard from "@/components/transparencia/DeclaracaoInexistenciaCard";
 import { 
-    FaGavel, FaCheckCircle, FaFilePdf, FaExternalLinkAlt, 
-    FaDownload, FaSearch, FaCalendar, FaShieldAlt, FaInfoCircle
+    FaGavel, FaExternalLinkAlt, 
+    FaDownload, FaShieldAlt
 } from "react-icons/fa";
 import { exportToCSV, exportToJSON, exportToPDF, exportToXLSX } from "@/lib/exportUtils";
 import { MUNICIPIO } from "@/config/municipio";
@@ -85,56 +86,13 @@ export default function SancoesAdministrativasPage() {
                 </div>
 
                 {/* Card Oficial de Declaração de Inexistência / Regularidade (Critério PNTP) */}
-                <div className="bg-white rounded-3xl p-8 sm:p-10 border border-[#DDE3EA] shadow-sm space-y-6">
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-100 pb-6">
-                        <div className="flex items-center gap-4">
-                            <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl shrink-0">
-                                <FaCheckCircle />
-                            </div>
-                            <div>
-                                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100 px-3 py-0.5 rounded-full">
-                                    Critério PNTP • Transparência Ativa
-                                </span>
-                                <h3 className="text-xl font-black text-[#12304A] mt-1">
-                                    Declaração Oficial de Inexistência de Sanções Administrativas Vigentes
-                                </h3>
-                                <p className="text-xs text-[#5B738B] font-medium">
-                                    {MUNICIPIO.nomeCompleto} • CNPJ {MUNICIPIO.cnpj} • Exercício {ano}
-                                </p>
-                            </div>
-                        </div>
-
-                        <button
-                            onClick={() => handleExport("pdf")}
-                            className="bg-[#1254A3] hover:bg-[#0d4282] text-white text-xs font-bold px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-sm transition-all cursor-pointer"
-                        >
-                            <FaFilePdf /> Baixar Certidão / Declaração
-                        </button>
-                    </div>
-
-                    <div className="bg-[#F5F7FA] rounded-2xl p-6 border border-[#DDE3EA] space-y-4">
-                        <p className="text-sm text-[#12304A] leading-relaxed font-medium">
-                            A <strong>{MUNICIPIO.nomeCompleto}</strong>, no uso de suas atribuições legais e em cumprimento ao disposto no <strong>art. 156 da Lei Federal nº 14.133/2021 (Nova Lei de Licitações)</strong> e às diretrizes da <strong>Matriz de Fiscalização PNTP 2026 (Critério PNTP)</strong>, declara para os devidos fins de direito e controle público que:
-                        </p>
-                        <blockquote className="bg-white p-5 rounded-xl border-l-4 border-emerald-500 text-sm font-semibold text-slate-800 italic shadow-xs">
-                            "No exercício de {ano}, não constam sanções administrativas vigentes (advertência, multa rescisória, impedimento de licitar ou contratar, ou declaração de inidoneidade) aplicadas pela Administração Direta a fornecedores, pessoas físicas ou jurídicas licitantes."
-                        </blockquote>
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 text-xs">
-                            <div className="bg-white p-3.5 rounded-xl border border-[#DDE3EA]">
-                                <span className="text-[10px] font-bold text-[#5B738B] uppercase block mb-0.5">Órgão Emissor:</span>
-                                <span className="font-bold text-[#12304A]">Setor de Licitações e Contratos / Gabinete</span>
-                            </div>
-                            <div className="bg-white p-3.5 rounded-xl border border-[#DDE3EA]">
-                                <span className="text-[10px] font-bold text-[#5B738B] uppercase block mb-0.5">Fundamentação:</span>
-                                <span className="font-bold text-[#12304A]">Art. 156 da Lei nº 14.133/21 • Critério PNTP</span>
-                            </div>
-                            <div className="bg-white p-3.5 rounded-xl border border-[#DDE3EA]">
-                                <span className="text-[10px] font-bold text-[#5B738B] uppercase block mb-0.5">Atualização:</span>
-                                <span className="font-bold text-emerald-700">Verificação Periódica Concluída</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <DeclaracaoInexistenciaCard
+                    modulo="sancoes_administrativas"
+                    criterioPntp="8.7"
+                    exercicio={ano}
+                    tituloFallback="Inexistência de Sanções Administrativas Aplicadas a Fornecedores"
+                    textoFallback={`A ${MUNICIPIO.nomeCompleto} (${MUNICIPIO.uf}), CNPJ ${MUNICIPIO.cnpj}, declara para os devidos fins de direito e cumprimento do art. 156 da Lei Federal nº 14.133/2021 e do Critério 8.7 do PNTP 2026 que, no exercício de ${ano}, não constam sanções administrativas vigentes (advertência, multa rescisória, impedimento de licitar/contratar ou declaração de inidoneidade) aplicadas pela Administração Direta a fornecedores, pessoas físicas ou jurídicas licitantes.`}
+                />
 
                 {/* Consultas Públicas Oficiais aos Cadastros Nacionais de Sanções */}
                 <div className="bg-white rounded-3xl p-8 border border-[#DDE3EA] shadow-sm space-y-6">

@@ -8,6 +8,7 @@ import {
     FaCheckCircle, FaExclamationCircle, FaExternalLinkAlt
 } from "react-icons/fa";
 import toast from "react-hot-toast";
+import DeclaracaoInexistenciaBanner from "@/components/admin/DeclaracaoInexistenciaBanner";
 
 type Convenio = {
     id: string;
@@ -128,6 +129,19 @@ export default function AdminConveniosPage() {
                     </Link>
                 </div>
             </div>
+
+            <DeclaracaoInexistenciaBanner
+                modulo="convenios_concedidos"
+                criterioPntp="5.2"
+                tituloModulo="Convênios e Transferências Concedidas"
+                totalRegistrosAtuais={
+                    loading
+                        ? undefined
+                        : items.filter(
+                              (i) => i.tipoConvenio === "concedido" || i.tipoConvenio === "realizado"
+                          ).length
+                }
+            />
 
             {/* Painel de Filtros e Abas de Operação */}
             <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">

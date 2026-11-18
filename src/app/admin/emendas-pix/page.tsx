@@ -4,6 +4,7 @@ import Link from "next/link";
 import { FaPlus, FaTrash, FaSpinner, FaSearch, FaEdit, FaExternalLinkAlt } from "react-icons/fa";
 import { FaHandHoldingDollar, FaPix } from "react-icons/fa6";
 import toast from "react-hot-toast";
+import DeclaracaoInexistenciaBanner from "@/components/admin/DeclaracaoInexistenciaBanner";
 
 type EmendaPix = {
     id: string;
@@ -72,6 +73,13 @@ export default function AdminEmendasPixPage() {
                     <FaPlus /> Nova Emenda PIX
                 </Link>
             </div>
+
+            <DeclaracaoInexistenciaBanner
+                modulo="emendas_pix"
+                criterioPntp="17.2"
+                tituloModulo="Emendas PIX (Transferências Especiais)"
+                totalRegistrosAtuais={loading ? undefined : items.length}
+            />
 
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="p-4 border-b border-gray-100 bg-gray-50/50">

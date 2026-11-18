@@ -9,6 +9,7 @@ import {
 import { FaBuildingColumns } from "react-icons/fa6";
 import toast from "react-hot-toast";
 import { HISTORICO_DIARIAS, HistoricoTabelaDiaria } from "@/lib/diarias-historico";
+import DeclaracaoInexistenciaBanner from "@/components/admin/DeclaracaoInexistenciaBanner";
 
 type Diaria = {
     id: string;
@@ -89,6 +90,12 @@ export default function AdminDiariasPage() {
                     </Link>
                 </div>
             </div>
+
+            <DeclaracaoInexistenciaBanner
+                modulo="diarias_internacionais"
+                criterioPntp="7.2"
+                tituloModulo="Diárias Internacionais / Não Regulamentação"
+            />
 
             {/* Abas Superiores */}
             <div className="bg-white rounded-2xl border border-[#DDE3EA] p-2 shadow-sm flex flex-wrap gap-2">

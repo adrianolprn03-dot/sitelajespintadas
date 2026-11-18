@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { FaHandHoldingDollar, FaCircleInfo, FaFileInvoiceDollar, FaCalendarDays, FaScaleBalanced, FaFilePdf } from "react-icons/fa6";
 import { FaSearch, FaSpinner, FaFilter } from "react-icons/fa";
+import DeclaracaoInexistenciaCard from "@/components/transparencia/DeclaracaoInexistenciaCard";
 
 type EmendaPix = {
     id: string;
@@ -134,7 +135,16 @@ export default function PublicEmendasPixPage() {
                 </div>
             </div>
 
-            {/* Results Table */}
+            {/* Results Table or Declaração Oficial */}
+            {!loading && filtered.length === 0 && !search ? (
+                <DeclaracaoInexistenciaCard
+                    modulo="emendas_pix"
+                    criterioPntp="17.2"
+                    exercicio={selectedAno || undefined}
+                    tituloFallback="Inexistência de Transferências Especiais (Emendas PIX) no Período"
+                    textoFallback={`A Prefeitura Municipal de Lajes Pintadas/RN declara formalmente, em cumprimento ao Critério 17.2 do PNTP 2026 e às determinações da ADPF 854/STF, que não recebeu nem executou Transferências Especiais (Emendas PIX) para ${selectedAno ? `o exercício de ${selectedAno}` : "o período consultado"}.`}
+                />
+            ) : (
             <div className="bg-white rounded-[2.5rem] shadow-xl border border-gray-100 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
@@ -258,6 +268,7 @@ export default function PublicEmendasPixPage() {
                     </table>
                 </div>
             </div>
+            )}
 
             {/* Note Section */}
             <div className="bg-blue-50 border border-blue-100 rounded-[2rem] p-8 flex flex-col md:flex-row items-center gap-6">

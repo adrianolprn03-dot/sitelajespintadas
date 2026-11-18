@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { FaPlus, FaEdit, FaTrash, FaSpinner, FaSearch, FaUserTie } from "react-icons/fa";
 import toast from "react-hot-toast";
+import DeclaracaoInexistenciaBanner from "@/components/admin/DeclaracaoInexistenciaBanner";
 
 type Terceirizado = {
     id: string;
@@ -65,6 +66,13 @@ export default function AdminTerceirizadosPage() {
                     <FaPlus /> Novo Terceirizado
                 </Link>
             </div>
+
+            <DeclaracaoInexistenciaBanner
+                modulo="terceirizados"
+                criterioPntp="6.6"
+                tituloModulo="Pessoal Terceirizado"
+                totalRegistrosAtuais={loading ? undefined : items.length}
+            />
 
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="p-4 border-b border-gray-100 bg-gray-50/50">
