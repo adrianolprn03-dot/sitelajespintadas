@@ -10,3 +10,7 @@ node_modules
 scratch
 tmp
 build_*
+db_data_dump.json
+site_vps_final.zip
+public/legacy-uploads
+public/uploads

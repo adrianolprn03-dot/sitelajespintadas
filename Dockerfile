@@ -27,12 +27,12 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Argumentos de Build para conexão inicial e secrets
-ARG DATABASE_URL
-ARG DIRECT_URL
-ARG NEXTAUTH_SECRET
-ARG NEXTAUTH_URL
-ARG NEXT_PUBLIC_BASE_URL
-ARG BLOB_READ_WRITE_TOKEN
+ARG DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder"
+ARG DIRECT_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder"
+ARG NEXTAUTH_SECRET="build-secret-placeholder-key-for-standalone"
+ARG NEXTAUTH_URL="http://localhost:3000"
+ARG NEXT_PUBLIC_BASE_URL="http://localhost:3000"
+ARG BLOB_READ_WRITE_TOKEN=""
 ARG NODE_ENV=production
 
 ENV DATABASE_URL=${DATABASE_URL}
@@ -47,8 +47,8 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # Gera o cliente Prisma
 RUN npx prisma generate
 
-# Limite de memória para evitar OOM no build em VPS compacta (1.5GB)
-ENV NODE_OPTIONS="--max-old-space-size=1536"
+# Limite de memória rigoroso (1024MB) para rodar com folga e segurança na VPS compacta (1.7GB RAM)
+ENV NODE_OPTIONS="--max-old-space-size=1024"
 
 # Build de produção (gera a pasta .next/standalone configurada no next.config.js)
 RUN npm run build
