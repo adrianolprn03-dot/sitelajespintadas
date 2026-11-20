@@ -16,7 +16,11 @@ const nextConfig = {
       },
     ];
   },
+  productionBrowserSourceMaps: false,
+  swcMinify: true,
   experimental: {
+    cpus: 1,
+    workerThreads: false,
     serverActions: { allowedOrigins: ['*'] },
     serverComponentsExternalPackages: ["@vercel/blob"],
     optimizePackageImports: ['lucide-react', 'react-icons', 'framer-motion'],

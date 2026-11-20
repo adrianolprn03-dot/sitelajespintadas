@@ -1,7 +1,7 @@
 {
-  "name": "saotomern",
+  "name": "sitelajespintadas",
   "version": "1.0.0",
-  "description": "Portal Institucional da Prefeitura Municipal de São Tomé - RN",
+  "description": "Portal Institucional da Prefeitura Municipal de Lajes Pintadas - RN",
   "private": true,
   "scripts": {
     "dev": "cross-env NODE_OPTIONS=--max_old_space_size=4096 next dev",

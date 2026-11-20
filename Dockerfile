@@ -47,8 +47,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # Gera o cliente Prisma
 RUN npx prisma generate
 
-# Limite de memória rigoroso (1024MB) para rodar com folga e segurança na VPS compacta (1.7GB RAM)
-ENV NODE_OPTIONS="--max-old-space-size=1024"
+# Limite de memória rigoroso (768MB) e 1 thread única para compilar com segurança total na VPS de 1.7GB
+ENV NEXT_CPU_COUNT=1
+ENV NODE_OPTIONS="--max-old-space-size=768"
 
 # Build de produção (gera a pasta .next/standalone configurada no next.config.js)
 RUN npm run build
