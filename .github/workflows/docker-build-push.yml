@@ -1,0 +1,65 @@
+name: Build e Publicar Imagem Docker no GHCR
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    name: Build Docker no GitHub (16GB RAM) e Publicar no GHCR
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1. Checkout do Código
+        uses: actions/checkout@v4
+
+      - name: 2. Configurar Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 3. Autenticar no GitHub Container Registry (GHCR)
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 4. Gerar Metadados e Tags
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=raw,value=latest
+            type=sha,format=short
+
+      - name: 5. Compilar e Publicar Imagem
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            DATABASE_URL=postgresql://placeholder:placeholder@localhost:5432/placeholder
+            DIRECT_URL=postgresql://placeholder:placeholder@localhost:5432/placeholder
+            NEXTAUTH_SECRET=build-secret-placeholder-key-for-standalone
+            NEXTAUTH_URL=http://localhost:3000
+            NEXT_PUBLIC_BASE_URL=http://localhost:3000
+            NODE_ENV=production
+
+      - name: 6. Notificar Easypanel Webhook (Opcional se configurado)
+        continue-on-error: true
+        run: |
+          WEBHOOK_URL="http://143.95.185.100:3000/api/deploy/cc6a52cf00cbfbe5e27f1eed8effaaf72399ca157fbb0c79"
+          echo "Disparando webhook do Easypanel..."
+          curl -s -X POST "$WEBHOOK_URL" || true
+          echo "Webhook disparado!"
