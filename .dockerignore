@@ -1,0 +1,12 @@
+node_modules
+.next
+.git
+.github
+.vercel
+*.log
+*.txt
+*.html
+*.zip
+scratch
+tmp
+build_*
